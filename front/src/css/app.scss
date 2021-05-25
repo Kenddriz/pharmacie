@@ -1,0 +1,48 @@
+// app global css in SCSS form
+.no-text-decoration {
+  text-decoration: none;
+}
+
+
+.menu_card {
+  margin-top: -300px;
+  width: 80%;
+}
+@media only screen and (max-width: 768px) {
+  .menu_card {
+    width: 95%;
+  }
+}
+@media only screen and (max-height: 563px) {
+  .menu_card {
+    margin-top: -200px;
+  }
+}
+.carousel-image{
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.break-line{
+  word-break: break-all;
+  line-height: 1.6
+}
+.keep-space {
+  white-space: pre-wrap
+}
+.bordered-left {
+  border-left: 1px solid darkgray;
+}
+.bordered-bottom {
+  border-bottom: 1px solid darkgray;
+}
+
+.padding-all {
+  padding: 6% 5% 6% 5%;
+}
+@media only screen and (max-width: 1024px) {
+  .padding-all  {
+    padding: 10% 5% 10% 5%;
+  }
+}
+

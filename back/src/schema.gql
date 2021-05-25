@@ -1,0 +1,328 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Sale {
+  id: Int!
+}
+
+type MedicineType {
+  id: Int!
+  label: Float!
+}
+
+type Unit {
+  id: Int!
+  label: String!
+  description: String!
+  parentId: Int!
+}
+
+type Quantity {
+  id: Int!
+  medicine: Medicine!
+  stock: Float!
+  shop: Float!
+  price: Float!
+  unit: Unit!
+}
+
+type Medicine {
+  id: Int!
+  designation: String!
+  expiration: String!
+  vat: Float!
+  type: MedicineType!
+  quantities: [Quantity!]!
+}
+
+type SalesLine {
+  id: Int!
+  unitPrice: Float!
+  quantity: Float!
+  vat: Float!
+  sale: Sale!
+  medicine: Medicine!
+  unit: Unit!
+}
+
+type PaymentMode {
+  id: Int!
+  label: String!
+}
+
+type Payment {
+  id: Int!
+  reference: String!
+  description: String!
+  date: String!
+  paymentMode: PaymentMode!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Contact {
+  id: Int!
+  label: String!
+}
+
+type ContactType {
+  id: Int!
+  label: String!
+  contacts: [Contact!]!
+}
+
+type Provider {
+  id: Int!
+  name: String!
+  logo: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contactTypes: [ContactType!]!
+}
+
+type Command {
+  id: Int!
+  provider: Provider!
+  vat: Float!
+  arrived: Boolean!
+}
+
+type Invoice {
+  id: Int!
+  reference: String!
+  dueDate: String!
+  payment: Payment
+  command: Command
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Meta {
+  itemCount: Float!
+  totalItems: Float!
+  itemsPerPage: Float!
+  totalPages: Float!
+  currentPage: Float!
+}
+
+type ProviderPagination {
+  items: [Provider!]!
+  meta: Meta!
+}
+
+type User {
+  id: Int!
+  username: String!
+  password: String!
+  avatar: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type LoginDto {
+  token: String!
+}
+
+type CommandLine {
+  id: Int!
+  unit: Unit!
+  medicine: Medicine!
+}
+
+type Query {
+  getHello: String!
+  salesLine(id: Int!): SalesLine!
+  sale(id: Int!): Sale!
+  medicineType(id: Int!): MedicineType!
+  command(id: Int!): Command!
+  providersPaginate(input: PaginationInput!): ProviderPagination!
+  providers: [Provider!]!
+  contacts: [Contact!]!
+  contactTypes: [ContactType!]!
+  whoAmI: User!
+  units: [Unit!]!
+  commandLine(id: Int!): CommandLine!
+}
+
+input PaginationInput {
+  keyword: String!
+  page: Float!
+  limit: Float!
+}
+
+type Mutation {
+  createSalesLine(createSalesLineInput: CreateSalesLineInput!): SalesLine!
+  updateSalesLine(updateSalesLineInput: UpdateSalesLineInput!): SalesLine!
+  removeSalesLine(id: Int!): SalesLine!
+  createSale(createSaleInput: CreateSaleInput!): Sale!
+  updateSale(updateSaleInput: UpdateSaleInput!): Sale!
+  removeSale(id: Int!): Sale!
+  createMedicineType(createMedicineTypeInput: CreateMedicineTypeInput!): MedicineType!
+  updateMedicineType(updateMedicineTypeInput: UpdateMedicineTypeInput!): MedicineType!
+  removeMedicineType(id: Int!): MedicineType!
+  createInvoice(input: CreateInvoiceInput!): Invoice!
+  updateInvoice(input: UpdateInvoiceInput!): Invoice!
+  createCommand(createCommandInput: PurchaseInput!): Command!
+  updateCommand(updateCommandInput: PurchaseDto!): Command!
+  removeCommand(id: Int!): Command!
+  createProvider(input: CreateProviderInput!): Provider!
+  createContactType(input: CreateContactTypeInput!): ContactType!
+  updateContactType(input: UpdateContactTypeInput!): ContactType!
+  createPayment(input: CreatePaymentInput!): Invoice!
+  updatePaymentMode(input: UpdatePaymentModeInput!): PaymentMode!
+  createMedicine(input: CreateMedicineInput!): Medicine!
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User!
+  login(input: AuthInput!): LoginDto!
+  createUnit(input: CreateUnitInput!): Unit!
+  updateUnit(input: UpdateUnitInput!): Unit!
+  createCommandLine(createCommandLineInput: CreateCommandLineInput!): CommandLine!
+  updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
+  removeCommandLine(id: Int!): CommandLine!
+}
+
+input CreateSalesLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSalesLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateSaleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSaleInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMedicineTypeInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMedicineTypeInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInvoiceInput {
+  dueDate: String!
+  reference: String!
+}
+
+input UpdateInvoiceInput {
+  id: Float!
+  dueDate: String!
+  reference: String!
+}
+
+input PurchaseInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input PurchaseDto {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateProviderInput {
+  name: String!
+  contactTypes: [CreateContactInput!]!
+}
+
+input CreateContactInput {
+  contactTypeId: Float!
+  contacts: [String!]!
+}
+
+input CreateContactTypeInput {
+  label: String!
+}
+
+input UpdateContactTypeInput {
+  label: String
+  id: Float!
+}
+
+input CreatePaymentInput {
+  reference: Float!
+  description: String!
+  date: String!
+  invoiceId: Float!
+  paymentMode: String!
+}
+
+input UpdatePaymentModeInput {
+  id: Int!
+  label: String!
+}
+
+input CreateMedicineInput {
+  designation: String!
+  expiration: String!
+  vat: Float!
+  type: String!
+  quantities: [CreateQuantityInput!]!
+}
+
+input CreateQuantityInput {
+  unitId: Int!
+  value: Int!
+  price: Int!
+}
+
+input CreateUserInput {
+  username: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  id: Float!
+  username: String!
+}
+
+input AuthInput {
+  username: String!
+  password: String!
+}
+
+input CreateUnitInput {
+  label: String!
+  description: String!
+  parentId: Int = 0
+}
+
+input UpdateUnitInput {
+  label: String
+  description: String
+  parentId: Int = 0
+  id: Float!
+}
+
+input CreateCommandLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCommandLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}

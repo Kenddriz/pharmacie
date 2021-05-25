@@ -1,0 +1,24 @@
+<template>
+  <router-view />
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'App',
+})
+</script>
+<style lang="scss">
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+    background: -webkit-gradient(linear, left top, left bottom, from($primary), to($primary));
+    box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.25), inset -2px -2px -2px rgba(0, 0, 0, 0.25);
+  }
+  body {
+    font-family: Lato, sans-serif;
+    overflow: hidden;
+  }
+</style>
