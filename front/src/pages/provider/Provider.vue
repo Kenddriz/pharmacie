@@ -7,7 +7,7 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import FournisseurForm from '../../components/provider/ProviderForm.vue';
+  import FournisseurForm from '../../components/provider/CreateProvider.vue';
   import ProviderTable from '../../components/provider/table/ProviderTable.vue';
 
   export default defineComponent({

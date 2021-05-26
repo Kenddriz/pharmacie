@@ -1,32 +1,35 @@
-import { ref, reactive } from 'vue';
-import {ContactType, MutationCreateProviderArgs} from '../../types';
+import { reactive, ref } from 'vue';
+import { CreateProviderInput, MutationCreateProviderArgs } from '../../types';
 import {useMutation, useQuery} from '@vue/apollo-composable';
 import {CONTACT_TYPES_QUERY, ContactTypesData} from '../../contact_type/read/contact.types.sdl';
 import { CreateProviderData, CREATE_PROVIDER } from './create.provider.sdl';
 import {ajoutProviderCache} from '../updateProviderCache';
 
-type CreateProviderForm = Omit<ContactType, 'contacts'|'__typename'> & {
-  contacts: string[];
-}
 export const useCreateProviderService = () => {
   const { onResult, loading } = useQuery<ContactTypesData>(CONTACT_TYPES_QUERY);
-  const input = ref<CreateProviderForm[]>([]);
+  const input = reactive<CreateProviderInput>({
+    name: '',
+    address: '',
+    contactTypes: [],
+  });
+  const contactTypes = ref<string[]>([]);
   onResult(res => {
     if(res.data) {
-      input.value = res.data.contactTypes.map(t => {
+      contactTypes.value = [];
+      input.contactTypes = res.data.contactTypes.map(t => {
+        contactTypes.value.push(t.label);
         return {
-          ...t,
+          contactTypeId: t.id,
           contacts: []
         }
       });
     }
   });
-  const details = reactive({ name: '' });
   const addContact = (index: number) => {
-    input.value[index].contacts.push('');
+    input.contactTypes[index].contacts.push('');
   }
   const removeContact = (cTypeIndex: number, cIndex: number) => {
-    input.value[cTypeIndex].contacts.splice(cIndex, 1);
+    input.contactTypes[cTypeIndex].contacts.splice(cIndex, 1);
   }
 
   const { mutate } = useMutation<
@@ -38,17 +41,7 @@ export const useCreateProviderService = () => {
       }
   })
   const submitCreateProvider = async () => {
-    await mutate({
-      input: {
-        name: details.name,
-        contactTypes: input.value.map(c => {
-          return {
-            contactTypeId: c.id,
-            contacts: c.contacts.filter(c => c.trim().length !== 0)
-          }
-        })
-      }
-    })
+    await mutate( { input } )
   }
-  return { input, addContact, removeContact, loading, submitCreateProvider, details }
+  return { input, addContact, removeContact, loading, submitCreateProvider, contactTypes }
 }

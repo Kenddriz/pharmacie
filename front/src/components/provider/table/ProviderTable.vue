@@ -6,10 +6,10 @@
     :rows="providers"
     :columns="columns"
     :pagination="{page: 1, rowsPerPage: 10}"
-    row-key="name"
+    row-key="id"
     flat
     class="sticky-column-table sticky-header-table"
-    card-container-class="fa-border"
+    card-container-class="fa-border items-start"
     no-data-label="Aucune page trouvé..."
     :loading="cTypesLoading"
   >
@@ -78,13 +78,42 @@
     </template>
     <!-- Table body for table view mod-->
     <template v-slot:body="props">
-      <ProviderRows :item="props" />
+      <q-tr :props="props">
+        <q-td auto-width>
+          <q-btn
+            size="sm"
+            color="positive"
+            round
+            dense
+            @click="props.expand = !props.expand"
+            :icon="props.expand ? 'remove' : 'add'"
+          />
+        </q-td>
+        <q-td
+          v-for="col in props.cols"
+          :key="col.name"
+          :props="props"
+        >
+          {{ col.value }}
+        </q-td>
+        <q-td auto-width>
+          <q-btn icon="delete" size="sm" round color="warning" />
+        </q-td>
+      </q-tr>
+      <q-tr v-show="props.expand" :props="props">
+        <q-td colspan="100%">
+          <div class="text-left">Courbe commande: {{ props.row.name }}.</div>
+        </q-td>
+      </q-tr>
     </template>
 
     <!-- Card body for Grid view mod -->
 
     <template v-slot:item="props">
-      <CardItem :item="props" />
+      <CardItem
+        :item="props"
+        :contacts="contacts(props.row.contacts)"
+      />
     </template>
 
     <!-- //pagination -->
@@ -99,21 +128,29 @@
   import {defineComponent, ref} from 'vue';
   import {useProviders} from '../../../graphql/provider/read/providers.service';
   import {useContactTypes} from '../../../graphql/contact_type/read/contact.types.service';
-  import ProviderRows from './ProviderRows.vue';
   import CardItem from './CardItem.vue';
+  import { Contact, ContactType } from '../../../graphql/types';
 
   export default defineComponent({
     name: 'ProviderTable',
-    components: { ProviderRows, CardItem },
+    components: { CardItem },
     setup() {
         const { contactTypes, loading: cTypesLoading } = useContactTypes();
+        const contacts = (contacts: Contact[]) => {
+          return contactTypes.value.map((cType: ContactType) => {
+            return {
+              ...cType,
+              contacts: contacts.filter(c => c.contactTypeId === cType.id)
+            }
+          })
+        };
         return {
           isGrid: ref<boolean>(false),
           viewModeOptions: [
             { value: false, slot: 'false' },
             { value: true, slot: 'true' }
           ],
-          contactTypes,
+          contacts,
           cTypesLoading,
           ...useProviders()
         }

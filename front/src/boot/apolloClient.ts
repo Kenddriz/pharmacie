@@ -52,7 +52,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpOptions = {
-  uri: String(process.env.uri) + 'graphql',
+  uri: 'http://localhost:3000/graphql',
 };
 
 const httpLink = new HttpLink(httpOptions);
@@ -60,9 +60,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   let error = '';
   if (graphQLErrors)
     graphQLErrors.map(({ message }) => {
-      return (error = message.toString());
+      return (error = `${message}`);
     });
-  if (networkError) error = 'Problème de réseau:' + networkError.message;
+  if (networkError) error = 'Problème de réseau:' + networkError;
   Notify.create({
     message: error,
     type: 'warning',
@@ -82,9 +82,11 @@ const link = split(
   httpLink
 );
 
+// const uploadLink = createUploadLink({ uri: 'http://localhost:3000/graphql', fetchOptions: {mode: 'no-cors'}  });
+
 const uploadLink = ApolloLink.split(
   (operation) => operation.getContext().hasUpload,
-  createUploadLink(httpOptions),
+  createUploadLink(httpOptions) as any,
   link
 );
 

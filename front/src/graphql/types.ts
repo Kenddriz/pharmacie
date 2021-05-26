@@ -13,6 +13,12 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AddContactInput = {
+  providerId: Scalars['Float'];
+  contactTypeId: Scalars['Float'];
+  contacts: Array<Scalars['String']>;
+};
+
 export type AuthInput = {
   username: Scalars['String'];
   password: Scalars['String'];
@@ -37,13 +43,13 @@ export type Contact = {
   __typename?: 'Contact';
   id: Scalars['Int'];
   label: Scalars['String'];
+  contactTypeId: Scalars['Float'];
 };
 
 export type ContactType = {
   __typename?: 'ContactType';
   id: Scalars['Int'];
   label: Scalars['String'];
-  contacts: Array<Contact>;
 };
 
 export type CreateCommandLineInput = {
@@ -88,6 +94,8 @@ export type CreatePaymentInput = {
 
 export type CreateProviderInput = {
   name: Scalars['String'];
+  address: Scalars['String'];
+  logo?: Maybe<Scalars['String']>;
   contactTypes: Array<CreateContactInput>;
 };
 
@@ -177,6 +185,8 @@ export type Mutation = {
   updateCommand: Command;
   removeCommand: Command;
   createProvider: Provider;
+  addContacts: Provider;
+  updateContact: Contact;
   createContactType: ContactType;
   updateContactType: ContactType;
   createPayment: Invoice;
@@ -265,6 +275,16 @@ export type MutationRemoveCommandArgs = {
 
 export type MutationCreateProviderArgs = {
   input: CreateProviderInput;
+};
+
+
+export type MutationAddContactsArgs = {
+  input: AddContactInput;
+};
+
+
+export type MutationUpdateContactArgs = {
+  input: UpdateContactInput;
 };
 
 
@@ -359,10 +379,11 @@ export type Provider = {
   __typename?: 'Provider';
   id: Scalars['Int'];
   name: Scalars['String'];
+  address: Scalars['String'];
   logo: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  contactTypes: Array<ContactType>;
+  contacts: Array<Contact>;
 };
 
 export type ProviderPagination = {
@@ -401,7 +422,6 @@ export type Query = {
   command: Command;
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
-  contacts: Array<Contact>;
   contactTypes: Array<ContactType>;
   whoAmI: User;
   units: Array<Unit>;
@@ -466,6 +486,11 @@ export type UpdateCommandLineInput = {
   /** Example field (placeholder) */
   exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
+};
+
+export type UpdateContactInput = {
+  id: Scalars['Float'];
+  label: Scalars['String'];
 };
 
 export type UpdateContactTypeInput = {

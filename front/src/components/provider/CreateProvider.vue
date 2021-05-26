@@ -6,9 +6,20 @@
 
     <q-separator inset />
 
-    <q-card-section>
-      <div class="text-h6 q-mt-sm q-mb-xs">Détails</div>
-        <q-input v-model="details.name" outlined dense label="Nom" />
+    <q-card-section class="q-gutter-sm">
+      <div class="text-h6">Détails</div>
+      <q-input
+        v-model="input.name"
+        outlined
+        dense
+        label="Nom"
+      />
+      <q-input
+        v-model="input.address"
+        outlined
+        dense
+        label="Adresse"
+      />
     </q-card-section>
 
     <q-separator inset />
@@ -17,7 +28,7 @@
       <div class="text-h6 q-mb-sm">Contacts</div>
       <q-list
         bordered
-        v-for="(cType, index) in input"
+        v-for="(cType, index) in input.contactTypes"
         :key="index"
         dense
         class="full-width q-mb-sm"
@@ -25,14 +36,14 @@
         <q-expansion-item
           expand-separator
           icon="perm_identity"
-          :label="cType.label"
+          :label="contactTypes[index]"
         >
           <div class="q-ma-sm">
               <ContactInput
                 v-for="i in cType.contacts.length"
                 :key="i"
-                :label="`${cType.label} ${i}`"
-                v-model:model-value="input[index].contacts[i - 1]"
+                :label="`${contactTypes[index]} ${i}`"
+                v-model:model-value="input.contactTypes[index].contacts[i - 1]"
                 class="q-mb-sm"
                 @remove="removeContact(index, i - 1)"
               />
@@ -65,7 +76,7 @@
 
 <script lang="ts">
   import { ref, defineComponent } from 'vue'
-  import ContactInput from './ContactInput.vue';
+  import ContactInput from './ContactForm.vue';
   import {useCreateProviderService} from '../../graphql/provider/create/create.provider.service';
 
   export default defineComponent({

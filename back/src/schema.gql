@@ -66,24 +66,25 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Contact {
+type ContactType {
   id: Int!
   label: String!
 }
 
-type ContactType {
+type Contact {
   id: Int!
   label: String!
-  contacts: [Contact!]!
+  contactTypeId: Float!
 }
 
 type Provider {
   id: Int!
   name: String!
+  address: String!
   logo: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  contactTypes: [ContactType!]!
+  contacts: [Contact!]!
 }
 
 type Command {
@@ -143,7 +144,6 @@ type Query {
   command(id: Int!): Command!
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
-  contacts: [Contact!]!
   contactTypes: [ContactType!]!
   whoAmI: User!
   units: [Unit!]!
@@ -172,6 +172,8 @@ type Mutation {
   updateCommand(updateCommandInput: PurchaseDto!): Command!
   removeCommand(id: Int!): Command!
   createProvider(input: CreateProviderInput!): Provider!
+  addContacts(input: AddContactInput!): Provider!
+  updateContact(input: UpdateContactInput!): Contact!
   createContactType(input: CreateContactTypeInput!): ContactType!
   updateContactType(input: UpdateContactTypeInput!): ContactType!
   createPayment(input: CreatePaymentInput!): Invoice!
@@ -244,12 +246,25 @@ input PurchaseDto {
 
 input CreateProviderInput {
   name: String!
+  address: String!
+  logo: String
   contactTypes: [CreateContactInput!]!
 }
 
 input CreateContactInput {
   contactTypeId: Float!
   contacts: [String!]!
+}
+
+input AddContactInput {
+  providerId: Float!
+  contactTypeId: Float!
+  contacts: [String!]!
+}
+
+input UpdateContactInput {
+  id: Float!
+  label: String!
 }
 
 input CreateContactTypeInput {

@@ -3,8 +3,9 @@ import {useQuery, useResult} from '@vue/apollo-composable';
 
 export const useContactTypes = () => {
   const { result, loading } = useQuery<ContactTypesData>(CONTACT_TYPES_QUERY);
+  const contactTypes = useResult(result, [], res => res.contactTypes);
   return {
-    contactTypes: useResult(result, [], res => res.contactTypes),
-    loading
+    loading,
+    contactTypes
   }
 }

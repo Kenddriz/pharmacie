@@ -1,7 +1,7 @@
 {
-  "name": "mamisoa",
+  "name": "pharmanager",
   "version": "0.0.1",
-  "description": "Application de gestion des pharmacies détaillantes",
+  "description": "pharmacie mamisoa",
   "productName": "pharmanager",
   "author": "RANDRIMANAJA Charlin <rcarandrcharlin@gmail.com>",
   "private": true,

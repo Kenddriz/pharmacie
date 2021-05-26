@@ -146,7 +146,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: 'pharmanager',
         short_name: 'pharmanager',
-        description: 'Application de gestion des pharmacies détaillantes',
+        description: 'pharmacie mamisoa application',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -211,7 +211,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'pharmanager'
+        appId: 'madavoary'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

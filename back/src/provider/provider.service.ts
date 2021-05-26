@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
-  Pagination
+  Pagination,
 } from 'nestjs-typeorm-paginate';
-import {PaginationInput} from '../shared/shared.input';
+import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
 export class ProviderService {
@@ -24,21 +24,21 @@ export class ProviderService {
   }
 
   async providers(): Promise<Provider[]> {
-    return this.providerService.find( {
-      order: { id: 'ASC' }
+    return this.providerService.find({
+      order: { id: 'ASC' },
     });
   }
 
   async paginate(input: PaginationInput): Promise<Pagination<Provider>> {
+    const queryBuilder = this.providerService
+      .createQueryBuilder()
+      .where('name LIKE :keyword', { keyword: `%${input.keyword}%` })
+      .orderBy('created_at', 'DESC');
 
-    const queryBuilder = this.providerService.createQueryBuilder()
-        .where('name LIKE :keyword', { keyword: `%${input.keyword}%` })
-        .orderBy('created_at', 'DESC');
-
-    const options:IPaginationOptions = {
+    const options: IPaginationOptions = {
       page: input.page,
-      limit: input.limit
-    }
+      limit: input.limit,
+    };
     return await paginate<Provider>(queryBuilder, options);
   }
 }
