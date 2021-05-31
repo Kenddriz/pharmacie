@@ -1,5 +1,6 @@
-import {InputType, Field, Int, PartialType} from '@nestjs/graphql';
-import {CreateQuantityInput} from '../../quantity/types/quantity.input';
+import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { CreateMedicineFormInput } from '../../medicine-form/types/medicine.form.input';
+
 
 @InputType()
 export class CreateMedicineInput {
@@ -9,14 +10,8 @@ export class CreateMedicineInput {
   @Field()
   expiration: string;
 
-  @Field()
-  vat: number;
-
-  @Field()
-  type: string;
-
-  @Field(() => [CreateQuantityInput])
-  quantities: CreateQuantityInput[]
+  @Field(() => [CreateMedicineFormInput])
+  medicineForms: CreateMedicineFormInput[];
 }
 
 @InputType()

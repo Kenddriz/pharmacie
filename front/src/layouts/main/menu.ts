@@ -11,17 +11,17 @@ export const pItems = [
   },
   {
     label: 'Médicament',
-    to: 'medicament',
+    to: 'medicine',
     icon: 'event'
   },
   {
     label: 'Commande',
-    to: 'commande',
+    to: 'command',
     icon: 'event'
   },
   {
     label: 'Facture',
-    to: 'facture',
+    to: 'invoice',
     icon: 'event'
   }
 ]

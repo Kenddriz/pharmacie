@@ -8,6 +8,7 @@ export type UnitsData = {
 export const UNIT = `
     id
     parentId
+    multiplicity
     label
     description
 `;

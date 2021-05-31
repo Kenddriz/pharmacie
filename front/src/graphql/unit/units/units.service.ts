@@ -29,12 +29,41 @@ export const unitNodes = (
   return out;
 };
 
+const findPathToChild = (id: number, units: Unit[], path: Unit[] = []):Unit[] => {
+  const child = units.find(u => u.id === id);
+  if(child && !path.length)path.unshift(child);
+  /**Find its parent*/
+  const parent = units.find(u => u.id === child?.parentId);
+  if(parent) {
+      path.unshift(parent);
+      /**parent becomes child*/
+      return findPathToChild(parent.id, units.filter(u => u.id !== id), path)
+  }
+  return path;
+};
+
 export const useUnits = () => {
   const {result} = useQuery<UnitsData>(UNITS_QUERY);
   const units = useResult(result,[], res => res.units);
-  const findUnit: any = (id: number) => units.value.find(u => u.id === id);
+
+  function pathToChild (childId: number): Unit[] {
+    return findPathToChild(childId, units.value.map((u: Unit) => u), [])
+  }
+
+  function orphanUnits(): Unit[] {
+    const orphans: Unit[] = [];
+    units.value.forEach(u => {
+      if(!units.value.find((x: Unit) => x.parentId === u.id))/*if never parent**/
+        orphans.push(u);
+    });
+    return orphans;
+  }
+  const findUnit = (id: number): Unit|undefined => units.value.find(u => u.id === id);
+
   return {
     units,
+    pathToChild,
+    orphanUnits,
     findUnit
   }
 }

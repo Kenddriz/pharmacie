@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {Medicine} from './medicine.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Medicine } from './medicine.entity';
 
 @Injectable()
 export class MedicineService {
   constructor(
-      @InjectRepository(Medicine)
-      private readonly medicineRepository: Repository<Medicine>
-  ) {
-  }
+    @InjectRepository(Medicine)
+    private readonly medicineRepository: Repository<Medicine>,
+  ) {}
   async save(medicine: Medicine): Promise<Medicine> {
     return this.medicineRepository.save(medicine);
   }

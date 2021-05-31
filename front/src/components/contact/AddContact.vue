@@ -1,6 +1,7 @@
 <template>
   <ContactForm
     v-for="i in input.contacts.length"
+    :key="i"
     v-model="input.contacts[i - 1]"
     color="teal-14"
     @reset="removeContact"

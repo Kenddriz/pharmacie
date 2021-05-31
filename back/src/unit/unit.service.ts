@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import {Unit} from './unit.entity';
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import { Unit } from './unit.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UnitService {
   constructor(
-      @InjectRepository(Unit)
-      private readonly unitRepository: Repository<Unit>
+    @InjectRepository(Unit)
+    private readonly unitRepository: Repository<Unit>,
   ) {}
 
   async save(unit: Unit): Promise<Unit> {
@@ -15,13 +15,13 @@ export class UnitService {
   }
 
   async findOneById(id: number): Promise<Unit> {
-    return  await this.unitRepository.findOne({
-      where: { id: id}
+    return await this.unitRepository.findOne({
+      where: { id: id },
     });
   }
 
   async findOneByLabel(label: string): Promise<Unit> {
-    return await this.unitRepository.findOne({ label })
+    return await this.unitRepository.findOne({ label });
   }
 
   /**Only price wich doesn't have any child can be removed*/
@@ -31,7 +31,7 @@ export class UnitService {
 
   async findAll(): Promise<Unit[]> {
     return this.unitRepository.find({
-      order: { id: 'ASC' }
+      order: { multiplicity: 'ASC' },
     });
   }
 }

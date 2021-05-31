@@ -66,22 +66,28 @@ export type CreateContactTypeInput = {
   label: Scalars['String'];
 };
 
+export type CreateFormInput = {
+  label: Scalars['String'];
+};
+
 export type CreateInvoiceInput = {
   dueDate: Scalars['String'];
   reference: Scalars['String'];
 };
 
+export type CreateMedicineFormInput = {
+  medicineId?: Maybe<Scalars['Int']>;
+  formId: Scalars['Int'];
+  unitId: Scalars['Int'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  quantity: Scalars['Float'];
+};
+
 export type CreateMedicineInput = {
   designation: Scalars['String'];
   expiration: Scalars['String'];
-  vat: Scalars['Float'];
-  type: Scalars['String'];
-  quantities: Array<CreateQuantityInput>;
-};
-
-export type CreateMedicineTypeInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
+  medicineForms: Array<CreateMedicineFormInput>;
 };
 
 export type CreatePaymentInput = {
@@ -99,12 +105,6 @@ export type CreateProviderInput = {
   contactTypes: Array<CreateContactInput>;
 };
 
-export type CreateQuantityInput = {
-  unitId: Scalars['Int'];
-  value: Scalars['Int'];
-  price: Scalars['Int'];
-};
-
 export type CreateSaleInput = {
   /** Example field (placeholder) */
   exampleField: Scalars['Int'];
@@ -117,6 +117,7 @@ export type CreateSalesLineInput = {
 
 export type CreateUnitInput = {
   label: Scalars['String'];
+  multiplicity: Scalars['Float'];
   description: Scalars['String'];
   parentId?: Maybe<Scalars['Int']>;
 };
@@ -126,6 +127,12 @@ export type CreateUserInput = {
   password: Scalars['String'];
 };
 
+
+export type Form = {
+  __typename?: 'Form';
+  id: Scalars['Int'];
+  label: Scalars['String'];
+};
 
 export type Invoice = {
   __typename?: 'Invoice';
@@ -148,15 +155,17 @@ export type Medicine = {
   id: Scalars['Int'];
   designation: Scalars['String'];
   expiration: Scalars['String'];
-  vat: Scalars['Float'];
-  type: MedicineType;
-  quantities: Array<Quantity>;
+  medicineForms: Array<MedicineForm>;
 };
 
-export type MedicineType = {
-  __typename?: 'MedicineType';
+export type MedicineForm = {
+  __typename?: 'MedicineForm';
   id: Scalars['Int'];
-  label: Scalars['Float'];
+  vat: Scalars['Float'];
+  stock: Scalars['Float'];
+  shop: Scalars['Float'];
+  price: Scalars['Float'];
+  unit: Unit;
 };
 
 export type Meta = {
@@ -176,9 +185,6 @@ export type Mutation = {
   createSale: Sale;
   updateSale: Sale;
   removeSale: Sale;
-  createMedicineType: MedicineType;
-  updateMedicineType: MedicineType;
-  removeMedicineType: MedicineType;
   createInvoice: Invoice;
   updateInvoice: Invoice;
   createCommand: Command;
@@ -192,11 +198,15 @@ export type Mutation = {
   createPayment: Invoice;
   updatePaymentMode: PaymentMode;
   createMedicine: Medicine;
+  createForm: Form;
+  updateForm: Form;
+  removeForm: Form;
+  removeMedicineForm: MedicineForm;
+  createUnit: Unit;
+  updateUnit: Unit;
   createUser: User;
   updateUser: User;
   login: LoginDto;
-  createUnit: Unit;
-  updateUnit: Unit;
   createCommandLine: CommandLine;
   updateCommandLine: CommandLine;
   removeCommandLine: CommandLine;
@@ -229,21 +239,6 @@ export type MutationUpdateSaleArgs = {
 
 
 export type MutationRemoveSaleArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationCreateMedicineTypeArgs = {
-  createMedicineTypeInput: CreateMedicineTypeInput;
-};
-
-
-export type MutationUpdateMedicineTypeArgs = {
-  updateMedicineTypeInput: UpdateMedicineTypeInput;
-};
-
-
-export type MutationRemoveMedicineTypeArgs = {
   id: Scalars['Int'];
 };
 
@@ -313,6 +308,36 @@ export type MutationCreateMedicineArgs = {
 };
 
 
+export type MutationCreateFormArgs = {
+  input: CreateFormInput;
+};
+
+
+export type MutationUpdateFormArgs = {
+  input: UpdateFormInput;
+};
+
+
+export type MutationRemoveFormArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveMedicineFormArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateUnitArgs = {
+  input: CreateUnitInput;
+};
+
+
+export type MutationUpdateUnitArgs = {
+  input: UpdateUnitInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
@@ -325,16 +350,6 @@ export type MutationUpdateUserArgs = {
 
 export type MutationLoginArgs = {
   input: AuthInput;
-};
-
-
-export type MutationCreateUnitArgs = {
-  input: CreateUnitInput;
-};
-
-
-export type MutationUpdateUnitArgs = {
-  input: UpdateUnitInput;
 };
 
 
@@ -403,28 +418,18 @@ export type PurchaseInput = {
   exampleField: Scalars['Int'];
 };
 
-export type Quantity = {
-  __typename?: 'Quantity';
-  id: Scalars['Int'];
-  medicine: Medicine;
-  stock: Scalars['Float'];
-  shop: Scalars['Float'];
-  price: Scalars['Float'];
-  unit: Unit;
-};
-
 export type Query = {
   __typename?: 'Query';
   getHello: Scalars['String'];
   salesLine: SalesLine;
   sale: Sale;
-  medicineType: MedicineType;
   command: Command;
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
   contactTypes: Array<ContactType>;
-  whoAmI: User;
+  forms: Array<Form>;
   units: Array<Unit>;
+  whoAmI: User;
   commandLine: CommandLine;
 };
 
@@ -435,11 +440,6 @@ export type QuerySalesLineArgs = {
 
 
 export type QuerySaleArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryMedicineTypeArgs = {
   id: Scalars['Int'];
 };
 
@@ -478,6 +478,7 @@ export type Unit = {
   __typename?: 'Unit';
   id: Scalars['Int'];
   label: Scalars['String'];
+  multiplicity: Scalars['Float'];
   description: Scalars['String'];
   parentId: Scalars['Int'];
 };
@@ -498,16 +499,15 @@ export type UpdateContactTypeInput = {
   id: Scalars['Float'];
 };
 
+export type UpdateFormInput = {
+  label?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+};
+
 export type UpdateInvoiceInput = {
   id: Scalars['Float'];
   dueDate: Scalars['String'];
   reference: Scalars['String'];
-};
-
-export type UpdateMedicineTypeInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
 };
 
 export type UpdatePaymentModeInput = {
@@ -529,6 +529,7 @@ export type UpdateSalesLineInput = {
 
 export type UpdateUnitInput = {
   label?: Maybe<Scalars['String']>;
+  multiplicity?: Maybe<Scalars['Float']>;
   description?: Maybe<Scalars['String']>;
   parentId?: Maybe<Scalars['Int']>;
   id: Scalars['Float'];

@@ -18,6 +18,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'provider',
         component: () => import('pages/provider/Provider.vue')
+      },
+      {
+        path: 'medicine',
+        component: () => import('pages/medicine/Medicine.vue')
       }
     ],
   },

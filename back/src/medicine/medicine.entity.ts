@@ -1,14 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-  RelationId,
-} from 'typeorm';
-import { MedicineType } from '../medicine-type/medicine-type.entity';
-import {Quantity} from "../quantity/quantity.entity";
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { MedicineForm } from '../medicine-form/medicine-form.entity';
 
 @ObjectType()
 @Entity({ name: 'medicines' })
@@ -25,17 +17,6 @@ export class Medicine {
   @Column({ type: 'date' })
   expiration: string;
 
-  @Field()
-  @Column({ type: 'float' })
-  vat: number;
-
-  @Field(() => MedicineType)
-  @ManyToOne(() => MedicineType)
-  @JoinColumn({ name: 'type_id', referencedColumnName: 'id' })
-  type: MedicineType;
-  @RelationId((medicine: Medicine) => medicine.type)
-  typeId: number;
-
-  @Field(() => [Quantity])
-  quantities: Quantity[];
+  @Field(() => [MedicineForm])
+  medicineForms: MedicineForm[];
 }

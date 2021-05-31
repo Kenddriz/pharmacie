@@ -1,13 +1,13 @@
-import {ResolveField, Resolver, Root} from '@nestjs/graphql';
-import {Medicine} from '../medicine.entity';
-import {QuantityService} from '../../quantity/quantity.service';
-import {Quantity} from '../../quantity/quantity.entity';
+import { ResolveField, Resolver, Root } from '@nestjs/graphql';
+import { Medicine } from '../medicine.entity';
+import { MedicineFormService } from '../../medicine-form/medicine-form.service';
+import { MedicineForm } from '../../medicine-form/medicine-form.entity';
 
 @Resolver(() => Medicine)
 export class MedicineFieldResolver {
-    constructor(private quantityService: QuantityService) {}
-    @ResolveField(() => [Quantity])
-    async quantities(@Root()medicine: Medicine): Promise<Quantity[]> {
-        return await this.quantityService.findByMedicine(medicine.id);
-    }
+  constructor(private medicineFormService: MedicineFormService) {}
+  @ResolveField(() => [MedicineForm])
+  async medicineForms(@Root() medicine: Medicine): Promise<MedicineForm[]> {
+    return await this.medicineFormService.findByMedicineId(medicine.id);
+  }
 }

@@ -4,7 +4,6 @@ import { join } from 'path';
 import { AppService } from './app.service';
 import { SalesLineModule } from './sales-line/sales-line.module';
 import { SaleModule } from './sale/sale.module';
-import { MedicineTypeModule } from './medicine-type/medicine-type.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { CommandModule } from './command/command.module';
 import { ProviderModule } from './provider/provider.module';
@@ -19,9 +18,10 @@ import { AuthModule } from './auth/auth.module';
 import { PaymentModeModule } from './payment-mode/payment-mode.module';
 import { UnitModule } from './unit/unit.module';
 import { CommandLineModule } from './command-line/command-line.module';
-import { QuantityModule } from './quantity/quantity.module';
 import { ContactModule } from './contact/contact.module';
 import { ContactTypeModule } from './contact-type/contact-type.module';
+import { MedicineFormModule } from './medicine-form/medicine-form.module';
+import { FormModule } from './form/form.module';
 
 @Module({
   imports: [
@@ -38,7 +38,6 @@ import { ContactTypeModule } from './contact-type/contact-type.module';
     }),
     SalesLineModule,
     SaleModule,
-    MedicineTypeModule,
     InvoiceModule,
     CommandModule,
     ProviderModule,
@@ -49,9 +48,10 @@ import { ContactTypeModule } from './contact-type/contact-type.module';
     PaymentModeModule,
     UnitModule,
     CommandLineModule,
-    QuantityModule,
     ContactModule,
     ContactTypeModule,
+    FormModule,
+    MedicineFormModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
