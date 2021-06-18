@@ -12,6 +12,10 @@ export class MedicineForm {
   id: number;
 
   @Field()
+  @Column({ type: 'date' })
+  expiration: string;
+
+  @Field()
   @Column({ type: 'float', default: 0 })
   vat: number;
 

@@ -6,6 +6,7 @@ import { Medicine } from './medicine.entity';
 import { FormModule } from '../form/form.module';
 import { MedicineFieldResolver } from './resolvers/medicine.field-resolver';
 import { MedicineFormModule } from '../medicine-form/medicine-form.module';
+import { MedicineResolver } from './resolvers/medicine.resolver';
 
 @Module({
   imports: [
@@ -13,6 +14,11 @@ import { MedicineFormModule } from '../medicine-form/medicine-form.module';
     FormModule,
     MedicineFormModule,
   ],
-  providers: [CreateMedicineResolver, MedicineFieldResolver, MedicineService],
+  providers: [
+    CreateMedicineResolver,
+    MedicineFieldResolver,
+    MedicineResolver,
+    MedicineService,
+  ],
 })
 export class MedicineModule {}

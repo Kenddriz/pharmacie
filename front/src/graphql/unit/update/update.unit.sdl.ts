@@ -1,6 +1,6 @@
 import {Unit} from '../../types';
 import {gql} from '@apollo/client/core';
-import {UNIT} from '../units/units.sdl';
+import { UNIT } from '../unit';
 
 export type UpdateUnitData = {
   updateUnit: Unit

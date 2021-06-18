@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { makeOptions, SelectOption } from './select';
 
 export default defineComponent({
@@ -64,10 +64,13 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props) {
-    const opt = ref<SelectOption[]>(makeOptions(props.options));
+    const opt = ref<SelectOption[]>([]);
+    watch(() => props.options, opts => {
+      opt.value = makeOptions(opts);
+    }, { immediate: true });
     return {
       opt,
-      model: ref<any>(props.modelValue),
+      model: ref<typeof props.modelValue>(props.modelValue),
       filterFn(val: string, update: any) {
         if (val === '') {
           update(() => {

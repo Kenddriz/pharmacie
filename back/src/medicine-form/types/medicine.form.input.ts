@@ -12,6 +12,9 @@ export class CreateMedicineFormInput {
   unitId: number;
 
   @Field()
+  expiration: string;
+
+  @Field()
   price: number;
 
   @Field()

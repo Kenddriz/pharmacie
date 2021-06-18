@@ -41,6 +41,9 @@ const findPathToChild = (id: number, units: Unit[], path: Unit[] = []):Unit[] =>
   }
   return path;
 };
+export const  pathToChild = (childId: number, units: Unit[]): Unit[] => {
+  return findPathToChild(childId, units.map((u: Unit) => u), [])
+};
 
 export const useUnits = () => {
   const {result} = useQuery<UnitsData>(UNITS_QUERY);

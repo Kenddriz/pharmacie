@@ -13,10 +13,6 @@ export class Medicine {
   @Column({ length: 100, unique: true })
   designation: string;
 
-  @Field()
-  @Column({ type: 'date' })
-  expiration: string;
-
   @Field(() => [MedicineForm])
   medicineForms: MedicineForm[];
 }

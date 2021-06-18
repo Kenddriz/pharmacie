@@ -21,17 +21,18 @@ type Unit {
 
 type MedicineForm {
   id: Int!
+  expiration: String!
   vat: Float!
   stock: Float!
   shop: Float!
   price: Float!
   unit: Unit!
+  form: Form!
 }
 
 type Medicine {
   id: Int!
   designation: String!
-  expiration: String!
   medicineForms: [MedicineForm!]!
 }
 
@@ -143,9 +144,10 @@ type Query {
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
   contactTypes: [ContactType!]!
+  medicines: [Medicine!]!
   forms: [Form!]!
-  units: [Unit!]!
   whoAmI: User!
+  units: [Unit!]!
   commandLine(id: Int!): CommandLine!
 }
 
@@ -174,16 +176,16 @@ type Mutation {
   updateContactType(input: UpdateContactTypeInput!): ContactType!
   createPayment(input: CreatePaymentInput!): Invoice!
   updatePaymentMode(input: UpdatePaymentModeInput!): PaymentMode!
-  createMedicine(input: CreateMedicineInput!): Medicine!
+  createMedicine(input: [CreateMedicineInput!]!): [[Medicine!]!]!
   createForm(input: CreateFormInput!): Form!
   updateForm(input: UpdateFormInput!): Form!
   removeForm(id: Int!): Form!
   removeMedicineForm(id: Int!): MedicineForm!
-  createUnit(input: CreateUnitInput!): Unit!
-  updateUnit(input: UpdateUnitInput!): Unit!
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
   login(input: AuthInput!): LoginDto!
+  createUnit(input: CreateUnitInput!): Unit!
+  updateUnit(input: UpdateUnitInput!): Unit!
   createCommandLine(createCommandLineInput: CreateCommandLineInput!): CommandLine!
   updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
   removeCommandLine(id: Int!): CommandLine!
@@ -280,7 +282,6 @@ input UpdatePaymentModeInput {
 
 input CreateMedicineInput {
   designation: String!
-  expiration: String!
   medicineForms: [CreateMedicineFormInput!]!
 }
 
@@ -288,6 +289,7 @@ input CreateMedicineFormInput {
   medicineId: Int
   formId: Int!
   unitId: Int!
+  expiration: String!
   price: Float!
   vat: Float!
   quantity: Float!
@@ -300,21 +302,6 @@ input CreateFormInput {
 input UpdateFormInput {
   label: String
   id: Int!
-}
-
-input CreateUnitInput {
-  label: String!
-  multiplicity: Float!
-  description: String!
-  parentId: Int = 0
-}
-
-input UpdateUnitInput {
-  label: String
-  multiplicity: Float
-  description: String
-  parentId: Int = 0
-  id: Float!
 }
 
 input CreateUserInput {
@@ -330,6 +317,21 @@ input UpdateUserInput {
 input AuthInput {
   username: String!
   password: String!
+}
+
+input CreateUnitInput {
+  label: String!
+  multiplicity: Float!
+  description: String!
+  parentId: Int = 0
+}
+
+input UpdateUnitInput {
+  label: String
+  multiplicity: Float
+  description: String
+  parentId: Int = 0
+  id: Float!
 }
 
 input CreateCommandLineInput {

@@ -1,7 +1,7 @@
 
 export type SelectOption = {
   label: string;
-  value: string;
+  value: number;
 }
 
 export const makeOptions = (data: unknown[]):SelectOption[] => {

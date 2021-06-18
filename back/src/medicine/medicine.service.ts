@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Medicine } from './medicine.entity';
 
 @Injectable()
@@ -13,8 +13,8 @@ export class MedicineService {
     return this.medicineRepository.save(medicine);
   }
 
-  findAll() {
-    return `This action returns all medicine`;
+  async findAll(): Promise<Medicine[]> {
+    return this.medicineRepository.find({ order: { designation: 'ASC' } });
   }
 
   async findOneById(id: number): Promise<Medicine> {
@@ -22,7 +22,7 @@ export class MedicineService {
   }
 
   async findOneByDesignation(designation: string): Promise<Medicine> {
-    return this.medicineRepository.findOne({ designation });
+    return this.medicineRepository.findOne({ designation: ILike(designation) });
   }
 
   remove(id: number) {

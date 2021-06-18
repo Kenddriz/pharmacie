@@ -79,6 +79,7 @@ export type CreateMedicineFormInput = {
   medicineId?: Maybe<Scalars['Int']>;
   formId: Scalars['Int'];
   unitId: Scalars['Int'];
+  expiration: Scalars['String'];
   price: Scalars['Float'];
   vat: Scalars['Float'];
   quantity: Scalars['Float'];
@@ -86,7 +87,6 @@ export type CreateMedicineFormInput = {
 
 export type CreateMedicineInput = {
   designation: Scalars['String'];
-  expiration: Scalars['String'];
   medicineForms: Array<CreateMedicineFormInput>;
 };
 
@@ -154,18 +154,19 @@ export type Medicine = {
   __typename?: 'Medicine';
   id: Scalars['Int'];
   designation: Scalars['String'];
-  expiration: Scalars['String'];
   medicineForms: Array<MedicineForm>;
 };
 
 export type MedicineForm = {
   __typename?: 'MedicineForm';
   id: Scalars['Int'];
+  expiration: Scalars['String'];
   vat: Scalars['Float'];
   stock: Scalars['Float'];
   shop: Scalars['Float'];
   price: Scalars['Float'];
   unit: Unit;
+  form: Form;
 };
 
 export type Meta = {
@@ -197,16 +198,16 @@ export type Mutation = {
   updateContactType: ContactType;
   createPayment: Invoice;
   updatePaymentMode: PaymentMode;
-  createMedicine: Medicine;
+  createMedicine: Array<Array<Medicine>>;
   createForm: Form;
   updateForm: Form;
   removeForm: Form;
   removeMedicineForm: MedicineForm;
-  createUnit: Unit;
-  updateUnit: Unit;
   createUser: User;
   updateUser: User;
   login: LoginDto;
+  createUnit: Unit;
+  updateUnit: Unit;
   createCommandLine: CommandLine;
   updateCommandLine: CommandLine;
   removeCommandLine: CommandLine;
@@ -304,7 +305,7 @@ export type MutationUpdatePaymentModeArgs = {
 
 
 export type MutationCreateMedicineArgs = {
-  input: CreateMedicineInput;
+  input: Array<CreateMedicineInput>;
 };
 
 
@@ -328,16 +329,6 @@ export type MutationRemoveMedicineFormArgs = {
 };
 
 
-export type MutationCreateUnitArgs = {
-  input: CreateUnitInput;
-};
-
-
-export type MutationUpdateUnitArgs = {
-  input: UpdateUnitInput;
-};
-
-
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
@@ -350,6 +341,16 @@ export type MutationUpdateUserArgs = {
 
 export type MutationLoginArgs = {
   input: AuthInput;
+};
+
+
+export type MutationCreateUnitArgs = {
+  input: CreateUnitInput;
+};
+
+
+export type MutationUpdateUnitArgs = {
+  input: UpdateUnitInput;
 };
 
 
@@ -427,9 +428,10 @@ export type Query = {
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
   contactTypes: Array<ContactType>;
+  medicines: Array<Medicine>;
   forms: Array<Form>;
-  units: Array<Unit>;
   whoAmI: User;
+  units: Array<Unit>;
   commandLine: CommandLine;
 };
 

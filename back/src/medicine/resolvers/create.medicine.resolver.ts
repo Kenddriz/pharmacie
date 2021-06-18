@@ -11,46 +11,51 @@ import { FormService } from '../../form/form.service';
 @Resolver(() => Medicine)
 export class CreateMedicineResolver {
   constructor(
-    private readonly medicineService: MedicineService,
-    private readonly unitService: UnitService,
-    private readonly medicineFormService: MedicineFormService,
-    private readonly formService: FormService,
+    private medicineService: MedicineService,
+    private unitService: UnitService,
+    private medicineFormService: MedicineFormService,
+    private formService: FormService,
   ) {}
 
-  @Mutation(() => Medicine)
+  @Mutation(() => [[Medicine]])
   async createMedicine(
-    @Args('input') input: CreateMedicineInput,
-  ): Promise<Medicine> {
-    let medicine = await this.medicineService.findOneByDesignation(
-      input.designation,
-    );
-    if (medicine)
-      throw new Error(
-        `Echec d'ajout du nouveau médicament! ${medicine.designation} existe déjà ...`,
+    @Args({ name: 'input', type: () => [CreateMedicineInput] })
+    medicines: CreateMedicineInput[],
+  ): Promise<Array<Medicine[]>> {
+    const created: Medicine[] = [];
+    const exist: Medicine[] = [];
+
+    for (const input of medicines) {
+      let medicine = await this.medicineService.findOneByDesignation(
+        input.designation,
       );
+      if (medicine) exist.push(medicine);
+      else {
+        const { medicineForms, ...res } = input;
+        medicine = new Medicine();
+        medicine.id = await uniqId('Medicine');
+        Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
+          medicine,
+          res,
+        );
+        medicine = await this.medicineService.save(medicine);
 
-    const { medicineForms, ...res } = input;
-    medicine = new Medicine();
-    medicine.id = await uniqId('Medicine');
-    Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
-      medicine,
-      res,
-    );
-    //medicine.formx = await this.
-    medicine = await this.medicineService.save(medicine);
-
-    for (const p of medicineForms) {
-      const medForm = new MedicineForm();
-      medForm.id = await uniqId('MedicineForm');
-      medForm.medicine = medicine;
-      medForm.price = p.price;
-      medForm.vat = p.vat;
-      medForm.stock = p.quantity;
-      medForm.shop = p.quantity;
-      medForm.form = await this.formService.findOneById(p.formId);
-      await this.medicineFormService.save(medForm);
+        for (const p of medicineForms) {
+          const medForm = new MedicineForm();
+          medForm.id = await uniqId('MedicineForm');
+          medForm.medicine = medicine;
+          medForm.price = p.price;
+          medForm.expiration = p.expiration;
+          medForm.vat = p.vat;
+          medForm.stock = p.quantity;
+          medForm.shop = p.quantity;
+          medForm.form = await this.formService.findOneById(p.formId);
+          medForm.unit = await this.unitService.findOneById(p.unitId);
+          await this.medicineFormService.save(medForm);
+        }
+        created.push(medicine);
+      }
     }
-
-    return medicine;
+    return [created, exist];
   }
 }
