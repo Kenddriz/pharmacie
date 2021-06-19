@@ -17,45 +17,38 @@ export class CreateMedicineResolver {
     private formService: FormService,
   ) {}
 
-  @Mutation(() => [[Medicine]])
+  @Mutation(() => Medicine)
   async createMedicine(
-    @Args({ name: 'input', type: () => [CreateMedicineInput] })
-    medicines: CreateMedicineInput[],
-  ): Promise<Array<Medicine[]>> {
-    const created: Medicine[] = [];
-    const exist: Medicine[] = [];
+    @Args('input') input: CreateMedicineInput,
+  ): Promise<Medicine> {
+    let medicine = await this.medicineService.findOneByDesignation(
+      input.designation,
+    );
 
-    for (const input of medicines) {
-      let medicine = await this.medicineService.findOneByDesignation(
-        input.designation,
+    if (!medicine) {
+      const { medicineForms, ...res } = input;
+      medicine = new Medicine();
+      medicine.id = await uniqId('Medicine');
+      Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
+        medicine,
+        res,
       );
-      if (medicine) exist.push(medicine);
-      else {
-        const { medicineForms, ...res } = input;
-        medicine = new Medicine();
-        medicine.id = await uniqId('Medicine');
-        Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
-          medicine,
-          res,
-        );
-        medicine = await this.medicineService.save(medicine);
+      medicine = await this.medicineService.save(medicine);
 
-        for (const p of medicineForms) {
-          const medForm = new MedicineForm();
-          medForm.id = await uniqId('MedicineForm');
-          medForm.medicine = medicine;
-          medForm.price = p.price;
-          medForm.expiration = p.expiration;
-          medForm.vat = p.vat;
-          medForm.stock = p.quantity;
-          medForm.shop = p.quantity;
-          medForm.form = await this.formService.findOneById(p.formId);
-          medForm.unit = await this.unitService.findOneById(p.unitId);
-          await this.medicineFormService.save(medForm);
-        }
-        created.push(medicine);
+      for (const p of medicineForms) {
+        const medForm = new MedicineForm();
+        medForm.id = await uniqId('MedicineForm');
+        medForm.medicine = medicine;
+        medForm.price = p.price;
+        medForm.expiration = p.expiration;
+        medForm.vat = p.vat;
+        medForm.stock = p.quantity;
+        medForm.shop = p.quantity;
+        medForm.form = await this.formService.findOneById(p.formId);
+        medForm.unit = await this.unitService.findOneById(p.unitId);
+        await this.medicineFormService.save(medForm);
       }
     }
-    return [created, exist];
+    return medicine;
   }
 }

@@ -198,7 +198,7 @@ export type Mutation = {
   updateContactType: ContactType;
   createPayment: Invoice;
   updatePaymentMode: PaymentMode;
-  createMedicine: Array<Array<Medicine>>;
+  createMedicine: Medicine;
   createForm: Form;
   updateForm: Form;
   removeForm: Form;
@@ -305,7 +305,7 @@ export type MutationUpdatePaymentModeArgs = {
 
 
 export type MutationCreateMedicineArgs = {
-  input: Array<CreateMedicineInput>;
+  input: CreateMedicineInput;
 };
 
 

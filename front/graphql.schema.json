@@ -2179,17 +2179,9 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "INPUT_OBJECT",
-                        "name": "CreateMedicineInput",
-                        "ofType": null
-                      }
-                    }
+                    "kind": "INPUT_OBJECT",
+                    "name": "CreateMedicineInput",
+                    "ofType": null
                   }
                 },
                 "defaultValue": null,
@@ -2201,25 +2193,9 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "OBJECT",
-                        "name": "Medicine",
-                        "ofType": null
-                      }
-                    }
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "Medicine",
+                "ofType": null
               }
             },
             "isDeprecated": false,

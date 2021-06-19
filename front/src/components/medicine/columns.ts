@@ -1,28 +1,19 @@
 export const MEDICINE_COLS = [
-  {
-    name: 'id',
-    align: 'left',
-    label: 'ID',
-    headerStyle: 'font-weight: bold'
-  },
+  { name: 'id', align: 'left', label: 'ID', field: 'id', sortable: true, headerStyle: 'font-weight: bold' },
   {
     name: 'designation',
     align: 'left',
     label: 'Désignation',
+    field: 'designation',
     headerStyle: 'font-weight: bold'
   },
   {
     name: 'form',
     align: 'left',
     label: 'Forme',
+    field: 'medicineForms',
     headerStyle: 'font-weight: bold'
-  },
-  {
-    name: 'action',
-    align: 'left',
-    label: 'Suppression',
-    headerStyle: 'font-weight: bold'
-  },
+  }
 ]
 export const FORM_COLUMNS = [
   {
@@ -45,12 +36,6 @@ export const FORM_COLUMNS = [
     headerStyle: 'font-weight: bold'
   },
   {
-    name: 'maxUnit',
-    align: 'left',
-    label: 'Unité maximale',
-    headerStyle: 'font-weight: bold'
-  },
-  {
     name: 'expiration',
     align: 'left',
     label: 'Péremption',
@@ -67,13 +52,11 @@ export const FORM_COLUMNS = [
     align: 'left',
     label: 'Prix Unitaire',
     headerStyle: 'font-weight: bold'
-  }
-]
-export const PRICE_COLS = [
+  },
   {
-    name: 'form',
+    name: 'action',
     align: 'left',
-    label: 'form',
+    label: 'Action',
     headerStyle: 'font-weight: bold'
   }
 ]
