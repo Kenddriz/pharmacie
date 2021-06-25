@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { CreateMedicineInput, MutationCreateMedicineArgs } from '../../types';
 import { formatDate } from '../../../shared/date';
 import { useMutation } from '@vue/apollo-composable';
@@ -10,6 +10,7 @@ export const useCreateMedicine = () => {
     designation: '',
     medicineForms: []
   });
+  const usedUnits = ref<{quantity: number, unit: number, price: number}[]>([]);
   const addForm = (forms: number[], unitId = 0) => {
     /**add if not exist**/
     forms.forEach(formId => {
@@ -22,10 +23,16 @@ export const useCreateMedicine = () => {
           quantity: 0,
           vat: 0,
         });
+        usedUnits.value.push({quantity: 0, unit: unitId, price: 0});
       }
     });
     /**finally, filter to get updated forms: delete all non correspondence to current chosen forms**/
-    createInput.medicineForms = createInput.medicineForms.filter(form => forms.includes(form.formId));
+    createInput.medicineForms.forEach((form, index) => {
+      if(!forms.includes(form.formId)) {
+        createInput.medicineForms.splice(index, 1);
+        usedUnits.value.splice(index, 1);
+      }
+    })
   }
   const { loading: creationLoading, mutate } = useMutation<
     CreateMedicineData,
@@ -38,5 +45,5 @@ export const useCreateMedicine = () => {
   async function submitCreation() {
      await mutate({ input: createInput });
   }
-  return {createInput, addForm, creationLoading, submitCreation }
+  return {createInput, addForm, creationLoading, submitCreation, usedUnits }
 }

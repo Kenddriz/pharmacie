@@ -217,15 +217,10 @@ export default defineComponent({
     pathToChild: Function
   },
   setup(props) {
-    const { createInput, addForm, submitCreation, creationLoading } = useCreateMedicine();
+    const { createInput, addForm, submitCreation, creationLoading, usedUnits } = useCreateMedicine();
     const selectedForms = ref<number[]>([]);
-    const usedUnits = ref<{quantity: number, unit: number, price: number}[]>([]);
     watch(() =>[...selectedForms.value], selected => {
       addForm(selected,props.childrenOptions[0]?.id||0);
-      usedUnits.value = createInput.medicineForms.map((u, index) => ({
-        quantity: usedUnits.value[index].quantity,
-        unit: u.unitId, price: u.price
-      }));
     });
     async function submit () {
       usedUnits.value.forEach((v, index) => {
@@ -239,7 +234,7 @@ export default defineComponent({
       FORM_COLUMNS,
       dialog: ref<boolean>(false),
       selectedForms,
-      createInput, addForm,
+      createInput,
       submit, creationLoading,
       usedUnits,
       removeForm: (id: number) => selectedForms.value = selectedForms.value.filter(f => f !== id)
