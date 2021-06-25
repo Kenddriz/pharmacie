@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MedicineFormService } from './medicine-form.service';
-import { MedicineFormResolver } from './medicine-form.resolver';
+import { MedicineFormResolver } from './resolvers/medicine-form.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MedicineForm } from './medicine-form.entity';
 import { MedicineFormFieldResolver } from './resolvers/medicine-form.field-resolver';

@@ -19,7 +19,8 @@
           </q-btn>
         </q-bar>
         <q-card-section horizontal class="flex flex-center q-gutter-md q-mt-none">
-          <q-input outlined v-model="createInput.designation"></q-input>
+          <q-input outlined v-model="createInput.designation" label="désignation">
+          </q-input>
           <q-btn-dropdown
             outline
             color="primary"
@@ -55,7 +56,7 @@
             flat
           >
             <template v-slot:top="props">
-              <div class="col-3 q-table__title">Les différentes formes</div>
+              <div class="q-table__title">Paramètrage des différentes formes</div>
               <q-space />
               <q-btn
                 flat round dense
@@ -83,9 +84,9 @@
                   </q-btn-dropdown>
                 </q-td>
                 <q-td key="quantity" :props="props">
-                  {{ props.row.quantity }}
-                  <q-popup-edit fit v-model="props.row.quantity">
-                    <q-input type="number" v-model.number="props.row.quantity" dense>
+                  {{ usedUnits[props.pageIndex].quantity }}
+                  <q-popup-edit fit v-model="usedUnits[props.pageIndex].quantity">
+                    <q-input type="number" v-model.number="usedUnits[props.pageIndex].quantity" dense>
                     </q-input>
                   </q-popup-edit>
                 </q-td>
@@ -117,13 +118,14 @@
                 </q-td>
 
                 <q-td key="price" :props="props">
-                  {{ props.row.price }}Ar/{{findUnit(usedUnits[props.pageIndex])?.label}}
+                  {{ usedUnits[props.pageIndex].price }}Ar/
+                  {{findUnit(usedUnits[props.pageIndex].unit)?.label}}
                   <q-popup-edit
-                    fit v-model="props.row.price"
+                    fit v-model="usedUnits[props.pageIndex].price"
                     title="Prix Unitaire" buttons
                     label-cancel="annuler" label-set="ok"
                   >
-                    <q-input type="number" v-model.number="props.row.price" dense autofocus >
+                    <q-input type="number" v-model.number="usedUnits[props.pageIndex].price" dense autofocus >
                       <template v-slot:append>
                         <q-btn flat label="unité" no-caps>
                           <q-menu>
@@ -132,7 +134,7 @@
                                 v-for="unit in pathToChild(props.row.unitId)"
                                 :key="unit.id" clickable v-close-popup tabindex="0"
                               >
-                                <q-radio dense v-model="usedUnits[props.pageIndex]" :val="unit.id" :label="unit.label" />
+                                <q-radio dense v-model="usedUnits[props.pageIndex].unit" :val="unit.id" :label="unit.label" />
                               </q-item>
                             </q-list>
                           </q-menu>
@@ -151,17 +153,42 @@
                 </q-td>
               </q-tr>
             </template>
-
+            <template v-slot:bottom-row>
+              <q-tr>
+                <q-td colspan="100%">
+                  <q-btn
+                    :disable="!createInput.designation || !selectedForms.length"
+                    no-caps
+                    unelevated
+                    color="primary"
+                    outline
+                    class="full-width"
+                    @click="submit"
+                    label="Enregistrer ce médicament"
+                  ></q-btn>
+                </q-td>
+              </q-tr>
+            </template>
           </q-table>
-          <q-card flat bordered class="col-3">
-            <q-card-section align="center" class="text-h5">
-              Bilan d'ajout
-            </q-card-section>
 
-            <q-separator />
+          <q-card bordered flat class="col-3">
+            <q-toolbar class="bg-teal text-white shadow-2">
+              <div class="text-subtitle1 text-center full-width">Prix en fonction de l'unité minimale</div>
+            </q-toolbar>
 
-            <q-card-section></q-card-section>
+            <q-list separator>
+              <q-item v-for="(form, index) in usedUnits" :key="index" clickable v-ripple>
+                <q-item-section v-if="(min = findUnit(createInput.medicineForms[index].unitId)) && (max = findUnit(form.unit))">
+                  <q-item-label >
+                    <p><b>{{max.multiplicity}}</b> {{ max.label }} &lt;=&gt; <b>{{min.multiplicity}}</b> {{ min.label }}</p>
+                    Donc : <b>{{form.price}}/{{ max.label }}</b> &lt;=&gt;
+                    <b>{{(form.price*max.multiplicity/min.multiplicity).toFixed(3)}}/{{ min.label }}</b>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-card>
+
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -169,7 +196,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
+import { defineComponent, PropType, reactive, ref, watch } from 'vue';
 import { Form, Unit } from '../../graphql/types';
 import { FORM_COLUMNS } from './columns';
 import { useCreateMedicine } from '../../graphql/medicine/create/create.medicine.service';
@@ -185,22 +212,35 @@ export default defineComponent({
       type: Array as PropType<Form[]>,
       required:true
     },
-    findUnit: Function,
+    findUnit: {type: Function, required: true},
+    getProportion: {type: Function, required: true},
     pathToChild: Function
   },
   setup(props) {
-    const { createInput, addForm } = useCreateMedicine();
+    const { createInput, addForm, submitCreation, creationLoading } = useCreateMedicine();
     const selectedForms = ref<number[]>([]);
-    const usedUnits = ref<number[]>([]);
+    const usedUnits = ref<{quantity: number, unit: number, price: number}[]>([]);
     watch(() =>[...selectedForms.value], selected => {
       addForm(selected,props.childrenOptions[0]?.id||0);
-      usedUnits.value = createInput.medicineForms.map(u => u.unitId);
-    })
+      usedUnits.value = createInput.medicineForms.map((u, index) => ({
+        quantity: usedUnits.value[index].quantity,
+        unit: u.unitId, price: u.price
+      }));
+    });
+    async function submit () {
+      usedUnits.value.forEach((v, index) => {
+        const proportion = props.getProportion(createInput.medicineForms[index].unitId, v.unit)
+        createInput.medicineForms[index].quantity = v.quantity * proportion.quantity;
+        createInput.medicineForms[index].price = v.price * proportion.price;
+      });
+      await submitCreation();
+    }
     return {
       FORM_COLUMNS,
       dialog: ref<boolean>(false),
       selectedForms,
       createInput, addForm,
+      submit, creationLoading,
       usedUnits,
       removeForm: (id: number) => selectedForms.value = selectedForms.value.filter(f => f !== id)
     }

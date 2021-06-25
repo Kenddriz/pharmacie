@@ -63,10 +63,27 @@ export const useUnits = () => {
   }
   const findUnit = (id: number): Unit|undefined => units.value.find(u => u.id === id);
 
+  const getProportion = (sm: number, m: number, order = 'toSubmultiple') => {
+    const submultiple = findUnit(sm);
+    const multiple = findUnit(m);
+    const params = {
+      quantity: 0,
+      price: 0
+    }
+    if(submultiple && multiple) {
+      if(order === 'toSubmultiple') {
+          params.quantity = submultiple.multiplicity/multiple.multiplicity;
+          params.price = multiple.multiplicity/submultiple.multiplicity
+      }
+    }
+    return params;
+  }
+
   return {
     units,
     pathToChild,
     orphanUnits,
-    findUnit
+    findUnit,
+    getProportion
   }
 }

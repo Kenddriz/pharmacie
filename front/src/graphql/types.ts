@@ -199,6 +199,7 @@ export type Mutation = {
   createPayment: Invoice;
   updatePaymentMode: PaymentMode;
   createMedicine: Medicine;
+  addMedicineForm: Medicine;
   createForm: Form;
   updateForm: Form;
   removeForm: Form;
@@ -306,6 +307,11 @@ export type MutationUpdatePaymentModeArgs = {
 
 export type MutationCreateMedicineArgs = {
   input: CreateMedicineInput;
+};
+
+
+export type MutationAddMedicineFormArgs = {
+  input: CreateMedicineFormInput;
 };
 
 

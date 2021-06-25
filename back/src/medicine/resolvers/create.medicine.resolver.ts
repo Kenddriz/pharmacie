@@ -24,30 +24,32 @@ export class CreateMedicineResolver {
     let medicine = await this.medicineService.findOneByDesignation(
       input.designation,
     );
-
-    if (!medicine) {
-      const { medicineForms, ...res } = input;
-      medicine = new Medicine();
-      medicine.id = await uniqId('Medicine');
-      Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
-        medicine,
-        res,
+    if (medicine)
+      throw new Error(
+        'La désignation ' + input.designation + ' est déjà utilisée.',
       );
-      medicine = await this.medicineService.save(medicine);
 
-      for (const p of medicineForms) {
-        const medForm = new MedicineForm();
-        medForm.id = await uniqId('MedicineForm');
-        medForm.medicine = medicine;
-        medForm.price = p.price;
-        medForm.expiration = p.expiration;
-        medForm.vat = p.vat;
-        medForm.stock = p.quantity;
-        medForm.shop = p.quantity;
-        medForm.form = await this.formService.findOneById(p.formId);
-        medForm.unit = await this.unitService.findOneById(p.unitId);
-        await this.medicineFormService.save(medForm);
-      }
+    const { medicineForms, ...res } = input;
+    medicine = new Medicine();
+    medicine.id = await uniqId('Medicine');
+    Object.assign<Medicine, Omit<CreateMedicineInput, 'medicineForms'>>(
+      medicine,
+      res,
+    );
+    medicine = await this.medicineService.save(medicine);
+
+    for (const p of medicineForms) {
+      const medForm = new MedicineForm();
+      medForm.id = await uniqId('MedicineForm');
+      medForm.medicine = medicine;
+      medForm.price = p.price;
+      medForm.expiration = p.expiration;
+      medForm.vat = p.vat;
+      medForm.stock = p.quantity;
+      medForm.shop = p.quantity;
+      medForm.form = await this.formService.findOneById(p.formId);
+      medForm.unit = await this.unitService.findOneById(p.unitId);
+      await this.medicineFormService.save(medForm);
     }
     return medicine;
   }

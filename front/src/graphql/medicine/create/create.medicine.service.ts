@@ -1,10 +1,13 @@
 import { reactive } from 'vue';
-import { CreateMedicineInput } from '../../types';
+import { CreateMedicineInput, MutationCreateMedicineArgs } from '../../types';
 import { formatDate } from '../../../shared/date';
+import { useMutation } from '@vue/apollo-composable';
+import { CREATE_MEDICINE, CreateMedicineData } from './create.medicine.sdl';
+import { addMedicineCache } from '../updateMedicineCache';
 
 export const useCreateMedicine = () => {
   const createInput = reactive<CreateMedicineInput>({
-    designation: 'mon médicament',
+    designation: '',
     medicineForms: []
   });
   const addForm = (forms: number[], unitId = 0) => {
@@ -18,11 +21,22 @@ export const useCreateMedicine = () => {
           price: 0,
           quantity: 0,
           vat: 0,
-        })
+        });
       }
     });
     /**finally, filter to get updated forms: delete all non correspondence to current chosen forms**/
     createInput.medicineForms = createInput.medicineForms.filter(form => forms.includes(form.formId));
   }
-  return {createInput, addForm }
+  const { loading: creationLoading, mutate } = useMutation<
+    CreateMedicineData,
+    MutationCreateMedicineArgs
+    >(CREATE_MEDICINE, {
+    update: (cache, { data }) => {
+      if(data?.createMedicine) addMedicineCache(cache, data.createMedicine)
+    }
+  });
+  async function submitCreation() {
+     await mutate({ input: createInput });
+  }
+  return {createInput, addForm, creationLoading, submitCreation }
 }

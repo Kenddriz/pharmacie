@@ -1,15 +1,14 @@
 <template>
   <q-select
-    :multiple="multiple"
     transition-show="scale"
     transition-hide="scale"
     dense
-    borderless
+    :borderless="borderless"
     options-dense
     hide-bottom-space
     hide-hint
     v-model="model"
-    use-input
+    :use-input="useInput"
     :label="label ? label : 'Option'"
     :options="opt"
     @filter="filterFn"
@@ -51,26 +50,35 @@ export default defineComponent({
       type: Array,
       default: () => ([])
     },
-    modelValue: {},
-    valueOnly: {
+    modelValue: {
+      type: Number,
+      default: 0
+    },
+    borderless: {
       type: Boolean,
       default: true
     },
-    multiple: {
+    useInput: {
       type: Boolean,
-      default: false
+      default: true
+    },
+    valueOnly: {
+      type: Boolean,
+      default: true
     },
     label: String
   },
   emits: ['update:modelValue'],
   setup(props) {
     const opt = ref<SelectOption[]>([]);
+    const model = ref<number>(props.modelValue);
     watch(() => props.options, opts => {
       opt.value = makeOptions(opts);
+      if(model.value === 0) model.value = opt.value[0]?.value||0;
     }, { immediate: true });
     return {
       opt,
-      model: ref<typeof props.modelValue>(props.modelValue),
+      model,
       filterFn(val: string, update: any) {
         if (val === '') {
           update(() => {

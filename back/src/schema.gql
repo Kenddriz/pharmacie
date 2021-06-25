@@ -177,6 +177,7 @@ type Mutation {
   createPayment(input: CreatePaymentInput!): Invoice!
   updatePaymentMode(input: UpdatePaymentModeInput!): PaymentMode!
   createMedicine(input: CreateMedicineInput!): Medicine!
+  addMedicineForm(input: CreateMedicineFormInput!): Medicine!
   createForm(input: CreateFormInput!): Form!
   updateForm(input: UpdateFormInput!): Form!
   removeForm(id: Int!): Form!

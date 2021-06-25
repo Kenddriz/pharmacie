@@ -1,8 +1,8 @@
 import {ApolloCache} from '@apollo/client';
 import { Medicine } from '../types';
 import { cloneDeep } from 'lodash';
-import { CreateMedicineData } from './add/add.medicine.sdl';
 import { MEDICINES, MedicinesData } from './read/medicines.sdl';
+import { CreateMedicineData } from './create/create.medicine.sdl';
 
 export const addMedicineCache = (cache: ApolloCache<CreateMedicineData>, medicine: Medicine) => {
   let medicinesCache = cache.readQuery<MedicinesData>({
