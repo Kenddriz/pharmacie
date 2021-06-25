@@ -28,7 +28,7 @@
         required: true
       }
     },
-    emits: ['remove', 'update:modelValue']
+    emits: ['remove', 'update:modelValue'],
   })
 </script>
 

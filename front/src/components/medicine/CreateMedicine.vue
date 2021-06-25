@@ -52,7 +52,7 @@
             bordered
             hide-bottom
             square
-            :pagination="{ page: 1, rowsPerPage: selectedForms.length }"
+            v-model:pagination="pagination"
             flat
           >
             <template v-slot:top="props">
@@ -196,7 +196,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, ref, watch } from 'vue';
+import { defineComponent, PropType, ref, watch } from 'vue';
 import { Form, Unit } from '../../graphql/types';
 import { FORM_COLUMNS } from './columns';
 import { useCreateMedicine } from '../../graphql/medicine/create/create.medicine.service';
@@ -219,8 +219,10 @@ export default defineComponent({
   setup(props) {
     const { createInput, addForm, submitCreation, creationLoading, usedUnits } = useCreateMedicine();
     const selectedForms = ref<number[]>([]);
+    const pagination = { page: 1, rowsPerPage: 0 }
     watch(() =>[...selectedForms.value], selected => {
       addForm(selected,props.childrenOptions[0]?.id||0);
+      pagination.rowsPerPage = selected.length;
     });
     async function submit () {
       usedUnits.value.forEach((v, index) => {
@@ -236,6 +238,7 @@ export default defineComponent({
       selectedForms,
       createInput,
       submit, creationLoading,
+      pagination,
       usedUnits,
       removeForm: (id: number) => selectedForms.value = selectedForms.value.filter(f => f !== id)
     }

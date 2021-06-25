@@ -43,7 +43,7 @@
                 v-for="i in cType.contacts.length"
                 :key="i"
                 :label="`${contactTypes[index]} ${i}`"
-                v-model:model-value="input.contactTypes[index].contacts[i - 1]"
+                v-model:model-value="cType.contacts[i - 1]"
                 class="q-mb-sm"
                 @remove="removeContact(index, i - 1)"
               />
