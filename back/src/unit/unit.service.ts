@@ -29,7 +29,7 @@ export class UnitService {
 
   async findAll(): Promise<Unit[]> {
     return this.unitRepository.find({
-      order: { multiplicity: 'ASC' },
+      order: { id: 'ASC' },
     });
   }
 }

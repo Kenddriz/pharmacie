@@ -1,38 +1,41 @@
 <template>
-  <q-page class="row justify-center q-pa-md">
-    <q-card class="col-12 col-md-11">
-      <q-card-section class="q-pb-none">
-        <q-input
-          v-model="filter"
-          dense
-          ref="filterRef"
-          label="Entrer un libellé poour filtrer"
-          clear-icon="filter_alt"
-          clearable
-          class="q-mb-lg"
-        >
-          <template v-slot:prepend>
-            <q-icon name="filter_alt" class="cursor-pointer" />
-          </template>
-        </q-input>
-      </q-card-section>
+  <q-card flat>
+    <q-card-section class="q-pb-none">
+      <q-input
+        v-model="filter"
+        dense
+        ref="filterRef"
+        label="Entrer un libellé pour filtrer"
+        clear-icon="filter_alt"
+        clearable
+        class="q-mb-lg"
+      >
+        <template v-slot:prepend>
+          <q-icon name="filter_alt" class="cursor-pointer" />
+        </template>
+      </q-input>
+    </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <q-toolbar>
-          <q-toolbar-title>Toutes les unités</q-toolbar-title>
-          <q-space />
-          <q-btn
-            icon="add"
-            label="Nouvelle unité principale"
-            color="blue-12"
-            @click="setPrentId(0)"
-          />
-        </q-toolbar>
-      </q-card-section>
+    <q-card-section class="q-pt-none">
+      <q-toolbar>
+        <q-toolbar-title>Toutes les unités</q-toolbar-title>
+        <q-space />
+        <q-btn
+          icon="add"
+          label="Nouvelle unité principale"
+          color="blue-12"
+          @click="setPrentId(0)"
+        />
+      </q-toolbar>
+    </q-card-section>
 
-      <q-separator />
+    <q-separator />
 
-      <q-card-section>
+    <q-card-section horizontal>
+      <ScrollArea
+        style="height: calc(100vh - 253px);"
+        class="col-12 col-md-6"
+      >
         <q-tree
           :nodes="unitNodes(cloneDeep(units), 0)"
           node-key="id"
@@ -41,7 +44,6 @@
           v-model:selected="selected"
           accordion
           default-expand-all
-          class="q-pr-md"
           :filter="filter"
           :filter-method="filterMethod"
         >
@@ -52,17 +54,6 @@
               class="q-mr-sm"
             />
             {{ node.label }}, N°{{ node.id }}
-            <q-badge color="info" floating transparent>
-              {{ node.children.length }}
-              <q-tooltip
-                anchor="top right"
-                self="center left"
-                style="font-size: 16px"
-                :offset="[3, 0]"
-              >
-                sous-unité : {{ node.children.length }}
-              </q-tooltip>
-            </q-badge>
           </template>
           <template v-slot:default-body="{ node }">
             <div class="row items-center justify-between q-pl-lg">
@@ -80,7 +71,7 @@
                 round
                 flat
                 color="positive"
-                @click="setUpateInput(node)"
+                @click="setUpdateInput(node)"
               />
               <q-btn
                 size="md"
@@ -88,33 +79,62 @@
                 color="deep-orange"
                 flat
                 icon="delete_forever"
-                :disable="node.children.length > 0"
+                v-if="!node.children.length"
               />
             </div>
           </template>
         </q-tree>
-      </q-card-section>
-    </q-card>
+      </ScrollArea>
 
-    <!--dialog -->
-    <CreateUnit
-      :title="`${createInput.parentId > 0 ? `Unité mère : ${findUnit(createInput.parentId)?.label}` : 'Nouvelle unité primaire'}`"
-      :model-value="createInput"
-      :loading="createLoading"
-      v-model:open="createDialog"
-      submit-label="Ajouter"
-      @submit="createUnit"
-    />
-    <!---update -->
-    <UpdateUnit
-      title="Mise à jour"
-      :model-value="updateInput"
-      :options="units.filter(u => u.id !== updateInput.id)"
-      v-model:open="updateDialog"
-      submit-label="Modifier"
-      @submit="updateUnit"
-    />
-  </q-page>
+      <q-separator :vertical="$q.screen.width >= 1024" />
+
+      <ScrollArea
+        style="height: calc(100vh - 253px);"
+        class="col-12 col-md-6"
+        v-if="orphens = orphanUnits()"
+      >
+        <div class="text-bold text-subtitle1 q-pt-md text-center">Correspondance des unités</div>
+        <div class="text-center text-caption">Exemple : 1m = 10dm = 100cm = ...</div>
+        <q-separator class="full-width" />
+        <ScrollArea v-for="orphan in orphens" :key="orphan.id" style="height: 80px; max-width: 100%;">
+          <div v-if="uPaths = pathToChild(orphan.id)" class="flex flex-center no-wrap q-gutter-sm">
+            <q-input
+              type="number"
+              min="1"
+              v-for="(uPath, index) in uPaths" :key="index"
+              input-style="width: 150px;"
+              stack-label
+              :model-value="uPath.multiplicity"
+              :label="uPath.label"
+              v-model.number="uPath.multiplicity"
+              :suffix="`${uPaths[index + 1]? '=' : ''}`"
+              @blur="setMultiplicity(uPath, $event.target.value)"
+            />
+          </div>
+          <q-separator class="full-width q-mt-md"/>
+        </ScrollArea>
+      </ScrollArea>
+    </q-card-section>
+  </q-card>
+
+  <!--dialog -->
+  <CreateUnit
+    :title="`${createInput.parentId > 0 ? `Unité mère : ${findUnit(createInput.parentId)?.label}` : 'Nouvelle unité primaire'}`"
+    :model-value="createInput"
+    :loading="createLoading"
+    v-model:open="createDialog"
+    submit-label="Ajouter"
+    @submit="createUnit"
+  />
+  <!---update -->
+  <UpdateUnit
+    title="Mise à jour"
+    :model-value="updateInput"
+    :options="units.filter(u => u.id !== updateInput.id)"
+    v-model:open="updateDialog"
+    submit-label="Enregistrer"
+    @submit="updateUnit"
+  />
 </template>
 
 <script lang="ts">
@@ -124,12 +144,14 @@
   import UnitForm from '../../components/unit/UnitForm.vue';
   import { createUnitService } from '../../graphql/unit/create/create.unit.service';
   import { updateUnitService } from '../../graphql/unit/update/update.unit.service';
+  import ScrollArea from '../../components/shared/ScrollArea.vue';
 
   export default defineComponent({
     name: 'Unit',
     components: {
       CreateUnit: UnitForm,
-      UpdateUnit: UnitForm
+      UpdateUnit: UnitForm,
+      ScrollArea
     },
     setup() {
       return {
@@ -145,7 +167,8 @@
           );
         },
         ...createUnitService(),
-        ...updateUnitService()
+        ...updateUnitService(),
+        showM: (u: any) => alert(u.target.value)
       }
     }
   })

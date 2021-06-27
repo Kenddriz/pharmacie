@@ -41,16 +41,6 @@
             type="textarea"
             label="Description"
           />
-          <q-input
-            v-if="model.parentId > 0"
-            input-class="text-grey-14"
-            v-model.number="model.multiplicity"
-            dense
-            outlined
-            :label="`Multiplicité % à l'unité n°${model.parentId}`"
-            clearable
-            class="q-mt-md"
-          />
           <q-card-actions align="between">
             <q-btn
               v-close-popup

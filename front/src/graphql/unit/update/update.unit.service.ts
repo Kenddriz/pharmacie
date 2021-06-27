@@ -5,6 +5,7 @@ import { notify } from '../../../shared/notification';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from 'lodash';
 import { defaultUnit } from '../unit';
+import { Arbre } from '../units/units.service';
 
 export const updateUnitService = () => {
   const { mutate, onDone, loading: updateLoading } = useMutation<
@@ -16,13 +17,22 @@ export const updateUnitService = () => {
     ...cloneDeep(defaultUnit)
   });
   const updateDialog = ref<boolean>(false);
-  const setUpateInput = (unit: Unit) => {
-    const { id, label, description, parentId} = unit;
-    Object.assign(updateInput, { id, label, description, parentId});
+  const setUpdateInput = (unit: Arbre) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __typename, children, ...res} = unit;
+    Object.assign(updateInput, res);
     updateDialog.value = true;
   }
   const updateUnit = async () => {
     await mutate({ input: updateInput });
+  }
+
+  const setMultiplicity = async (unit: Unit, multiplicity: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __typename, ...res} = unit;
+    Object.assign(updateInput, res);
+    updateInput.multiplicity = Number(multiplicity);
+    await updateUnit();
   }
 
   onDone(res => {
@@ -31,5 +41,7 @@ export const updateUnitService = () => {
         notify('L\'unité ' + 'n°' + String(res.data.updateUnit.id) + ' a été mise à jour.')
     }
   })
-  return { updateUnit, updateLoading, setUpateInput, updateDialog, updateInput }
+  return {
+    updateUnit,
+    updateLoading, setUpdateInput, updateDialog, updateInput, setMultiplicity }
 }
