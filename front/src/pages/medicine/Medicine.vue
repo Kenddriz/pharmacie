@@ -57,11 +57,14 @@
                 <q-item>
                   <q-item-section>
                     <q-item-label header>
-                      {{forms.find(f => f.id === medForm.form.id)?.label}}
+                      {{medForm.form.label}}
                     </q-item-label>
                   </q-item-section>
-                  <q-item-section side top>
-                    <q-btn icon="edit" size="sm" round flat color="teal" />
+                  <q-item-section side>
+                    <q-fab flat padding="xs" icon="more_vert" color="primary" direction="left">
+                      <q-fab-action padding="xs" color="amber" icon="delete" />
+                      <q-fab-action padding="xs" color="blue-5" icon="edit" />
+                    </q-fab>
                   </q-item-section>
                 </q-item>
 
@@ -70,7 +73,7 @@
                 <q-item>
                   <q-item-section>
                     <q-item-label>Quantité en magasin</q-item-label>
-                    <q-item-label caption>{{props.row.medicineForms[index].shop}}</q-item-label>
+                    <q-item-label caption>{{medForm.shop}} {{medForm.unit.label}}</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -79,7 +82,7 @@
                 <q-item>
                   <q-item-section>
                     <q-item-label>Quantité en stock</q-item-label>
-                    <q-item-label caption>{{props.row.medicineForms[index].stock}}</q-item-label>
+                    <q-item-label caption>{{medForm.stock}} {{medForm.unit.label}}</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -88,7 +91,7 @@
                 <q-item>
                   <q-item-section>
                     <q-item-label>Prix unitaire de vente</q-item-label>
-                    <q-item-label caption>{{props.row.medicineForms[index].price}}</q-item-label>
+                    <q-item-label caption>{{medForm.price}}/{{medForm.unit.label}}</q-item-label>
                   </q-item-section>
                 </q-item>
 
@@ -97,7 +100,7 @@
                 <q-item>
                   <q-item-section>
                     <q-item-label>Date d'expiration</q-item-label>
-                    <q-item-label caption>{{props.row.medicineForms[index].expiration}}</q-item-label>
+                    <q-item-label caption>{{medForm.expiration}}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -112,7 +115,7 @@
 
     </q-table>
     <q-card flat bordered class="col-3">
-      <q-card-section align="center" class="text-h5">
+      <q-card-section class="text-h5 text-center">
         Bilan d'ajout
       </q-card-section>
 

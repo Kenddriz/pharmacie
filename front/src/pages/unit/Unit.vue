@@ -17,25 +17,22 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-toolbar>
-        <q-toolbar-title>Toutes les unités</q-toolbar-title>
-        <q-space />
-        <q-btn
-          icon="add"
-          label="Nouvelle unité principale"
-          color="blue-12"
-          @click="setPrentId(0)"
-        />
-      </q-toolbar>
+      <q-btn
+        icon="add"
+        label="Nouvelle unité principale"
+        color="blue-12"
+        @click="setPrentId(0)"
+      />
     </q-card-section>
 
     <q-separator />
 
-    <q-card-section horizontal>
+    <q-card-section :horizontal="$q.screen.width >= 1024">
       <ScrollArea
         style="height: calc(100vh - 253px);"
         class="col-12 col-md-6"
       >
+        <div class="text-bold text-subtitle1 q-pt-md text-center">Toutes les unités</div>
         <q-tree
           :nodes="unitNodes(cloneDeep(units), 0)"
           node-key="id"
@@ -95,7 +92,7 @@
       >
         <div class="text-bold text-subtitle1 q-pt-md text-center">Correspondance des unités</div>
         <div class="text-center text-caption">Exemple : 1m = 10dm = 100cm = ...</div>
-        <q-separator class="full-width" />
+        <q-separator inset spaced />
         <ScrollArea v-for="orphan in orphens" :key="orphan.id" style="height: 80px; max-width: 100%;">
           <div v-if="uPaths = pathToChild(orphan.id)" class="flex flex-center no-wrap q-gutter-sm">
             <q-input
@@ -111,7 +108,7 @@
               @blur="setMultiplicity(uPath, $event.target.value)"
             />
           </div>
-          <q-separator class="full-width q-mt-md"/>
+          <q-separator class="q-mt-md" inset/>
         </ScrollArea>
       </ScrollArea>
     </q-card-section>
@@ -167,8 +164,7 @@
           );
         },
         ...createUnitService(),
-        ...updateUnitService(),
-        showM: (u: any) => alert(u.target.value)
+        ...updateUnitService()
       }
     }
   })

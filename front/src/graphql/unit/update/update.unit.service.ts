@@ -1,14 +1,13 @@
 import { useMutation } from '@vue/apollo-composable';
 import {UPDATE_UNIT, UpdateUnitData} from './update.unit.sdl';
 import { MutationUpdateUnitArgs, Unit, UpdateUnitInput } from '../../types';
-import { notify } from '../../../shared/notification';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from 'lodash';
 import { defaultUnit } from '../unit';
 import { Arbre } from '../units/units.service';
 
 export const updateUnitService = () => {
-  const { mutate, onDone, loading: updateLoading } = useMutation<
+  const { mutate, loading: updateLoading } = useMutation<
     UpdateUnitData,
     MutationUpdateUnitArgs
     >(UPDATE_UNIT);
@@ -34,13 +33,6 @@ export const updateUnitService = () => {
     updateInput.multiplicity = Number(multiplicity);
     await updateUnit();
   }
-
-  onDone(res => {
-    if(res.data) {
-      if(res.data.updateUnit)
-        notify('L\'unité ' + 'n°' + String(res.data.updateUnit.id) + ' a été mise à jour.')
-    }
-  })
   return {
     updateUnit,
     updateLoading, setUpdateInput, updateDialog, updateInput, setMultiplicity }

@@ -10,8 +10,8 @@ export const MEDICINE_PARAMS = `
     shop
     price
     expiration
-    unit { id }
-    form { id }
+    unit { id, label }
+    form { id, label }
   }
 `;
 export const defaultMedicineInput: CreateMedicineInput = {

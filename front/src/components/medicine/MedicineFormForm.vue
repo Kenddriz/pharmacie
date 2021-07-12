@@ -15,6 +15,7 @@
         label="unité minimale"
         :options="units"
         v-model="model.unitId"
+        @update:model-value="usedUnit.unit = $event"
       />
       <q-input type="number" label="Quantité"
         v-model.number="usedUnit.quantity" dense stack-label min="0"
@@ -76,7 +77,11 @@ export default defineComponent({
     const model = reactive<CreateMedicineFormInput>(props.modelValue);
     model.formId = props.forms[0]?.id||0;
     model.unitId = props.units[0]?.id||0;
-    const usedUnit = reactive({ unit: model.unitId, price: model.price, quantity: model.quantity });
+    const usedUnit = reactive({
+      unit: model.unitId,
+      price: model.price,
+      quantity: model.quantity
+    });
 
     return {
       model,

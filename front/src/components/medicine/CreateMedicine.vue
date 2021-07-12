@@ -78,7 +78,13 @@
                     <q-list>
                       <q-item-label header>Unité minimale de vente</q-item-label>
                       <q-item v-for="unit in childrenOptions" :key="unit.id" clickable v-close-popup tabindex="0">
-                        <q-radio dense v-model="props.row.unitId" :val="unit.id" :label="unit.label" />
+                        <q-radio
+                          dense
+                          v-model="props.row.unitId"
+                          :val="unit.id"
+                          :label="unit.label"
+                          @update:model-value="usedUnits[props.pageIndex].unit = $event"
+                        />
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>

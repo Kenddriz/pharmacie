@@ -8,6 +8,7 @@
     hide-bottom-space
     hide-hint
     v-model="model"
+    :model-value="modelValue"
     :use-input="useInput"
     :label="label ? label : 'Option'"
     :options="opt"
@@ -72,9 +73,9 @@ export default defineComponent({
   setup(props) {
     const opt = ref<SelectOption[]>([]);
     const model = ref<number>(props.modelValue);
-    watch(() => props.options, opts => {
+    watch(() => [...props.options], opts => {
       opt.value = makeOptions(opts);
-      if(model.value === 0) model.value = opt.value[0]?.value||0;
+     // model.value = opt.value[0]?.value;
     }, { immediate: true });
     return {
       opt,
