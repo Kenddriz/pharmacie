@@ -4,6 +4,7 @@
     transition-hide="scale"
     dense
     :borderless="borderless"
+    :outlined="outlined"
     options-dense
     hide-bottom-space
     hide-hint
@@ -59,6 +60,10 @@ export default defineComponent({
       type: Boolean,
       default: true
     },
+    outlined: {
+      type: Boolean,
+      default: false
+    },
     useInput: {
       type: Boolean,
       default: true
@@ -75,7 +80,6 @@ export default defineComponent({
     const model = ref<number>(props.modelValue);
     watch(() => [...props.options], opts => {
       opt.value = makeOptions(opts);
-     // model.value = opt.value[0]?.value;
     }, { immediate: true });
     return {
       opt,

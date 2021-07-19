@@ -75,6 +75,10 @@ export const useUnits = () => {
           params.quantity = submultiple.multiplicity/multiple.multiplicity;
           params.price = multiple.multiplicity/submultiple.multiplicity
       }
+      else {
+        params.quantity = multiple.multiplicity/submultiple.multiplicity;
+        params.price = submultiple.multiplicity/multiple.multiplicity
+      }
     }
     return params;
   }

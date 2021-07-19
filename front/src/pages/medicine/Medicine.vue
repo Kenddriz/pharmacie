@@ -7,7 +7,7 @@
       :value="index"
     />
   </div>-->
-  <div class="row q-pa-sm q-gutter-sm">
+  <div class="q-pa-sm q-gutter-sm">
     <q-table
       flat
       bordered
@@ -15,7 +15,6 @@
       :columns="MEDICINE_COLS"
       row-key="id"
       table-class="table-border"
-      class="col"
       separator="cell"
       loading-label="Chargement des données"
       :loading="medicinesLoading"
@@ -63,7 +62,10 @@
                   <q-item-section side>
                     <q-fab flat padding="xs" icon="more_vert" color="primary" direction="left">
                       <q-fab-action padding="xs" color="amber" icon="delete" />
-                      <q-fab-action padding="xs" color="blue-5" icon="edit" />
+                      <q-fab-action
+                        @click="setUpdateMedFormInput(medForm)"
+                        padding="xs" color="blue-5" icon="edit"
+                      />
                     </q-fab>
                   </q-item-section>
                 </q-item>
@@ -114,7 +116,7 @@
       </template>
 
     </q-table>
-    <q-card flat bordered class="col-3">
+   <!-- <q-card flat bordered class="col-3">
       <q-card-section class="text-h5 text-center">
         Bilan d'ajout
       </q-card-section>
@@ -122,10 +124,10 @@
       <q-separator />
 
       <q-card-section></q-card-section>
-    </q-card>
+    </q-card>-->
 
     <q-dialog v-model="showAddMedForm">
-      <MedicineFormForm
+      <MedicineCreateForm
         v-model:modelValue="addMedFormInput"
         :forms="forms.filter(f => !existForms.includes(f.id))"
         :units="orphanUnits()"
@@ -135,6 +137,17 @@
         :find-unit="findUnit"
         :get-proportion="getProportion"
         :title="`Nouvelle forme de ${medicines.find(med => med.id === addMedFormInput.medicineId).designation}`"
+      />
+    </q-dialog>
+
+    <q-dialog v-model="showUpdateMedForm">
+      <MedicineUpdateForm
+        :min="orphanUnits()"
+        :path-to-child="pathToChild"
+        v-model:model-value="updateMedFormInput"
+        @cancel="showUpdateMedForm = false"
+        :title="`Mise à jour de la forme ${typeMedFormLabel}`"
+        @submit="updateMedForm"
       />
     </q-dialog>
   </div>
@@ -148,12 +161,14 @@
   import { useUnits } from '../../graphql/unit/units/units.service';
   import MedicineOperations from '../../components/medicine/MedicineOperations.vue';
   import CreateMedicine from '../../components/medicine/CreateMedicine.vue';
-  import MedicineFormForm from '../../components/medicine/MedicineFormForm.vue';
-  import { useAddMedForm } from '../../graphql/medicine/addForm/add.medicine.form.service';
+  import { useAddMedForm } from '../../graphql/medicineForm/addForm/add.medicine.form.service';
+  import MedicineUpdateForm from '../../components/medicine/MedicineUpdateForm.vue';
+  import MedicineCreateForm from '../../components/medicine/MedicineCreateForm.vue';
+  import { useUpdateMedicineForm } from '../../graphql/medicineForm/update/updateMedicineForm.service';
 
   export default defineComponent({
     name: 'Medicine',
-    components: { CreateMedicine, MedicineOperations, MedicineFormForm },
+    components: { CreateMedicine, MedicineOperations, MedicineCreateForm, MedicineUpdateForm },
     setup() {
       return {
         MEDICINE_COLS,
@@ -161,7 +176,8 @@
         ...useMedicines(),
         ...useForms(),
         ...useUnits(),
-        ...useAddMedForm()
+        ...useAddMedForm(),
+        ...useUpdateMedicineForm()
       }
     }
   });

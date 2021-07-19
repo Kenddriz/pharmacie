@@ -200,6 +200,7 @@ export type Mutation = {
   updatePaymentMode: PaymentMode;
   createMedicine: Medicine;
   addMedicineForm: Medicine;
+  updateMedicineForm: MedicineForm;
   createForm: Form;
   updateForm: Form;
   removeForm: Form;
@@ -312,6 +313,11 @@ export type MutationCreateMedicineArgs = {
 
 export type MutationAddMedicineFormArgs = {
   input: CreateMedicineFormInput;
+};
+
+
+export type MutationUpdateMedicineFormArgs = {
+  input: UpdateMedicineFormInput;
 };
 
 
@@ -516,6 +522,18 @@ export type UpdateInvoiceInput = {
   id: Scalars['Float'];
   dueDate: Scalars['String'];
   reference: Scalars['String'];
+};
+
+export type UpdateMedicineFormInput = {
+  id: Scalars['Int'];
+  medicineId: Scalars['Int'];
+  formId: Scalars['Int'];
+  unitId: Scalars['Int'];
+  expiration: Scalars['String'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  stock: Scalars['Float'];
+  shop: Scalars['Float'];
 };
 
 export type UpdatePaymentModeInput = {

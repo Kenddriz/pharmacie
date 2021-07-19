@@ -52,7 +52,7 @@ import { CreateMedicineFormInput, Form, Unit } from '../../graphql/types';
 import CustomSelect from '../shared/CustomSelect.vue';
 
 export default defineComponent({
-  name: 'MedicineFormForm',
+  name: 'MedicineCreateForm',
   components: {CustomSelect},
   props: {
     modelValue: {
@@ -64,7 +64,7 @@ export default defineComponent({
       default: () => ([])
     },
     units: {
-      type: Array as PropType<Unit[] >,
+      type: Array as PropType<Unit[]>,
       default: () => ([])
     },
     pathToChild: Function,

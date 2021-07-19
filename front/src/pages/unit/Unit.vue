@@ -88,13 +88,13 @@
       <ScrollArea
         style="height: calc(100vh - 253px);"
         class="col-12 col-md-6"
-        v-if="orphens = orphanUnits()"
+        v-if="(orphens = orphanUnits()).length"
       >
         <div class="text-bold text-subtitle1 q-pt-md text-center">Correspondance des unités</div>
         <div class="text-center text-caption">Exemple : 1m = 10dm = 100cm = ...</div>
         <q-separator inset spaced />
         <ScrollArea v-for="orphan in orphens" :key="orphan.id" style="height: 80px; max-width: 100%;">
-          <div v-if="uPaths = pathToChild(orphan.id)" class="flex flex-center no-wrap q-gutter-sm">
+          <div v-if="(uPaths = pathToChild(orphan.id)).length" class="flex flex-center no-wrap q-gutter-sm">
             <q-input
               type="number"
               min="1"
@@ -103,9 +103,8 @@
               stack-label
               :model-value="uPath.multiplicity"
               :label="uPath.label"
-              v-model.number="uPath.multiplicity"
               :suffix="`${uPaths[index + 1]? '=' : ''}`"
-              @blur="setMultiplicity(uPath, $event.target.value)"
+              @keyup="setMultiplicity(uPath, $event.target.value)"
             />
           </div>
           <q-separator class="q-mt-md" inset/>

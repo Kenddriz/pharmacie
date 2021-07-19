@@ -1,6 +1,6 @@
 import { Medicine } from '../../types';
 import { gql } from '@apollo/client/core';
-import { MEDICINE_PARAMS } from '../medicine';
+import { MEDICINE_PARAMS } from '../../medicine/medicine';
 
 export type AddMedicineFormData = {
   addMedicineForm: Medicine
