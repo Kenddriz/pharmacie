@@ -1,26 +1,53 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import {Unit} from '../unit/unit.entity';
-import {Entity, JoinColumn, ManyToOne, PrimaryColumn, RelationId} from 'typeorm';
-import {Medicine} from '../medicine/medicine.entity';
+import { ObjectType, Field } from '@nestjs/graphql';
+import { Unit } from '../unit/unit.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from 'typeorm';
+import { Form } from '../form/form.entity';
+import { Command } from '../command/command.entity';
 
 @ObjectType()
-@Entity({ name: 'command_lines'})
+@Entity({ name: 'command_lines' })
 export class CommandLine {
-  @Field(() => Int)
-  @PrimaryColumn()
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Field(() => Unit)
-  @ManyToOne(() => Unit)
-  @JoinColumn({ name: 'unit_id', referencedColumnName: 'id' })
   unit: Unit;
-  @RelationId((commandLine: CommandLine) => commandLine.unit)
+  @Column()
   unitId: number;
 
-  @Field(() => Medicine)
-  @ManyToOne(() => Medicine)
-  @JoinColumn({ name: 'medicine_id', referencedColumnName: 'id' })
-  medicine: Medicine;
-  @RelationId((commandLine: CommandLine) => commandLine.medicine)
-  medicineId: number;
+  @Field()
+  @Column({ default: 0 })
+  quantity: number;
+
+  @Field()
+  @Column({ default: 0 })
+  price: number;
+
+  @Field()
+  @Column()
+  medicine: string;
+
+  @Field(() => Form)
+  form: Form;
+  @Column()
+  formId: number;
+
+  @ManyToOne(() => Command)
+  @JoinColumn({ name: 'commandId' })
+  command: Command;
+  @Field()
+  @RelationId((commandLine: CommandLine) => commandLine.command)
+  commandId: number;
+
+  @Field()
+  @Column({ default: 0 })
+  vat: number;
 }

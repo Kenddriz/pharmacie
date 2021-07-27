@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Contact } from '../contact/Contact.entity';
+import { Command } from '../command/command.entity';
 
 @ObjectType()
 @Entity({ name: 'providers' })
@@ -28,13 +29,16 @@ export class Provider {
   logo: string;
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
   @Field(() => [Contact])
   contacts: Contact[];
+
+  @Field(() => [Command])
+  commands: Command[];
 }

@@ -21,6 +21,9 @@ export class FormService {
   findOneById(id: number) {
     return this.FormRepository.findOne(id);
   }
+  findByIds(ids: number[]): Promise<Form[]> {
+    return this.FormRepository.findByIds(ids);
+  }
   findOneByLabel(label: string) {
     return this.FormRepository.findOne({ label });
   }

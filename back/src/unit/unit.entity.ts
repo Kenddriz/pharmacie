@@ -20,7 +20,7 @@ export class Unit {
   @Column({ length: 200 })
   description: string;
 
-  @Field((type) => Int, { defaultValue: 0 })
-  @Column({ name: 'parentId', type: 'int', width: 2 })
+  @Field({ defaultValue: 0 })
+  @Column({ type: 'int', width: 2 })
   parentId: number;
 }

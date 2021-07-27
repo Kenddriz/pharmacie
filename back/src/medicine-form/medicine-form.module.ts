@@ -4,10 +4,9 @@ import { MedicineFormResolver } from './resolvers/medicine-form.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MedicineForm } from './medicine-form.entity';
 import { MedicineFormFieldResolver } from './resolvers/medicine-form.field-resolver';
-import { FormModule } from '../form/form.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MedicineForm]), FormModule],
+  imports: [TypeOrmModule.forFeature([MedicineForm])],
   providers: [
     MedicineFormResolver,
     MedicineFormFieldResolver,

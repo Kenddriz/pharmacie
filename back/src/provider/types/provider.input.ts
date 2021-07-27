@@ -3,10 +3,7 @@ import { CreateContactInput } from '../../contact/types/contact.input';
 import { Provider } from '../provider.entity';
 
 @InputType()
-export class CreateProviderInput extends PartialType(
-  OmitType(Provider, ['id', 'createdAt', 'updatedAt', 'contacts'] as const),
-  InputType,
-) {
+export class CreateProviderInput {
   @Field()
   name: string;
 

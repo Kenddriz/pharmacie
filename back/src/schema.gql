@@ -16,7 +16,7 @@ type Unit {
   label: String!
   multiplicity: Float!
   description: String!
-  parentId: Int!
+  parentId: Float!
 }
 
 type MedicineForm {
@@ -85,13 +85,27 @@ type Provider {
   createdAt: DateTime!
   updatedAt: DateTime!
   contacts: [Contact!]!
+  commands: [Command!]!
+}
+
+type CommandLine {
+  id: Float!
+  unit: Unit!
+  quantity: Float!
+  price: Float!
+  medicine: String!
+  form: Form!
+  commandId: Float!
+  vat: Float!
 }
 
 type Command {
-  id: Int!
+  id: Float!
   provider: Provider!
-  vat: Float!
   arrived: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  commandLines: [CommandLine!]!
 }
 
 type Invoice {
@@ -112,6 +126,11 @@ type Meta {
   currentPage: Float!
 }
 
+type CommandPagination {
+  items: [Command!]!
+  meta: Meta!
+}
+
 type ProviderPagination {
   items: [Provider!]!
   meta: Meta!
@@ -130,17 +149,11 @@ type LoginDto {
   token: String!
 }
 
-type CommandLine {
-  id: Int!
-  unit: Unit!
-  medicine: Medicine!
-}
-
 type Query {
   getHello: String!
   salesLine(id: Int!): SalesLine!
   sale(id: Int!): Sale!
-  command(id: Int!): Command!
+  paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
   contactTypes: [ContactType!]!
@@ -148,11 +161,10 @@ type Query {
   forms: [Form!]!
   whoAmI: User!
   units: [Unit!]!
-  commandLine(id: Int!): CommandLine!
 }
 
 input PaginationInput {
-  keyword: String!
+  keyword: String
   page: Float!
   limit: Float!
 }
@@ -166,9 +178,11 @@ type Mutation {
   removeSale(id: Int!): Sale!
   createInvoice(input: CreateInvoiceInput!): Invoice!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
-  createCommand(createCommandInput: PurchaseInput!): Command!
-  updateCommand(updateCommandInput: PurchaseDto!): Command!
-  removeCommand(id: Int!): Command!
+  createCommand(input: CreateCommandInput!): Command!
+  updateCommand(input: UpdateCommandInput!): Command!
+  addCommandLine(input: CreateOrUpdateCommandLineInput!): Command!
+  updateCommandLine(input: CreateOrUpdateCommandLineInput!): Command!
+  removeCommandLine(id: Float!): Command!
   createProvider(input: CreateProviderInput!): Provider!
   addContacts(input: AddContactInput!): Provider!
   updateContact(input: UpdateContactInput!): Contact!
@@ -189,9 +203,6 @@ type Mutation {
   login(input: AuthInput!): LoginDto!
   createUnit(input: CreateUnitInput!): Unit!
   updateUnit(input: UpdateUnitInput!): Unit!
-  createCommandLine(createCommandLineInput: CreateCommandLineInput!): CommandLine!
-  updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
-  removeCommandLine(id: Int!): CommandLine!
 }
 
 input CreateSalesLineInput {
@@ -227,21 +238,34 @@ input UpdateInvoiceInput {
   reference: String!
 }
 
-input PurchaseInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input CreateCommandInput {
+  providerId: Float!
 }
 
-input PurchaseDto {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input UpdateCommandInput {
+  id: Float!
+  providerId: Float!
+  arrived: Boolean
+}
+
+input CreateOrUpdateCommandLineInput {
+  commandId: Float!
+  commandLines: [CommandLineInput!]!
+}
+
+input CommandLineInput {
+  id: Float
+  medicine: String!
+  unitId: Float!
+  price: Float!
+  quantity: Float!
+  formId: Float!
+  vat: Float!
 }
 
 input CreateProviderInput {
   name: String!
   address: String!
-  logo: String
   contactTypes: [CreateContactInput!]!
 }
 
@@ -350,17 +374,6 @@ input UpdateUnitInput {
   label: String
   multiplicity: Float
   description: String
-  parentId: Int = 0
+  parentId: Float = 0
   id: Float!
-}
-
-input CreateCommandLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateCommandLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }

@@ -1,32 +1,38 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import {
-  Column, Entity,
-  JoinColumn,
-  ManyToOne,
+  Column,
+  CreateDateColumn,
+  Entity,
   PrimaryColumn,
-  RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Provider } from '../provider/provider.entity';
+import { CommandLine } from '../command-line/command-line.entity';
 
 @ObjectType()
 @Entity({ name: 'commands' })
 export class Command {
-  @Field(() => Int)
+  @Field()
   @PrimaryColumn()
   id: number;
 
   @Field(() => Provider)
-  @ManyToOne(() => Provider)
-  @JoinColumn({ name: 'provider_id', referencedColumnName: 'id' })
   provider: Provider;
-  @RelationId((command: Command) => command.provider)
+  @Column()
   providerId: number;
-
-  @Field()
-  @Column({ default: 0 })
-  vat: number;
 
   @Field()
   @Column({ default: false })
   arrived: boolean;
+
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @Field(() => [CommandLine])
+  commandLines: CommandLine[];
 }

@@ -17,6 +17,9 @@ export class UnitService {
   async findOneById(id: number): Promise<Unit> {
     return this.unitRepository.findOne(id);
   }
+  async findByIds(ids: number[]): Promise<Unit[]> {
+    return this.unitRepository.findByIds(ids);
+  }
 
   async findOneByLabel(label: string): Promise<Unit> {
     return await this.unitRepository.findOne({ label });

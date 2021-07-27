@@ -1,25 +1,11 @@
-import {Field, InputType, ObjectType} from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Stream } from 'stream';
-import { IPaginationMeta, IPaginationOptions } from 'nestjs-typeorm-paginate';
-
-@ObjectType()
-export class Meta implements IPaginationMeta {
-  @Field()
-  itemCount: number;
-  @Field()
-  totalItems: number;
-  @Field()
-  itemsPerPage: number;
-  @Field()
-  totalPages: number;
-  @Field()
-  currentPage: number;
-}
+import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @InputType()
 export class PaginationInput implements IPaginationOptions {
-  @Field()
-  keyword: string;
+  @Field({ nullable: true })
+  keyword?: string;
 
   @Field()
   page: number;

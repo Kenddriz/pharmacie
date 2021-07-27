@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MedicineService } from './medicine.service';
 import { CreateMedicineResolver } from './resolvers/create.medicine.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { MedicineFieldResolver } from './resolvers/medicine.field-resolver';
 import { MedicineFormModule } from '../medicine-form/medicine-form.module';
 import { MedicineResolver } from './resolvers/medicine.resolver';
 
+@Global()
 @Module({
   imports: [
     TypeOrmModule.forFeature([Medicine]),
@@ -20,5 +21,6 @@ import { MedicineResolver } from './resolvers/medicine.resolver';
     MedicineResolver,
     MedicineService,
   ],
+  exports: [MedicineService],
 })
 export class MedicineModule {}

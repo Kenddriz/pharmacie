@@ -32,21 +32,21 @@ export class SalesLine {
 
   @Field(() => Sale)
   @ManyToOne(() => Sale)
-  @JoinColumn({ name: 'sale_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'saleId', referencedColumnName: 'id' })
   sale: Sale;
   @RelationId((salesLine: SalesLine) => salesLine.sale)
   saleId: number;
 
   @Field(() => Medicine)
   @ManyToOne(() => Medicine)
-  @JoinColumn({ name: 'medicine_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'medicineId', referencedColumnName: 'id' })
   medicine: Medicine;
   @RelationId((salesLine: SalesLine) => salesLine.medicine)
   medicineId: number;
 
   @Field(() => Unit)
   @ManyToOne(() => Unit)
-  @JoinColumn({ name: 'unit_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'unitId', referencedColumnName: 'id' })
   unit: Unit;
   @RelationId((salesLine: SalesLine) => salesLine.unit)
   unitId: number;

@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IPaginationMeta } from 'nestjs-typeorm-paginate';
 
 @ObjectType()
-export class PaginationMeta {
+export class Meta implements IPaginationMeta {
   @Field()
   itemCount: number;
   @Field()
