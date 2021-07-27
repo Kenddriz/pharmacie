@@ -11,7 +11,7 @@
     v-model="model"
     :model-value="modelValue"
     :use-input="useInput"
-    :label="label ? label : 'Option'"
+    :label="label ? label : 'Options'"
     :options="opt"
     @filter="filterFn"
     behavior="menu"
@@ -75,11 +75,15 @@ export default defineComponent({
     label: String
   },
   emits: ['update:modelValue'],
-  setup(props) {
+  setup(props, {emit}) {
     const opt = ref<SelectOption[]>([]);
     const model = ref<number>(props.modelValue);
     watch(() => [...props.options], opts => {
       opt.value = makeOptions(opts);
+      if(props.modelValue === 0 && opt.value.length) {
+        model.value = opt.value[0].value;
+        emit('update:modelValue', model.value)
+      }
     }, { immediate: true });
     return {
       opt,

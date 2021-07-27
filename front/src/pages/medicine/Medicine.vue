@@ -46,7 +46,11 @@
             {{ props.row.medicineForms.length }}
           </q-td>
           <q-td auto-width key="form" :props="props" class="q-gutter-sm">
-            <MedicineOperations :designation="props.row.designation" :id="props.row.id" />
+            <MedicineOperations
+              :designation="props.row.designation"
+              :id="props.row.id"
+              @submit="updateMedicine($event)"
+            />
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props" no-hover>
@@ -116,15 +120,6 @@
       </template>
 
     </q-table>
-   <!-- <q-card flat bordered class="col-3">
-      <q-card-section class="text-h5 text-center">
-        Bilan d'ajout
-      </q-card-section>
-
-      <q-separator />
-
-      <q-card-section></q-card-section>
-    </q-card>-->
 
     <q-dialog v-model="showAddMedForm">
       <MedicineCreateForm
@@ -134,8 +129,6 @@
         @cancel="showAddMedForm = false"
         @submit="AddMedForm"
         :path-to-child="pathToChild"
-        :find-unit="findUnit"
-        :get-proportion="getProportion"
         :title="`Nouvelle forme de ${medicines.find(med => med.id === addMedFormInput.medicineId).designation}`"
       />
     </q-dialog>
@@ -165,6 +158,7 @@
   import MedicineUpdateForm from '../../components/medicine/MedicineUpdateForm.vue';
   import MedicineCreateForm from '../../components/medicine/MedicineCreateForm.vue';
   import { useUpdateMedicineForm } from '../../graphql/medicineForm/update/updateMedicineForm.service';
+  import { useUpdateMedicine } from '../../graphql/medicine/update/updateMedicine.service';
 
   export default defineComponent({
     name: 'Medicine',
@@ -177,7 +171,8 @@
         ...useForms(),
         ...useUnits(),
         ...useAddMedForm(),
-        ...useUpdateMedicineForm()
+        ...useUpdateMedicineForm(),
+        ...useUpdateMedicine()
       }
     }
   });

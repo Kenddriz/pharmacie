@@ -8,7 +8,7 @@ export const makeOptions = (data: unknown[]):SelectOption[] => {
   const options: SelectOption[] = [];
   data.forEach((d: any) => {
     options.push({
-      label: d.label,
+      label: d.label||d.designation,
       value: d.id
     })
   });

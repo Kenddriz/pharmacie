@@ -129,29 +129,20 @@
   import {useProviders} from '../../../graphql/provider/read/providers.service';
   import {useContactTypes} from '../../../graphql/contact_type/read/contact.types.service';
   import CardItem from './CardItem.vue';
-  import { Contact, ContactType } from '../../../graphql/types';
+  import { columns } from './columns';
 
   export default defineComponent({
     name: 'ProviderTable',
     components: { CardItem },
     setup() {
-        const { contactTypes, loading: cTypesLoading } = useContactTypes();
-        const contacts = (contacts: Contact[]) => {
-          return contactTypes.value.map((cType: ContactType) => {
-            return {
-              ...cType,
-              contacts: contacts.filter(c => c.contactTypeId === cType.id)
-            }
-          })
-        };
         return {
           isGrid: ref<boolean>(false),
           viewModeOptions: [
             { value: false, slot: 'false' },
             { value: true, slot: 'true' }
           ],
-          contacts,
-          cTypesLoading,
+          columns,
+          ...useContactTypes(),
           ...useProviders()
         }
     }

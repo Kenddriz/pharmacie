@@ -9,8 +9,8 @@ export const InitialPagination = {
   }
 };
 
-export const META_PARAMS = `
+export const PAGINATION_META = `
   meta {
     ${Object.keys(InitialPagination.meta).join(' ')}
   }
-`
+`;

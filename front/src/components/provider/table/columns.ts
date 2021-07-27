@@ -1,44 +1,45 @@
+import { Provider } from '../../../graphql/types';
+import { date } from 'quasar';
+
 export const columns = [
   {
     name: 'id',
     align: 'left',
     label: 'ID',
-    headerStyle: 'font-weight: bold'
+    field: 'id',
+    sortable: true,
   },
   {
     name: 'name',
     align: 'left',
     label: 'Nom',
-    headerStyle: 'font-weight: bold'
-  },
-  {
-    name: 'P',
-    align: 'left',
-    label: 'Categorie',
-    headerStyle: 'font-weight: bold'
+    sortable: true,
+    field: 'name'
   },
   {
     name: 'createdAt',
     align: 'left',
     label: 'Date de création',
-    headerStyle: 'font-weight: bold'
+    field: (row: Provider) => date.formatDate(row.createdAt, 'DD/MM/YYYY à hh:mm:ss'),
+    sortable: true
   },
   {
     name: 'updatedAt',
     align: 'left',
-    label: 'Date de modification',
-    headerStyle: 'font-weight: bold'
-  },
-  {
-    name: 'status',
-    align: 'left',
-    label: 'Status',
-    headerStyle: 'font-weight: bold'
-  },
-  {
-    name: 'action',
-    align: 'center',
-    label: 'Action',
-    headerStyle: 'font-weight: bold'
-  },
+    label: 'Dernière modification',
+    field: (row: Provider) => date.formatDate(row.updatedAt, 'DD/MM/YYYY à hh:mm:ss'),
+    sortable: true
+  }
 ];
+
+export const cmdProviderCol = [
+  ...columns.slice(0, 2),
+  {
+    name: 'contacts',
+    align: 'left',
+    label: 'Contacts',
+    field: 'contacts',
+    headerStyle: 'font-weight: bold'
+  },
+  columns[2]
+]

@@ -10,6 +10,7 @@ import { FormService } from '../../form/form.service';
 import { UnitService } from '../../unit/unit.service';
 import { MedicineFormService } from '../../medicine-form/medicine-form.service';
 import { uniqId } from '../../shared/id-builder.service';
+import { UpdateMedicineInput } from '../types/medicine.input';
 
 @Resolver()
 export class MedicineResolver {
@@ -51,5 +52,14 @@ export class MedicineResolver {
     medForm.form = await this.formService.findOneById(formId);
     medForm.unit = await this.unitService.findOneById(unitId);
     return await this.medicineFormService.save(medForm);
+  }
+
+  @Mutation(() => Medicine)
+  async updateMedicine(
+    @Args('input') input: UpdateMedicineInput,
+  ): Promise<Medicine> {
+    const medicine = await this.medicineService.findOneById(input.id);
+    Object.assign(medicine, input);
+    return await this.medicineService.save(medicine);
   }
 }

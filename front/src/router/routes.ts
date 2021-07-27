@@ -22,6 +22,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'medicine',
         component: () => import('pages/medicine/Medicine.vue')
+      },
+      {
+        path: 'command',
+        component: () => import('pages/command/Command.vue')
       }
     ],
   },

@@ -10,9 +10,19 @@
         </q-item>
 
         <q-item>
-          <q-input :model-value="designation" label="Désignation">
+          <q-input
+            :model-value="modelValue.designation"
+            label="Désignation"
+            v-model="modelValue.designation"
+          >
             <template v-slot:append>
-              <q-btn size="sm" round icon="save" flat color="primary" />
+              <q-btn
+                size="sm"
+                @click="$emit('submit', modelValue)"
+                round
+                icon="save"
+                flat color="primary"
+              />
             </template>
           </q-input>
         </q-item>
@@ -22,13 +32,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
+import { UpdateMedicineInput } from '../../graphql/types';
 
 export default defineComponent({
   name: 'MedicineOperations',
   props: {
-    id: Number,
-    designation: String
+    designation: { type: String, required: true },
+    id: { type: Number, required: true }
+  },
+  emits: ['submit', 'delete'],
+  setup(props) {
+    return {
+      modelValue: reactive<UpdateMedicineInput>({
+        id: props.id,
+        designation: props.designation
+      })
+    }
   }
 });
 </script>

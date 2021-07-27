@@ -179,6 +179,7 @@ type Mutation {
   createMedicine(input: CreateMedicineInput!): Medicine!
   addMedicineForm(input: CreateMedicineFormInput!): Medicine!
   updateMedicineForm(input: UpdateMedicineFormInput!): MedicineForm!
+  updateMedicine(input: UpdateMedicineInput!): Medicine!
   createForm(input: CreateFormInput!): Form!
   updateForm(input: UpdateFormInput!): Form!
   removeForm(id: Int!): Form!
@@ -307,6 +308,11 @@ input UpdateMedicineFormInput {
   vat: Float!
   stock: Float!
   shop: Float!
+}
+
+input UpdateMedicineInput {
+  id: Int!
+  designation: String!
 }
 
 input CreateFormInput {

@@ -22,8 +22,9 @@ export const useUpdateMedicineForm = () => {
     vat: 0,
   });
   const setUpdateMedFormInput = (input: MedicineForm) => {
-    const {__typename, unit, form, ...res } = input;
-    Object.assign<UpdateMedicineFormInput, typeof res>(updateMedFormInput, res);
+    const {unit, form, ...res } = input;
+    delete res.__typename;
+    Object.assign(updateMedFormInput, res);
     updateMedFormInput.unitId = unit.id;
     updateMedFormInput.formId = form.id;
     showUpdateMedForm.value = true;

@@ -1,8 +1,7 @@
 {
   "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": "."
+    "outDir": "./dist"
   }
 }
 

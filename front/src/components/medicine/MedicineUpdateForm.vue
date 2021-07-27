@@ -87,7 +87,7 @@
 import { defineComponent, PropType, reactive, watch, ref } from 'vue';
 import { Unit, UpdateMedicineFormInput } from '../../graphql/types';
 import CustomSelect from '../shared/CustomSelect.vue';
-type Price = {
+export type Price = {
   unitId: number;
   value: number;
 }
