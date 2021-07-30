@@ -1,21 +1,18 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { Payment } from '../payment/payment.entity';
-import {Command} from '../command/command.entity';
+import { Command } from '../command/command.entity';
 
 @ObjectType()
 @Entity({ name: 'invoices' })
 export class Invoice {
-  @Field(() => Int)
+  @Field()
   @PrimaryColumn()
   id: number;
 
@@ -28,24 +25,21 @@ export class Invoice {
   dueDate: string;
 
   @Field(() => Payment, { nullable: true })
-  @OneToOne(() => Payment, { nullable: true })
-  @JoinColumn({ name: 'payment_id', referencedColumnName: 'id' })
   payment?: Payment;
-  @RelationId((invoice: Invoice) => invoice.payment)
+  @Column({ default: 0 })
   paymentId: number;
 
-  @Field(() => Command, { nullable: true })
-  @OneToOne(() => Command, { nullable: true })
-  @JoinColumn({ name: 'command_id', referencedColumnName: 'id' })
+  @Field(() => Command)
   command: Command;
-  @RelationId((invoice: Invoice) => invoice.command)
+  @Field()
+  @Column()
   commandId: number;
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'update_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

@@ -1,7 +1,12 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Meta } from '../../shared/shared.dto';
+import { Invoice } from '../invoice.entity';
 
-@InputType()
-export class InvoiceDto {
-  @Field(() => Int)
-  id: number;
+@ObjectType()
+export class InvoicePagination {
+  @Field(() => [Invoice])
+  items: Invoice[];
+
+  @Field(() => Meta)
+  meta: Meta;
 }

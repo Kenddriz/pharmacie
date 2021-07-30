@@ -1,9 +1,11 @@
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreatePaymentInput {
+export class SavePaymentInput {
   @Field()
-  reference: number;
+  id: number;
+  @Field()
+  reference: string;
 
   @Field()
   description: string;
@@ -15,11 +17,5 @@ export class CreatePaymentInput {
   invoiceId: number;
 
   @Field()
-  paymentMode: string;
-}
-
-@InputType()
-export class UpdatePaymentInput {
-  @Field()
-  id: number;
+  paymentModeId: number;
 }

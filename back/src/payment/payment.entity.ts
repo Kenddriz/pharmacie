@@ -3,10 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 import { PaymentMode } from '../payment-mode/payment-mode.entity';
@@ -31,17 +28,15 @@ export class Payment {
   date: string;
 
   @Field(() => PaymentMode)
-  @ManyToOne(() => PaymentMode)
-  @JoinColumn({ name: 'payment_mode_id', referencedColumnName: 'id' })
   paymentMode: PaymentMode;
-  @RelationId((payment: Payment) => payment.paymentMode)
+  @Column()
   paymentModeId: number;
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'update_at' })
+  @UpdateDateColumn({ name: 'updateAt' })
   updatedAt: Date;
 }

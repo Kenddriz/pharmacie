@@ -16,4 +16,7 @@ export class PaymentService {
   findOneById(id: number) {
     return this.paymentService.findOne(id);
   }
+  async findOneByPaymentModeId(paymentModeId: number) {
+    return this.paymentService.findOne({ where: { paymentModeId } });
+  }
 }

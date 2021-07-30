@@ -17,6 +17,13 @@ export class PaymentModeService {
   async findOneById(id: number): Promise<PaymentMode> {
     return this.paymentModeRepository.findOne(id);
   }
+  async findAll(): Promise<PaymentMode[]> {
+    return this.paymentModeRepository.find({ order: { label: 'ASC' } });
+  }
+  async remove(id: number): Promise<number> {
+    await this.paymentModeRepository.delete(id);
+    return id;
+  }
 
   async findOneByLabel(label: string): Promise<PaymentMode> {
     label = label.toLowerCase();

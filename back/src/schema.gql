@@ -47,7 +47,7 @@ type SalesLine {
 }
 
 type PaymentMode {
-  id: Int!
+  id: Float!
   label: String!
 }
 
@@ -109,11 +109,12 @@ type Command {
 }
 
 type Invoice {
-  id: Int!
+  id: Float!
   reference: String!
   dueDate: String!
   payment: Payment
-  command: Command
+  command: Command!
+  commandId: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -126,6 +127,11 @@ type Meta {
   currentPage: Float!
 }
 
+type InvoicePagination {
+  items: [Invoice!]!
+  meta: Meta!
+}
+
 type CommandPagination {
   items: [Command!]!
   meta: Meta!
@@ -134,6 +140,11 @@ type CommandPagination {
 type ProviderPagination {
   items: [Provider!]!
   meta: Meta!
+}
+
+type RemovePaymentModeDto {
+  id: Float!
+  payment: Payment
 }
 
 type User {
@@ -153,10 +164,13 @@ type Query {
   getHello: String!
   salesLine(id: Int!): SalesLine!
   sale(id: Int!): Sale!
+  paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
+  findOneInvoice(commandId: Float!): Invoice!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
   contactTypes: [ContactType!]!
+  paymentModes: [PaymentMode!]!
   medicines: [Medicine!]!
   forms: [Form!]!
   whoAmI: User!
@@ -188,8 +202,10 @@ type Mutation {
   updateContact(input: UpdateContactInput!): Contact!
   createContactType(input: CreateContactTypeInput!): ContactType!
   updateContactType(input: UpdateContactTypeInput!): ContactType!
-  createPayment(input: CreatePaymentInput!): Invoice!
-  updatePaymentMode(input: UpdatePaymentModeInput!): PaymentMode!
+  savePayment(input: SavePaymentInput!): Invoice!
+  removePaymentMode(id: Float!): RemovePaymentModeDto!
+  createPaymentMode(input: PaymentModeInput!): PaymentMode!
+  updatePaymentMode(input: PaymentModeInput!): PaymentMode!
   createMedicine(input: CreateMedicineInput!): Medicine!
   addMedicineForm(input: CreateMedicineFormInput!): Medicine!
   updateMedicineForm(input: UpdateMedicineFormInput!): MedicineForm!
@@ -230,6 +246,7 @@ input UpdateSaleInput {
 input CreateInvoiceInput {
   dueDate: String!
   reference: String!
+  commandId: Float!
 }
 
 input UpdateInvoiceInput {
@@ -294,16 +311,17 @@ input UpdateContactTypeInput {
   id: Float!
 }
 
-input CreatePaymentInput {
-  reference: Float!
+input SavePaymentInput {
+  id: Float!
+  reference: String!
   description: String!
   date: String!
   invoiceId: Float!
-  paymentMode: String!
+  paymentModeId: Float!
 }
 
-input UpdatePaymentModeInput {
-  id: Int!
+input PaymentModeInput {
+  id: Float
   label: String!
 }
 
