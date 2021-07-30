@@ -16,7 +16,7 @@
         color="primary"
         label="Enregistrer les lignes"
         icon-right="save"
-        @click="submitAddCommandLine(commandId); $emit('submitted')"
+        @click="submit()"
         :loading="addCmdLineLoading"
       />
     </td>
@@ -113,7 +113,14 @@ export default defineComponent({
       type: Function,
       required: true
     },
-    commandId: Number
+    commandId: {
+      type: Number,
+      required: true
+    },
+    emitValue: {
+      type: Boolean,
+      default: false
+    }
   },
   emits: ['submitted'],
   setup() {
@@ -129,6 +136,10 @@ export default defineComponent({
         if(form) return this.pathToChild(form.unit.id);
       }
       return this.units;
+    },
+    async submit() {
+      const lines = await this.submitAddCommandLine(this.commandId);
+      if(this.emitValue) this.$emit('submitted', lines);
     }
   }
 });

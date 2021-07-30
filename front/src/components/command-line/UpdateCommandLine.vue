@@ -146,6 +146,12 @@
 
     <q-item>
       <q-item-section side>
+        <q-icon class="q-ml-sm" name="tips_and_updates" color="amber" />
+      </q-item-section>
+      <q-item-section>
+        Dernière mise à jour : {{formatDate(command.provider.updatedAt, 'DATE_TIME')}}
+      </q-item-section>
+     <!-- <q-item-section>
         <q-checkbox
           color="amber"
           keep-color
@@ -154,47 +160,90 @@
       </q-item-section>
       <q-item-section>
         Cocher si la commande est arrivée et prête à être importée dans les stocks ou magasin
-      </q-item-section>
+      </q-item-section>-->
     </q-item>
 
-    <q-item>
+    <q-item v-if="command.commandLines.length && !command.arrived">
       <q-item-section side>
         <q-btn
-          icon="add"
+          @click="invoiceDialog = true"
+          icon="receipt"
           text-color="dark"
-          label="Payer la commande"
+          label="Facturer la commande"
           class="q-ma-md"
         />
       </q-item-section>
     </q-item>
 
-    <q-item>
+    <q-item v-else-if="command.arrived">
       <q-item-section side>
-        <q-radio color="orange" :model-value="true" :val="true" />
+        <q-radio color="orange" :model-value="command.arrived" :val="command.arrived" />
       </q-item-section>
       <q-item-section>
-        Payée
+        Facturée
       </q-item-section>
       <q-item-section>
         <q-item-label>
-          <q-btn flat no-caps icon="info" label="Voir les informations de payement" />
+          <q-btn
+            flat
+            no-caps
+            icon="info"
+            label="Voir la facture"
+            text-color="primary"
+            :loading="findInvoiceLoading"
+          >
+            <q-menu transition-show="flip-right" transition-hide="flip-left">
+              <q-list dense bordered>
+                <q-item-label header>Facture</q-item-label>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="tag" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Référence</q-item-label>
+                    <q-item-label caption>{{cmdInvoice.reference}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item>
+                  <q-item-section avatar>
+                    <q-icon name="pin_end" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Date d'échéance</q-item-label>
+                    <q-item-label caption>{{formatDate(cmdInvoice.dueDate, 'DATE_ONLY')}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item-label header>Payement</q-item-label>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </q-item-label>
       </q-item-section>
     </q-item>
   </q-list>
+  <q-dialog v-model="invoiceDialog">
+    <InvoiceForm
+      @close="invoiceDialog = false"
+      v-model="createInvoiceInput"
+      @submit="createInvoice(command.id)"
+    />
+  </q-dialog>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref, watch } from 'vue';
 import { Command, Form, Medicine, Unit } from '../../graphql/types';
 import { cmData } from './cmData';
 import CommandLineRow from './CommandLineRow.vue';
 import CustomSelect from '../shared/CustomSelect.vue';
+import InvoiceForm from '../invoice/InvoiceForm.vue';
 import { formatDate } from '../../shared/date';
 import { useRemoveCommandLine } from '../../graphql/command-lines/remove/remove.command-line.service';
 import { useUpdateCommandLine } from '../../graphql/command-lines/update/update.command-line.service';
+import { useCreateInvoice, useFindOneInvoice } from '../../graphql/invoice/invoice.service';
 export default defineComponent({
   name: 'UpdateCommandLine',
-  components: {CustomSelect, CommandLineRow},
+  components: { CustomSelect, CommandLineRow, InvoiceForm },
   props: {
     medicines: {
       type: Array as PropType<Medicine[]>,
@@ -221,12 +270,18 @@ export default defineComponent({
       required: true
     },
   },
-  setup() {
+  setup(props) {
+    const {findInvoiceLoading, findOneInvoice, cmdInvoice } = useFindOneInvoice();
+    watch(() => props.command.id, id => {
+      if(props.command.arrived) findOneInvoice(id);
+    }, { immediate: true });
     return {
       cmData,
       formatDate,
       ...useRemoveCommandLine(),
-      ...useUpdateCommandLine()
+      ...useUpdateCommandLine(),
+      ...useCreateInvoice(),
+      cmdInvoice, findInvoiceLoading
     }
   }
 });

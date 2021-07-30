@@ -30,18 +30,10 @@
         </q-tab-panel>
 
         <q-tab-panel name="update" class="q-pa-none">
-          <ScrollArea v-if="selectedCmd" :style="`height:${$q.screen.height - 157}px`">
+          <q-linear-progress v-if="paginateLoading" query />
+          <ScrollArea v-else-if="selectedCmd" :style="`height:${$q.screen.height - 157}px`">
             <div class="row items-start justify-center q-mt-sm">
-              <q-card bordered style="width: 400px">
-                <q-card-section  class="text-center">
-                  <p class="text-h5">{{selectedCmd.provider.name}}</p>
-                  <p>{{selectedCmd.provider.address}}</p>
-                </q-card-section>
-                <q-separator inset />
-                <q-card-section>
-                  <ContactTypeList :contacts="contacts(selectedCmd.provider.contacts)" />
-                </q-card-section>
-              </q-card>
+              <CardProvider :provider="selectedCmd.provider" />
             </div>
             <UpdateCommandLine
               :medicines="medicines"
@@ -55,7 +47,6 @@
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
-
     <div class="col-12 col-md-3">
       <div class="text-h6 text-center">Liste des commandes</div>
       <q-list
@@ -104,20 +95,18 @@ import AddCommandLine from '../../components/command-line/AddCommandLine.vue';
 import UpdateCommandLine from '../../components/command-line/UpdateCommandLine.vue';
 import { usePaginateCommands } from '../../graphql/command/read/paginate-commands.service';
 import { formatDate } from '../../shared/date';
-import { useContactTypes } from '../../graphql/contact_type/read/contact.types.service';
 import ScrollArea from '../../components/shared/ScrollArea.vue';
 import { useForms } from '../../graphql/medicine-types/read/forms.service';
 import { useUnits } from '../../graphql/unit/units/units.service';
-import ContactTypeList from '../../components/contactType/ContactTypeList.vue';
+import CardProvider from '../../components/provider/CardProvider.vue';
 
 export default defineComponent({
   name: 'Command',
-  components: {AddCommandLine, UpdateCommandLine, ScrollArea, ContactTypeList},
+  components: {AddCommandLine, UpdateCommandLine, ScrollArea, CardProvider},
   setup() {
     return {
       tab: ref<string>('update'),
       formatDate,
-      ...useContactTypes(),
       ...useMedicines(),
       ...usePaginateCommands(),
       ...useForms(),

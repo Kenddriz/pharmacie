@@ -62,7 +62,7 @@
           unelevated
           :disable="!selectedProvider.length"
           color="primary"
-          :label="`${createdCmd === 0 ? 'Créer la commande et ' : ''}continuer`"
+          :label="`${createdCmd.id === 0 ? 'Créer la commande' : 'Modifier le fournisseur'} et continuer`"
           @click="submitCreateCmd"
         />
       </q-stepper-navigation>
@@ -98,23 +98,35 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-for="(cmd, i) in createdCmd.commandLines" :key="i">
+            <td>{{cmd.medicine}}</td>
+            <td>{{cmd.form.label}}</td>
+            <td>{{cmd.unit.label}}</td>
+            <td>{{cmd.quantity}}</td>
+            <td>{{cmd.price}}</td>
+            <td>{{cmd.vat}}</td>
+            <td></td>
+          </tr>
         <CommandLineRow
-          :commandId="createdCmd"
+          :commandId="createdCmd.id"
           :medicines="medicines"
           :forms="forms"
           :units="units"
           :path-to-child="pathToChild"
-          @submitted="submitted"
+          :emit-value="true"
+          @submitted="createdCmd.commandLines = $event"
         />
         </tbody>
       </q-markup-table>
 
       <q-stepper-navigation>
         <q-btn
+          v-for="(bn, index) in btnBack"
+          :key="index"
           flat
-          @click="step = 1"
+          @click="submitted(index)"
           color="primary"
-          label="Retour"
+          :label="bn"
           class="q-ml-sm"
         />
       </q-stepper-navigation>
@@ -178,20 +190,23 @@ export default defineComponent({
       },
       createCmdLoading, createdCmd, updateCmdLoading,
       submitCreateCmd: async () => {
-        if(createdCmd.value === 0)
-          await createCommand(selectedProvider.value[0].id);
-        else {
+        if(createdCmd.commandLines.length) {
           updateCmdInput.providerId = selectedProvider.value[0].id;
-          updateCmdInput.id = createdCmd.value;
+          updateCmdInput.id = createdCmd.id;
           await updateCommand()
         }
+        await createCommand(selectedProvider.value[0].id);
         step.value = 2;
       },
-      submitted: () => {
-        selectedProvider.value.length = 0;
-        createdCmd.value = 0;
+      submitted: (i: number) => {
+        if(i === 1 && createdCmd.commandLines.length) {
+          selectedProvider.value.length = 0;
+          createdCmd.id = 0;
+          createdCmd.commandLines = [];
+        }
         step.value = 1;
-      }
+      },
+      btnBack: ['Retour', 'Réinitialiser']
     }
   }
 });

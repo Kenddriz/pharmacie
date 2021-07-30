@@ -5,11 +5,10 @@ import { MEDICINES, MedicinesData } from './read/medicines.sdl';
 import { CreateMedicineData } from './create/create.medicine.sdl';
 
 export const addMedicineCache = (cache: ApolloCache<CreateMedicineData>, medicine: Medicine) => {
-  let medicinesCache = cache.readQuery<MedicinesData>({
+  const medicinesCache = cloneDeep(cache.readQuery<MedicinesData>({
     query: MEDICINES
-  });
+  }));
   if(medicinesCache?.medicines) {
-    medicinesCache = cloneDeep(medicinesCache);
     medicinesCache.medicines.unshift(medicine);
     cache.writeQuery<MedicinesData>({
       query: MEDICINES,

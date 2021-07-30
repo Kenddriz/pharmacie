@@ -95,6 +95,7 @@ export type CreateFormInput = {
 export type CreateInvoiceInput = {
   dueDate: Scalars['String'];
   reference: Scalars['String'];
+  commandId: Scalars['Float'];
 };
 
 export type CreateMedicineFormInput = {
@@ -115,14 +116,6 @@ export type CreateMedicineInput = {
 export type CreateOrUpdateCommandLineInput = {
   commandId: Scalars['Float'];
   commandLines: Array<CommandLineInput>;
-};
-
-export type CreatePaymentInput = {
-  reference: Scalars['Float'];
-  description: Scalars['String'];
-  date: Scalars['String'];
-  invoiceId: Scalars['Float'];
-  paymentMode: Scalars['String'];
 };
 
 export type CreateProviderInput = {
@@ -162,13 +155,20 @@ export type Form = {
 
 export type Invoice = {
   __typename?: 'Invoice';
-  id: Scalars['Int'];
+  id: Scalars['Float'];
   reference: Scalars['String'];
   dueDate: Scalars['String'];
   payment?: Maybe<Payment>;
-  command?: Maybe<Command>;
+  command: Command;
+  commandId: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type InvoicePagination = {
+  __typename?: 'InvoicePagination';
+  items: Array<Invoice>;
+  meta: Meta;
 };
 
 export type LoginDto = {
@@ -224,7 +224,9 @@ export type Mutation = {
   updateContact: Contact;
   createContactType: ContactType;
   updateContactType: ContactType;
-  createPayment: Invoice;
+  savePayment: Invoice;
+  removePaymentMode: RemovePaymentModeDto;
+  createPaymentMode: PaymentMode;
   updatePaymentMode: PaymentMode;
   createMedicine: Medicine;
   addMedicineForm: Medicine;
@@ -332,13 +334,23 @@ export type MutationUpdateContactTypeArgs = {
 };
 
 
-export type MutationCreatePaymentArgs = {
-  input: CreatePaymentInput;
+export type MutationSavePaymentArgs = {
+  input: SavePaymentInput;
+};
+
+
+export type MutationRemovePaymentModeArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type MutationCreatePaymentModeArgs = {
+  input: PaymentModeInput;
 };
 
 
 export type MutationUpdatePaymentModeArgs = {
-  input: UpdatePaymentModeInput;
+  input: PaymentModeInput;
 };
 
 
@@ -425,7 +437,12 @@ export type Payment = {
 
 export type PaymentMode = {
   __typename?: 'PaymentMode';
-  id: Scalars['Int'];
+  id: Scalars['Float'];
+  label: Scalars['String'];
+};
+
+export type PaymentModeInput = {
+  id?: Maybe<Scalars['Float']>;
   label: Scalars['String'];
 };
 
@@ -452,10 +469,13 @@ export type Query = {
   getHello: Scalars['String'];
   salesLine: SalesLine;
   sale: Sale;
+  paginateInvoices: InvoicePagination;
+  findOneInvoice: Invoice;
   paginateCommands: CommandPagination;
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
   contactTypes: Array<ContactType>;
+  paymentModes: Array<PaymentMode>;
   medicines: Array<Medicine>;
   forms: Array<Form>;
   whoAmI: User;
@@ -473,6 +493,16 @@ export type QuerySaleArgs = {
 };
 
 
+export type QueryPaginateInvoicesArgs = {
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryFindOneInvoiceArgs = {
+  commandId: Scalars['Float'];
+};
+
+
 export type QueryPaginateCommandsArgs = {
   paginationInput: PaginationInput;
 };
@@ -480,6 +510,12 @@ export type QueryPaginateCommandsArgs = {
 
 export type QueryProvidersPaginateArgs = {
   input: PaginationInput;
+};
+
+export type RemovePaymentModeDto = {
+  __typename?: 'RemovePaymentModeDto';
+  id: Scalars['Float'];
+  payment?: Maybe<Payment>;
 };
 
 export type Sale = {
@@ -496,6 +532,15 @@ export type SalesLine = {
   sale: Sale;
   medicine: Medicine;
   unit: Unit;
+};
+
+export type SavePaymentInput = {
+  id: Scalars['Float'];
+  reference: Scalars['String'];
+  description: Scalars['String'];
+  date: Scalars['String'];
+  invoiceId: Scalars['Float'];
+  paymentModeId: Scalars['Float'];
 };
 
 export type Unit = {
@@ -549,11 +594,6 @@ export type UpdateMedicineFormInput = {
 export type UpdateMedicineInput = {
   id: Scalars['Int'];
   designation: Scalars['String'];
-};
-
-export type UpdatePaymentModeInput = {
-  id: Scalars['Int'];
-  label: Scalars['String'];
 };
 
 export type UpdateSaleInput = {

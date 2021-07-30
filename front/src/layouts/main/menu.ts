@@ -2,27 +2,32 @@ export const pItems = [
   {
     label: 'Unité',
     to: 'unit',
-    icon: 'group'
+    icon: 'ac_unit'
   },
   {
     label: 'Fournisseur',
     to: 'provider',
-    icon: 'group'
+    icon: 'local_pharmacy'
   },
   {
     label: 'Médicament',
     to: 'medicine',
-    icon: 'event'
+    icon: 'medication'
   },
   {
     label: 'Commande',
     to: 'command',
-    icon: 'event'
+    icon: 'touch_app'
   },
   {
     label: 'Facture',
     to: 'invoice',
-    icon: 'event'
+    icon: 'request_quote'
+  },
+  {
+    label: 'Vente',
+    to: 'sell',
+    icon: 'shopping_basket'
   }
 ]
 

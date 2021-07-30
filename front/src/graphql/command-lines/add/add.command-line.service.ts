@@ -19,9 +19,10 @@ export const useCreateCommandLine = () => {
     MutationAddCommandLineArgs
     >(ADD_COMMAND_LINE);
   onDone(() => input.commandLines.length = 0);
-  function submitAddCommandLine(cmdId: number) {
+  async function submitAddCommandLine(cmdId: number) {
     input.commandId = cmdId;
-    void mutate({ input });
+    const lines = await mutate({ input });
+    return lines.data?.addCommandLine?.commandLines||[];
   }
   return { submitAddCommandLine, input, addCmdLineLoading, addAddCmdLine,removeCmdLine }
 }
