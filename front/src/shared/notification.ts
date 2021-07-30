@@ -5,5 +5,7 @@ export const notify = (message: string) => {
       message: message,
       color: 'positive',
       position: 'bottom-right',
+      multiLine: true,
+      html: true
     });
 }

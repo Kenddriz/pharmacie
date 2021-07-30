@@ -79,7 +79,8 @@ export const useRemovePaymentMode = () => {
     MutationRemovePaymentModeArgs
     >(REMOVE_PAYMENT_MODE, {
       update: (cache, { data}) => {
-        if(data?.removePaymentMode && !data?.removePaymentMode.payment) {
+        const payment = data?.removePaymentMode.payment;
+        if(data?.removePaymentMode && !payment) {
           cache.modify({
             fields: {
               paymentModes: (existingData: PaymentMode[], { readField}) => {
@@ -90,7 +91,8 @@ export const useRemovePaymentMode = () => {
             }
           })
         }
-        else notify('Echec de suppression');
+        else if(payment)
+          notify('<div>Impossible de supprimer!Des payments utilisent ce mode</div><div> y compris ce dont la référence n°' + payment.reference + '</div>')
       }
   });
   const submitRemovePaymentMode = async (id: number) => {

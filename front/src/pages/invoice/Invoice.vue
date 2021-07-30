@@ -20,7 +20,7 @@
           v-ripple
           v-for="(invoice, i) in invoices.items"
           :active="selectedInvoice.id === invoice.id"
-          active-class="bg-grey text-white"
+          active-class="bg-warning text-white"
           :key="i"
           @click="setSelectedInvoice(i)"
         >
@@ -34,8 +34,8 @@
           <q-item-section side>
             <q-item-label>
               payée
-              <q-icon v-if="invoice.payment" size="sm" color="positive" name="price_check" />
-              <q-icon v-else size="sm" color="warning" name="unpublished" />
+              <q-icon v-if="invoice.payment" size="md" color="primary" name="price_check" />
+              <q-icon v-else size="sm" color="positive" name="unpublished" />
             </q-item-label>
           </q-item-section>
         </q-item>

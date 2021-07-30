@@ -7,9 +7,7 @@ import {
   InMemoryCache,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { ApolloLink, split } from '@apollo/client/core';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from '@apollo/client/utilities';
+import { ApolloLink } from '@apollo/client/core';
 import { createUploadLink } from 'apollo-upload-client';
 import { onError } from '@apollo/client/link/error';
 import { Notify } from 'quasar';
@@ -28,11 +26,11 @@ const authLink = setContext((_, { headers, ...context }) => {
 });
 
 const defaultOptions: DefaultOptions = {
-  watchQuery: {
+  /*watchQuery: {
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'ignore',
     notifyOnNetworkStatusChange: true,
-  },
+  },*/
   query: {
     fetchPolicy: 'cache-first',
     errorPolicy: 'all',
@@ -41,15 +39,6 @@ const defaultOptions: DefaultOptions = {
     errorPolicy: 'all'
   },
 };
-
-// createU
-
-const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:3000/graphql',
-  options: {
-    reconnect: false,
-  },
-});
 
 const httpOptions = {
   uri: 'http://localhost:3000/graphql',
@@ -69,25 +58,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   });
 });
 
-const link = split(
-  // split based on operation type
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    );
-  },
-  wsLink,
-  httpLink
-);
-
 // const uploadLink = createUploadLink({ uri: 'http://localhost:3000/graphql', fetchOptions: {mode: 'no-cors'}  });
 
 const uploadLink = ApolloLink.split(
   (operation) => operation.getContext().hasUpload,
   createUploadLink(httpOptions) as any,
-  link
+  httpLink
 );
 
 // Create the apollo client

@@ -5,7 +5,7 @@
         <q-icon name="info" size="md" /> Informations de payement
       </div>
       <q-card-section horizontal class="q-gutter-md">
-        <div class="row q-gutter-md items-center">
+        <div class="row q-gutter-md items-start">
           <q-input
             :model-value="paymentInput.reference"
             v-model="paymentInput.reference"
@@ -29,6 +29,7 @@
           />
           <CustomSelect
             outlined
+            :dense="false"
             label="Mode de payement"
             :options="paymentModes"
             v-model="paymentInput.paymentModeId"
@@ -55,7 +56,7 @@
 <script lang="ts">
 import { defineComponent, PropType, watch } from 'vue';
 import CustomSelect from '../shared/CustomSelect.vue';
-import { Payment, PaymentMode, PaymentModeInput } from '../../graphql/types';
+import { Payment, PaymentMode } from '../../graphql/types';
 import { useSavePayment } from '../../graphql/payment/payment.service';
 export default defineComponent({
   name: 'PaymentForm',

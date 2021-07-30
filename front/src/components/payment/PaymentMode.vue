@@ -21,7 +21,7 @@
           class="mCard justify-center items-center column"
           @click="setUpdateInput(p)"
         >
-          <span class="q-mb-sm">{{p.label}}</span>
+          <div class="q-pa-sm">{{p.label}}</div>
           <q-btn icon="edit"/>
         </q-card>
       </div>
@@ -78,7 +78,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   .mCard {
-    width: 100px;
+    min-width: 100px;
     height: 100px;
   }
 </style>

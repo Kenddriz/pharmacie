@@ -2,7 +2,7 @@
   <q-select
     transition-show="scale"
     transition-hide="scale"
-    dense
+    :dense="dense"
     :borderless="borderless"
     :outlined="outlined"
     options-dense
@@ -69,6 +69,10 @@ export default defineComponent({
       default: true
     },
     valueOnly: {
+      type: Boolean,
+      default: true
+    },
+    dense: {
       type: Boolean,
       default: true
     },

@@ -22,7 +22,6 @@ export class MedicineResolver {
   ) {}
   @Query(() => [Medicine])
   async medicines(): Promise<Medicine[]> {
-    console.log('called');
     return await this.medicineService.findAll();
   }
   @Mutation(() => Medicine)

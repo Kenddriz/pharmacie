@@ -9,7 +9,6 @@ export class PaymentModeResolver {
   constructor(private readonly paymentModeService: PaymentModeService) {}
   @Query(() => [PaymentMode])
   async paymentModes(): Promise<PaymentMode[]> {
-    console.log('called');
     return this.paymentModeService.findAll();
   }
   @Mutation(() => PaymentMode)

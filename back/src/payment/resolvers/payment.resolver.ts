@@ -20,7 +20,7 @@ export class PaymentResolver {
   async savePayment(@Args('input') input: SavePaymentInput): Promise<Invoice> {
     const { id, invoiceId, ...res } = input;
     let payment = new Payment();
-    if (id === 0) payment = await this.paymentService.findOneById(input.id);
+    if (id !== 0) payment = await this.paymentService.findOneById(input.id);
     else payment.id = await uniqId('Payment');
     Object.assign(payment, res);
     await this.paymentService.save(payment);

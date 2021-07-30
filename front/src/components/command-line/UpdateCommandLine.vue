@@ -231,7 +231,7 @@
   </q-dialog>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
+import { defineComponent, PropType, watch } from 'vue';
 import { Command, Form, Medicine, Unit } from '../../graphql/types';
 import { cmData } from './cmData';
 import CommandLineRow from './CommandLineRow.vue';
