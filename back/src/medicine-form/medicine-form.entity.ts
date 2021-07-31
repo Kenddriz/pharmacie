@@ -31,18 +31,18 @@ export class MedicineForm {
   @Column({ type: 'float', default: 0 })
   price: number;
 
-  @ManyToOne(() => Medicine)
+  @Field(() => Medicine)
   medicine: Medicine;
-  @RelationId((med: MedicineForm) => med.medicine)
+  @PrimaryColumn()
   medicineId: number;
 
-  @ManyToOne(() => Unit)
+  @Field(() => Unit)
   unit: Unit;
-  @RelationId((med: MedicineForm) => med.unit)
+  @Column()
   unitId: number;
 
-  @ManyToOne(() => Form)
+  @Field(() => Form)
   form: Form;
-  @RelationId((med: MedicineForm) => med.form)
+  @PrimaryColumn()
   formId: number;
 }

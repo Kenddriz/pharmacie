@@ -20,7 +20,7 @@ export class CreateUnitInput extends PartialType(
   description: string;
 }
 
-/**update unit*/
+/**update sale-unit*/
 @InputType()
 export class UpdateUnitInput extends PartialType(CreateUnitInput, InputType) {
   @Field()

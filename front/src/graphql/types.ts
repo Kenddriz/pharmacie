@@ -176,6 +176,14 @@ export type LoginDto = {
   token: Scalars['String'];
 };
 
+export type Measure = {
+  __typename?: 'Measure';
+  id: Scalars['Float'];
+  children: Array<Measure>;
+  parentId: Scalars['Float'];
+  label: Scalars['String'];
+};
+
 export type Medicine = {
   __typename?: 'Medicine';
   id: Scalars['Int'];
@@ -191,6 +199,7 @@ export type MedicineForm = {
   stock: Scalars['Float'];
   shop: Scalars['Float'];
   price: Scalars['Float'];
+  medicine: Medicine;
   unit: Unit;
   form: Form;
 };
@@ -241,6 +250,8 @@ export type Mutation = {
   login: LoginDto;
   createUnit: Unit;
   updateUnit: Unit;
+  saveMeasure: Measure;
+  removeMeasure: Measure;
 };
 
 
@@ -418,6 +429,16 @@ export type MutationUpdateUnitArgs = {
   input: UpdateUnitInput;
 };
 
+
+export type MutationSaveMeasureArgs = {
+  input: SaveMeasureInput;
+};
+
+
+export type MutationRemoveMeasureArgs = {
+  id: Scalars['Int'];
+};
+
 export type PaginationInput = {
   keyword?: Maybe<Scalars['String']>;
   page: Scalars['Float'];
@@ -480,6 +501,7 @@ export type Query = {
   forms: Array<Form>;
   whoAmI: User;
   units: Array<Unit>;
+  measures: Array<Measure>;
 };
 
 
@@ -512,6 +534,11 @@ export type QueryProvidersPaginateArgs = {
   input: PaginationInput;
 };
 
+
+export type QueryMeasuresArgs = {
+  measures: Scalars['Boolean'];
+};
+
 export type RemovePaymentModeDto = {
   __typename?: 'RemovePaymentModeDto';
   id: Scalars['Float'];
@@ -532,6 +559,12 @@ export type SalesLine = {
   sale: Sale;
   medicine: Medicine;
   unit: Unit;
+};
+
+export type SaveMeasureInput = {
+  id: Scalars['Float'];
+  parentId: Scalars['Float'];
+  label: Scalars['String'];
 };
 
 export type SavePaymentInput = {

@@ -18,7 +18,7 @@
       />
       <!--<q-input type="number" label="Prix unitaire de vente"
          v-model.number="usedUnit.price" dense stack-label min="0"
-         :suffix="`/${findUnit(usedUnit.unit)?.label || '?'}`"
+         :suffix="`/${findUnit(usedUnit.sale-unit)?.label || '?'}`"
       />-->
       <q-card square bordered flat>
         <div class="q-pt-sm q-pl-md">Quantités [ {{quantity}} ]</div>

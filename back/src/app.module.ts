@@ -22,6 +22,7 @@ import { ContactModule } from './contact/contact.module';
 import { ContactTypeModule } from './contact-type/contact-type.module';
 import { MedicineFormModule } from './medicine-form/medicine-form.module';
 import { FormModule } from './form/form.module';
+import { MeasureModule } from './measure/measure.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { FormModule } from './form/form.module';
     ContactTypeModule,
     FormModule,
     MedicineFormModule,
+    MeasureModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

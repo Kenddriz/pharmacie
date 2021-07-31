@@ -26,6 +26,7 @@ type MedicineForm {
   stock: Float!
   shop: Float!
   price: Float!
+  medicine: Medicine!
   unit: Unit!
   form: Form!
 }
@@ -160,6 +161,13 @@ type LoginDto {
   token: String!
 }
 
+type Measure {
+  id: Float!
+  children: [Measure!]!
+  parentId: Float!
+  label: String!
+}
+
 type Query {
   getHello: String!
   salesLine(id: Int!): SalesLine!
@@ -175,6 +183,7 @@ type Query {
   forms: [Form!]!
   whoAmI: User!
   units: [Unit!]!
+  measures(measures: Boolean!): [Measure!]!
 }
 
 input PaginationInput {
@@ -219,6 +228,8 @@ type Mutation {
   login(input: AuthInput!): LoginDto!
   createUnit(input: CreateUnitInput!): Unit!
   updateUnit(input: UpdateUnitInput!): Unit!
+  saveMeasure(input: SaveMeasureInput!): Measure!
+  removeMeasure(id: Int!): Measure!
 }
 
 input CreateSalesLineInput {
@@ -394,4 +405,10 @@ input UpdateUnitInput {
   description: String
   parentId: Float = 0
   id: Float!
+}
+
+input SaveMeasureInput {
+  id: Float!
+  parentId: Float!
+  label: String!
 }

@@ -8,7 +8,7 @@ import { notify } from '../../shared/notification';
 export const useSavePayment = () => {
   const paymentInput = reactive<SavePaymentInput>({
     id: 0,
-    date: '',
+    date: formatDate(Date.now(), 'DATE_ONLY'),
     description: '',
     invoiceId: 0,
     paymentModeId: 0,
@@ -30,7 +30,7 @@ export const useSavePayment = () => {
   const savePayment = async() => {
     await mutate({ input: {
         ...paymentInput,
-        date: formatDate(paymentInput.date, 'DB_DATE')
+        date: paymentInput.date.split('/').reverse().join('-')
       }
     });
   }

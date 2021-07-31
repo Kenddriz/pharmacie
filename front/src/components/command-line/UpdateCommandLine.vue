@@ -214,7 +214,26 @@
                   </q-item-section>
                 </q-item>
                 <q-separator />
+
                 <q-item-label header>Payement</q-item-label>
+                <q-item v-if="cmdInvoice?.payment">
+                  <q-item-section avatar>
+                    <q-icon name="payments" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Date de payement</q-item-label>
+                    <q-item-label caption>{{formatDate(cmdInvoice.payment.date, 'DATE_ONLY')}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item v-else>
+                  <q-item-section avatar>
+                    <q-icon name="money_off_csred" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Impayée</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>

@@ -1,6 +1,6 @@
 export const pItems = [
   {
-    label: 'Unité',
+    label: 'Unités',
     to: 'unit',
     icon: 'ac_unit'
   },
