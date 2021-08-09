@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { CreateCommandLineInput } from './dto/create-command-line.input';
+import { UpdateCommandLineInput } from './dto/update-command-line.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommandLine } from './command-line.entity';
 import { Repository } from 'typeorm';
@@ -9,36 +11,23 @@ export class CommandLineService {
     @InjectRepository(CommandLine)
     private commandLineRepository: Repository<CommandLine>,
   ) {}
-  async create(input: Array<Record<string, any>>): Promise<void> {
-    await this.commandLineRepository
-      .createQueryBuilder()
-      .insert()
-      .values(input)
-      .execute();
+  create(createCommandLineInput: CreateCommandLineInput) {
+    return 'This action adds a new commandLine';
   }
 
-  async update(input: Record<string, any>, id: number): Promise<void> {
-    await this.commandLineRepository
-      .createQueryBuilder()
-      .update()
-      .set(input)
-      .where('id = :id', { id })
-      .execute();
+  findAll() {
+    return `This action returns all commandLine`;
   }
 
-  async findByCommandId(commandId: number): Promise<CommandLine[]> {
-    return await this.commandLineRepository
-      .createQueryBuilder('cl')
-      .where('cl.commandId = :commandId', { commandId })
-      .getMany();
+  findOne(id: number) {
+    return `This action returns a #${id} commandLine`;
   }
 
-  async findOne(id: number): Promise<CommandLine> {
-    return await this.commandLineRepository.findOne(id);
+  update(id: number, updateCommandLineInput: UpdateCommandLineInput) {
+    return `This action updates a #${id} commandLine`;
   }
 
-  async remove(id: number): Promise<number> {
-    const query = await this.commandLineRepository.delete(id);
-    return query.affected;
+  remove(id: number) {
+    return `This action removes a #${id} commandLine`;
   }
 }

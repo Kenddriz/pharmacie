@@ -1,28 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
-import { Medicine } from './medicine.entity';
+import { CreateMedicineInput } from './dto/create-medicine.input';
+import { UpdateMedicineInput } from './dto/update-medicine.input';
 
 @Injectable()
 export class MedicineService {
-  constructor(
-    @InjectRepository(Medicine)
-    private readonly medicineRepository: Repository<Medicine>,
-  ) {}
-  async save(medicine: Medicine): Promise<Medicine> {
-    return this.medicineRepository.save(medicine);
+  create(createMedicineInput: CreateMedicineInput) {
+    return 'This action adds a new medicine';
   }
 
-  async findAll(): Promise<Medicine[]> {
-    return this.medicineRepository.find({ order: { designation: 'ASC' } });
+  findAll() {
+    return `This action returns all medicine`;
   }
 
-  async findOneById(id: number): Promise<Medicine> {
-    return this.medicineRepository.findOne(id);
+  findOne(id: number) {
+    return `This action returns a #${id} medicine`;
   }
 
-  async findOneByDesignation(designation: string): Promise<Medicine> {
-    return this.medicineRepository.findOne({ designation: ILike(designation) });
+  update(id: number, updateMedicineInput: UpdateMedicineInput) {
+    return `This action updates a #${id} medicine`;
   }
 
   remove(id: number) {

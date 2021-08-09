@@ -11,7 +11,6 @@
     class="sticky-column-table sticky-header-table"
     card-container-class="fa-border items-start"
     no-data-label="Aucune page trouvé..."
-    :loading="cTypesLoading"
   >
     <template v-slot:top>
       <div class="column full-width q-gutter-xs">
@@ -110,10 +109,7 @@
     <!-- Card body for Grid view mod -->
 
     <template v-slot:item="props">
-      <CardItem
-        :item="props"
-        :contacts="contacts(props.row.contacts)"
-      />
+      <CardItem :provider="props.row"/>
     </template>
 
     <!-- //pagination -->
@@ -126,8 +122,7 @@
 
 <script lang="ts">
   import {defineComponent, ref} from 'vue';
-  import {useProviders} from '../../../graphql/provider/read/providers.service';
-  import {useContactTypes} from '../../../graphql/contact_type/read/contact.types.service';
+  import {useProviders} from '../../../graphql/provider/provider.service';
   import CardItem from './CardItem.vue';
   import { columns } from './columns';
 
@@ -142,7 +137,6 @@
             { value: true, slot: 'true' }
           ],
           columns,
-          ...useContactTypes(),
           ...useProviders()
         }
     }

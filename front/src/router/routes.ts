@@ -3,36 +3,17 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('pages/account/Login.vue'),
-    children: [],
+    component: () => import('pages/account/Login.vue')
   },
   {
     path: '/main',
-    component: () => import('src/layouts/main/MainLayout.vue'),
+    component: () => import('layouts/main/MainLayout.vue'),
     children: [
-      {
-        path: '',
-        alias: 'unit',
-        component: () => import('pages/unit/Unit.vue')
-      },
-      {
-        path: 'provider',
-        component: () => import('pages/provider/Provider.vue')
-      },
-      {
-        path: 'medicine',
-        component: () => import('pages/medicine/Medicine.vue')
-      },
-      {
-        path: 'command',
-        component: () => import('pages/command/Command.vue')
-      },
-      {
-        path: 'invoice',
-        component: () => import('pages/invoice/Invoice.vue')
-      }
+      { path: '', alias: 'unit', component: () => import('pages/Units.vue') },
+      { path: 'provider', component: () => import('pages/provider/Provider.vue') }
     ],
   },
+
   // Always leave this as last one,
   // but you can also remove it
   {

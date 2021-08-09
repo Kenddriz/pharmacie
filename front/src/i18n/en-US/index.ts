@@ -1,12 +1,8 @@
-
-import home from './home';
-import date from './date';
-import { about } from './about';
-import parks from './parks'
+// This is just an example,
+// so you can safely delete all default props below
 
 export default {
-  home,
-  date,
-  about,
-  parks
+  failed: 'Action failed',
+  success: 'Action was successful',
+  contacts: ['Mail', 'Mobile', 'Faxe'],
 };

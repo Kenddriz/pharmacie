@@ -1,14 +1,11 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { InvoiceResolver } from './resolvers/invoice.resolver';
+import { InvoiceResolver } from './invoice.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invoice } from './invoice.entity';
-import { InvoiceFieldResolver } from './resolvers/invoice.field-resolver';
 
-@Global()
 @Module({
   imports: [TypeOrmModule.forFeature([Invoice])],
-  providers: [InvoiceResolver, InvoiceService, InvoiceFieldResolver],
-  exports: [InvoiceService],
+  providers: [InvoiceResolver, InvoiceService],
 })
 export class InvoiceModule {}

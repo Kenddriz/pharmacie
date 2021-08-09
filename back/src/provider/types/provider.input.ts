@@ -1,6 +1,13 @@
-import { InputType, Field, PartialType, OmitType } from '@nestjs/graphql';
-import { CreateContactInput } from '../../contact/types/contact.input';
-import { Provider } from '../provider.entity';
+import { InputType, Field } from '@nestjs/graphql';
+
+/**Add parent to a category*/
+@InputType()
+export class ContactInput {
+  @Field()
+  type: number;
+  @Field(() => [String])
+  list: string[];
+}
 
 @InputType()
 export class CreateProviderInput {
@@ -10,8 +17,8 @@ export class CreateProviderInput {
   @Field()
   address: string;
 
-  @Field(() => [CreateContactInput])
-  contactTypes: CreateContactInput[];
+  @Field(() => [ContactInput])
+  contacts: ContactInput[];
 }
 
 @InputType()

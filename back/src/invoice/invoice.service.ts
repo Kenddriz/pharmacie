@@ -1,31 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { Invoice } from './invoice.entity';
+import { CreateInvoiceInput } from './dto/create-invoice.input';
+import { UpdateInvoiceInput } from './dto/update-invoice.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PaginationInput } from '../shared/shared.input';
-import { Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { Invoice } from './invoice.entity';
 
 @Injectable()
 export class InvoiceService {
   constructor(
-    @InjectRepository(Invoice)
-    private invoiceRepository: Repository<Invoice>,
+    @InjectRepository(Invoice) private repository: Repository<Invoice>,
   ) {}
-  async save(invoice: Invoice): Promise<Invoice> {
-    return this.invoiceRepository.save(invoice);
+  create(createInvoiceInput: CreateInvoiceInput) {
+    return 'This action adds a new invoice';
   }
 
-  async findOneById(id: number): Promise<Invoice> {
-    return this.invoiceRepository.findOne(id);
+  findAll() {
+    return `This action returns all invoice`;
   }
-  async findOneByCommandId(commandId: number): Promise<Invoice> {
-    return this.invoiceRepository.findOne({ where: { commandId } });
+
+  findOne(id: number) {
+    return `This action returns a #${id} invoice`;
   }
-  async paginate(input: PaginationInput): Promise<Pagination<Invoice>> {
-    const queryBuilder = this.invoiceRepository
-      .createQueryBuilder('invoice')
-      .orderBy('invoice.dueDate', 'ASC');
-    const { page, limit } = input;
-    return await paginate<Invoice>(queryBuilder, { page, limit });
+
+  update(id: number, updateInvoiceInput: UpdateInvoiceInput) {
+    return `This action updates a #${id} invoice`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} invoice`;
   }
 }

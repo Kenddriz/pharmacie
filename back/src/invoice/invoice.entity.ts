@@ -1,13 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { Payment } from '../payment/payment.entity';
-import { Command } from '../command/command.entity';
 
 @ObjectType()
 @Entity({ name: 'invoices' })
@@ -17,29 +10,15 @@ export class Invoice {
   id: number;
 
   @Field()
-  @Column()
-  reference: string; /**Reference of invoice from provider**/
+  @Column({ type: 'date' })
+  date: number;
 
   @Field()
   @Column({ type: 'date' })
-  dueDate: string;
+  dueDate: number;
 
   @Field(() => Payment, { nullable: true })
   payment?: Payment;
   @Column({ default: 0 })
   paymentId: number;
-
-  @Field(() => Command)
-  command: Command;
-  @Field()
-  @Column()
-  commandId: number;
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

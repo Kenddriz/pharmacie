@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,39 +6,35 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Contact } from '../contact/Contact.entity';
-import { Command } from '../command/command.entity';
+import { Contact } from './types/provider.dto';
 
 @ObjectType()
 @Entity({ name: 'providers' })
 export class Provider {
-  @Field(() => Int)
+  @Field()
   @PrimaryColumn()
   id: number;
 
   @Field()
-  @Column({ length: 60 })
+  @Column()
   name: string;
 
-  @Field()
-  @Column({ length: 60, default: '' })
-  address: string;
+  @Field(() => [Contact])
+  @Column({ type: 'jsonb' })
+  contacts: Contact[];
 
   @Field()
-  @Column({ length: 60, default: '' })
+  @Column()
+  address: string;
+
+  @Field({ defaultValue: '' })
   logo: string;
 
   @Field()
-  @CreateDateColumn({ name: 'createdAt' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ name: 'updatedAt' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-
-  @Field(() => [Contact])
-  contacts: Contact[];
-
-  @Field(() => [Command])
-  commands: Command[];
 }

@@ -1,42 +1,24 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { PaymentMode } from '../payment-mode/payment-mode.entity';
+import { ObjectType, Field } from '@nestjs/graphql';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Method } from '../method/method.entity';
 
 @ObjectType()
 @Entity({ name: 'payments' })
 export class Payment {
-  @Field(() => Int)
+  @Field()
   @PrimaryColumn()
   id: number;
 
   @Field()
   @Column()
-  reference: string; /**reference from payment mode**/
+  reference: string;
 
-  @Field()
-  @Column({ length: 100 })
-  description: string;
+  @Field(() => Method)
+  method: Method;
+  @Column()
+  methodId: string;
 
   @Field()
   @Column({ type: 'date' })
   date: string;
-
-  @Field(() => PaymentMode)
-  paymentMode: PaymentMode;
-  @Column()
-  paymentModeId: number;
-
-  @Field()
-  @CreateDateColumn({ name: 'createdAt' })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ name: 'updateAt' })
-  updatedAt: Date;
 }

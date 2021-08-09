@@ -13,10 +13,20 @@ export type Scalars = {
   DateTime: any;
 };
 
-export type AddContactInput = {
-  providerId: Scalars['Float'];
-  contactTypeId: Scalars['Float'];
-  contacts: Array<Scalars['String']>;
+export type Article = {
+  __typename?: 'Article';
+  id: Scalars['Float'];
+  dci: Scalars['String'];
+  commercial_name: Scalars['String'];
+};
+
+export type AssuredLine = {
+  __typename?: 'AssuredLine';
+  id: Scalars['Float'];
+  deliveryId: Scalars['Float'];
+  expirationDate: Scalars['String'];
+  quantity: Scalars['Float'];
+  batches: Array<Batch>;
 };
 
 export type AuthInput = {
@@ -24,104 +34,115 @@ export type AuthInput = {
   password: Scalars['String'];
 };
 
+export type Batch = {
+  __typename?: 'Batch';
+  id: Scalars['Float'];
+  medicineId: Scalars['Float'];
+  manufactureDate: Scalars['String'];
+  expirationDate: Scalars['String'];
+  stock: Scalars['String'];
+};
+
 export type Command = {
   __typename?: 'Command';
   id: Scalars['Float'];
-  provider: Provider;
-  arrived: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  commandLines: Array<CommandLine>;
+  delivery?: Maybe<Delivery>;
 };
 
 export type CommandLine = {
   __typename?: 'CommandLine';
   id: Scalars['Float'];
-  unit: Unit;
-  quantity: Scalars['Float'];
-  price: Scalars['Float'];
-  medicine: Scalars['String'];
-  form: Form;
   commandId: Scalars['Float'];
-  vat: Scalars['Float'];
-};
-
-export type CommandLineInput = {
-  id?: Maybe<Scalars['Float']>;
-  medicine: Scalars['String'];
-  unitId: Scalars['Float'];
-  price: Scalars['Float'];
   quantity: Scalars['Float'];
-  formId: Scalars['Float'];
-  vat: Scalars['Float'];
-};
-
-export type CommandPagination = {
-  __typename?: 'CommandPagination';
-  items: Array<Command>;
-  meta: Meta;
+  medicines: Array<Medicine>;
 };
 
 export type Contact = {
   __typename?: 'Contact';
-  id: Scalars['Int'];
-  label: Scalars['String'];
-  contactTypeId: Scalars['Float'];
+  type: Scalars['Float'];
+  list: Array<Scalars['String']>;
 };
 
-export type ContactType = {
-  __typename?: 'ContactType';
-  id: Scalars['Int'];
-  label: Scalars['String'];
+export type ContactInput = {
+  type: Scalars['Float'];
+  list: Array<Scalars['String']>;
+};
+
+export type CreateArticleInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreateAssuredLineInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
 export type CreateCommandInput = {
-  providerId: Scalars['Float'];
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
-export type CreateContactInput = {
-  contactTypeId: Scalars['Float'];
-  contacts: Array<Scalars['String']>;
+export type CreateCommandLineInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
-export type CreateContactTypeInput = {
-  label: Scalars['String'];
+export type CreateDeliveryInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
 export type CreateFormInput = {
-  label: Scalars['String'];
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
 export type CreateInvoiceInput = {
-  dueDate: Scalars['String'];
-  reference: Scalars['String'];
-  commandId: Scalars['Float'];
-};
-
-export type CreateMedicineFormInput = {
-  medicineId?: Maybe<Scalars['Int']>;
-  formId: Scalars['Int'];
-  unitId: Scalars['Int'];
-  expiration: Scalars['String'];
-  price: Scalars['Float'];
-  vat: Scalars['Float'];
-  quantity: Scalars['Float'];
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
 export type CreateMedicineInput = {
-  designation: Scalars['String'];
-  medicineForms: Array<CreateMedicineFormInput>;
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
-export type CreateOrUpdateCommandLineInput = {
-  commandId: Scalars['Float'];
-  commandLines: Array<CommandLineInput>;
+export type CreateMethodInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreatePackagingInput = {
+  label: Scalars['String'];
+  multiplicity: Scalars['Float'];
+};
+
+export type CreateParcelInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreatePatientInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreatePaymentInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
+};
+
+export type CreatePrescriptionInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int'];
 };
 
 export type CreateProviderInput = {
   name: Scalars['String'];
   address: Scalars['String'];
-  contactTypes: Array<CreateContactInput>;
+  contacts: Array<ContactInput>;
 };
 
 export type CreateSaleInput = {
@@ -129,16 +150,9 @@ export type CreateSaleInput = {
   exampleField: Scalars['Int'];
 };
 
-export type CreateSalesLineInput = {
+export type CreateSaleLineInput = {
   /** Example field (placeholder) */
   exampleField: Scalars['Int'];
-};
-
-export type CreateUnitInput = {
-  label: Scalars['String'];
-  multiplicity: Scalars['Float'];
-  description: Scalars['String'];
-  parentId?: Maybe<Scalars['Int']>;
 };
 
 export type CreateUserInput = {
@@ -147,28 +161,33 @@ export type CreateUserInput = {
 };
 
 
+export type Delivery = {
+  __typename?: 'Delivery';
+  id: Scalars['Float'];
+  command: Command;
+  invoice: Invoice;
+  createdAt: Scalars['DateTime'];
+};
+
+export type Dosage = {
+  __typename?: 'Dosage';
+  id: Scalars['Float'];
+  parentId: Scalars['Float'];
+  label: Scalars['String'];
+};
+
 export type Form = {
   __typename?: 'Form';
-  id: Scalars['Int'];
-  label: Scalars['String'];
+  id: Scalars['Float'];
+  label: Scalars['Float'];
 };
 
 export type Invoice = {
   __typename?: 'Invoice';
   id: Scalars['Float'];
-  reference: Scalars['String'];
-  dueDate: Scalars['String'];
+  date: Scalars['Float'];
+  dueDate: Scalars['Float'];
   payment?: Maybe<Payment>;
-  command: Command;
-  commandId: Scalars['Float'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type InvoicePagination = {
-  __typename?: 'InvoicePagination';
-  items: Array<Invoice>;
-  meta: Meta;
 };
 
 export type LoginDto = {
@@ -176,32 +195,14 @@ export type LoginDto = {
   token: Scalars['String'];
 };
 
-export type Measure = {
-  __typename?: 'Measure';
-  id: Scalars['Float'];
-  children: Array<Measure>;
-  parentId: Scalars['Float'];
-  label: Scalars['String'];
-};
-
 export type Medicine = {
   __typename?: 'Medicine';
-  id: Scalars['Int'];
-  designation: Scalars['String'];
-  medicineForms: Array<MedicineForm>;
-};
-
-export type MedicineForm = {
-  __typename?: 'MedicineForm';
-  id: Scalars['Int'];
-  expiration: Scalars['String'];
-  vat: Scalars['Float'];
-  stock: Scalars['Float'];
-  shop: Scalars['Float'];
-  price: Scalars['Float'];
-  medicine: Medicine;
-  unit: Unit;
+  id: Scalars['Float'];
+  article: Article;
   form: Form;
+  dosage: Dosage;
+  unit: Unit;
+  batch: Batch;
 };
 
 export type Meta = {
@@ -213,59 +214,266 @@ export type Meta = {
   currentPage: Scalars['Float'];
 };
 
+export type Method = {
+  __typename?: 'Method';
+  id: Scalars['Float'];
+  label: Scalars['Float'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  createSalesLine: SalesLine;
-  updateSalesLine: SalesLine;
-  removeSalesLine: SalesLine;
+  createUser: User;
+  updateUser: User;
+  createProvider: Provider;
+  createCommand: Command;
+  updateCommand: Command;
+  removeCommand: Command;
+  createCommandLine: CommandLine;
+  updateCommandLine: CommandLine;
+  removeCommandLine: CommandLine;
+  createMedicine: Medicine;
+  updateMedicine: Medicine;
+  removeMedicine: Medicine;
+  createArticle: Article;
+  updateArticle: Article;
+  removeArticle: Article;
+  saveDosage: Dosage;
+  removeDosage: Dosage;
+  createPackaging: Packaging;
+  updatePackaging: Packaging;
+  createDelivery: Delivery;
+  updateDelivery: Delivery;
+  removeDelivery: Delivery;
+  createAssuredLine: AssuredLine;
+  updateAssuredLine: AssuredLine;
+  removeAssuredLine: AssuredLine;
+  createInvoice: Invoice;
+  updateInvoice: Invoice;
+  removeInvoice: Invoice;
+  createPayment: Payment;
+  updatePayment: Payment;
+  removePayment: Payment;
+  createMethod: Method;
+  updateMethod: Method;
+  removeMethod: Method;
+  createParcel: Batch;
+  updateParcel: Batch;
+  removeParcel: Batch;
+  createSaleLine: SaleLine;
+  updateSaleLine: SaleLine;
+  removeSaleLine: SaleLine;
   createSale: Sale;
   updateSale: Sale;
   removeSale: Sale;
-  createInvoice: Invoice;
-  updateInvoice: Invoice;
-  createCommand: Command;
-  updateCommand: Command;
-  addCommandLine: Command;
-  updateCommandLine: Command;
-  removeCommandLine: Command;
-  createProvider: Provider;
-  addContacts: Provider;
-  updateContact: Contact;
-  createContactType: ContactType;
-  updateContactType: ContactType;
-  savePayment: Invoice;
-  removePaymentMode: RemovePaymentModeDto;
-  createPaymentMode: PaymentMode;
-  updatePaymentMode: PaymentMode;
-  createMedicine: Medicine;
-  addMedicineForm: Medicine;
-  updateMedicineForm: MedicineForm;
-  updateMedicine: Medicine;
+  createPatient: Patient;
+  updatePatient: Patient;
+  removePatient: Patient;
+  login: LoginDto;
+  createPrescription: Prescription;
+  updatePrescription: Prescription;
+  removePrescription: Prescription;
   createForm: Form;
   updateForm: Form;
   removeForm: Form;
-  removeMedicineForm: MedicineForm;
-  createUser: User;
-  updateUser: User;
-  login: LoginDto;
-  createUnit: Unit;
-  updateUnit: Unit;
-  saveMeasure: Measure;
-  removeMeasure: Measure;
 };
 
 
-export type MutationCreateSalesLineArgs = {
-  createSalesLineInput: CreateSalesLineInput;
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
 };
 
 
-export type MutationUpdateSalesLineArgs = {
-  updateSalesLineInput: UpdateSalesLineInput;
+export type MutationUpdateUserArgs = {
+  input: UpdateUserInput;
 };
 
 
-export type MutationRemoveSalesLineArgs = {
+export type MutationCreateProviderArgs = {
+  input: CreateProviderInput;
+};
+
+
+export type MutationCreateCommandArgs = {
+  createCommandInput: CreateCommandInput;
+};
+
+
+export type MutationUpdateCommandArgs = {
+  updateCommandInput: UpdateCommandInput;
+};
+
+
+export type MutationRemoveCommandArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateCommandLineArgs = {
+  createCommandLineInput: CreateCommandLineInput;
+};
+
+
+export type MutationUpdateCommandLineArgs = {
+  updateCommandLineInput: UpdateCommandLineInput;
+};
+
+
+export type MutationRemoveCommandLineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateMedicineArgs = {
+  createMedicineInput: CreateMedicineInput;
+};
+
+
+export type MutationUpdateMedicineArgs = {
+  updateMedicineInput: UpdateMedicineInput;
+};
+
+
+export type MutationRemoveMedicineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateArticleArgs = {
+  createArticleInput: CreateArticleInput;
+};
+
+
+export type MutationUpdateArticleArgs = {
+  updateArticleInput: UpdateArticleInput;
+};
+
+
+export type MutationRemoveArticleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationSaveDosageArgs = {
+  input: SaveDosageInput;
+};
+
+
+export type MutationRemoveDosageArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreatePackagingArgs = {
+  input: Array<CreatePackagingInput>;
+};
+
+
+export type MutationUpdatePackagingArgs = {
+  input: UpdatePackagingInput;
+};
+
+
+export type MutationCreateDeliveryArgs = {
+  createDeliveryInput: CreateDeliveryInput;
+};
+
+
+export type MutationUpdateDeliveryArgs = {
+  updateDeliveryInput: UpdateDeliveryInput;
+};
+
+
+export type MutationRemoveDeliveryArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateAssuredLineArgs = {
+  createAssuredLineInput: CreateAssuredLineInput;
+};
+
+
+export type MutationUpdateAssuredLineArgs = {
+  updateAssuredLineInput: UpdateAssuredLineInput;
+};
+
+
+export type MutationRemoveAssuredLineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateInvoiceArgs = {
+  createInvoiceInput: CreateInvoiceInput;
+};
+
+
+export type MutationUpdateInvoiceArgs = {
+  updateInvoiceInput: UpdateInvoiceInput;
+};
+
+
+export type MutationRemoveInvoiceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreatePaymentArgs = {
+  createPaymentInput: CreatePaymentInput;
+};
+
+
+export type MutationUpdatePaymentArgs = {
+  updatePaymentInput: UpdatePaymentInput;
+};
+
+
+export type MutationRemovePaymentArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateMethodArgs = {
+  createMethodInput: CreateMethodInput;
+};
+
+
+export type MutationUpdateMethodArgs = {
+  updateMethodInput: UpdateMethodInput;
+};
+
+
+export type MutationRemoveMethodArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateParcelArgs = {
+  createParcelInput: CreateParcelInput;
+};
+
+
+export type MutationUpdateParcelArgs = {
+  updateParcelInput: UpdateParcelInput;
+};
+
+
+export type MutationRemoveParcelArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCreateSaleLineArgs = {
+  createSaleLineInput: CreateSaleLineInput;
+};
+
+
+export type MutationUpdateSaleLineArgs = {
+  updateSaleLineInput: UpdateSaleLineInput;
+};
+
+
+export type MutationRemoveSaleLineArgs = {
   id: Scalars['Int'];
 };
 
@@ -285,133 +493,18 @@ export type MutationRemoveSaleArgs = {
 };
 
 
-export type MutationCreateInvoiceArgs = {
-  input: CreateInvoiceInput;
+export type MutationCreatePatientArgs = {
+  createPatientInput: CreatePatientInput;
 };
 
 
-export type MutationUpdateInvoiceArgs = {
-  input: UpdateInvoiceInput;
+export type MutationUpdatePatientArgs = {
+  updatePatientInput: UpdatePatientInput;
 };
 
 
-export type MutationCreateCommandArgs = {
-  input: CreateCommandInput;
-};
-
-
-export type MutationUpdateCommandArgs = {
-  input: UpdateCommandInput;
-};
-
-
-export type MutationAddCommandLineArgs = {
-  input: CreateOrUpdateCommandLineInput;
-};
-
-
-export type MutationUpdateCommandLineArgs = {
-  input: CreateOrUpdateCommandLineInput;
-};
-
-
-export type MutationRemoveCommandLineArgs = {
-  id: Scalars['Float'];
-};
-
-
-export type MutationCreateProviderArgs = {
-  input: CreateProviderInput;
-};
-
-
-export type MutationAddContactsArgs = {
-  input: AddContactInput;
-};
-
-
-export type MutationUpdateContactArgs = {
-  input: UpdateContactInput;
-};
-
-
-export type MutationCreateContactTypeArgs = {
-  input: CreateContactTypeInput;
-};
-
-
-export type MutationUpdateContactTypeArgs = {
-  input: UpdateContactTypeInput;
-};
-
-
-export type MutationSavePaymentArgs = {
-  input: SavePaymentInput;
-};
-
-
-export type MutationRemovePaymentModeArgs = {
-  id: Scalars['Float'];
-};
-
-
-export type MutationCreatePaymentModeArgs = {
-  input: PaymentModeInput;
-};
-
-
-export type MutationUpdatePaymentModeArgs = {
-  input: PaymentModeInput;
-};
-
-
-export type MutationCreateMedicineArgs = {
-  input: CreateMedicineInput;
-};
-
-
-export type MutationAddMedicineFormArgs = {
-  input: CreateMedicineFormInput;
-};
-
-
-export type MutationUpdateMedicineFormArgs = {
-  input: UpdateMedicineFormInput;
-};
-
-
-export type MutationUpdateMedicineArgs = {
-  input: UpdateMedicineInput;
-};
-
-
-export type MutationCreateFormArgs = {
-  input: CreateFormInput;
-};
-
-
-export type MutationUpdateFormArgs = {
-  input: UpdateFormInput;
-};
-
-
-export type MutationRemoveFormArgs = {
+export type MutationRemovePatientArgs = {
   id: Scalars['Int'];
-};
-
-
-export type MutationRemoveMedicineFormArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
 };
 
 
@@ -420,23 +513,39 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationCreateUnitArgs = {
-  input: CreateUnitInput;
+export type MutationCreatePrescriptionArgs = {
+  createPrescriptionInput: CreatePrescriptionInput;
 };
 
 
-export type MutationUpdateUnitArgs = {
-  input: UpdateUnitInput;
+export type MutationUpdatePrescriptionArgs = {
+  updatePrescriptionInput: UpdatePrescriptionInput;
 };
 
 
-export type MutationSaveMeasureArgs = {
-  input: SaveMeasureInput;
-};
-
-
-export type MutationRemoveMeasureArgs = {
+export type MutationRemovePrescriptionArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationCreateFormArgs = {
+  createFormInput: CreateFormInput;
+};
+
+
+export type MutationUpdateFormArgs = {
+  updateFormInput: UpdateFormInput;
+};
+
+
+export type MutationRemoveFormArgs = {
+  id: Scalars['Int'];
+};
+
+export type Packaging = {
+  __typename?: 'Packaging';
+  id: Scalars['Float'];
+  units: Array<Unit>;
 };
 
 export type PaginationInput = {
@@ -445,38 +554,40 @@ export type PaginationInput = {
   limit: Scalars['Float'];
 };
 
+export type Patient = {
+  __typename?: 'Patient';
+  id: Scalars['Float'];
+  lastName: Scalars['String'];
+  firstName: Scalars['String'];
+  phone: Scalars['String'];
+  prescriptions: Array<Prescription>;
+};
+
 export type Payment = {
   __typename?: 'Payment';
-  id: Scalars['Int'];
+  id: Scalars['Float'];
+  reference: Scalars['String'];
+  method: Method;
+  date: Scalars['String'];
+};
+
+export type Prescription = {
+  __typename?: 'Prescription';
+  id: Scalars['Float'];
   reference: Scalars['String'];
   description: Scalars['String'];
-  date: Scalars['String'];
-  paymentMode: PaymentMode;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type PaymentMode = {
-  __typename?: 'PaymentMode';
-  id: Scalars['Float'];
-  label: Scalars['String'];
-};
-
-export type PaymentModeInput = {
-  id?: Maybe<Scalars['Float']>;
-  label: Scalars['String'];
+  patient: Patient;
 };
 
 export type Provider = {
   __typename?: 'Provider';
-  id: Scalars['Int'];
+  id: Scalars['Float'];
   name: Scalars['String'];
+  contacts: Array<Contact>;
   address: Scalars['String'];
   logo: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  contacts: Array<Contact>;
-  commands: Array<Command>;
 };
 
 export type ProviderPagination = {
@@ -487,25 +598,85 @@ export type ProviderPagination = {
 
 export type Query = {
   __typename?: 'Query';
-  getHello: Scalars['String'];
-  salesLine: SalesLine;
-  sale: Sale;
-  paginateInvoices: InvoicePagination;
-  findOneInvoice: Invoice;
-  paginateCommands: CommandPagination;
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
-  contactTypes: Array<ContactType>;
-  paymentModes: Array<PaymentMode>;
-  medicines: Array<Medicine>;
-  forms: Array<Form>;
+  command: Command;
+  commandLine: CommandLine;
+  medicine: Medicine;
+  article: Article;
+  dosages: Array<Dosage>;
+  packaging: Array<Packaging>;
+  delivery: Delivery;
+  assuredLine: AssuredLine;
+  invoice: Invoice;
+  payment: Payment;
+  method: Method;
+  parcel: Batch;
+  saleLine: SaleLine;
+  sale: Sale;
+  patient: Patient;
   whoAmI: User;
-  units: Array<Unit>;
-  measures: Array<Measure>;
+  prescription: Prescription;
+  form: Form;
 };
 
 
-export type QuerySalesLineArgs = {
+export type QueryProvidersPaginateArgs = {
+  input: PaginationInput;
+};
+
+
+export type QueryCommandArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryCommandLineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryMedicineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryArticleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryDeliveryArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryAssuredLineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryInvoiceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryPaymentArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryMethodArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryParcelArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QuerySaleLineArgs = {
   id: Scalars['Int'];
 };
 
@@ -515,118 +686,127 @@ export type QuerySaleArgs = {
 };
 
 
-export type QueryPaginateInvoicesArgs = {
-  paginationInput: PaginationInput;
+export type QueryPatientArgs = {
+  id: Scalars['Int'];
 };
 
 
-export type QueryFindOneInvoiceArgs = {
-  commandId: Scalars['Float'];
+export type QueryPrescriptionArgs = {
+  id: Scalars['Int'];
 };
 
 
-export type QueryPaginateCommandsArgs = {
-  paginationInput: PaginationInput;
-};
-
-
-export type QueryProvidersPaginateArgs = {
-  input: PaginationInput;
-};
-
-
-export type QueryMeasuresArgs = {
-  measures: Scalars['Boolean'];
-};
-
-export type RemovePaymentModeDto = {
-  __typename?: 'RemovePaymentModeDto';
-  id: Scalars['Float'];
-  payment?: Maybe<Payment>;
+export type QueryFormArgs = {
+  id: Scalars['Int'];
 };
 
 export type Sale = {
   __typename?: 'Sale';
-  id: Scalars['Int'];
+  id: Scalars['Float'];
+  date: Scalars['String'];
+  prescription?: Maybe<Prescription>;
 };
 
-export type SalesLine = {
-  __typename?: 'SalesLine';
-  id: Scalars['Int'];
-  unitPrice: Scalars['Float'];
+export type SaleLine = {
+  __typename?: 'SaleLine';
+  id: Scalars['Float'];
+  saleId: Scalars['Float'];
   quantity: Scalars['Float'];
-  vat: Scalars['Float'];
-  sale: Sale;
-  medicine: Medicine;
-  unit: Unit;
 };
 
-export type SaveMeasureInput = {
+export type SaveDosageInput = {
   id: Scalars['Float'];
   parentId: Scalars['Float'];
   label: Scalars['String'];
-};
-
-export type SavePaymentInput = {
-  id: Scalars['Float'];
-  reference: Scalars['String'];
-  description: Scalars['String'];
-  date: Scalars['String'];
-  invoiceId: Scalars['Float'];
-  paymentModeId: Scalars['Float'];
 };
 
 export type Unit = {
   __typename?: 'Unit';
-  id: Scalars['Int'];
   label: Scalars['String'];
   multiplicity: Scalars['Float'];
-  description: Scalars['String'];
-  parentId: Scalars['Float'];
+};
+
+export type UpdateArticleInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdateAssuredLineInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 export type UpdateCommandInput = {
-  id: Scalars['Float'];
-  providerId: Scalars['Float'];
-  arrived?: Maybe<Scalars['Boolean']>;
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
-export type UpdateContactInput = {
-  id: Scalars['Float'];
-  label: Scalars['String'];
+export type UpdateCommandLineInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
-export type UpdateContactTypeInput = {
-  label?: Maybe<Scalars['String']>;
-  id: Scalars['Float'];
+export type UpdateDeliveryInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 export type UpdateFormInput = {
-  label?: Maybe<Scalars['String']>;
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
 };
 
 export type UpdateInvoiceInput = {
-  id: Scalars['Float'];
-  dueDate: Scalars['String'];
-  reference: Scalars['String'];
-};
-
-export type UpdateMedicineFormInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
-  medicineId: Scalars['Int'];
-  formId: Scalars['Int'];
-  unitId: Scalars['Int'];
-  expiration: Scalars['String'];
-  price: Scalars['Float'];
-  vat: Scalars['Float'];
-  stock: Scalars['Float'];
-  shop: Scalars['Float'];
 };
 
 export type UpdateMedicineInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
-  designation: Scalars['String'];
+};
+
+export type UpdateMethodInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdatePackagingInput = {
+  id: Scalars['Float'];
+  units: Array<CreatePackagingInput>;
+};
+
+export type UpdateParcelInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdatePatientInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdatePaymentInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type UpdatePrescriptionInput = {
+  /** Example field (placeholder) */
+  exampleField?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 export type UpdateSaleInput = {
@@ -635,18 +815,10 @@ export type UpdateSaleInput = {
   id: Scalars['Int'];
 };
 
-export type UpdateSalesLineInput = {
+export type UpdateSaleLineInput = {
   /** Example field (placeholder) */
   exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
-};
-
-export type UpdateUnitInput = {
-  label?: Maybe<Scalars['String']>;
-  multiplicity?: Maybe<Scalars['Float']>;
-  description?: Maybe<Scalars['String']>;
-  parentId?: Maybe<Scalars['Float']>;
-  id: Scalars['Float'];
 };
 
 export type UpdateUserInput = {

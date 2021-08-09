@@ -4,28 +4,44 @@
   >
     <q-img height="150px" src="register.jpg">
       <div class="absolute-center text-center">
-        {{ item.row.name }}
+        {{ provider.name }}
       </div>
     </q-img>
     <q-card-section>
     <q-list separator>
       <q-expansion-item
-        v-for="(cType, index) in contacts"
+        v-for="(contact, index) in provider.contacts"
         :key="index"
         group="somegroup"
-        :label="cType.label"
-        :caption="`${ cType.contacts[0]?.label || 'Aucun contact'}`"
+        :label="$tm('contacts')[contact.type]"
+        :caption="`${contact.list[0]||'Aucun contact'}`"
       >
-        <UpdateContact
-          v-for="(c, i) in cType.contacts"
+        <div
+          v-for="i in contact.list.length"
+          class="flex no-wrap flex-center q-gutter-sm q-pa-sm"
           :key="i"
-          :contact="c"
-          :p-id="item.row.id"
-          :c-type-id="cType.id"
-        />
-        <AddContact
-          :p-id="item.row.id"
-          :c-type-id="cType.id"
+        >
+          <q-input
+            :model-value="contact"
+            v-model="contact.list[i - 1]"
+            dense
+          />
+          <q-btn
+            unelevated
+            outline
+            rounded
+            icon="delete_forever"
+            color="deep-orange"
+            @click="$emit('reset')"
+          />
+        </div>
+
+        <q-btn
+          round
+          color="teal-14"
+          class="q-mb-sm"
+          size="sm"
+          icon="add"
         />
       </q-expansion-item>
     </q-list>
@@ -36,23 +52,17 @@
 <script lang="ts">
   import { defineComponent, PropType } from 'vue';
   import {Provider} from '../../../graphql/types';
-  import UpdateContact from '../../contact/UpdateContact.vue';
-  import AddContact from '../../contact/AddContact.vue';
 
-    export default defineComponent({
-      name: 'CardItem',
-      components: { UpdateContact, AddContact },
-      props: {
-        item: {
-          type: Object as PropType<Provider>,
-          required: true,
-        },
-        contacts: {
-          type: Array,
-          required: true,
-        },
-      },
-    })
+  export default defineComponent({
+    name: 'CardItem',
+    components: {  },
+    props: {
+      provider: {
+        type: Object as PropType<Provider>,
+        required: true,
+      }
+    },
+  })
 </script>
 
 <style scoped>

@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli/boot-files
     boot: [
       'i18n',
-      'apolloClient'
+      'apollo-client'
     ],
 
     // https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
@@ -42,7 +42,7 @@ module.exports = configure(function (ctx) {
     extras: [
       // 'ionicons-v4',
       // 'mdi-v5',
-      'fontawesome-v5',
+      // 'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
@@ -77,10 +77,6 @@ module.exports = configure(function (ctx) {
       chainWebpack (/* chain */) {
         //
       },
-      env: {
-        uri: 'http://localhost:3000/',
-
-      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
@@ -97,7 +93,7 @@ module.exports = configure(function (ctx) {
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
-      // For special cases outside of where the auto-import stategy can have an impact
+      // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
       //
@@ -105,7 +101,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Notify']
+      plugins: []
     },
 
     // animations: 'all', // --- includes all animations
@@ -115,7 +111,10 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
       pwa: false,
+
       // manualStoreHydration: true,
+      // manualPostHydrationTrigger: true,
+
       prodPort: 3000, // The default port that the production server should use
                       // (gets superseded if process.env.PORT is specified at runtime)
 
@@ -146,7 +145,7 @@ module.exports = configure(function (ctx) {
       manifest: {
         name: 'pharmanager',
         short_name: 'pharmanager',
-        description: 'pharmacie mamisoa application',
+        description: 'mamisoa application',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -211,7 +210,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'madavoary'
+        appId: 'pharmanager'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

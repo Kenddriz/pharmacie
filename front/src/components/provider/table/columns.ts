@@ -17,6 +17,13 @@ export const columns = [
     field: 'name'
   },
   {
+    name: 'address',
+    align: 'left',
+    label: 'Addresse',
+    sortable: true,
+    field: 'address'
+  },
+  {
     name: 'createdAt',
     align: 'left',
     label: 'Date de création',

@@ -1,18 +1,38 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { MedicineForm } from '../medicine-form/medicine-form.entity';
+import { Article } from '../article/article.entity';
+import { Form } from '../form/form.entity';
+import { Dosage } from '../dosage/dosage.entity';
+import { Unit } from '../package/packaging.entity';
+import { Batch } from '../batch/batch.entity';
 
 @ObjectType()
 @Entity({ name: 'medicines' })
 export class Medicine {
-  @Field(() => Int)
+  @Field()
   @PrimaryColumn()
   id: number;
 
-  @Field()
-  @Column({ length: 100, unique: true })
-  designation: string;
+  @Field(() => Article)
+  article: Article;
+  @Column()
+  articleId: number;
 
-  @Field(() => [MedicineForm])
-  medicineForms: MedicineForm[];
+  @Field(() => Form)
+  form: Form;
+  @Column()
+  formId: number;
+
+  @Field(() => Dosage)
+  dosage: Dosage;
+  @Column()
+  dosageId: number;
+
+  @Field(() => Unit)
+  unit: Unit;
+  @Column()
+  unitId: number;
+
+  @Field(() => Batch)
+  batch: Batch;
 }

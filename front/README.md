@@ -1,6 +1,6 @@
-# madavoary website (madavoary)
+# pharmanager (pharmanager)
 
-Madagascar natures
+mamisoa application
 
 ## Install the dependencies
 ```bash

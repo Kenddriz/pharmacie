@@ -10,3 +10,11 @@ export class ProviderPagination {
   @Field(() => Meta)
   meta: Meta;
 }
+
+@ObjectType()
+export class Contact {
+  @Field()
+  type: number;
+  @Field(() => [String])
+  list: string[];
+};

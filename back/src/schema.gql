@@ -2,122 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Sale {
+type User {
   id: Int!
-}
-
-type Form {
-  id: Int!
-  label: String!
-}
-
-type Unit {
-  id: Int!
-  label: String!
-  multiplicity: Float!
-  description: String!
-  parentId: Float!
-}
-
-type MedicineForm {
-  id: Int!
-  expiration: String!
-  vat: Float!
-  stock: Float!
-  shop: Float!
-  price: Float!
-  medicine: Medicine!
-  unit: Unit!
-  form: Form!
-}
-
-type Medicine {
-  id: Int!
-  designation: String!
-  medicineForms: [MedicineForm!]!
-}
-
-type SalesLine {
-  id: Int!
-  unitPrice: Float!
-  quantity: Float!
-  vat: Float!
-  sale: Sale!
-  medicine: Medicine!
-  unit: Unit!
-}
-
-type PaymentMode {
-  id: Float!
-  label: String!
-}
-
-type Payment {
-  id: Int!
-  reference: String!
-  description: String!
-  date: String!
-  paymentMode: PaymentMode!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type ContactType {
-  id: Int!
-  label: String!
-}
-
-type Contact {
-  id: Int!
-  label: String!
-  contactTypeId: Float!
-}
-
-type Provider {
-  id: Int!
-  name: String!
-  address: String!
-  logo: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  contacts: [Contact!]!
-  commands: [Command!]!
-}
-
-type CommandLine {
-  id: Float!
-  unit: Unit!
-  quantity: Float!
-  price: Float!
-  medicine: String!
-  form: Form!
-  commandId: Float!
-  vat: Float!
-}
-
-type Command {
-  id: Float!
-  provider: Provider!
-  arrived: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  commandLines: [CommandLine!]!
-}
-
-type Invoice {
-  id: Float!
-  reference: String!
-  dueDate: String!
-  payment: Payment
-  command: Command!
-  commandId: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  username: String!
+  password: String!
+  avatar: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Meta {
@@ -128,62 +19,174 @@ type Meta {
   currentPage: Float!
 }
 
-type InvoicePagination {
-  items: [Invoice!]!
-  meta: Meta!
-}
-
-type CommandPagination {
-  items: [Command!]!
-  meta: Meta!
-}
-
 type ProviderPagination {
   items: [Provider!]!
   meta: Meta!
 }
 
-type RemovePaymentModeDto {
+type Contact {
+  type: Float!
+  list: [String!]!
+}
+
+type Provider {
   id: Float!
+  name: String!
+  contacts: [Contact!]!
+  address: String!
+  logo: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Method {
+  id: Float!
+  label: Float!
+}
+
+type Payment {
+  id: Float!
+  reference: String!
+  method: Method!
+  date: String!
+}
+
+type Invoice {
+  id: Float!
+  date: Float!
+  dueDate: Float!
   payment: Payment
 }
 
-type User {
-  id: Int!
-  username: String!
-  password: String!
-  avatar: String!
-  createdAt: String!
-  updatedAt: String!
+type Delivery {
+  id: Float!
+  command: Command!
+  invoice: Invoice!
+  createdAt: DateTime!
+}
+
+type Command {
+  id: Float!
+  createdAt: DateTime!
+  delivery: Delivery
+}
+
+type Article {
+  id: Float!
+  dci: String!
+  commercial_name: String!
+}
+
+type Form {
+  id: Float!
+  label: Float!
+}
+
+type Dosage {
+  id: Float!
+  parentId: Float!
+  label: String!
+}
+
+type Unit {
+  label: String!
+  multiplicity: Float!
+}
+
+type Packaging {
+  id: Float!
+  units: [Unit!]!
+}
+
+type Batch {
+  id: Float!
+  medicineId: Float!
+  manufactureDate: String!
+  expirationDate: String!
+  stock: String!
+}
+
+type Medicine {
+  id: Float!
+  article: Article!
+  form: Form!
+  dosage: Dosage!
+  unit: Unit!
+  batch: Batch!
+}
+
+type CommandLine {
+  id: Float!
+  commandId: Float!
+  quantity: Float!
+  medicines: [Medicine!]!
+}
+
+type AssuredLine {
+  id: Float!
+  deliveryId: Float!
+  expirationDate: String!
+  quantity: Float!
+  batches: [Batch!]!
+}
+
+type SaleLine {
+  id: Float!
+  saleId: Float!
+  quantity: Float!
+}
+
+type Patient {
+  id: Float!
+  lastName: String!
+  firstName: String!
+  phone: String!
+  prescriptions: [Prescription!]!
+}
+
+type Prescription {
+  id: Float!
+  reference: String!
+  description: String!
+  patient: Patient!
+}
+
+type Sale {
+  id: Float!
+  date: String!
+  prescription: Prescription
 }
 
 type LoginDto {
   token: String!
 }
 
-type Measure {
-  id: Float!
-  children: [Measure!]!
-  parentId: Float!
-  label: String!
-}
-
 type Query {
-  getHello: String!
-  salesLine(id: Int!): SalesLine!
-  sale(id: Int!): Sale!
-  paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
-  findOneInvoice(commandId: Float!): Invoice!
-  paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
-  contactTypes: [ContactType!]!
-  paymentModes: [PaymentMode!]!
-  medicines: [Medicine!]!
-  forms: [Form!]!
+  command(id: Int!): Command!
+  commandLine(id: Int!): CommandLine!
+  medicine(id: Int!): Medicine!
+  article(id: Int!): Article!
+  dosages: [Dosage!]!
+  packaging: [Packaging!]!
+  delivery(id: Int!): Delivery!
+  assuredLine(id: Int!): AssuredLine!
+  invoice(id: Int!): Invoice!
+  payment(id: Int!): Payment!
+  method(id: Int!): Method!
+  parcel(id: Int!): Batch!
+  saleLine(id: Int!): SaleLine!
+  sale(id: Int!): Sale!
+  patient(id: Int!): Patient!
   whoAmI: User!
-  units: [Unit!]!
-  measures(measures: Boolean!): [Measure!]!
+  prescription(id: Int!): Prescription!
+  form(id: Int!): Form!
 }
 
 input PaginationInput {
@@ -193,51 +196,214 @@ input PaginationInput {
 }
 
 type Mutation {
-  createSalesLine(createSalesLineInput: CreateSalesLineInput!): SalesLine!
-  updateSalesLine(updateSalesLineInput: UpdateSalesLineInput!): SalesLine!
-  removeSalesLine(id: Int!): SalesLine!
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User!
+  createProvider(input: CreateProviderInput!): Provider!
+  createCommand(createCommandInput: CreateCommandInput!): Command!
+  updateCommand(updateCommandInput: UpdateCommandInput!): Command!
+  removeCommand(id: Int!): Command!
+  createCommandLine(createCommandLineInput: CreateCommandLineInput!): CommandLine!
+  updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
+  removeCommandLine(id: Int!): CommandLine!
+  createMedicine(createMedicineInput: CreateMedicineInput!): Medicine!
+  updateMedicine(updateMedicineInput: UpdateMedicineInput!): Medicine!
+  removeMedicine(id: Int!): Medicine!
+  createArticle(createArticleInput: CreateArticleInput!): Article!
+  updateArticle(updateArticleInput: UpdateArticleInput!): Article!
+  removeArticle(id: Int!): Article!
+  saveDosage(input: SaveDosageInput!): Dosage!
+  removeDosage(id: Int!): Dosage!
+  createPackaging(input: [CreatePackagingInput!]!): Packaging!
+  updatePackaging(input: UpdatePackagingInput!): Packaging!
+  createDelivery(createDeliveryInput: CreateDeliveryInput!): Delivery!
+  updateDelivery(updateDeliveryInput: UpdateDeliveryInput!): Delivery!
+  removeDelivery(id: Int!): Delivery!
+  createAssuredLine(createAssuredLineInput: CreateAssuredLineInput!): AssuredLine!
+  updateAssuredLine(updateAssuredLineInput: UpdateAssuredLineInput!): AssuredLine!
+  removeAssuredLine(id: Int!): AssuredLine!
+  createInvoice(createInvoiceInput: CreateInvoiceInput!): Invoice!
+  updateInvoice(updateInvoiceInput: UpdateInvoiceInput!): Invoice!
+  removeInvoice(id: Int!): Invoice!
+  createPayment(createPaymentInput: CreatePaymentInput!): Payment!
+  updatePayment(updatePaymentInput: UpdatePaymentInput!): Payment!
+  removePayment(id: Int!): Payment!
+  createMethod(createMethodInput: CreateMethodInput!): Method!
+  updateMethod(updateMethodInput: UpdateMethodInput!): Method!
+  removeMethod(id: Int!): Method!
+  createParcel(createParcelInput: CreateParcelInput!): Batch!
+  updateParcel(updateParcelInput: UpdateParcelInput!): Batch!
+  removeParcel(id: Int!): Batch!
+  createSaleLine(createSaleLineInput: CreateSaleLineInput!): SaleLine!
+  updateSaleLine(updateSaleLineInput: UpdateSaleLineInput!): SaleLine!
+  removeSaleLine(id: Int!): SaleLine!
   createSale(createSaleInput: CreateSaleInput!): Sale!
   updateSale(updateSaleInput: UpdateSaleInput!): Sale!
   removeSale(id: Int!): Sale!
-  createInvoice(input: CreateInvoiceInput!): Invoice!
-  updateInvoice(input: UpdateInvoiceInput!): Invoice!
-  createCommand(input: CreateCommandInput!): Command!
-  updateCommand(input: UpdateCommandInput!): Command!
-  addCommandLine(input: CreateOrUpdateCommandLineInput!): Command!
-  updateCommandLine(input: CreateOrUpdateCommandLineInput!): Command!
-  removeCommandLine(id: Float!): Command!
-  createProvider(input: CreateProviderInput!): Provider!
-  addContacts(input: AddContactInput!): Provider!
-  updateContact(input: UpdateContactInput!): Contact!
-  createContactType(input: CreateContactTypeInput!): ContactType!
-  updateContactType(input: UpdateContactTypeInput!): ContactType!
-  savePayment(input: SavePaymentInput!): Invoice!
-  removePaymentMode(id: Float!): RemovePaymentModeDto!
-  createPaymentMode(input: PaymentModeInput!): PaymentMode!
-  updatePaymentMode(input: PaymentModeInput!): PaymentMode!
-  createMedicine(input: CreateMedicineInput!): Medicine!
-  addMedicineForm(input: CreateMedicineFormInput!): Medicine!
-  updateMedicineForm(input: UpdateMedicineFormInput!): MedicineForm!
-  updateMedicine(input: UpdateMedicineInput!): Medicine!
-  createForm(input: CreateFormInput!): Form!
-  updateForm(input: UpdateFormInput!): Form!
-  removeForm(id: Int!): Form!
-  removeMedicineForm(id: Int!): MedicineForm!
-  createUser(input: CreateUserInput!): User!
-  updateUser(input: UpdateUserInput!): User!
+  createPatient(createPatientInput: CreatePatientInput!): Patient!
+  updatePatient(updatePatientInput: UpdatePatientInput!): Patient!
+  removePatient(id: Int!): Patient!
   login(input: AuthInput!): LoginDto!
-  createUnit(input: CreateUnitInput!): Unit!
-  updateUnit(input: UpdateUnitInput!): Unit!
-  saveMeasure(input: SaveMeasureInput!): Measure!
-  removeMeasure(id: Int!): Measure!
+  createPrescription(createPrescriptionInput: CreatePrescriptionInput!): Prescription!
+  updatePrescription(updatePrescriptionInput: UpdatePrescriptionInput!): Prescription!
+  removePrescription(id: Int!): Prescription!
+  createForm(createFormInput: CreateFormInput!): Form!
+  updateForm(updateFormInput: UpdateFormInput!): Form!
+  removeForm(id: Int!): Form!
 }
 
-input CreateSalesLineInput {
+input CreateUserInput {
+  username: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  id: Float!
+  username: String!
+}
+
+input CreateProviderInput {
+  name: String!
+  address: String!
+  contacts: [ContactInput!]!
+}
+
+input ContactInput {
+  type: Float!
+  list: [String!]!
+}
+
+input CreateCommandInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdateSalesLineInput {
+input UpdateCommandInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateCommandLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCommandLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMedicineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMedicineInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateArticleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateArticleInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input SaveDosageInput {
+  id: Float!
+  parentId: Float!
+  label: String!
+}
+
+input CreatePackagingInput {
+  label: String!
+  multiplicity: Float!
+}
+
+input UpdatePackagingInput {
+  id: Float!
+  units: [CreatePackagingInput!]!
+}
+
+input CreateDeliveryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateDeliveryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateAssuredLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateAssuredLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInvoiceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateInvoiceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreatePaymentInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdatePaymentInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMethodInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMethodInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateParcelInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateParcelInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateSaleLineInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSaleLineInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -254,137 +420,15 @@ input UpdateSaleInput {
   id: Int!
 }
 
-input CreateInvoiceInput {
-  dueDate: String!
-  reference: String!
-  commandId: Float!
+input CreatePatientInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
-input UpdateInvoiceInput {
-  id: Float!
-  dueDate: String!
-  reference: String!
-}
-
-input CreateCommandInput {
-  providerId: Float!
-}
-
-input UpdateCommandInput {
-  id: Float!
-  providerId: Float!
-  arrived: Boolean
-}
-
-input CreateOrUpdateCommandLineInput {
-  commandId: Float!
-  commandLines: [CommandLineInput!]!
-}
-
-input CommandLineInput {
-  id: Float
-  medicine: String!
-  unitId: Float!
-  price: Float!
-  quantity: Float!
-  formId: Float!
-  vat: Float!
-}
-
-input CreateProviderInput {
-  name: String!
-  address: String!
-  contactTypes: [CreateContactInput!]!
-}
-
-input CreateContactInput {
-  contactTypeId: Float!
-  contacts: [String!]!
-}
-
-input AddContactInput {
-  providerId: Float!
-  contactTypeId: Float!
-  contacts: [String!]!
-}
-
-input UpdateContactInput {
-  id: Float!
-  label: String!
-}
-
-input CreateContactTypeInput {
-  label: String!
-}
-
-input UpdateContactTypeInput {
-  label: String
-  id: Float!
-}
-
-input SavePaymentInput {
-  id: Float!
-  reference: String!
-  description: String!
-  date: String!
-  invoiceId: Float!
-  paymentModeId: Float!
-}
-
-input PaymentModeInput {
-  id: Float
-  label: String!
-}
-
-input CreateMedicineInput {
-  designation: String!
-  medicineForms: [CreateMedicineFormInput!]!
-}
-
-input CreateMedicineFormInput {
-  medicineId: Int
-  formId: Int!
-  unitId: Int!
-  expiration: String!
-  price: Float!
-  vat: Float!
-  quantity: Float!
-}
-
-input UpdateMedicineFormInput {
+input UpdatePatientInput {
+  """Example field (placeholder)"""
+  exampleField: Int
   id: Int!
-  medicineId: Int!
-  formId: Int!
-  unitId: Int!
-  expiration: String!
-  price: Float!
-  vat: Float!
-  stock: Float!
-  shop: Float!
-}
-
-input UpdateMedicineInput {
-  id: Int!
-  designation: String!
-}
-
-input CreateFormInput {
-  label: String!
-}
-
-input UpdateFormInput {
-  label: String
-  id: Int!
-}
-
-input CreateUserInput {
-  username: String!
-  password: String!
-}
-
-input UpdateUserInput {
-  id: Float!
-  username: String!
 }
 
 input AuthInput {
@@ -392,23 +436,24 @@ input AuthInput {
   password: String!
 }
 
-input CreateUnitInput {
-  label: String!
-  multiplicity: Float!
-  description: String!
-  parentId: Int = 0
+input CreatePrescriptionInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
-input UpdateUnitInput {
-  label: String
-  multiplicity: Float
-  description: String
-  parentId: Float = 0
-  id: Float!
+input UpdatePrescriptionInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
-input SaveMeasureInput {
-  id: Float!
-  parentId: Float!
-  label: String!
+input CreateFormInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateFormInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }

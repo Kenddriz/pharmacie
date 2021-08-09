@@ -57,7 +57,6 @@
         :thumb-style="thumbStyle"
         :bar-style="barStyle"
         style="height: 85vh;"
-        class="bg-grey-1"
       >
         <router-view />
       </q-scroll-area>

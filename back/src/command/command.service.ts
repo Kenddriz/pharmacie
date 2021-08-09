@@ -1,54 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CommandDto } from './types/command.dto';
+import { CreateCommandInput } from './dto/create-command.input';
+import { UpdateCommandInput } from './dto/update-command.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from './command.entity';
 import { Repository } from 'typeorm';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
 export class CommandService {
   constructor(
-    @InjectRepository(Command)
-    private commandRepository: Repository<Command>,
+    @InjectRepository(Command) private commandRepository: Repository<Command>,
   ) {}
-  async create(input: Record<string, any>): Promise<void> {
-    await this.commandRepository
-      .createQueryBuilder()
-      .insert()
-      .values(input)
-      .execute();
-  }
-  async update(id: number, input: Record<string, any>): Promise<void> {
-    await this.commandRepository
-      .createQueryBuilder()
-      .update()
-      .set(input)
-      .where('id = :id', { id })
-      .execute();
-  }
-  async findOneById(id: number): Promise<Command> {
-    return await this.commandRepository.findOne(id);
+  create(createCommandInput: CreateCommandInput) {
+    return 'This action adds a new command';
   }
 
-  async findPendingCommands(providerId: number): Promise<Command[]> {
-    return await this.commandRepository
-      .createQueryBuilder()
-      .where('providerId = :providerId ', { providerId })
-      .andWhere('arrived = :arrived', { arrived: false })
-      .orderBy('createdAt', 'DESC')
-      .getMany();
+  findAll() {
+    return `This action returns all command`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} command`;
+  }
+
+  update(id: number, updateCommandInput: UpdateCommandInput) {
+    return `This action updates a #${id} command`;
   }
 
   remove(id: number) {
     return `This action removes a #${id} command`;
-  }
-  async paginate(input: PaginationInput): Promise<Pagination<Command>> {
-    const queryBuilder = this.commandRepository
-      .createQueryBuilder()
-      .orderBy('arrived', 'DESC');
-
-    const { page, limit } = input;
-    return await paginate<Command>(queryBuilder, { page, limit });
   }
 }
