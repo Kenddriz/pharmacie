@@ -3,36 +3,19 @@
     <div class="q-table__title q-mb-md">
       Formes et dosages
       <q-btn v-if="article" class="q-ml-lg" round color="positive" size="sm" glossy icon="add">
-        <q-menu>
-          <q-list dense padding style="min-width: 250px">
-            <FormList
-              :forms="forms"
-              :selected="selectedForm"
-              @selected="Object.assign(selectedForm, $event)"
-            />
-            <DosageList
-              :dosages="dosages"
-              :selected="selectedDosage"
-              @selected="Object.assign(selectedDosage, $event)"
-            />
-            <PackagingList
-              :packaging="packagingList"
-              :selected="selectedPk"
-              @selected="Object.assign(selectedPk, $event)"
-            />
-          </q-list>
-          <q-btn
-            type="submit"
-            class="q-ma-sm q-pr-sm q-pl-sm"
-            color="primary"
-            no-caps
-            rounded
-            outline
-            dense
-            label="Enregistrer"
-            @click="addMedicine(article.id, selectedForm.id, selectedDosage.id, selectedPk.id)"
-          />
-        </q-menu>
+        <MedicineForm
+          :forms="forms"
+          :selectedForm="selectedForm"
+          @selectedForm="Object.assign(selectedForm, $event)"
+          :dosages="dosages"
+          :selectedDosage="selectedDosage"
+          @selectedDosage="Object.assign(selectedDosage, $event)"
+          :packaging="packagingList"
+          :selectedPk="selectedPk"
+          @selectedPk="Object.assign(selectedPk, $event)"
+          @submit="addMedicine(article.id, ...$event)"
+        >
+        </MedicineForm>
       </q-btn>
     </div>
     <div class="flex flex-center wrap q-gutter-md">
@@ -67,22 +50,23 @@
       </q-card>
     </div>
   </div>
+  <q-dialog>
+
+  </q-dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { Article } from '../../graphql/types';
 import { useForms } from '../../graphql/form/form.service';
-import FormList from '../form/FormList.vue';
-import DosageList from '../dosage/DosageList.vue';
-import PackagingList from '../packaging/PackagingList.vue';
 import { useDosages } from '../../graphql/dosage/dosage.service';
 import { useListPackaging } from '../../graphql/packaging/packaging.service';
 import { useSaveMedicine } from '../../graphql/medicine/medicine.service';
+import MedicineForm from './MedicineForm.vue';
 
 export default defineComponent({
   name: 'Medicine',
-  components: { FormList, DosageList, PackagingList },
+  components: { MedicineForm },
   props: {
     article: Object as PropType<Article>
   },
