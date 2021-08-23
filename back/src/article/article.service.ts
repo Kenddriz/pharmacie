@@ -19,7 +19,7 @@ export class ArticleService {
     return `This action returns all article`;
   }
 
-  findOneById(id: number) {
+  async findOneById(id: number): Promise<Article> {
     return this.repository.findOne(id);
   }
   async paginate(input: PaginationInput): Promise<Pagination<Article>> {

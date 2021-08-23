@@ -249,7 +249,9 @@ export type Mutation = {
   updateCommandLine: CommandLine;
   removeCommandLine: CommandLine;
   saveMedicine: Medicine;
-  removeMedicine: Medicine;
+  softRemoveMedicine: Scalars['Boolean'];
+  deleteMedicine: Scalars['Boolean'];
+  recoverMedicine: Scalars['Boolean'];
   saveForm: Form;
   removeForm: Form;
   saveDosage: Dosage;
@@ -342,7 +344,17 @@ export type MutationSaveMedicineArgs = {
 };
 
 
-export type MutationRemoveMedicineArgs = {
+export type MutationSoftRemoveMedicineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationDeleteMedicineArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRecoverMedicineArgs = {
   id: Scalars['Int'];
 };
 
@@ -607,7 +619,7 @@ export type Query = {
   providers: Array<Provider>;
   command: Command;
   commandLine: CommandLine;
-  medicine: Medicine;
+  findAll: Array<Medicine>;
   forms: Array<Form>;
   dosages: Array<Dosage>;
   packaging: Array<Packaging>;
@@ -637,11 +649,6 @@ export type QueryCommandArgs = {
 
 
 export type QueryCommandLineArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryMedicineArgs = {
   id: Scalars['Int'];
 };
 

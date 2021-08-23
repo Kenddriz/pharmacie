@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMedicineInput } from './types/create-medicine.input';
 import { MedicineInput } from './types/medicine.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medicine } from './medicine.entity';
@@ -31,7 +30,16 @@ export class MedicineService {
     return `This action updates a #${id} medicine`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} medicine`;
+  async delete(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
+  }
+  async softRemove(id: number): Promise<boolean> {
+    const query = await this.repository.softDelete(id);
+    return query.affected > 0;
+  }
+  async recover(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
   }
 }

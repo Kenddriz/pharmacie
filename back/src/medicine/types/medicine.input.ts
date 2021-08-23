@@ -17,3 +17,11 @@ export class MedicineInput {
   @Field(() => Int)
   packagingId: number;
 }
+@InputType()
+export class DeleteMedicineInput {
+  @Field(() => Int)
+  medicineId: number;
+
+  @Field(() => Int)
+  articleId: number;
+}

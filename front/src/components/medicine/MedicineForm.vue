@@ -1,33 +1,31 @@
 <template>
-  <q-menu>
-    <q-list dense padding style="min-width: 250px">
-      <FormList
-        :forms="forms"
-        :selected="selectedForm"
-        @selected="$emit('selectedForm', $event)"
-      />
-      <DosageList
-        :dosages="dosages"
-        :selected="selectedDosage"
-        @selected="$emit('selectedDosage', $event)"
-      />
-      <PackagingList
-        :packaging="packaging"
-        :selected="selectedPk"
-        @selected="$emit('selectedPk', $event)"
-      />
-    </q-list>
-    <q-btn
-      class="q-ma-sm q-pl-sm q-pr-sm"
-      color="primary"
-      no-caps
-      rounded
-      outline
-      dense
-      label="Enregistrer"
-      @click="$emit('submit', [selectedForm.id, selectedDosage.id, selectedPk.id])"
+  <q-list dense padding style="min-width: 250px">
+    <FormList
+      :forms="forms"
+      :selected="selectedForm"
+      @selected="$emit('selectedForm', $event)"
     />
-  </q-menu>
+    <DosageList
+      :dosages="dosages"
+      :selected="selectedDosage"
+      @selected="$emit('selectedDosage', $event)"
+    />
+    <PackagingList
+      :packaging="packaging"
+      :selected="selectedPk"
+      @selected="$emit('selectedPk', $event)"
+    />
+  </q-list>
+  <q-btn
+    class="q-ma-sm q-pl-sm q-pr-sm"
+    color="primary"
+    no-caps
+    rounded
+    outline
+    dense
+    label="Enregistrer"
+    @click="$emit('submit', [selectedForm.id, selectedDosage.id, selectedPk.id])"
+  />
 </template>
 
 <script lang="ts">

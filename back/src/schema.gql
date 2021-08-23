@@ -206,7 +206,7 @@ type Query {
   providers: [Provider!]!
   command(id: Int!): Command!
   commandLine(id: Int!): CommandLine!
-  medicine(id: Int!): Medicine!
+  findAll: [Medicine!]!
   forms: [Form!]!
   dosages: [Dosage!]!
   packaging: [Packaging!]!
@@ -241,7 +241,9 @@ type Mutation {
   updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
   removeCommandLine(id: Int!): CommandLine!
   saveMedicine(input: MedicineInput!): Medicine!
-  removeMedicine(id: Int!): Medicine!
+  softRemoveMedicine(id: Int!): Boolean!
+  deleteMedicine(id: Int!): Boolean!
+  recoverMedicine(id: Int!): Boolean!
   saveForm(input: FormInput!): Form!
   removeForm(id: Int!): Form!
   saveDosage(input: SaveDosageInput!): Dosage!

@@ -39,23 +39,29 @@ export class MedicineResolver {
       medicine = new Medicine();
       medicine.id = await uniqId('Medicine');
     }
-    Object.assign(medicine, res);
-    return this.medicineService.save(medicine);
+    medicine.article = await this.articleService.findOneById(res.articleId);
+    medicine.form = await this.formService.findOne(res.formId);
+    medicine.dosage = await this.dosageService.findOneById(res.dosageId);
+    medicine.packaging = await this.packagingService.findOneById(res.formId);
+    return await this.medicineService.save(medicine);
   }
 
-  @Query(() => [Medicine], { name: 'medicine' })
+  @Query(() => [Medicine])
   findAll() {
     return this.medicineService.findAll();
   }
 
-  @Query(() => Medicine, { name: 'medicine' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.medicineService.findOne(id);
+  @Mutation(() => Boolean)
+  async softRemoveMedicine(@Args('id', { type: () => Int }) id: number) {
+    return this.medicineService.softRemove(id);
   }
-
-  @Mutation(() => Medicine)
-  removeMedicine(@Args('id', { type: () => Int }) id: number) {
-    return this.medicineService.remove(id);
+  @Mutation(() => Boolean)
+  async deleteMedicine(@Args('id', { type: () => Int }) id: number) {
+    return this.medicineService.delete(id);
+  }
+  @Mutation(() => Boolean)
+  async recoverMedicine(@Args('id', { type: () => Int }) id: number) {
+    return this.medicineService.recover(id);
   }
   /**Field resolver*/
   @ResolveField(() => Form)

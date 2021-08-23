@@ -18,9 +18,36 @@ export type SaveMedicineData = {
 export const SAVE_MEDICINE = gql`
     mutation SaveMedicine($input:MedicineInput!) {
       saveMedicine(input: $input) {
-        article { id }
         ${MEDICINE_PARAMS}
       }
     }
+`;
+
+
+export type SoftRemoveMedicineData = {
+  softRemoveMedicine: boolean;
+}
+export const SOFT_REMOVE_MEDICINE = gql`
+  mutation SoftRemoveMedicine($id: Int!) {
+    softRemoveMedicine(id: $id)
+  }
+`;
+
+export type DeleteMedicineData = {
+  softRemoveMedicine: boolean;
+}
+export const DELETE_MEDICINE = gql`
+    mutation DeleteMedicine($id: Int!) {
+      deleteMedicine(id: $id)
+    }
+`;
+
+export type RecoverMedicineData = {
+  recoverMedicine: boolean;
+}
+export const RECOVER_MEDICINE = gql`
+  mutation RecoverMedicine($id: Int!) {
+    recoverMedicine(id: $id)
+  }
 `;
 
