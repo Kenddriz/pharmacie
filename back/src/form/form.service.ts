@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFormInput } from './dto/create-form.input';
-import { UpdateFormInput } from './dto/update-form.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Form } from './form.entity';
@@ -8,20 +6,16 @@ import { Form } from './form.entity';
 @Injectable()
 export class FormService {
   constructor(@InjectRepository(Form) private repository: Repository<Form>) {}
-  create(createFormInput: CreateFormInput) {
-    return 'This action adds a new form';
+  async save(form: Form): Promise<Form> {
+    return this.repository.save(form);
   }
 
-  findAll() {
-    return `This action returns all form`;
+  async findAll(): Promise<Form[]> {
+    return this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} form`;
-  }
-
-  update(id: number, updateFormInput: UpdateFormInput) {
-    return `This action updates a #${id} form`;
+  async findOne(id: number) {
+    return this.repository.findOne(id);
   }
 
   remove(id: number) {

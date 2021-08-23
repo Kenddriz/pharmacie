@@ -25,13 +25,13 @@ export const PROVIDERS = gql`
     }
   }
 `;
-export type CreateProviderData = {
-  createProvider: Provider
+export type SaveProviderData = {
+  saveProvider: Provider
 }
 
 export const CREATE_PROVIDER = gql`
-  mutation CreateProvider($input: CreateProviderInput!) {
-    createProvider(input: $input) {
+  mutation SaveProvider($input: SaveProviderInput!) {
+    saveProvider(input: $input) {
       ${ PROVIDER }
     }
   }

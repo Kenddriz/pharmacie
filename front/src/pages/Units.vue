@@ -11,7 +11,7 @@
 
 <script lang="ts">
 
-import ConditioningComponent from '../components/Conditioning/ConditioningComponent.vue';
+import ConditioningComponent from '../components/packaging/PackagingComponent.vue';
 import DosageComponent from '../components/dosage/DosageComponent.vue';
 
 export default {

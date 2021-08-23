@@ -10,7 +10,10 @@ export class ContactInput {
 }
 
 @InputType()
-export class CreateProviderInput {
+export class SaveProviderInput {
+  @Field()
+  id: number;
+
   @Field()
   name: string;
 

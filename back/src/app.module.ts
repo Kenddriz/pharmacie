@@ -12,7 +12,7 @@ import { CommandLineModule } from './command-line/command-line.module';
 import { MedicineModule } from './medicine/medicine.module';
 import { ArticleModule } from './article/article.module';
 import { DosageModule } from './dosage/dosage.module';
-import { PackagingModule } from './package/packaging.module';
+import { PackagingModule } from './packaging/packaging.module';
 import { DeliveryModule } from './delivery/delivery.module';
 import { AssuredLineModule } from './assured-line/assured-line.module';
 import { InvoiceModule } from './invoice/invoice.module';

@@ -2,11 +2,14 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Contact } from './types/provider.dto';
+import { Command } from '../command/command.entity';
 
 @ObjectType()
 @Entity({ name: 'providers' })
@@ -37,4 +40,15 @@ export class Provider {
   @Field()
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @Field(() => [Command])
+  @OneToMany(() => Command, (command) => command.provider, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  commands: Command[];
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Method } from '../method/method.entity';
 
 @ObjectType()
@@ -14,11 +14,17 @@ export class Payment {
   reference: string;
 
   @Field(() => Method)
+  @ManyToOne(() => Method, (method) => method.payments, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   method: Method;
-  @Column()
-  methodId: string;
 
   @Field()
   @Column({ type: 'date' })
   date: string;
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

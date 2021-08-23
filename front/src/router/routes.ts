@@ -10,7 +10,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/main/MainLayout.vue'),
     children: [
       { path: '', alias: 'unit', component: () => import('pages/Units.vue') },
-      { path: 'provider', component: () => import('pages/provider/Provider.vue') }
+      { path: 'provider', component: () => import('pages/provider/Provider.vue') },
+      { path: 'medicine', component: () => import('src/pages/medicine/MedicinePage.vue') }
     ],
   },
 

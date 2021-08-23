@@ -3,23 +3,24 @@ import { DOSAGES_DATA, DosagesData, SAVE_DOSAGE, SaveDosageData } from './dosage
 import {reactive, ref} from 'vue';
 import { Dosage, MutationSaveDosageArgs, SaveDosageInput } from '../types';
 
+export type DosageItem = Dosage & {children: Dosage[]};
 export const useDosages = () => {
-  const dosages = ref<(Dosage & {children: Dosage[]})[]>([]);
+  const dosages = ref<DosageItem[]>([]);
+  const selectedDosage = reactive<Dosage>({ id: 0, parentId: 0, label: ''});
   const { loading:listLoading, onResult } = useQuery<DosagesData>(DOSAGES_DATA);
-  onResult(res => {
-    if(res.data?.dosages) {
-      dosages.value = res.data.dosages
+  onResult(({ data }) => {
+    if(data?.dosages) {
+      dosages.value = data.dosages
         .filter(u => u.parentId === 0)
         .map(u => ({
           ...u,
-          children: res.data.dosages.filter(c => c.parentId === u.id)
+          children: data.dosages.filter(c => c.parentId === u.id)
         }));
+      const child = data.dosages.find(u => u.parentId > 0);
+      if(child)Object.assign(selectedDosage, child);
     }
   })
-  return {
-    listLoading,
-    dosages
-  }
+  return { listLoading, dosages, selectedDosage }
 }
 
 export const useSaveDosage = () => {

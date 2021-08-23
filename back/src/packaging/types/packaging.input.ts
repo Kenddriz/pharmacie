@@ -10,7 +10,7 @@ export class CreatePackagingInput {
   multiplicity: number;
 }
 
-/**update sale-package*/
+/**update sale-packaging*/
 @InputType()
 export class UpdatePackagingInput {
   @Field()

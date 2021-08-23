@@ -13,9 +13,13 @@ import {cloneDeep} from '../utils/utils';
 
 export const useListPackaging = () => {
   const packagingList = ref<Packaging[]>([]);
+  const selectedPk = reactive<Packaging>({ id: 0, units: []});
   const { onResult, loading: loadList } = useQuery<PackagingData>(PACKAGING);
-  onResult(res => {
-    if(res?.data?.packaging) packagingList.value = cloneDeep(res.data.packaging);
+  onResult(({ data }) => {
+    if(data?.packaging && data.packaging.length) {
+      Object.assign(selectedPk, data.packaging[0]);
+      packagingList.value = cloneDeep(data.packaging);
+    }
   });
 
   const { mutate, loading: loadUpdate } = useMutation<
@@ -30,13 +34,7 @@ export const useListPackaging = () => {
     packagingList.value[indexP].units.splice(indexU, 1);
     updatePackage(indexP);
   }
-  return {
-    loadList,
-    packagingList,
-    updatePackage,
-    removeUnit,
-    loadUpdate
-  }
+  return { loadList, packagingList, updatePackage, removeUnit, loadUpdate, selectedPk }
 }
 
 export const useCreatePackaging = () => {

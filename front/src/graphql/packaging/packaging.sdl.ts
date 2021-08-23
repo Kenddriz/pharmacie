@@ -4,7 +4,7 @@ import {Packaging} from '../types';
 export type PackagingData = {
   packaging: Packaging[]
 }
-const UNIT_PARAMS = `
+export const PACKAGING_PARAMS = `
   id
   units{
     label
@@ -14,7 +14,7 @@ const UNIT_PARAMS = `
 export const PACKAGING = gql`
   query Packaging{
     packaging{
-      ${UNIT_PARAMS}
+      ${PACKAGING_PARAMS}
     }
   }
 `;
@@ -25,7 +25,7 @@ export type CreatePackagingData = {
 export const CREATE_PACKAGING = gql`
   mutation CreatePackaging($input: [CreatePackagingInput!]!){
     createPackaging(input: $input){
-      ${UNIT_PARAMS}
+      ${PACKAGING_PARAMS}
     }
   }
 `;
@@ -36,7 +36,7 @@ export type UpdatePackagingData = {
 export const UPDATE_PACKAGING = gql`
   mutation UpdatePackaging($input:UpdatePackagingInput!){
     updatePackaging(input:$input){
-      ${UNIT_PARAMS}
+      ${PACKAGING_PARAMS}
     }
   }
 `;

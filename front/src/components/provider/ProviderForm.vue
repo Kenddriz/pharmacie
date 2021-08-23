@@ -1,7 +1,11 @@
 <template>
-  <q-card square flat bordered>
-    <q-card-section align="center">
-      <div class="text-h5">Nouveau fournisseur</div>
+  <q-card bordered>
+    <q-card-section class="q-pa-md" horizontal align="center">
+      <div class="text-h6 text-weight-bold">{{$tm('provider.' + mode)}}</div>
+      <q-space />
+      <q-btn color="red" v-if="mode === 'update'" dense flat icon="close" v-close-popup>
+        <q-tooltip>Fermer</q-tooltip>
+      </q-btn>
     </q-card-section>
 
     <q-separator inset />
@@ -66,27 +70,50 @@
 
     <q-card-actions align="right">
       <q-btn
-        @click="submitCreation"
+        @click="$emit('submit', input)"
         color="secondary"
         no-caps
-        label="submit"
-        :loading="loadCreation"
+        label="Enregistrer"
       />
     </q-card-actions>
   </q-card>
 </template>
 
 <script lang="ts">
-  import { ref, defineComponent } from 'vue'
+  import { ref, defineComponent, PropType, reactive } from 'vue';
   import ContactInput from '../contact/ContactInput.vue';
-  import {useCreateProvider} from '../../graphql/provider/provider.service';
+  import { SaveProviderInput } from '../../graphql/types';
+  import { useI18n } from 'vue-i18n';
+  import { defaultProviderInput } from '../../graphql/provider/provider.service';
 
   export default defineComponent({
+    name: 'ProviderForm',
     components: { ContactInput },
-    setup () {
+    emits: ['submit'],
+    props: {
+      modelValue: Object as PropType<SaveProviderInput>,
+      mode: {
+        type: String,
+        default: 'add'
+      }
+    },
+    setup (props) {
+      const { tm } =  useI18n();
+      const input = reactive<SaveProviderInput>({
+        ...defaultProviderInput,
+        contacts: (tm('contacts') as string[]).map((type, index) => ({ type: index, list: [] })),
+      });
+      if(props.modelValue)Object.assign(input, props.modelValue);
+
       return {
         expanded: ref(false),
-        ...useCreateProvider()
+        input,
+        addContact: (index: number) => {
+          input.contacts[index].list.push('');
+        },
+        removeContact: (cIndex: number, lIndex: number) => {
+          input.contacts[cIndex].list.splice(lIndex, 1);
+        }
       }
     }
   })

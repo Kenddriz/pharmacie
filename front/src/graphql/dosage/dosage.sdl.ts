@@ -4,7 +4,7 @@ import { Dosage } from '../types';
 export type DosagesData = {
   dosages: Dosage[]
 }
-const DOSAGE_PARAMS = `
+export const DOSAGE_PARAMS = `
   id
   label
   parentId

@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts">
-import { PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { Contact } from '../../graphql/types';
-export default {
+export default defineComponent({
   name: 'ContactList',
   props: {
     contacts: {
@@ -25,7 +25,7 @@ export default {
       cts: props.contacts.filter(c => c.list.length > 0)
     }
   }
-};
+});
 </script>
 
 <style scoped>

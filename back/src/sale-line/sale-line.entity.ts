@@ -1,8 +1,16 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { Batch } from '../batch/batch.entity';
+import { Sale } from '../sale/sale.entity';
 
 @ObjectType()
-@Entity({ name: 'sale-lines' })
+@Entity({ name: 'saleLines' })
 export class SaleLine {
   @Field()
   @PrimaryColumn()
@@ -15,4 +23,22 @@ export class SaleLine {
   @Field()
   @Column()
   quantity: number;
+
+  @Field(() => Batch)
+  @ManyToOne(() => Batch, (batch) => batch.saleLines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  batches: Batch;
+
+  @Field(() => Sale)
+  @ManyToOne(() => Sale, (sale) => sale.saleLines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  sales: Sale;
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

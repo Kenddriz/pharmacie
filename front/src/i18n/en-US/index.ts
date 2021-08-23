@@ -5,4 +5,12 @@ export default {
   failed: 'Action failed',
   success: 'Action was successful',
   contacts: ['Mail', 'Mobile', 'Faxe'],
+  provider: {
+    'update': 'Modification de fournisseur',
+    'add': 'Nouveau fournisseur'
+  },
+  article: {
+    update: 'Modification d\'article',
+    add: 'Nouvelle article'
+  }
 };

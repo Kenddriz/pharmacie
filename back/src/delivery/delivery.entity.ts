@@ -1,7 +1,17 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  RelationId,
+} from 'typeorm';
 import { Command } from '../command/command.entity';
 import { Invoice } from '../invoice/invoice.entity';
+import { AssuredLine } from '../assured-line/assured-line.entity';
 
 @ObjectType()
 @Entity({ name: 'deliveries' })
@@ -11,16 +21,38 @@ export class Delivery {
   id: number;
 
   @Field(() => Command)
+  @OneToOne(() => Command, (command) => command.delivery, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
   command: Command;
-  @Column()
+  @RelationId((delivery: Delivery) => delivery.command)
   commandId: number;
 
-  @Field(() => Invoice)
-  invoice: Invoice;
-  @Column({ default: 0 })
+  @Field(() => Invoice, { nullable: true })
+  @OneToOne(() => Invoice, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
+  invoice?: Invoice;
+  @RelationId((delivery: Delivery) => delivery.invoice)
   invoiceId: number;
+
+  @Field(() => [AssuredLine])
+  @OneToMany(() => AssuredLine, (assuredLine) => assuredLine.delivery, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  assuredLines: AssuredLine[];
 
   @Field()
   @CreateDateColumn()
   createdAt: Date;
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

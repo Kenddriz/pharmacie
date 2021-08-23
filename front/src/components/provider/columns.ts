@@ -1,4 +1,4 @@
-import { Provider } from '../../../graphql/types';
+import { Provider } from '../../graphql/types';
 import { date } from 'quasar';
 
 export const columns = [

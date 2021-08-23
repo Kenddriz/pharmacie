@@ -1,10 +1,18 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  RelationId,
+} from 'typeorm';
 import { Article } from '../article/article.entity';
 import { Form } from '../form/form.entity';
 import { Dosage } from '../dosage/dosage.entity';
-import { Unit } from '../package/packaging.entity';
+import { Packaging } from '../packaging/packaging.entity';
 import { Batch } from '../batch/batch.entity';
+import { CommandLine } from '../command-line/command-line.entity';
 
 @ObjectType()
 @Entity({ name: 'medicines' })
@@ -14,25 +22,56 @@ export class Medicine {
   id: number;
 
   @Field(() => Article)
+  @ManyToOne(() => Article, (article) => article.medicines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   article: Article;
-  @Column()
+  @RelationId((medicine: Medicine) => medicine.article)
   articleId: number;
 
   @Field(() => Form)
+  @ManyToOne(() => Form, (form) => form.medicines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   form: Form;
-  @Column()
+  @RelationId((medicine: Medicine) => medicine.form)
   formId: number;
 
   @Field(() => Dosage)
+  @ManyToOne(() => Dosage, (dosage) => dosage.medicines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   dosage: Dosage;
-  @Column()
+  @RelationId((medicine: Medicine) => medicine.dosage)
   dosageId: number;
 
-  @Field(() => Unit)
-  unit: Unit;
-  @Column()
-  unitId: number;
+  @Field(() => Packaging)
+  @ManyToOne(() => Packaging, (packaging) => packaging.medicines, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  packaging: Packaging;
+  @RelationId((medicine: Medicine) => medicine.packaging)
+  packagingId: number;
 
-  @Field(() => Batch)
-  batch: Batch;
+  @Field(() => [Batch])
+  @OneToMany(() => Batch, (batch) => batch.medicine, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  batches: Batch[];
+
+  @Field(() => [CommandLine], { nullable: true })
+  @OneToMany(() => CommandLine, (commandLine) => commandLine.medicine, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  commandLines: CommandLine[];
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

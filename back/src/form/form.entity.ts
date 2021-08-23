@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Medicine } from '../medicine/medicine.entity';
 
 @ObjectType()
 @Entity({ name: 'forms' })
@@ -10,5 +11,15 @@ export class Form {
 
   @Field()
   @Column()
-  label: number;
+  label: string;
+
+  @OneToMany(() => Medicine, (medicine) => medicine.form, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  medicines: Medicine[];
+
+  @Field({ nullable: true })
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt?: Date;
 }

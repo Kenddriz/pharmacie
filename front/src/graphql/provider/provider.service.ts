@@ -1,8 +1,15 @@
 import {useMutation, useQuery, useResult} from '@vue/apollo-composable';
-import {CREATE_PROVIDER, CreateProviderData, PROVIDERS, ProvidersData} from './provider.sdl';
-import {reactive} from 'vue';
-import {CreateProviderInput, MutationCreateProviderArgs, Provider} from '../types';
+import {CREATE_PROVIDER, SaveProviderData, PROVIDERS, ProvidersData} from './provider.sdl';
+import {SaveProviderInput, MutationSaveProviderArgs, Provider} from '../types';
+import { reactive, ref } from 'vue';
+import { cloneDeep } from '../utils/utils';
 
+export const defaultProviderInput: SaveProviderInput = {
+  id: 0,
+  name: '',
+  address: '',
+  contacts: []
+}
 export const useProviders = () => {
   const { result, loading: providersLoading } = useQuery<ProvidersData>(PROVIDERS);
     return {
@@ -11,40 +18,50 @@ export const useProviders = () => {
     }
 }
 
-export const useCreateProvider = () => {
-  const input = reactive<CreateProviderInput>({
-    name: '',
-    address: '',
-    contacts: [0,1,2].map(type => ({ type, list: [] })),
-  });
-  const addContact = (index: number) => {
-    input.contacts[index].list.push('');
+export const useSaveProvider = () => {
+  const { mutate, loading: loadSave } = useMutation<
+    SaveProviderData,
+    MutationSaveProviderArgs
+    >(CREATE_PROVIDER);
+  const show = ref<boolean>(false);
+  const updateInput = reactive<SaveProviderInput>(defaultProviderInput);
+  function setUpdateInput(provider: Provider) {
+    const { id, name, address, contacts } = cloneDeep(provider);
+    Object.assign(updateInput, { id, name, address, contacts });
+    show.value = true;
   }
-  const removeContact = (cIndex: number, lIndex: number) => {
-    input.contacts[cIndex].list.splice(lIndex, 1);
-  };
-  const { mutate, loading: loadCreation } = useMutation<
-    CreateProviderData,
-    MutationCreateProviderArgs
-    >(CREATE_PROVIDER, {
-    update: (cache, { data }) => {
-      if(data?.createProvider) {
-        cache.modify({
-          fields: {
-            providers(existing: Provider[], {toReference}) {
-              return [toReference(data.createProvider), ...existing]
-            }
-          }
-        })
-      }
-    }
-  });
-  const submitCreation = () => {
+  function filterInput(input: SaveProviderInput) {
     input.contacts = input.contacts.map(c => ({
       type: c.type,
       list: c.list.filter(l => l.trim() !== '')
-    }))
-    void mutate( { input } )
+    }));
+    return input;
   }
-  return { input, submitCreation, loadCreation, addContact, removeContact }
+  function createProvider(input: SaveProviderInput){
+    void mutate({ input: filterInput(input) }, {
+      update: (cache, { data }) => {
+        if(data?.saveProvider) {
+          cache.modify({
+            fields: {
+              providers(existing: Provider[], {toReference}) {
+                return [toReference(data.saveProvider), ...existing]
+              }
+            }
+          })
+        }
+      }
+    })
+  }
+  function updateProvider(input: SaveProviderInput) {
+    if(input.id > 0) void mutate({ input: filterInput(input) })
+  }
+
+  return {
+    createProvider,
+    updateProvider,
+    setUpdateInput,
+    show,
+    updateInput,
+    loadSave,
+  }
 }

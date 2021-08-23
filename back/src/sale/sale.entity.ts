@@ -1,6 +1,16 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  RelationId,
+} from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
+import { SaleLine } from '../sale-line/sale-line.entity';
 
 @ObjectType()
 @Entity({ name: 'sales' })
@@ -14,7 +24,25 @@ export class Sale {
   date: string;
 
   @Field(() => Prescription, { nullable: true })
+  @OneToOne(() => Prescription, (prescription) => prescription.sale, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn()
   prescription?: Prescription;
-  @Column({ default: 0 })
+  @RelationId((sale: Sale) => sale.prescription)
   prescriptionId: number;
+
+  @Field(() => [SaleLine])
+  @OneToMany(() => SaleLine, (saleLine) => saleLine.batches, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  saleLines: SaleLine[];
+
+  @Field()
+  @DeleteDateColumn({ type: 'timestamp' })
+  archivedAt: Date;
 }

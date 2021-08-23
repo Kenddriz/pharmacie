@@ -8,7 +8,7 @@ import {
 } from './types/packaging.input';
 
 @Resolver(() => Packaging)
-export class PackageResolver {
+export class PackagingResolver {
   constructor(private packagingService: PackagingService) {}
 
   @Mutation(() => Packaging)
