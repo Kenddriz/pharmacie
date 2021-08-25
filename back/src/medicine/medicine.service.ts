@@ -26,9 +26,6 @@ export class MedicineService {
       .where('m.articleId = :articleId', { articleId })
       .getMany();
   }
-  update(id: number, updateMedicineInput: MedicineInput) {
-    return `This action updates a #${id} medicine`;
-  }
 
   async delete(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);

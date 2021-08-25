@@ -1,5 +1,4 @@
 import {
-  ArticlePagination,
   MutationDeleteMedicineArgs,
   MutationRecoverMedicineArgs,
   MutationSaveMedicineArgs,
@@ -19,23 +18,7 @@ import { softRemoveDialog } from '../utils/utils';
 export const useSaveMedicine = () => {
   const { mutate, loading: saveLoading } = useMutation<SaveMedicineData, MutationSaveMedicineArgs>(SAVE_MEDICINE);
   function addMedicine(articleId: number, formId: number, dosageId: number, packagingId: number) {
-    void mutate({ input: {id: 0, articleId, formId, dosageId, packagingId} }, {
-      update(cache, { data }) {
-        if(data?.saveMedicine){
-          cache.modify({
-            fields: {
-              paginateArticles(existing: ArticlePagination){
-                const article = existing.items.find(a => a.id === data.saveMedicine.article.id);
-                if(article){
-                  article?.medicines?.push(data.saveMedicine);
-                }
-                return existing;
-              }
-            }
-          })
-        }
-      }
-    })
+    void mutate({ input: {id: 0, articleId, formId, dosageId, packagingId} });
   }
   function updateMedicine(id: number, articleId: number, formId: number, dosageId: number, packagingId: number) {
     void mutate({ input: { id, articleId, formId, dosageId, packagingId }});
@@ -50,24 +33,8 @@ export const useSoftRemoveMedicine = () => {
     >(SOFT_REMOVE_MEDICINE);
   return {
     softRemoveMedicineLoading,
-    softRemoveMedicine: (id: number) => {
-      softRemoveDialog(() => void mutate({ id }, {
-        update(cache, { data }) {
-          if(data?.softRemoveMedicine) {
-            cache.modify({
-              fields: {
-                paginateArticles(existingRef: any, { readField, toReference }){
-                  const items = existingRef.items.filter((medRef: any) => id !== readField('id', medRef));
-                  return {
-                    ...existingRef,
-                    items: toReference(items)
-                  };
-                }
-              }
-            })
-          }
-        }
-      }))
+    softRemoveMedicine: (articleId: number, medicineId: number) => {
+      softRemoveDialog(() => void mutate({ input: { articleId, medicineId } }))
     }
   }
 }
@@ -78,7 +45,7 @@ export const useDeleteMedicine = () => {
     MutationDeleteMedicineArgs
     >(DELETE_MEDICINE);
   return {
-    deleteMedicine: (id: number) => mutate({ id }),
+    deleteMedicine: (articleId: number, medicineId: number) => mutate({ input: { articleId, medicineId }  }),
     deleteMedicineLoading
   }
 }
@@ -89,7 +56,7 @@ export const useRecoverMedicine = () => {
     MutationRecoverMedicineArgs
     >(DELETE_MEDICINE);
   return {
-    recoverMedicine: (id: number) => mutate({ id }),
+    recoverMedicine: (articleId: number, medicineId: number) => mutate({ input: { articleId, medicineId }  }),
     recoverMedicineLoading
   }
 }

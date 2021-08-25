@@ -54,7 +54,7 @@
             :color="selectedMedicineId === med.id ? 'positive': 'secondary'"
             flat
           />
-          <q-btn @click="softRemoveMedicine(med.id)" icon="delete_sweep" color="deep-orange" flat></q-btn>
+          <q-btn @click="softRemoveMedicine(article.id, med.id)" icon="delete_sweep" color="deep-orange" flat></q-btn>
           <q-btn icon="edit" @click="setSelected(med)" color="positive" flat></q-btn>
         </q-card-actions>
       </q-card>
@@ -63,7 +63,7 @@
   <q-dialog v-model="updateDialog">
     <q-card>
       <q-bar class="bg-primary text-white">
-        <q-icon @click="softRemoveMedicine(selectedMedicineId)" class="cursor-pointer" name="delete_sweep" />
+        <q-icon @click="softRemoveMedicine(article.id, selectedMedicineId)" class="cursor-pointer" name="delete_sweep" />
         <q-space />
         <q-btn dense flat icon="close" v-close-popup>
           <q-tooltip class="bg-white text-primary">Close</q-tooltip>

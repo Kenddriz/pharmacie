@@ -52,9 +52,7 @@
           </template>
 
           <template v-slot:after>
-            <div class="q-pa-md">
-              <div class="text-h4 q-mb-md">Lots</div>
-            </div>
+            <Batch />
           </template>
 
         </q-splitter>
@@ -90,10 +88,11 @@ import { useArticle, useSaveArticle } from '../../graphql/article/article.servic
 import ArticleForm from '../../components/article/ArticleForm.vue';
 import Medicine from '../../components/medicine/Medicine.vue';
 import MedicineForm from '../../components/medicine/MedicineForm.vue';
+import Batch from '../../components/batch/Batch.vue';
 
 export default {
   name: 'MedicinePage',
-  components: {Article, ArticleForm, Medicine, MedicineForm},
+  components: {Article, ArticleForm, Medicine, MedicineForm, Batch},
   setup () {
     return {
       splitterModel: ref(25), // start at 50%

@@ -3,13 +3,12 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   ResolveField,
   Root,
 } from '@nestjs/graphql';
 import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
-import { MedicineInput } from './types/medicine.input';
+import { DeleteMedicineInput, MedicineInput } from './types/medicine.input';
 import { uniqId } from '../shared/id-builder.service';
 import { Form } from '../form/form.entity';
 import { FormService } from '../form/form.service';
@@ -19,6 +18,8 @@ import { Packaging } from '../packaging/packaging.entity';
 import { Dosage } from '../dosage/dosage.entity';
 import { ArticleService } from '../article/article.service';
 import { Article } from '../article/article.entity';
+import { BatchService } from '../batch/batch.service';
+import { Batch } from '../batch/batch.entity';
 
 @Resolver(() => Medicine)
 export class MedicineResolver {
@@ -28,10 +29,11 @@ export class MedicineResolver {
     private dosageService: DosageService,
     private packagingService: PackagingService,
     private articleService: ArticleService,
+    private batchService: BatchService,
   ) {}
 
-  @Mutation(() => Medicine)
-  async saveMedicine(@Args('input') input: MedicineInput): Promise<Medicine> {
+  @Mutation(() => Article)
+  async saveMedicine(@Args('input') input: MedicineInput): Promise<Article> {
     const { id, ...res } = input;
     let medicine: Medicine;
     if (id > 0) medicine = await this.medicineService.findOne(id);
@@ -43,7 +45,8 @@ export class MedicineResolver {
     medicine.form = await this.formService.findOne(res.formId);
     medicine.dosage = await this.dosageService.findOneById(res.dosageId);
     medicine.packaging = await this.packagingService.findOneById(res.formId);
-    return await this.medicineService.save(medicine);
+    await this.medicineService.save(medicine);
+    return medicine.article;
   }
 
   @Query(() => [Medicine])
@@ -51,33 +54,40 @@ export class MedicineResolver {
     return this.medicineService.findAll();
   }
 
-  @Mutation(() => Boolean)
-  async softRemoveMedicine(@Args('id', { type: () => Int }) id: number) {
-    return this.medicineService.softRemove(id);
+  @Mutation(() => Article)
+  async softRemoveMedicine(@Args('input') input: DeleteMedicineInput) {
+    await this.medicineService.softRemove(input.medicineId);
+    return this.articleService.findOneById(input.articleId);
   }
-  @Mutation(() => Boolean)
-  async deleteMedicine(@Args('id', { type: () => Int }) id: number) {
-    return this.medicineService.delete(id);
+  @Mutation(() => Article)
+  async deleteMedicine(@Args('input') input: DeleteMedicineInput) {
+    await this.medicineService.delete(input.medicineId);
+    return this.articleService.findOneById(input.articleId);
   }
-  @Mutation(() => Boolean)
-  async recoverMedicine(@Args('id', { type: () => Int }) id: number) {
-    return this.medicineService.recover(id);
+  @Mutation(() => Article)
+  async recoverMedicine(@Args('input') input: DeleteMedicineInput) {
+    await this.medicineService.recover(input.medicineId);
+    return this.articleService.findOneById(input.articleId);
   }
-  /**Field resolver*/
+  /**Field resolvers*/
   @ResolveField(() => Form)
   async form(@Root() medicine: Medicine): Promise<Form> {
-    return await this.formService.findOne(medicine.formId);
+    return this.formService.findOne(medicine.formId);
   }
   @ResolveField(() => Dosage)
   async dosage(@Root() medicine: Medicine): Promise<Dosage> {
-    return await this.dosageService.findOneById(medicine.dosageId);
+    return this.dosageService.findOneById(medicine.dosageId);
   }
   @ResolveField(() => Packaging)
   async packaging(@Root() medicine: Medicine): Promise<Packaging> {
-    return await this.packagingService.findOneById(medicine.packagingId);
+    return this.packagingService.findOneById(medicine.packagingId);
   }
   @ResolveField(() => Article)
   async article(@Root() medicine: Medicine): Promise<Article> {
-    return await this.articleService.findOneById(medicine.articleId);
+    return this.articleService.findOneById(medicine.articleId);
+  }
+  @ResolveField(() => [Batch])
+  async batches(@Root() medicine: Medicine): Promise<Batch[]> {
+    return this.batchService.findByMedicine(medicine.id);
   }
 }

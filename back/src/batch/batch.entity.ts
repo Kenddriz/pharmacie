@@ -1,9 +1,11 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
+  CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryColumn,
   RelationId,
 } from 'typeorm';
@@ -53,7 +55,15 @@ export class Batch {
 
   @Field()
   @Column({ type: 'int' })
-  stock: string;
+  stock: number;
+
+  @Field()
+  @Column({ type: 'float' })
+  price: number;
+
+  @Field()
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })

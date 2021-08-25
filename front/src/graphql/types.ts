@@ -52,7 +52,9 @@ export type Batch = {
   saleLines: Array<SaleLine>;
   manufactureDate: Scalars['String'];
   expirationDate: Scalars['String'];
-  stock: Scalars['String'];
+  stock: Scalars['Float'];
+  price: Scalars['Float'];
+  createdAt: Scalars['DateTime'];
   archivedAt: Scalars['DateTime'];
 };
 
@@ -91,6 +93,14 @@ export type CreateAssuredLineInput = {
   exampleField: Scalars['Int'];
 };
 
+export type CreateBatchInput = {
+  medicineId: Scalars['Int'];
+  manufactureDate: Scalars['String'];
+  expirationDate: Scalars['String'];
+  stock: Scalars['Int'];
+  price: Scalars['Float'];
+};
+
 export type CreateCommandInput = {
   /** Example field (placeholder) */
   exampleField: Scalars['Int'];
@@ -119,11 +129,6 @@ export type CreateMethodInput = {
 export type CreatePackagingInput = {
   label: Scalars['String'];
   multiplicity: Scalars['Float'];
-};
-
-export type CreateParcelInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
 };
 
 export type CreatePatientInput = {
@@ -156,6 +161,11 @@ export type CreateUserInput = {
   password: Scalars['String'];
 };
 
+
+export type DeleteMedicineInput = {
+  medicineId: Scalars['Int'];
+  articleId: Scalars['Int'];
+};
 
 export type Delivery = {
   __typename?: 'Delivery';
@@ -248,10 +258,10 @@ export type Mutation = {
   createCommandLine: CommandLine;
   updateCommandLine: CommandLine;
   removeCommandLine: CommandLine;
-  saveMedicine: Medicine;
-  softRemoveMedicine: Scalars['Boolean'];
-  deleteMedicine: Scalars['Boolean'];
-  recoverMedicine: Scalars['Boolean'];
+  saveMedicine: Article;
+  softRemoveMedicine: Article;
+  deleteMedicine: Article;
+  recoverMedicine: Article;
   saveForm: Form;
   removeForm: Form;
   saveDosage: Dosage;
@@ -275,9 +285,9 @@ export type Mutation = {
   createMethod: Method;
   updateMethod: Method;
   removeMethod: Method;
-  createParcel: Batch;
-  updateParcel: Batch;
-  removeParcel: Batch;
+  createBatch: Medicine;
+  updateBatch: Medicine;
+  softRemove: Batch;
   createSaleLine: SaleLine;
   updateSaleLine: SaleLine;
   removeSaleLine: SaleLine;
@@ -345,17 +355,17 @@ export type MutationSaveMedicineArgs = {
 
 
 export type MutationSoftRemoveMedicineArgs = {
-  id: Scalars['Int'];
+  input: DeleteMedicineInput;
 };
 
 
 export type MutationDeleteMedicineArgs = {
-  id: Scalars['Int'];
+  input: DeleteMedicineInput;
 };
 
 
 export type MutationRecoverMedicineArgs = {
-  id: Scalars['Int'];
+  input: DeleteMedicineInput;
 };
 
 
@@ -474,17 +484,17 @@ export type MutationRemoveMethodArgs = {
 };
 
 
-export type MutationCreateParcelArgs = {
-  createParcelInput: CreateParcelInput;
+export type MutationCreateBatchArgs = {
+  input: CreateBatchInput;
 };
 
 
-export type MutationUpdateParcelArgs = {
-  updateParcelInput: UpdateParcelInput;
+export type MutationUpdateBatchArgs = {
+  input: UpdateBatchInput;
 };
 
 
-export type MutationRemoveParcelArgs = {
+export type MutationSoftRemoveArgs = {
   id: Scalars['Int'];
 };
 
@@ -619,7 +629,7 @@ export type Query = {
   providers: Array<Provider>;
   command: Command;
   commandLine: CommandLine;
-  findAll: Array<Medicine>;
+  findAll: Array<Batch>;
   forms: Array<Form>;
   dosages: Array<Dosage>;
   packaging: Array<Packaging>;
@@ -629,7 +639,6 @@ export type Query = {
   invoice: Invoice;
   payment: Payment;
   method: Method;
-  parcel: Batch;
   saleLine: SaleLine;
   sale: Sale;
   patient: Patient;
@@ -679,11 +688,6 @@ export type QueryPaymentArgs = {
 
 
 export type QueryMethodArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryParcelArgs = {
   id: Scalars['Int'];
 };
 
@@ -757,6 +761,15 @@ export type UpdateAssuredLineInput = {
   id: Scalars['Int'];
 };
 
+export type UpdateBatchInput = {
+  id: Scalars['Int'];
+  medicineId: Scalars['Int'];
+  manufactureDate: Scalars['String'];
+  expirationDate: Scalars['String'];
+  stock: Scalars['Int'];
+  price: Scalars['Float'];
+};
+
 export type UpdateCommandInput = {
   /** Example field (placeholder) */
   exampleField?: Maybe<Scalars['Int']>;
@@ -790,12 +803,6 @@ export type UpdateMethodInput = {
 export type UpdatePackagingInput = {
   id: Scalars['Float'];
   units: Array<CreatePackagingInput>;
-};
-
-export type UpdateParcelInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
 };
 
 export type UpdatePatientInput = {
