@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Command } from '../command/command.entity';
 import { Invoice } from '../invoice/invoice.entity';
-import { AssuredLine } from '../assured-line/assured-line.entity';
+import { StockMovement } from '../stock-movement/stock-movement.entity';
 
 @ObjectType()
 @Entity({ name: 'deliveries' })
@@ -40,13 +40,13 @@ export class Delivery {
   @RelationId((delivery: Delivery) => delivery.invoice)
   invoiceId: number;
 
-  @Field(() => [AssuredLine])
-  @OneToMany(() => AssuredLine, (assuredLine) => assuredLine.delivery, {
+  @Field(() => [StockMovement])
+  @OneToMany(() => StockMovement, (stockMovements) => stockMovements.delivery, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  assuredLines: AssuredLine[];
+  stockMovements: StockMovement[];
 
   @Field()
   @CreateDateColumn()

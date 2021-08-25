@@ -10,7 +10,7 @@ import {
   RelationId,
 } from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
-import { SaleLine } from '../sale-line/sale-line.entity';
+import { StockMovement } from '../stock-movement/stock-movement.entity';
 
 @ObjectType()
 @Entity({ name: 'sales' })
@@ -34,13 +34,13 @@ export class Sale {
   @RelationId((sale: Sale) => sale.prescription)
   prescriptionId: number;
 
-  @Field(() => [SaleLine])
-  @OneToMany(() => SaleLine, (saleLine) => saleLine.batches, {
+  @Field(() => [StockMovement])
+  @OneToMany(() => StockMovement, (stockMovement) => stockMovement.sale, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  saleLines: SaleLine[];
+  stockMovements: StockMovement[];
 
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })

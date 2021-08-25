@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAssuredLineInput } from './dto/create-assured-line.input';
-import { UpdateAssuredLineInput } from './dto/update-assured-line.input';
+import { StockMovementInput } from './dto/stock-movement.input';
+import { UpdateStockMovementInput } from './dto/update-assured-line.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AssuredLine } from './assured-line.entity';
+import { StockMovement } from './stock-movement.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class AssuredLineService {
+export class StockMovementService {
   constructor(
-    @InjectRepository(AssuredLine)
-    private assuredLineRepository: Repository<AssuredLine>,
+    @InjectRepository(StockMovement)
+    private assuredLineRepository: Repository<StockMovement>,
   ) {}
-  create(createAssuredLineInput: CreateAssuredLineInput) {
+  create(createStockMovementInput: StockMovementInput) {
     return 'This action adds a new assuredLine';
   }
 
@@ -23,7 +23,7 @@ export class AssuredLineService {
     return `This action returns a #${id} assuredLine`;
   }
 
-  update(id: number, updateAssuredLineInput: UpdateAssuredLineInput) {
+  update(id: number, updateStockMovementInput: UpdateStockMovementInput) {
     return `This action updates a #${id} assuredLine`;
   }
 

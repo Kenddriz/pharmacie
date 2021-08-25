@@ -109,6 +109,18 @@ type Medicine {
   archivedAt: DateTime!
 }
 
+type Batch {
+  id: Float!
+  medicine: Medicine!
+  stockMovements: [StockMovement!]!
+  manufactureDate: String!
+  expirationDate: String!
+  stock: Float!
+  price: Float!
+  createdAt: DateTime!
+  archivedAt: DateTime!
+}
+
 type Patient {
   id: Float!
   lastName: String!
@@ -130,45 +142,25 @@ type Sale {
   id: Float!
   date: String!
   prescription: Prescription
-  saleLines: [SaleLine!]!
+  stockMovements: [StockMovement!]!
   archivedAt: DateTime!
 }
 
-type SaleLine {
-  id: Float!
-  saleId: Float!
-  quantity: Float!
-  batches: Batch!
-  sales: Sale!
-  archivedAt: DateTime!
-}
-
-type Batch {
-  id: Float!
-  medicine: Medicine!
-  assuredLines: [AssuredLine!]!
-  saleLines: [SaleLine!]!
-  manufactureDate: String!
-  expirationDate: String!
-  stock: Float!
-  price: Float!
-  createdAt: DateTime!
-  archivedAt: DateTime!
-}
-
-type AssuredLine {
+type StockMovement {
   id: Int!
-  delivery: Delivery!
-  expirationDate: String!
-  quantity: Float!
   batch: Batch!
+  delivery: Delivery
+  sale: Sale
+  quantity: Float!
+  price: Float!
+  stock: Float!
 }
 
 type Delivery {
   id: Float!
   command: Command!
   invoice: Invoice
-  assuredLines: [AssuredLine!]!
+  stockMovements: [StockMovement!]!
   createdAt: DateTime!
   archivedAt: DateTime!
 }
@@ -214,11 +206,11 @@ type Query {
   packaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
   delivery(id: Int!): Delivery!
-  assuredLine(id: Int!): AssuredLine!
+  assuredLine: [StockMovement!]!
+  findOne(id: Int!): StockMovement!
   invoice(id: Int!): Invoice!
   payment(id: Int!): Payment!
   method(id: Int!): Method!
-  saleLine(id: Int!): SaleLine!
   sale(id: Int!): Sale!
   patient(id: Int!): Patient!
   whoAmI: User!
@@ -256,9 +248,9 @@ type Mutation {
   createDelivery(createDeliveryInput: CreateDeliveryInput!): Delivery!
   updateDelivery(updateDeliveryInput: UpdateDeliveryInput!): Delivery!
   removeDelivery(id: Int!): Delivery!
-  createAssuredLine(createAssuredLineInput: CreateAssuredLineInput!): AssuredLine!
-  updateAssuredLine(updateAssuredLineInput: UpdateAssuredLineInput!): AssuredLine!
-  removeAssuredLine(id: Int!): AssuredLine!
+  createAssuredLine(createAssuredLineInput: StockMovementInput!): StockMovement!
+  updateAssuredLine(input: UpdateStockMovementInput!): StockMovement!
+  removeAssuredLine(id: Int!): StockMovement!
   createInvoice(createInvoiceInput: CreateInvoiceInput!): Invoice!
   updateInvoice(updateInvoiceInput: UpdateInvoiceInput!): Invoice!
   removeInvoice(id: Int!): Invoice!
@@ -271,9 +263,6 @@ type Mutation {
   createBatch(input: CreateBatchInput!): Medicine!
   updateBatch(input: UpdateBatchInput!): Medicine!
   softRemove(id: Int!): Batch!
-  createSaleLine(createSaleLineInput: CreateSaleLineInput!): SaleLine!
-  updateSaleLine(updateSaleLineInput: UpdateSaleLineInput!): SaleLine!
-  removeSaleLine(id: Int!): SaleLine!
   createSale(createSaleInput: CreateSaleInput!): Sale!
   updateSale(updateSaleInput: UpdateSaleInput!): Sale!
   removeSale(id: Int!): Sale!
@@ -381,12 +370,12 @@ input UpdateDeliveryInput {
   id: Int!
 }
 
-input CreateAssuredLineInput {
+input StockMovementInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdateAssuredLineInput {
+input UpdateStockMovementInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -440,17 +429,6 @@ input UpdateBatchInput {
   expirationDate: String!
   stock: Int!
   price: Float!
-}
-
-input CreateSaleLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateSaleLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input CreateSaleInput {

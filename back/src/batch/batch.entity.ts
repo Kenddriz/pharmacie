@@ -10,8 +10,7 @@ import {
   RelationId,
 } from 'typeorm';
 import { Medicine } from '../medicine/medicine.entity';
-import { AssuredLine } from '../assured-line/assured-line.entity';
-import { SaleLine } from '../sale-line/sale-line.entity';
+import { StockMovement } from '../stock-movement/stock-movement.entity';
 
 @ObjectType()
 @Entity({ name: 'batches' })
@@ -29,21 +28,13 @@ export class Batch {
   @RelationId((batch: Batch) => batch.medicine)
   medicineId: number;
 
-  @Field(() => [AssuredLine])
-  @OneToMany(() => AssuredLine, (assuredLine) => assuredLine.batch, {
+  @Field(() => [StockMovement])
+  @OneToMany(() => StockMovement, (stockMovement) => stockMovement.batch, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  assuredLines: AssuredLine[];
-
-  @Field(() => [SaleLine])
-  @OneToMany(() => SaleLine, (saleLine) => saleLine.batches, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  saleLines: SaleLine[];
+  stockMovements: StockMovement[];
 
   @Field()
   @Column({ type: 'date' })

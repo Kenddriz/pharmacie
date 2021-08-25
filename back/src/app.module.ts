@@ -14,12 +14,11 @@ import { ArticleModule } from './article/article.module';
 import { DosageModule } from './dosage/dosage.module';
 import { PackagingModule } from './packaging/packaging.module';
 import { DeliveryModule } from './delivery/delivery.module';
-import { AssuredLineModule } from './assured-line/assured-line.module';
+import { StockMovementModule } from './stock-movement/stock-movement.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
 import { MethodModule } from './method/method.module';
 import { BatchModule } from './batch/batch.module';
-import { SaleLineModule } from './sale-line/sale-line.module';
 import { SaleModule } from './sale/sale.module';
 import { PatientModule } from './patient/patient.module';
 import { AuthModule } from './auth/auth.module';
@@ -48,12 +47,11 @@ import { FormModule } from './form/form.module';
     DosageModule,
     PackagingModule,
     DeliveryModule,
-    AssuredLineModule,
+    StockMovementModule,
     InvoiceModule,
     PaymentModule,
     MethodModule,
     BatchModule,
-    SaleLineModule,
     SaleModule,
     PatientModule,
     AuthModule,
