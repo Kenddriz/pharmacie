@@ -1,35 +1,59 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
 import { CommandService } from './command.service';
 import { Command } from './command.entity';
-import { CreateCommandInput } from './dto/create-command.input';
-import { UpdateCommandInput } from './dto/update-command.input';
+import { uniqId } from '../shared/id-builder.service';
+import { CreateCommandInput, UpdateCommandInput } from './dto/command.input';
+import { CommandPagination } from './dto/command.dto';
+import { PaginationInput } from '../shared/shared.input';
+import { CommandLine } from '../command-line/command-line.entity';
+import { Provider } from '../provider/provider.entity';
+import { CommandLineService } from '../command-line/command-line.service';
+import { ProviderService } from '../provider/provider.service';
+import { Delivery } from '../delivery/delivery.entity';
+import { DeliveryService } from '../delivery/delivery.service';
 
 @Resolver(() => Command)
 export class CommandResolver {
-  constructor(private readonly commandService: CommandService) {}
+  constructor(
+    private commandService: CommandService,
+    private commandLineService: CommandLineService,
+    private providerService: ProviderService,
+    private deliveryService: DeliveryService,
+  ) {}
 
   @Mutation(() => Command)
-  createCommand(@Args('createCommandInput') createCommandInput: CreateCommandInput) {
-    return this.commandService.create(createCommandInput);
+  async createCommand(
+    @Args('input') input: CreateCommandInput,
+  ): Promise<Command> {
+    const command = new Command();
+    command.id = await uniqId('Command');
+    return await this.commandService.save(command);
   }
-
-  @Query(() => [Command], { name: 'command' })
-  findAll() {
-    return this.commandService.findAll();
-  }
-
-  @Query(() => Command, { name: 'command' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.commandService.findOne(id);
-  }
-
   @Mutation(() => Command)
-  updateCommand(@Args('updateCommandInput') updateCommandInput: UpdateCommandInput) {
-    return this.commandService.update(updateCommandInput.id, updateCommandInput);
+  async updateCommand(
+    @Args('input') input: UpdateCommandInput,
+  ): Promise<Command> {
+    const command = await this.commandService.findOneById(input.id);
+    return await this.commandService.save(command);
+  }
+  @Query(() => CommandPagination)
+  async paginateCommands(
+    @Args('paginationInput') input: PaginationInput,
+  ): Promise<CommandPagination> {
+    return await this.commandService.paginate(input);
   }
 
-  @Mutation(() => Command)
-  removeCommand(@Args('id', { type: () => Int }) id: number) {
-    return this.commandService.remove(id);
+  /**Field resolver*/
+  @ResolveField(() => [CommandLine])
+  async commandLines(@Root() command: Command): Promise<CommandLine[]> {
+    return await this.commandLineService.findByCommandId(command.id);
+  }
+  @ResolveField(() => Provider)
+  async provider(@Root() command: Command): Promise<Provider> {
+    return await this.providerService.findOneById(command.providerId);
+  }
+  @ResolveField(() => Delivery)
+  async delivery(@Root() command: Command): Promise<Delivery> {
+    return await this.deliveryService.findByCommandId(command.id);
   }
 }

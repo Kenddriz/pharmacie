@@ -1,35 +1,36 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { CommandLineService } from './command-line.service';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { CommandLine } from './command-line.entity';
-import { CreateCommandLineInput } from './dto/create-command-line.input';
-import { UpdateCommandLineInput } from './dto/update-command-line.input';
+import { CommandService } from '../command/command.service';
+import { CommandLineService } from './command-line.service';
+import { Command } from '../command/command.entity';
+import { AddCommandLineInput } from './dto/command-line.input';
 
 @Resolver(() => CommandLine)
 export class CommandLineResolver {
-  constructor(private readonly commandLineService: CommandLineService) {}
-
+  constructor(
+    private commandService: CommandService,
+    private commandLineService: CommandLineService,
+  ) {}
   @Mutation(() => CommandLine)
-  createCommandLine(@Args('createCommandLineInput') createCommandLineInput: CreateCommandLineInput) {
-    return this.commandLineService.create(createCommandLineInput);
+  async addCommandLine(
+    @Args('input')
+    input: AddCommandLineInput,
+  ): Promise<CommandLine> {
+    const commandLine = new CommandLine();
+    return this.commandLineService.save(commandLine);
+  }
+  @Mutation(() => Command)
+  async updateCommandLine(
+    @Args('input')
+    input: AddCommandLineInput,
+  ): Promise<Command> {
+    return await this.commandService.findOneById(input.commandId);
   }
 
-  @Query(() => [CommandLine], { name: 'commandLine' })
-  findAll() {
-    return this.commandLineService.findAll();
-  }
-
-  @Query(() => CommandLine, { name: 'commandLine' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.commandLineService.findOne(id);
-  }
-
-  @Mutation(() => CommandLine)
-  updateCommandLine(@Args('updateCommandLineInput') updateCommandLineInput: UpdateCommandLineInput) {
-    return this.commandLineService.update(updateCommandLineInput.id, updateCommandLineInput);
-  }
-
-  @Mutation(() => CommandLine)
-  removeCommandLine(@Args('id', { type: () => Int }) id: number) {
-    return this.commandLineService.remove(id);
+  @Mutation(() => Command)
+  async removeCommandLine(@Args('id') id: number): Promise<Command> {
+    const { commandId } = await this.commandLineService.findOne(id);
+    await this.commandLineService.remove(id);
+    return await this.commandService.findOneById(commandId);
   }
 }

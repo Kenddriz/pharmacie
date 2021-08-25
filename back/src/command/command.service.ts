@@ -1,32 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommandInput } from './dto/create-command.input';
-import { UpdateCommandInput } from './dto/update-command.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from './command.entity';
 import { Repository } from 'typeorm';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
 export class CommandService {
   constructor(
-    @InjectRepository(Command) private commandRepository: Repository<Command>,
+    @InjectRepository(Command)
+    private repository: Repository<Command>,
   ) {}
-  create(createCommandInput: CreateCommandInput) {
-    return 'This action adds a new command';
+  async save(command: Command): Promise<Command> {
+    return this.repository.save(command);
   }
-
-  findAll() {
-    return `This action returns all command`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} command`;
-  }
-
-  update(id: number, updateCommandInput: UpdateCommandInput) {
-    return `This action updates a #${id} command`;
+  async findOneById(id: number): Promise<Command> {
+    return await this.repository.findOne(id);
   }
 
   remove(id: number) {
     return `This action removes a #${id} command`;
+  }
+  async paginate(input: PaginationInput): Promise<Pagination<Command>> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('c')
+      .orderBy('c.createdAt', 'DESC');
+
+    const { page, limit } = input;
+    return await paginate<Command>(queryBuilder, { page, limit });
   }
 }

@@ -23,6 +23,13 @@ export class DeliveryService {
     return `This action returns a #${id} delivery`;
   }
 
+  async findByCommandId(commandId: number): Promise<Delivery> {
+    return this.deliveryRepository
+      .createQueryBuilder('d')
+      .where('d.commandId = :commandId', { commandId })
+      .getOne();
+  }
+
   update(id: number, updateDeliveryInput: UpdateDeliveryInput) {
     return `This action updates a #${id} delivery`;
   }

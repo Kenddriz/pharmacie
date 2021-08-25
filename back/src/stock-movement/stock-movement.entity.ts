@@ -57,6 +57,10 @@ export class StockMovement {
   @Column({ type: 'float' })
   stock: number;
 
+  @Field()
+  @Column({ type: 'float' })
+  vat: number;
+
   @DeleteDateColumn({ type: 'timestamp' })
   archivedAt: Date;
 }

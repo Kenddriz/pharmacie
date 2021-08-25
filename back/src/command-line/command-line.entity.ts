@@ -29,6 +29,7 @@ export class CommandLine {
     onUpdate: 'CASCADE',
   })
   command: Command;
+  @Field()
   @RelationId((commandLine: CommandLine) => commandLine.command)
   commandId: number;
 

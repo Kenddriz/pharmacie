@@ -50,6 +50,7 @@
             <q-separator vertical />
             <q-card-actions vertical class="justify-around q-px-md">
               <q-btn
+                to="/main/card-stock"
                 align="left"
                 color="primary"
                 flat

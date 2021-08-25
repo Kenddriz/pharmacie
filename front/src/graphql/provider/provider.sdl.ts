@@ -1,7 +1,7 @@
 import {gql} from '@apollo/client/core';
 import { Provider } from '../types';
 
-const PROVIDER = `
+export const PROVIDER = `
   id
   name
   address

@@ -33,6 +33,12 @@
             icon="rate_review"
             @click="$emit('edit', scope.row)"
           />
+          <q-fab-action
+            padding="xs"
+            color="primary"
+            icon="inventory_2"
+            to="/main/card-stock"
+          />
         </q-fab>
       </template>
       <template v-slot:top>

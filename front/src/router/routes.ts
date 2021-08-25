@@ -11,7 +11,9 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', alias: 'unit', component: () => import('pages/Units.vue') },
       { path: 'provider', component: () => import('pages/provider/Provider.vue') },
-      { path: 'medicine', component: () => import('src/pages/medicine/MedicinePage.vue') }
+      { path: 'medicine', component: () => import('src/pages/medicine/MedicinePage.vue') },
+      { path: 'command', component: () => import('src/pages/command/Command.vue') },
+      { path: 'card-stock', component: () => import('src/pages/CardStock.vue') }
     ],
   },
 

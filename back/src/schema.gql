@@ -95,6 +95,7 @@ type CommandLine {
   quantity: Float!
   medicine: Medicine!
   command: Command!
+  commandId: Float!
   archivedAt: DateTime!
 }
 
@@ -154,6 +155,7 @@ type StockMovement {
   quantity: Float!
   price: Float!
   stock: Float!
+  vat: Float!
 }
 
 type Delivery {
@@ -186,6 +188,11 @@ type Provider {
   archivedAt: DateTime!
 }
 
+type CommandPagination {
+  items: [Command!]!
+  meta: Meta!
+}
+
 type ArticlePagination {
   items: [Article!]!
   meta: Meta!
@@ -198,8 +205,7 @@ type LoginDto {
 type Query {
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
-  command(id: Int!): Command!
-  commandLine(id: Int!): CommandLine!
+  paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findAll: [Batch!]!
   forms: [Form!]!
   dosages: [Dosage!]!
@@ -227,12 +233,11 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
   saveProvider(input: SaveProviderInput!): Provider!
-  createCommand(createCommandInput: CreateCommandInput!): Command!
-  updateCommand(updateCommandInput: UpdateCommandInput!): Command!
-  removeCommand(id: Int!): Command!
-  createCommandLine(createCommandLineInput: CreateCommandLineInput!): CommandLine!
-  updateCommandLine(updateCommandLineInput: UpdateCommandLineInput!): CommandLine!
-  removeCommandLine(id: Int!): CommandLine!
+  createCommand(input: CreateCommandInput!): Command!
+  updateCommand(input: UpdateCommandInput!): Command!
+  addCommandLine(input: AddCommandLineInput!): CommandLine!
+  updateCommandLine(input: AddCommandLineInput!): Command!
+  removeCommandLine(id: Float!): Command!
   saveMedicine(input: MedicineInput!): Article!
   softRemoveMedicine(input: DeleteMedicineInput!): Article!
   deleteMedicine(input: DeleteMedicineInput!): Article!
@@ -298,25 +303,23 @@ input ContactInput {
 }
 
 input CreateCommandInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  providerId: Float!
 }
 
 input UpdateCommandInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: Float!
+  providerId: Float!
 }
 
-input CreateCommandLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input AddCommandLineInput {
+  commandId: Float!
+  commandLines: [CommandLineInput!]!
 }
 
-input UpdateCommandLineInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input CommandLineInput {
+  medicine: String!
+  quantity: Float!
+  vat: Float!
 }
 
 input MedicineInput {
