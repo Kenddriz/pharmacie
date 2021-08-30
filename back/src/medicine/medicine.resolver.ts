@@ -50,7 +50,7 @@ export class MedicineResolver {
   }
 
   @Query(() => [Medicine])
-  findAll() {
+  async medicines() {
     return this.medicineService.findAll();
   }
 

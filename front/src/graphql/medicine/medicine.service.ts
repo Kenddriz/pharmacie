@@ -1,20 +1,30 @@
 import {
+  Medicine,
   MutationDeleteMedicineArgs,
   MutationRecoverMedicineArgs,
   MutationSaveMedicineArgs,
   MutationSoftRemoveMedicineArgs,
 } from '../types';
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation, useQuery } from '@vue/apollo-composable';
 import {
   SAVE_MEDICINE,
   SaveMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
   DeleteMedicineData,
-  DELETE_MEDICINE, RecoverMedicineData,
+  DELETE_MEDICINE, RecoverMedicineData, MedicinesData, MEDICINES,
 } from './medicine.sdl';
 import { softRemoveDialog } from '../utils/utils';
+import { ref } from 'vue';
 
+export const  useMedicines = () => {
+  const medicines = ref<Medicine[]>([]);
+  const { loading: medLoading, onResult } = useQuery<MedicinesData>(MEDICINES);
+  onResult(({ data }) => {
+    if(data.medicines) medicines.value = data.medicines;
+  })
+  return { medicines, medLoading }
+}
 export const useSaveMedicine = () => {
   const { mutate, loading: saveLoading } = useMutation<SaveMedicineData, MutationSaveMedicineArgs>(SAVE_MEDICINE);
   function addMedicine(articleId: number, formId: number, dosageId: number, packagingId: number) {

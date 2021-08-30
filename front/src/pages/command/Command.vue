@@ -9,9 +9,10 @@
         align="justify"
         narrow-indicator
         stretch
+        no-caps
       >
-        <q-tab name="add" label="Ajout" />
-        <q-tab name="update" label="Commande" />
+        <q-tab icon="add" name="add" label="Nouvelle commande" />
+        <q-tab icon="toggle_on" name="update" label="Commande active" />
       </q-tabs>
 
       <q-separator />
@@ -19,15 +20,16 @@
       <q-tab-panels keep-alive swipeable v-model="tab" animated>
         <q-tab-panel name="add" class="q-pa-none">
           <ScrollArea :style="`height:${$q.screen.height - 157}px`">
-
+            <AddCommand :providers="providers" />
           </ScrollArea>
         </q-tab-panel>
 
         <q-tab-panel name="update" class="q-pa-none">
-          <ScrollArea :style="`height:${$q.screen.height - 157}px`">
+          <ScrollArea v-if="selectedCmd" :style="`height:${$q.screen.height - 157}px`">
             <div class="row items-start justify-center q-mt-sm">
-
+              <CardProvider :provider="selectedCmd.provider" />
             </div>
+            <UpdateCommand :command="selectedCmd" />
           </ScrollArea>
         </q-tab-panel>
       </q-tab-panels>
@@ -53,12 +55,12 @@
           </q-item-section>
           <q-item-section>{{cmd.provider.name}}</q-item-section>
           <q-item-section>{{formatDate(cmd.provider.createdAt, 'DATE_ONLY')}}</q-item-section>
-          <q-item-section>
-            <q-item-label>
-              arrivée
-              <q-icon size="sm" v-if="cmd.arrived" color="positive" name="thumb_up_alt" />
-              <q-icon size="sm" v-else color="warning" name="thumb_down_alt" />
+          <q-item-section top side>
+            <q-item-label caption>
+              livrée
             </q-item-label>
+            <q-icon size="xs" v-if="cmd.delivery" color="positive" name="done" />
+            <q-icon size="xs" v-else color="warning" name="remove_done" />
           </q-item-section>
         </q-item>
         <!--<q-infinite-scroll @load="setPage" :offset="$q.screen.height - 150" scroll-target="scrollTargetRef">
@@ -77,20 +79,21 @@
 import { defineComponent, ref } from 'vue';
 import { formatDate } from '../../shared/date';
 import ScrollArea from '../../components/shared/ScrollArea.vue';
-import { useForms } from '../../graphql/form/form.service';
-import { useListPackaging } from '../../graphql/packaging/packaging.service';
 import { usePaginateCommands } from '../../graphql/command/command.service';
+import AddCommand from '../../components/command/AddCommand.vue';
+import { useProviders } from '../../graphql/provider/provider.service';
+import UpdateCommand from '../../components/command/UpdateCommand.vue';
+import CardProvider from '../../components/provider/CardProvider.vue';
 
 export default defineComponent({
   name: 'Command',
-  components: { ScrollArea},
+  components: { ScrollArea,  AddCommand, UpdateCommand, CardProvider },
   setup() {
     return {
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      ...useForms(),
-      ...useListPackaging()
+      ...useProviders()
     }
   }
 });

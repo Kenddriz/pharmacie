@@ -4463,7 +4463,7 @@
             "deprecationReason": null
           },
           {
-            "name": "findAll",
+            "name": "medicines",
             "description": null,
             "args": [],
             "type": {
@@ -4477,7 +4477,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Batch",
+                    "name": "Medicine",
                     "ofType": null
                   }
                 }
@@ -4775,6 +4775,30 @@
                 "kind": "OBJECT",
                 "name": "Method",
                 "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "findAll",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Batch",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,

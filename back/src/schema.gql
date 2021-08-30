@@ -206,7 +206,7 @@ type Query {
   providersPaginate(input: PaginationInput!): ProviderPagination!
   providers: [Provider!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
-  findAll: [Batch!]!
+  medicines: [Medicine!]!
   forms: [Form!]!
   dosages: [Dosage!]!
   packaging: [Packaging!]!
@@ -217,6 +217,7 @@ type Query {
   invoice(id: Int!): Invoice!
   payment(id: Int!): Payment!
   method(id: Int!): Method!
+  findAll: [Batch!]!
   sale(id: Int!): Sale!
   patient(id: Int!): Patient!
   whoAmI: User!

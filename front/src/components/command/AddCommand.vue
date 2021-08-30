@@ -23,7 +23,6 @@
         row-key="id"
         selection="single"
         v-model:selected="selectedProvider"
-        :loading="providersLoading"
         :selected-rows-label="selectedRowLabel"
         :pagination-label="paginationLabel"
         no-data-label="Aucun fournisseur"
@@ -49,7 +48,7 @@
             {{props.row.contacts.slice(0, 2).map(c => c.label).join(' - ')}}
             <q-btn color="primary" icon="more_vert" flat>
               <q-menu anchor="center end" self="center end" auto-close>
-                <ContactTypeList class="q-pt-sm" :contacts="contacts(props.row.contacts)" />
+                <ContactList class="q-pt-sm" :contacts="props.row.contacts" />
               </q-menu>
             </q-btn>
           </q-td>
@@ -58,12 +57,11 @@
       <q-stepper-navigation>
         <q-btn
           no-caps
-          :loading="createCmdLoading||updateCmdLoading"
           unelevated
           :disable="!selectedProvider.length"
           color="primary"
-          :label="`${createdCmd.id === 0 ? 'Créer la commande' : 'Modifier le fournisseur'} et continuer`"
-          @click="submitCreateCmd"
+          label="suivant"
+          @click="step = 2"
         />
       </q-stepper-navigation>
     </q-step>
@@ -98,7 +96,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(cmd, i) in createdCmd.commandLines" :key="i">
+          <CommandLineRow />
+          <!--<tr v-for="(cmd, i) in createdCmd.commandLines" :key="i">
             <td>{{cmd.medicine}}</td>
             <td>{{cmd.form.label}}</td>
             <td>{{cmd.unit.label}}</td>
@@ -106,16 +105,7 @@
             <td>{{cmd.price}}</td>
             <td>{{cmd.vat}}</td>
             <td></td>
-          </tr>
-        <CommandLineRow
-          :commandId="createdCmd.id"
-          :medicines="medicines"
-          :forms="forms"
-          :units="units"
-          :path-to-child="pathToChild"
-          :emit-value="true"
-          @submitted="createdCmd.commandLines = $event"
-        />
+          </tr>-->
         </tbody>
       </q-markup-table>
 
@@ -124,7 +114,6 @@
           v-for="(bn, index) in btnBack"
           :key="index"
           flat
-          @click="submitted(index)"
           color="primary"
           :label="bn"
           class="q-ml-sm"
@@ -136,43 +125,22 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import { cmData } from './cmData';
-import { Form, Medicine, Provider, Unit } from '../../graphql/types';
-import CommandLineRow from './CommandLineRow.vue';
-import { cmdProviderCol } from '../provider/table/columns';
-import { useProviders } from '../../graphql/provider/read/providers.service';
-import ContactTypeList from '../contactType/ContactTypeList.vue';
-import { useCreateCommand } from '../../graphql/command/create/create.command.service';
-import { useUpdateCommand } from '../../graphql/command/update/update.command.service';
+import { cmData } from '../command-line/cmData';
+import { Provider} from '../../graphql/types';
+import { cmdProviderCol } from '../provider/columns';
+import ContactList from '../contact/ContactList.vue';
+import CommandLineRow from '../command-line/CommandLineRow.vue';
 
 export default defineComponent({
-  name: 'AddCommandLine',
-  components: {CommandLineRow, ContactTypeList},
+  name: 'AddCommand',
+  components: {ContactList, CommandLineRow},
   props: {
-    medicines: {
-      type: Array as PropType<Medicine[]>,
-      required: true
-    },
-    forms: {
-      type: Array as PropType<Form[]>,
-      required: true
-    },
-    units: {
-      type: Array as PropType<Unit[]>,
-      required: true
-    },
-    pathToChild: {
-      type: Function,
-      required: true
-    },
-    contacts: {
-      type: Function,
+    providers: {
+      type: Array as PropType<Provider[]>,
       required: true
     },
   },
   setup() {
-    const {createCmdLoading, createCommand, createdCmd } = useCreateCommand();
-    const { updateCmdLoading, updateCommand, updateCmdInput } = useUpdateCommand()
     const step = ref<number>(1);
     const selectedProvider = ref<Provider[]>([]);
     return {
@@ -181,30 +149,11 @@ export default defineComponent({
       selectedProvider,
       filter: ref<string>(''),
       cmdProviderCol,
-      ...useProviders(),
       selectedRowLabel: (count: number) => {
         return count + ' fournisseur séléctionné'
       },
       paginationLabel: (firstRowIndex: number, endRowIndex: number, totalRowsNumber: number) => {
         return firstRowIndex + '-' + endRowIndex + ' de ' + totalRowsNumber
-      },
-      createCmdLoading, createdCmd, updateCmdLoading,
-      submitCreateCmd: async () => {
-        if(createdCmd.commandLines.length) {
-          updateCmdInput.providerId = selectedProvider.value[0].id;
-          updateCmdInput.id = createdCmd.id;
-          await updateCommand()
-        }
-        await createCommand(selectedProvider.value[0].id);
-        step.value = 2;
-      },
-      submitted: (i: number) => {
-        if(i === 1 && createdCmd.commandLines.length) {
-          selectedProvider.value.length = 0;
-          createdCmd.id = 0;
-          createdCmd.commandLines = [];
-        }
-        step.value = 1;
       },
       btnBack: ['Retour', 'Réinitialiser']
     }

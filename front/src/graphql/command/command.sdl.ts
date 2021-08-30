@@ -8,6 +8,7 @@ export const COMMAND = `
   id
   provider{${PROVIDER}}
   commandLines{${COMMAND_LINE}}
+  delivery {id}
   createdAt
 `
 export type PaginateCommandsData = {

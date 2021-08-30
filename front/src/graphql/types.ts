@@ -596,7 +596,7 @@ export type Query = {
   providersPaginate: ProviderPagination;
   providers: Array<Provider>;
   paginateCommands: CommandPagination;
-  findAll: Array<Batch>;
+  medicines: Array<Medicine>;
   forms: Array<Form>;
   dosages: Array<Dosage>;
   packaging: Array<Packaging>;
@@ -607,6 +607,7 @@ export type Query = {
   invoice: Invoice;
   payment: Payment;
   method: Method;
+  findAll: Array<Batch>;
   sale: Sale;
   patient: Patient;
   whoAmI: User;

@@ -1,10 +1,10 @@
 
 export const cmData = [
   {
-    name: 'medicine',
+    name: 'article',
     align: 'center',
-    label: 'Medicine',
-    field: 'medicine',
+    label: 'Article',
+    field: 'article',
   },
   {
     name: 'form',
@@ -13,10 +13,10 @@ export const cmData = [
     field: 'form',
   },
   {
-    name: 'unit',
+    name: 'dosage',
     align: 'center',
-    label: 'Unité',
-    field: 'unit',
+    label: 'Dosage',
+    field: 'dosage',
   },
   {
     name: 'quantity',
@@ -24,7 +24,7 @@ export const cmData = [
     label: 'Quantité',
     field: 'quantity',
   },
-  {
+  /*{
     name: 'price',
     align: 'center',
     label: 'Prix Unitaire',
@@ -36,7 +36,7 @@ export const cmData = [
     align: 'center',
     label: 'TVA',
     field: 'vat',
-  },
+  },*/
   {
     name: 'action',
     align: 'center',

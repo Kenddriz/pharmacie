@@ -10,7 +10,17 @@ export const MEDICINE_PARAMS = `
   dosage{${DOSAGE_PARAMS}}
   packaging{${PACKAGING_PARAMS}}
 `;
-
+export type MedicinesData = {
+  medicines: Medicine[];
+}
+export const MEDICINES = gql`
+  query Medicines {
+    medicines {
+      ${MEDICINE_PARAMS}
+      article {commercialName}
+    }
+  }
+`;
 export type SaveMedicineData = {
   saveMedicine: Medicine
 }

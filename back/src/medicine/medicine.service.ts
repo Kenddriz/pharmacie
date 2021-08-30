@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { MedicineInput } from './types/medicine.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medicine } from './medicine.entity';
 import { Repository } from 'typeorm';
@@ -17,7 +16,7 @@ export class MedicineService {
     return `This action returns all medicine`;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Medicine> {
     return this.repository.findOne(id);
   }
   async findOneByArticle(articleId: number): Promise<Medicine[]> {
