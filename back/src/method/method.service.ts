@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMethodInput } from './dto/create-method.input';
-import { UpdateMethodInput } from './dto/update-method.input';
+import { Method } from './method.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MethodService {
-  create(createMethodInput: CreateMethodInput) {
-    return 'This action adds a new method';
+  constructor(
+    @InjectRepository(Method)
+    private repository: Repository<Method>,
+  ) {}
+
+  async save(paymentMode: Method): Promise<Method> {
+    return this.repository.save(paymentMode);
   }
 
-  findAll() {
-    return `This action returns all method`;
+  async findOneById(id: number): Promise<Method> {
+    return this.repository.findOne(id);
+  }
+  async findAll(): Promise<Method[]> {
+    return this.repository.find({ order: { label: 'ASC' } });
+  }
+  async remove(id: number): Promise<number> {
+    await this.repository.delete(id);
+    return id;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} method`;
-  }
-
-  update(id: number, updateMethodInput: UpdateMethodInput) {
-    return `This action updates a #${id} method`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} method`;
+  async findOneByLabel(label: string): Promise<Method> {
+    label = label.toLowerCase();
+    return this.repository
+      .createQueryBuilder()
+      .where('LOWER(label) = :label', { label })
+      .getOne();
   }
 }

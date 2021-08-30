@@ -11,7 +11,7 @@ export class Method {
 
   @Field()
   @Column()
-  label: number;
+  label: string;
 
   @OneToMany(() => Payment, (payment) => payment.method, {
     onDelete: 'CASCADE',

@@ -114,13 +114,9 @@ export type CreateDeliveryInput = {
 };
 
 export type CreateInvoiceInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
-};
-
-export type CreateMethodInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
+  dueDate: Scalars['String'];
+  reference: Scalars['String'];
+  commandId: Scalars['Float'];
 };
 
 export type CreatePackagingInput = {
@@ -129,11 +125,6 @@ export type CreatePackagingInput = {
 };
 
 export type CreatePatientInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
-};
-
-export type CreatePaymentInput = {
   /** Example field (placeholder) */
   exampleField: Scalars['Int'];
 };
@@ -198,6 +189,12 @@ export type Invoice = {
   archivedAt: Scalars['DateTime'];
 };
 
+export type InvoicePagination = {
+  __typename?: 'InvoicePagination';
+  items: Array<Invoice>;
+  meta: Meta;
+};
+
 export type LoginDto = {
   __typename?: 'LoginDto';
   token: Scalars['String'];
@@ -235,8 +232,13 @@ export type Meta = {
 export type Method = {
   __typename?: 'Method';
   id: Scalars['Float'];
-  label: Scalars['Float'];
+  label: Scalars['String'];
   archivedAt: Scalars['DateTime'];
+};
+
+export type MethodInput = {
+  id?: Maybe<Scalars['Float']>;
+  label: Scalars['String'];
 };
 
 export type Mutation = {
@@ -269,13 +271,9 @@ export type Mutation = {
   removeAssuredLine: StockMovement;
   createInvoice: Invoice;
   updateInvoice: Invoice;
-  removeInvoice: Invoice;
-  createPayment: Payment;
-  updatePayment: Payment;
-  removePayment: Payment;
+  savePayment: Invoice;
   createMethod: Method;
   updateMethod: Method;
-  removeMethod: Method;
   createBatch: Medicine;
   updateBatch: Medicine;
   softRemove: Batch;
@@ -423,47 +421,27 @@ export type MutationRemoveAssuredLineArgs = {
 
 
 export type MutationCreateInvoiceArgs = {
-  createInvoiceInput: CreateInvoiceInput;
+  input: CreateInvoiceInput;
 };
 
 
 export type MutationUpdateInvoiceArgs = {
-  updateInvoiceInput: UpdateInvoiceInput;
+  input: UpdateInvoiceInput;
 };
 
 
-export type MutationRemoveInvoiceArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type MutationCreatePaymentArgs = {
-  createPaymentInput: CreatePaymentInput;
-};
-
-
-export type MutationUpdatePaymentArgs = {
-  updatePaymentInput: UpdatePaymentInput;
-};
-
-
-export type MutationRemovePaymentArgs = {
-  id: Scalars['Int'];
+export type MutationSavePaymentArgs = {
+  input: SavePaymentInput;
 };
 
 
 export type MutationCreateMethodArgs = {
-  createMethodInput: CreateMethodInput;
+  input: MethodInput;
 };
 
 
 export type MutationUpdateMethodArgs = {
-  updateMethodInput: UpdateMethodInput;
-};
-
-
-export type MutationRemoveMethodArgs = {
-  id: Scalars['Int'];
+  input: MethodInput;
 };
 
 
@@ -604,9 +582,9 @@ export type Query = {
   delivery: Delivery;
   assuredLine: Array<StockMovement>;
   findOne: StockMovement;
-  invoice: Invoice;
-  payment: Payment;
-  method: Method;
+  paginateInvoices: InvoicePagination;
+  findOneInvoice: Invoice;
+  methods: Array<Method>;
   findAll: Array<Batch>;
   sale: Sale;
   patient: Patient;
@@ -640,18 +618,13 @@ export type QueryFindOneArgs = {
 };
 
 
-export type QueryInvoiceArgs = {
-  id: Scalars['Int'];
+export type QueryPaginateInvoicesArgs = {
+  paginationInput: PaginationInput;
 };
 
 
-export type QueryPaymentArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryMethodArgs = {
-  id: Scalars['Int'];
+export type QueryFindOneInvoiceArgs = {
+  commandId: Scalars['Float'];
 };
 
 
@@ -688,6 +661,15 @@ export type SaveDosageInput = {
   id: Scalars['Float'];
   parentId: Scalars['Float'];
   label: Scalars['String'];
+};
+
+export type SavePaymentInput = {
+  id: Scalars['Float'];
+  reference: Scalars['String'];
+  description: Scalars['String'];
+  date: Scalars['String'];
+  invoiceId: Scalars['Float'];
+  paymentModeId: Scalars['Float'];
 };
 
 export type SaveProviderInput = {
@@ -741,15 +723,9 @@ export type UpdateDeliveryInput = {
 };
 
 export type UpdateInvoiceInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
-};
-
-export type UpdateMethodInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
+  id: Scalars['Float'];
+  dueDate: Scalars['String'];
+  reference: Scalars['String'];
 };
 
 export type UpdatePackagingInput = {
@@ -758,12 +734,6 @@ export type UpdatePackagingInput = {
 };
 
 export type UpdatePatientInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
-};
-
-export type UpdatePaymentInput = {
   /** Example field (placeholder) */
   exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];

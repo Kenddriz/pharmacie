@@ -35,10 +35,7 @@ export class Delivery {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn()
   invoice?: Invoice;
-  @RelationId((delivery: Delivery) => delivery.invoice)
-  invoiceId: number;
 
   @Field(() => [StockMovement])
   @OneToMany(() => StockMovement, (stockMovements) => stockMovements.delivery, {

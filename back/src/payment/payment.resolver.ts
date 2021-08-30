@@ -1,35 +1,29 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
 import { PaymentService } from './payment.service';
 import { Payment } from './payment.entity';
-import { CreatePaymentInput } from './dto/create-payment.input';
-import { UpdatePaymentInput } from './dto/update-payment.input';
+import { Method } from '../method/method.entity';
+import { InvoiceService } from '../invoice/invoice.service';
+import { MethodService } from '../method/method.service';
+import { Invoice } from '../invoice/invoice.entity';
+import { SavePaymentInput } from './dto/payment.input';
 
 @Resolver(() => Payment)
 export class PaymentResolver {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly invoiceService: InvoiceService,
+    private methodService: MethodService,
+  ) {}
 
-  @Mutation(() => Payment)
-  createPayment(@Args('createPaymentInput') createPaymentInput: CreatePaymentInput) {
-    return this.paymentService.create(createPaymentInput);
+  @Mutation(() => Invoice)
+  async savePayment(@Args('input') input: SavePaymentInput): Promise<Invoice> {
+    const { invoiceId } = input;
+    const invoice = await this.invoiceService.findOneById(invoiceId);
+    return invoice;
   }
 
-  @Query(() => [Payment], { name: 'payment' })
-  findAll() {
-    return this.paymentService.findAll();
-  }
-
-  @Query(() => Payment, { name: 'payment' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.paymentService.findOne(id);
-  }
-
-  @Mutation(() => Payment)
-  updatePayment(@Args('updatePaymentInput') updatePaymentInput: UpdatePaymentInput) {
-    return this.paymentService.update(updatePaymentInput.id, updatePaymentInput);
-  }
-
-  @Mutation(() => Payment)
-  removePayment(@Args('id', { type: () => Int }) id: number) {
-    return this.paymentService.remove(id);
+  @ResolveField(() => Method)
+  async method(@Root() payment: Payment): Promise<Method> {
+    return await this.methodService.findOneById(payment.methodId);
   }
 }

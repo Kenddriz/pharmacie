@@ -19,8 +19,8 @@ export class DeliveryService {
     return `This action returns all delivery`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} delivery`;
+  async findOneById(id: number): Promise<Delivery> {
+    return this.deliveryRepository.findOne(id);
   }
 
   async findByCommandId(commandId: number): Promise<Delivery> {

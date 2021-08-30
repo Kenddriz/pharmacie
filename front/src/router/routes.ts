@@ -13,7 +13,9 @@ const routes: RouteRecordRaw[] = [
       { path: 'provider', component: () => import('pages/provider/Provider.vue') },
       { path: 'medicine', component: () => import('src/pages/medicine/MedicinePage.vue') },
       { path: 'command', component: () => import('src/pages/command/Command.vue') },
-      { path: 'card-stock', component: () => import('src/pages/CardStock.vue') }
+      { path: 'card-stock', component: () => import('src/pages/CardStock.vue') },
+      { path: 'command/delivery/:id', component: () => import('src/pages/delivery/Delivery.vue') },
+      { path: 'invoice', component: () => import('src/pages/invoice/Invoice.vue') }
     ],
   },
 

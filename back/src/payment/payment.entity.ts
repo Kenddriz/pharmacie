@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
 import { Method } from '../method/method.entity';
 
 @ObjectType()
@@ -19,6 +19,8 @@ export class Payment {
     onUpdate: 'CASCADE',
   })
   method: Method;
+  @RelationId((payment: Payment) => payment.method)
+  methodId: number;
 
   @Field()
   @Column({ type: 'date' })

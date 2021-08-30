@@ -40,13 +40,15 @@
         ref="scrollTargetRef"
         :style="`max-height: ${$q.screen.height - 150}px`"
         class="scroll-y"
-        separator-
+        separator
       >
         <q-item
           clickable
           v-ripple v-for="(cmd, i) in commands.items"
           :key="i"
           @click="setSelectedCmd(i); tab = 'update'"
+          :active="cmd.id === selectedCmd.id"
+          :active-class="cmd.id === selectedCmd.id ? 'bg-brown-1' : ''"
         >
           <q-item-section avatar>
             <q-avatar size="sm" color="primary" text-color="white">

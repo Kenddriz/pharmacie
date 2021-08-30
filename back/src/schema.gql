@@ -31,7 +31,7 @@ type Contact {
 
 type Method {
   id: Float!
-  label: Float!
+  label: String!
   archivedAt: DateTime!
 }
 
@@ -53,6 +53,7 @@ type Invoice {
   date: Float!
   dueDate: Float!
   payment: Payment
+  delivery: Delivery!
   archivedAt: DateTime!
 }
 
@@ -198,6 +199,11 @@ type ArticlePagination {
   meta: Meta!
 }
 
+type InvoicePagination {
+  items: [Invoice!]!
+  meta: Meta!
+}
+
 type LoginDto {
   token: String!
 }
@@ -214,9 +220,9 @@ type Query {
   delivery(id: Int!): Delivery!
   assuredLine: [StockMovement!]!
   findOne(id: Int!): StockMovement!
-  invoice(id: Int!): Invoice!
-  payment(id: Int!): Payment!
-  method(id: Int!): Method!
+  paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
+  findOneInvoice(commandId: Float!): Invoice!
+  methods: [Method!]!
   findAll: [Batch!]!
   sale(id: Int!): Sale!
   patient(id: Int!): Patient!
@@ -257,15 +263,11 @@ type Mutation {
   createAssuredLine(createAssuredLineInput: StockMovementInput!): StockMovement!
   updateAssuredLine(input: UpdateStockMovementInput!): StockMovement!
   removeAssuredLine(id: Int!): StockMovement!
-  createInvoice(createInvoiceInput: CreateInvoiceInput!): Invoice!
-  updateInvoice(updateInvoiceInput: UpdateInvoiceInput!): Invoice!
-  removeInvoice(id: Int!): Invoice!
-  createPayment(createPaymentInput: CreatePaymentInput!): Payment!
-  updatePayment(updatePaymentInput: UpdatePaymentInput!): Payment!
-  removePayment(id: Int!): Payment!
-  createMethod(createMethodInput: CreateMethodInput!): Method!
-  updateMethod(updateMethodInput: UpdateMethodInput!): Method!
-  removeMethod(id: Int!): Method!
+  createInvoice(input: CreateInvoiceInput!): Invoice!
+  updateInvoice(input: UpdateInvoiceInput!): Invoice!
+  savePayment(input: SavePaymentInput!): Invoice!
+  createMethod(input: MethodInput!): Method!
+  updateMethod(input: MethodInput!): Method!
   createBatch(input: CreateBatchInput!): Medicine!
   updateBatch(input: UpdateBatchInput!): Medicine!
   softRemove(id: Int!): Batch!
@@ -386,36 +388,29 @@ input UpdateStockMovementInput {
 }
 
 input CreateInvoiceInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  dueDate: String!
+  reference: String!
+  commandId: Float!
 }
 
 input UpdateInvoiceInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: Float!
+  dueDate: String!
+  reference: String!
 }
 
-input CreatePaymentInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input SavePaymentInput {
+  id: Float!
+  reference: String!
+  description: String!
+  date: String!
+  invoiceId: Float!
+  paymentModeId: Float!
 }
 
-input UpdatePaymentInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateMethodInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateMethodInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input MethodInput {
+  id: Float
+  label: String!
 }
 
 input CreateBatchInput {

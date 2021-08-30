@@ -141,10 +141,20 @@
     <q-item>
       <q-item-section side>
         <q-btn
-          icon="receipt"
+          v-if="command.delivery"
+          icon="store"
           text-color="dark"
           label="Livraison"
           class="q-ma-md"
+          :to="`command/delivery/${command.id}`"
+        />
+        <q-btn
+          v-else
+          icon="receipt"
+          text-color="dark"
+          label="Facturation"
+          class="q-ma-md"
+          :to="`command/invoice/${command.id}`"
         />
       </q-item-section>
     </q-item>
