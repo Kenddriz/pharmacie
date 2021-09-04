@@ -1,7 +1,7 @@
 import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
 import { DOSAGE_PARAMS } from '../dosage/dosage.sdl';
 import { FORM_PARAMS } from '../form/form.sdl';
-import { Medicine } from '../types';
+import { Article, Medicine } from '../types';
 import { gql } from '@apollo/client/core';
 
 export const MEDICINE_PARAMS = `
@@ -9,6 +9,9 @@ export const MEDICINE_PARAMS = `
   form{${FORM_PARAMS}}
   dosage{${DOSAGE_PARAMS}}
   packaging{${PACKAGING_PARAMS}}
+  currentSalePrice
+  currentVat
+  stockTotal
 `;
 export type MedicinesData = {
   medicines: Medicine[];
@@ -17,21 +20,33 @@ export const MEDICINES = gql`
   query Medicines {
     medicines {
       ${MEDICINE_PARAMS}
-      article {commercialName}
+      article {commercialName }
     }
   }
 `;
-export type SaveMedicineData = {
-  saveMedicine: Medicine
+export type CreateMedicineData = {
+  createMedicine: Article
 }
 
-export const SAVE_MEDICINE = gql`
-    mutation SaveMedicine($input:MedicineInput!) {
-      saveMedicine(input: $input) {
+export const CREATE_MEDICINE = gql`
+    mutation CreateMedicine($input:MedicineInputForm!) {
+      createMedicine(input: $input) {
         id
         medicines{${MEDICINE_PARAMS}}
       }
     }
+`;
+
+export type UpdateMedicineData = {
+  updateMedicine: Medicine
+}
+
+export const UPDATE_MEDICINE = gql`
+  mutation UpdateMedicine($input:UpdateMedicineInput!) {
+    updateMedicine(input: $input) {
+      ${MEDICINE_PARAMS}
+    }
+  }
 `;
 
 

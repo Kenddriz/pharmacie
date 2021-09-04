@@ -26,7 +26,7 @@ export const pItems = [
   },
   {
     label: 'Vente',
-    to: 'sell',
+    to: 'sale',
     icon: 'shopping_basket'
   }
 ]

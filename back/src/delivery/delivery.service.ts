@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDeliveryInput } from './dto/create-delivery.input';
 import { UpdateDeliveryInput } from './dto/update-delivery.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Delivery } from './delivery.entity';
@@ -9,10 +8,10 @@ import { Repository } from 'typeorm';
 export class DeliveryService {
   constructor(
     @InjectRepository(Delivery)
-    private deliveryRepository: Repository<Delivery>,
+    private repository: Repository<Delivery>,
   ) {}
-  create(createDeliveryInput: CreateDeliveryInput) {
-    return 'This action adds a new delivery';
+  async save(delivery: Delivery): Promise<Delivery> {
+    return this.repository.save(delivery);
   }
 
   findAll() {
@@ -20,11 +19,11 @@ export class DeliveryService {
   }
 
   async findOneById(id: number): Promise<Delivery> {
-    return this.deliveryRepository.findOne(id);
+    return this.repository.findOne(id);
   }
 
   async findByCommandId(commandId: number): Promise<Delivery> {
-    return this.deliveryRepository
+    return this.repository
       .createQueryBuilder('d')
       .where('d.commandId = :commandId', { commandId })
       .getOne();

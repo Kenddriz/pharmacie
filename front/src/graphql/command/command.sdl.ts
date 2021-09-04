@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
 import { PROVIDER } from '../provider/provider.sdl';
-import { COMMAND_LINE } from '../command-line/commandLine';
-import { CommandPagination } from '../types';
+import { COMMAND_LINE } from '../command-line/commandLine.sdl';
+import { Command, CommandPagination } from '../types';
 
 export const COMMAND = `
   id
@@ -23,3 +23,14 @@ export const PAGINATE_COMMAND = gql`
   }
  }
 `
+export type CreateCommandData = {
+  createCommand: Command;
+}
+
+export const CREATE_COMMAND = gql`
+    mutation CreateCommand($input: CreateCommandInput!) {
+        createCommand(input: $input) {
+          ${COMMAND}
+        }
+    }
+`;

@@ -4,7 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
 import { Batch } from '../batch/batch.entity';
@@ -12,10 +12,10 @@ import { Delivery } from '../delivery/delivery.entity';
 import { Sale } from '../sale/sale.entity';
 
 @ObjectType()
-@Entity({ name: 'stock-movements' })
+@Entity({ name: 'stockMovements' })
 export class StockMovement {
   @Field(() => Int)
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Field(() => Batch)
@@ -47,19 +47,19 @@ export class StockMovement {
 
   @Field()
   @Column({ type: 'int' })
-  quantity: number;
+  quantity: number; /**purchase or sale quantity**/
 
   @Field()
   @Column({ type: 'float' })
-  price: number;
+  price: number; /**purchase or sale price**/
 
   @Field()
   @Column({ type: 'float' })
   stock: number;
 
   @Field()
-  @Column({ type: 'float' })
-  vat: number;
+  @Column({ type: 'float', default: 0 })
+  vat: number; /**purchase or sale vat variation**/
 
   @DeleteDateColumn({ type: 'timestamp' })
   archivedAt: Date;

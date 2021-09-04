@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { StockMovementInput } from './dto/stock-movement.input';
+import { StockMovementFormInput } from './dto/stock-movement.input';
 import { UpdateStockMovementInput } from './dto/update-assured-line.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StockMovement } from './stock-movement.entity';
@@ -9,20 +9,31 @@ import { Repository } from 'typeorm';
 export class StockMovementService {
   constructor(
     @InjectRepository(StockMovement)
-    private assuredLineRepository: Repository<StockMovement>,
+    private repository: Repository<StockMovement>,
   ) {}
-  create(createStockMovementInput: StockMovementInput) {
-    return 'This action adds a new assuredLine';
+  async save(stockMovement: StockMovement): Promise<StockMovement> {
+    return this.repository.save(stockMovement);
   }
 
   findAll() {
     return `This action returns all assuredLine`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} assuredLine`;
+  async findOne(id: number): Promise<StockMovement> {
+    return this.repository.findOne(id);
   }
-
+  async findByDelivery(deliveryId: number): Promise<StockMovement[]> {
+    return this.repository
+      .createQueryBuilder('sm')
+      .where(`sm.deliveryId = :deliveryId`, { deliveryId })
+      .getMany();
+  }
+  async findByBatch(batchId: number): Promise<StockMovement[]> {
+    return this.repository
+      .createQueryBuilder('sm')
+      .where(`sm.batchId = :batchId`, { batchId })
+      .getMany();
+  }
   update(id: number, updateStockMovementInput: UpdateStockMovementInput) {
     return `This action updates a #${id} assuredLine`;
   }

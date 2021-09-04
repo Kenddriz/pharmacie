@@ -1,57 +1,127 @@
 <template>
-  <q-list dense padding style="min-width: 250px">
+  <q-list class="q-gutter-sm" dense padding style="min-width: 250px">
     <FormList
       :forms="forms"
       :selected="selectedForm"
-      @selected="$emit('selectedForm', $event)"
+      @selected="Object.assign(selectedForm, $event)"
     />
     <DosageList
       :dosages="dosages"
       :selected="selectedDosage"
-      @selected="$emit('selectedDosage', $event)"
+      @selected="Object.assign(selectedDosage, $event)"
     />
     <PackagingList
       :packaging="packaging"
       :selected="selectedPk"
-      @selected="$emit('selectedPk', $event)"
+      @selected="Object.assign(selectedPk, $event)"
     />
+    <q-item>
+      <PackagingInput
+        label="`Prix unitaire de vente`"
+        outlined
+        :units="selectedPk.units"
+        :value="mPrice"
+        @set-model="mPrice = $event"
+        :is-q="false"
+      />
+    </q-item>
+
+    <q-item>
+      <q-input
+        type="number"
+        :min="0"
+        :model-value="mVat"
+        v-model.number="mVat"
+        dense
+        outlined
+        stack-label
+        label="TVA"
+      />
+    </q-item>
   </q-list>
+
   <q-btn
-    class="q-ma-sm q-pl-sm q-pr-sm"
+    class="q-ml-sm q-mb-sm q-pl-sm q-pr-sm"
     color="primary"
     no-caps
     rounded
     outline
     dense
     label="Enregistrer"
-    @click="$emit('submit', [selectedForm.id, selectedDosage.id, selectedPk.id])"
+    @click="$emit('submit', formInput())"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 import FormList from '../form/FormList.vue';
 import DosageList from '../dosage/DosageList.vue';
 import PackagingList from '../packaging/PackagingList.vue';
-import { Form, Packaging } from '../../graphql/types';
+import { Form, MedicineInputForm, Packaging } from '../../graphql/types';
 import { DosageItem } from '../../graphql/dosage/dosage.service';
+import PackagingInput from '../packaging/PackagingInput.vue';
 
 export default defineComponent({
   name: 'MedicineForm',
-  components: {  FormList, DosageList, PackagingList },
+  components: {  FormList, DosageList, PackagingList, PackagingInput },
   props: {
-    forms: Array as PropType<Form[]>,
-    selectedForm: Object as PropType<Form>,
-    dosages: Array as PropType<DosageItem[]>,
-    selectedDosage: Object as PropType<DosageItem>,
-    packaging: Array as PropType<Packaging[]>,
-    selectedPk: Object as PropType<Packaging>,
-    mode: {
-      type: String,
-      default: 'add'
+    forms: {
+      type: Array as PropType<Form[]>,
+      required: true
     },
+    selectedForm: {
+      type: Object as PropType<Form>,
+      required: true
+    },
+    dosages: {
+      type: Array as PropType<DosageItem[]>,
+      required: true
+    },
+    selectedDosage: {
+      type: Object as PropType<DosageItem>,
+      required: true
+    },
+    packaging: {
+      type: Array as PropType<Packaging[]>,
+      required: true
+    },
+    selectedPk: {
+      type: Object as PropType<Packaging>,
+      required: true
+    },
+    articleId: {
+      type: Number,
+      required: true
+    },
+    price: {
+      type: Number,
+      default: 0
+    },
+
+    vat: {
+      type: Number,
+      default: 0
+    }
   },
-  emits: ['selectedForm', 'selectedDosage', 'selectedPk', 'submit']
+  emits: ['submit'],
+  setup(props) {
+    const mPrice = ref<number>(props.price);
+    const mVat = ref<number>(props.vat);
+    return {
+      mPrice,
+      mVat,
+      formInput: function(): MedicineInputForm {
+        return {
+          articleId: props.articleId,
+          formId: props.selectedForm.id,
+          dosageId: props.selectedDosage.id,
+          packagingId: props.selectedPk.id,
+          currentSalePrice: mPrice.value,
+          currentVat: mVat.value
+        }
+      }
+    }
+  }
 });
 </script>
 

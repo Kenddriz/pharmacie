@@ -1,11 +1,14 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Float, Int } from '@nestjs/graphql';
 import {
+  Column,
+  CreateDateColumn,
   DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Article } from '../article/article.entity';
 import { Form } from '../form/form.entity';
@@ -59,6 +62,7 @@ export class Medicine {
 
   @Field(() => [Batch])
   @OneToMany(() => Batch, (batch) => batch.medicine, {
+    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
@@ -66,10 +70,30 @@ export class Medicine {
 
   @Field(() => [CommandLine], { nullable: true })
   @OneToMany(() => CommandLine, (commandLine) => commandLine.medicine, {
+    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   commandLines: CommandLine[];
+
+  @Field(() => Float)
+  @Column({ type: 'float', default: 0 })
+  currentSalePrice: number;
+
+  @Field(() => Int, { defaultValue: 0 })
+  stockTotal: number;
+  /*current vat should be saved to have always access on it, even if some movement are deleted**/
+  @Field(() => Float)
+  @Column({ type: 'float', default: 0 })
+  currentVat: number;
+
+  @Field()
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })

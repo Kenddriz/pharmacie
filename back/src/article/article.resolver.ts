@@ -47,7 +47,12 @@ export class ArticleResolver {
   removeArticle(@Args('id', { type: () => Int }) id: number) {
     return this.articleService.remove(id);
   }
-
+  @Query(() => Article, { nullable: true })
+  findOneArticle(
+    @Args({ name: 'keyword', type: () => String }) keyword: string,
+  ): Promise<Article> {
+    return this.articleService.findOne(keyword);
+  }
   @ResolveField(() => [Medicine])
   async medicines(@Root() article: Article): Promise<Medicine[]> {
     return await this.medicineService.findOneByArticle(article.id);

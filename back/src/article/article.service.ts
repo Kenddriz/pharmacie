@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ArticleDto } from './types/article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Article } from './article.entity';
-import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import {
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
@@ -21,6 +25,12 @@ export class ArticleService {
 
   async findOneById(id: number): Promise<Article> {
     return this.repository.findOne(id);
+  }
+  async findOne(keyword: string): Promise<Article> {
+    keyword = `%${keyword}%`;
+    return this.repository.findOne({
+      where: [{ dci: ILike(keyword) }, { commercialName: ILike(keyword) }],
+    });
   }
   async paginate(input: PaginationInput): Promise<Pagination<Article>> {
     const keyword = `%${input.keyword}%`;

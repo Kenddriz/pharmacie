@@ -1,23 +1,24 @@
 import {
-  Medicine,
+  Medicine, MedicineInputForm,
   MutationDeleteMedicineArgs,
   MutationRecoverMedicineArgs,
-  MutationSaveMedicineArgs,
+  MutationCreateMedicineArgs,
   MutationSoftRemoveMedicineArgs,
+  MutationUpdateMedicineArgs,
 } from '../types';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import {
-  SAVE_MEDICINE,
-  SaveMedicineData,
+  CREATE_MEDICINE,
+  CreateMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
   DeleteMedicineData,
-  DELETE_MEDICINE, RecoverMedicineData, MedicinesData, MEDICINES,
+  DELETE_MEDICINE, RecoverMedicineData, MedicinesData, MEDICINES, UPDATE_MEDICINE, UpdateMedicineData,
 } from './medicine.sdl';
-import { softRemoveDialog } from '../utils/utils';
+import { removeDialog } from '../utils/utils';
 import { ref } from 'vue';
 
-export const  useMedicines = () => {
+export const useMedicines = () => {
   const medicines = ref<Medicine[]>([]);
   const { loading: medLoading, onResult } = useQuery<MedicinesData>(MEDICINES);
   onResult(({ data }) => {
@@ -25,26 +26,39 @@ export const  useMedicines = () => {
   })
   return { medicines, medLoading }
 }
-export const useSaveMedicine = () => {
-  const { mutate, loading: saveLoading } = useMutation<SaveMedicineData, MutationSaveMedicineArgs>(SAVE_MEDICINE);
-  function addMedicine(articleId: number, formId: number, dosageId: number, packagingId: number) {
-    void mutate({ input: {id: 0, articleId, formId, dosageId, packagingId} });
+export const useCreateMedicine = () => {
+  const { mutate, loading: cmLoading } = useMutation<
+    CreateMedicineData,
+    MutationCreateMedicineArgs
+    >(CREATE_MEDICINE);
+  function createMedicine(input: MedicineInputForm) {
+    void mutate({ input });
   }
-  function updateMedicine(id: number, articleId: number, formId: number, dosageId: number, packagingId: number) {
-    void mutate({ input: { id, articleId, formId, dosageId, packagingId }});
+  return { createMedicine, cmLoading }
+}
+
+export const useUpdateMedicine = () => {
+  const { mutate, loading: umLoading } = useMutation<
+    UpdateMedicineData,
+    MutationUpdateMedicineArgs
+    >(UPDATE_MEDICINE);
+  const updateDialog = ref<boolean>(false);
+  function updateMedicine(id: number, form: MedicineInputForm) {
+    void mutate({ input: {id, form} });
+    updateDialog.value = false;
   }
-  return { addMedicine, updateMedicine, saveLoading }
+  return { updateMedicine, umLoading, updateDialog }
 }
 
 export const useSoftRemoveMedicine = () => {
-  const { mutate, loading: softRemoveMedicineLoading } = useMutation<
+  const { mutate, loading: srmLoading } = useMutation<
     SoftRemoveMedicineData,
     MutationSoftRemoveMedicineArgs
     >(SOFT_REMOVE_MEDICINE);
   return {
-    softRemoveMedicineLoading,
+    srmLoading,
     softRemoveMedicine: (articleId: number, medicineId: number) => {
-      softRemoveDialog(() => void mutate({ input: { articleId, medicineId } }))
+      removeDialog(() => void mutate({ input: { articleId, medicineId } }))
     }
   }
 }

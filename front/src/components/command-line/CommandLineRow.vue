@@ -8,6 +8,7 @@
         color="primary"
         icon="add"
         no-caps
+        @click="addLine"
       />
       <!-- v-if="input.commandLines.length"-->
       <q-btn
@@ -16,33 +17,21 @@
         color="primary"
         label="Enregistrer les lignes"
         icon-right="save"
+        @click="submit"
+        :disable="!commandLineInput.length"
+        :loading="loading"
       />
     </td>
   </tr>
-  <tr v-for="(ipt, i) in [1, 2, 3]" :key="i">
+  <tr v-for="(ipt, index) in commandLineInput" :key="index">
     <td>
-      <Autocomplete
-        borderless
-        style="min-width: 150px"
-        :options="medicines"
-      />
+      <ArticleSelect @update="setLine($event, index)" />
     </td>
-    <td>Forme</td>
-    <td>Dosage</td>
     <td>
-      <q-input
-        borderless
-        style="min-width: 100px"
-        min="0"
-        type="number"
-        dense
-      >
-      <template v-slot:after>
-        <q-btn class="q-pr-md q-pl-md" flat dense no-caps label="unité d'achat">
-
-        </q-btn>
-      </template>
-      </q-input>
+      <PackagingInput
+        :units="ipt.pkg.units"
+        @set-model="ipt.quantity = $event"
+      />
     </td>
     <td>
       <q-btn
@@ -51,22 +40,55 @@
         unelevated
         dense
         text-color="orange"
+        @click="removeLine(index)"
       />
     </td>
   </tr>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { Medicine } from '../../graphql/types';
-import Autocomplete from '../shared/Autocomplete.vue';
+import ArticleSelect from '../article/ArticleSelect.vue';
+import { CommandLineInput, Packaging } from '../../graphql/types';
+import { FindOneArticleOption } from '../../graphql/article/article.service';
+import PackagingInput from '../packaging/PackagingInput.vue';
 
 export default defineComponent({
   name: 'CommandLineRow',
-  components: {Autocomplete},
-  emits: ['submitted'],
-  setup() {
+  components: { ArticleSelect, PackagingInput },
+  emits: ['onSubmit'],
+  props: { loading: Boolean },
+  setup(__, {emit}) {
+    const commandLineInput = ref<(CommandLineInput & { pkg: Packaging })[]>([]);
+    function addLine() {
+      commandLineInput.value.push({
+        medicineId: 0, quantity: 1,
+        pkg: { id: 0, units: [] }
+      })
+    }
+    function removeLine(index: number) {
+      commandLineInput.value.splice(index, 1);
+    }
+    function setLine(data: FindOneArticleOption, index: number) {
+      commandLineInput.value[index].pkg = data.packaging;
+      commandLineInput.value[index].medicineId = data.value;
+    }
+    function submit() {
+      const commandLines: CommandLineInput[] = [];
+      commandLineInput.value.forEach(val => {
+        const { quantity, medicineId } = val;
+        if(medicineId > 0)commandLines.push({ quantity, medicineId });
+      });
+      if(commandLines.length) {
+        emit('onSubmit', commandLines);
+        commandLineInput.value.length = 0;
+      }
+    }
     return {
-      medicines: ref<Medicine[]>([])
+      commandLineInput,
+      addLine,
+      removeLine,
+      setLine,
+      submit
     }
   },
 });

@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Float } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +8,7 @@ import {
   OneToMany,
   PrimaryColumn,
   RelationId,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Medicine } from '../medicine/medicine.entity';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
@@ -38,23 +39,19 @@ export class Batch {
 
   @Field()
   @Column({ type: 'date' })
-  manufactureDate: string;
-
-  @Field()
-  @Column({ type: 'date' })
   expirationDate: string;
-
-  @Field()
-  @Column({ type: 'int' })
-  stock: number;
-
-  @Field()
-  @Column({ type: 'float' })
-  price: number;
+  /*current stock should be saved to have always access on it, even if some movement are deleted**/
+  @Field(() => Float, { defaultValue: 0 })
+  @Column({ type: 'float', default: 0 })
+  currentStock: number;
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })

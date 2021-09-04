@@ -21,7 +21,6 @@ export class Command {
 
   @Field(() => Delivery, { nullable: true })
   @OneToOne(() => Delivery, (delivery) => delivery.command, {
-    eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
@@ -29,6 +28,7 @@ export class Command {
 
   @Field(() => [CommandLine], { nullable: true })
   @OneToMany(() => CommandLine, (commandLine) => commandLine.command, {
+    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

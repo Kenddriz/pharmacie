@@ -1,22 +1,10 @@
 
 export const cmData = [
   {
-    name: 'article',
+    name: 'medicine',
     align: 'center',
-    label: 'Article',
-    field: 'article',
-  },
-  {
-    name: 'form',
-    align: 'center',
-    label: 'Forme',
-    field: 'form',
-  },
-  {
-    name: 'dosage',
-    align: 'center',
-    label: 'Dosage',
-    field: 'dosage',
+    label: 'Médicament',
+    field: 'medicine',
   },
   {
     name: 'quantity',

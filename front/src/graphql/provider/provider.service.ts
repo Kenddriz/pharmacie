@@ -1,6 +1,13 @@
 import {useMutation, useQuery, useResult} from '@vue/apollo-composable';
-import {CREATE_PROVIDER, SaveProviderData, PROVIDERS, ProvidersData} from './provider.sdl';
-import {SaveProviderInput, MutationSaveProviderArgs, Provider} from '../types';
+import {
+  CREATE_PROVIDER,
+  SaveProviderData,
+  PROVIDERS,
+  ProvidersData,
+  FindProvidersData,
+  FIND_PROVIDERS,
+} from './provider.sdl';
+import { SaveProviderInput, MutationSaveProviderArgs, Provider, QueryFindProvidersArgs } from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
 
@@ -63,5 +70,28 @@ export const useSaveProvider = () => {
     show,
     updateInput,
     loadSave,
+  }
+}
+
+export const useFindProviders = () => {
+  const fpInput = ref<string>('');
+  const providers = ref<Provider[]>([]);
+  const { loading: fpLoading, onResult, refetch } = useQuery<
+    FindProvidersData,
+    QueryFindProvidersArgs
+    >(FIND_PROVIDERS, { keyword: cloneDeep(fpInput.value) }, {
+      fetchPolicy: 'no-cache',
+  });
+  onResult(({ data }) => {
+    providers.value = data.findProviders;
+  });
+  function findProviders() {
+    void refetch({ keyword: fpInput.value });
+  }
+  return {
+    fpLoading,
+    fpInput,
+    providers,
+    findProviders
   }
 }

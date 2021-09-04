@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Provider } from './provider.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import {
   IPaginationOptions,
   paginate,
@@ -13,24 +13,30 @@ import { PaginationInput } from '../shared/shared.input';
 export class ProviderService {
   constructor(
     @InjectRepository(Provider)
-    private providerService: Repository<Provider>,
+    private repository: Repository<Provider>,
   ) {}
   async save(provider: Provider): Promise<Provider> {
-    return this.providerService.save(provider);
+    return this.repository.save(provider);
   }
 
   async findOneById(id: number): Promise<Provider> {
-    return this.providerService.findOne(id);
+    return this.repository.findOne(id);
   }
-
+  async findProviders(keyword: string): Promise<Provider[]> {
+    keyword = `%${keyword}%`;
+    return this.repository.find({
+      where: [{ name: ILike(keyword) }, { address: ILike(keyword) }],
+      take: 5,
+    });
+  }
   async providers(): Promise<Provider[]> {
-    return this.providerService.find({
+    return this.repository.find({
       order: { id: 'ASC' },
     });
   }
 
   async paginate(input: PaginationInput): Promise<Pagination<Provider>> {
-    const queryBuilder = this.providerService
+    const queryBuilder = this.repository
       .createQueryBuilder()
       .where('name LIKE :keyword', { keyword: `%${input.keyword}%` })
       .orderBy('created_at', 'DESC');

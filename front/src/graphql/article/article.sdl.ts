@@ -38,3 +38,15 @@ export const SAVE_ARTICLE = gql`
     }
   }
 `;
+export type FindOneArticle = {
+  findOneArticle: Article;
+}
+
+export const FIND_ONE_ARTICLE = gql`
+    query findOneArticle($keyword: String!) {
+      findOneArticle(keyword: $keyword) {
+        ${ARTICLE_PARAMS}
+        medicines{${MEDICINE_PARAMS}}
+      }
+    }
+`;

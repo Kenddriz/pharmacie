@@ -1,10 +1,16 @@
-import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
-import { ArticlePaginationData, PAGINATE_ARTICLE, SAVE_ARTICLE, SaveArticleData } from './article.sdl';
+import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
+import {
+  ArticlePaginationData,
+  FIND_ONE_ARTICLE, FindOneArticle,
+  PAGINATE_ARTICLE,
+  SAVE_ARTICLE,
+  SaveArticleData,
+} from './article.sdl';
 import {
   Article,
   ArticlePagination,
-  MutationSaveArticleArgs,
-  PaginationInput,
+  MutationSaveArticleArgs, Packaging,
+  PaginationInput, QueryFindOneArticleArgs,
   QueryPaginateArticlesArgs,
   SaveArticleInput,
 } from '../types';
@@ -81,5 +87,58 @@ export const useSaveArticle = () => {
     articleDialog,
     setSaveInput,
     updateArticle
+  }
+}
+/**Find One Article*/
+export class FindOneArticleOption {
+  value = 0; label = '';
+  packaging: Packaging = { id: 0, units: [], archivedAt: ''}
+}
+export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption) => {
+  const faInput = ref<string>('');
+  const model = reactive<FindOneArticleOption>(defaultOption);
+  const selectOptions = ref<Array<FindOneArticleOption>>([]);
+  const options = ref<Array<FindOneArticleOption>>([]);
+  if(defaultOption.value > 0) {
+    selectOptions.value = [defaultOption];
+    options.value = [defaultOption];
+  }
+
+  const { loading: faLoading, onResult, load } = useLazyQuery<
+    FindOneArticle,
+    QueryFindOneArticleArgs
+    >(FIND_ONE_ARTICLE);
+  onResult(({ data }) => {
+    const medn = data.findOneArticle?.medicines;
+    if(medn) {
+      selectOptions.value = medn.map(med => ({
+        value: med.id,
+        label: `${data.findOneArticle.commercialName} ${med.dosage.label}, ${med.form.label}`,
+        packaging: med.packaging
+      }));
+      //Object.assign(model, selectOptions.value[0]);
+      options.value = cloneDeep(selectOptions.value);
+    } else {
+      selectOptions.value.length = 0;
+      options.value.length = 0;
+      Object.assign(model, new FindOneArticleOption());
+    }
+  });
+  function filterFn (val: string, update: any) {
+    update(() => {
+      const needle = val.toLocaleLowerCase()
+      const newOptions = selectOptions.value.filter(v => v.label.toLocaleLowerCase().indexOf(needle) > -1);
+      if(!newOptions.length) {
+        void load(FIND_ONE_ARTICLE,{ keyword: faInput.value }, { fetchPolicy: 'no-cache' });
+      }
+      else options.value = newOptions;
+    })
+  }
+  return {
+    filterFn,
+    faLoading,
+    faInput,
+    options,
+    model
   }
 }

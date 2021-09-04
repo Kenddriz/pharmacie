@@ -1,21 +1,28 @@
 <template>
   <div class="q-pa-md">
-    <q-linear-progress v-if="saveLoading||listLoading" indeterminate color="warning" class="q-mb-md" />
+    <q-linear-progress
+      v-if="srmLoading||cmLoading||umLoading||listLoading"
+      indeterminate
+      color="warning"
+      class="q-mb-md"
+    />
     <div class="q-table__title q-mb-md">
-      Formes et dosages
+      Formes et dosages [
+      <span class="text-secondary text-capitalize text-body1">
+        Article : {{article.commercialName||'Aucun'}}
+      </span>
+      ]
       <q-btn v-if="article" class="q-ml-lg" round color="positive" size="sm" glossy icon="add">
         <q-menu>
           <MedicineForm
             :forms="forms"
             :selectedForm="selectedForm"
-            @selectedForm="Object.assign(selectedForm, $event)"
             :dosages="dosages"
             :selectedDosage="selectedDosage"
-            @selectedDosage="Object.assign(selectedDosage, $event)"
             :packaging="packagingList"
             :selectedPk="selectedPk"
-            @selectedPk="Object.assign(selectedPk, $event)"
-            @submit="addMedicine(article.id, ...$event)"
+            :articleId="article.id"
+            @submit="createMedicine"
           >
           </MedicineForm>
         </q-menu>
@@ -40,22 +47,36 @@
         <q-item>
           <q-item-section avatar>
             <q-avatar size="sm" color="primary" text-color="white">
-              C
+              P
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label>Unités de vente</q-item-label>
-            <q-item-label caption>{{med.packaging.units.map(c => c.label).join(' -')}}</q-item-label>
+            <q-item-label>Prix de vente</q-item-label>
+            <UnitConverter
+              :units="med.packaging.units"
+              :value="med.currentSalePrice"
+              :is-q="false"
+            />
           </q-item-section>
         </q-item>
         <q-card-actions align="around">
           <q-btn
             icon="read_more"
-            :color="selectedMedicineId === med.id ? 'positive': 'secondary'"
+            :color="selectedMedicine?.id === med.id ? 'positive': 'secondary'"
             flat
           />
-          <q-btn @click="softRemoveMedicine(article.id, med.id)" icon="delete_sweep" color="deep-orange" flat></q-btn>
-          <q-btn icon="edit" @click="setSelected(med)" color="positive" flat></q-btn>
+          <q-btn
+            @click="softRemoveMedicine(article.id, med.id)"
+            icon="delete_sweep"
+            color="deep-orange"
+            flat
+          />
+          <q-btn
+            icon="edit"
+            @click="setSelected(med)"
+            color="positive"
+            flat
+            />
         </q-card-actions>
       </q-card>
     </div>
@@ -63,23 +84,23 @@
   <q-dialog v-model="updateDialog">
     <q-card>
       <q-bar class="bg-primary text-white">
-        <q-icon @click="softRemoveMedicine(article.id, selectedMedicineId)" class="cursor-pointer" name="delete_sweep" />
+        <q-icon @click="softRemoveMedicine(article.id, selectedMedicine?.id)" class="cursor-pointer" name="delete_sweep" />
         <q-space />
         <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+          <q-tooltip class="bg-white text-primary">Fermer</q-tooltip>
         </q-btn>
       </q-bar>
       <MedicineForm
         :forms="forms"
         :selectedForm="selectedForm"
-        @selectedForm="Object.assign(selectedForm, $event)"
         :dosages="dosages"
         :selectedDosage="selectedDosage"
-        @selectedDosage="Object.assign(selectedDosage, $event)"
         :packaging="packagingList"
         :selectedPk="selectedPk"
-        @selectedPk="Object.assign(selectedPk, $event)"
-        @submit="updateMedicine(selectedMedicineId, article.id, ...$event)"
+        :articleId="article.id"
+        :price="selectedMedicine?.currentSalePrice"
+        :vat="selectedMedicine?.currentVat"
+        @submit="updateMedicine(selectedMedicine?.id,$event)"
       >
       </MedicineForm>
     </q-card>
@@ -92,12 +113,13 @@ import { Article, Medicine } from '../../graphql/types';
 import { useForms } from '../../graphql/form/form.service';
 import { useDosages } from '../../graphql/dosage/dosage.service';
 import { useListPackaging } from '../../graphql/packaging/packaging.service';
-import { useSaveMedicine, useSoftRemoveMedicine } from '../../graphql/medicine/medicine.service';
+import { useCreateMedicine, useUpdateMedicine, useSoftRemoveMedicine } from '../../graphql/medicine/medicine.service';
 import MedicineForm from './MedicineForm.vue';
+import UnitConverter from '../packaging/UnitConverter.vue';
 
 export default defineComponent({
   name: 'Medicine',
-  components: { MedicineForm },
+  components: { MedicineForm, UnitConverter },
   props: {
     article: {
       type: Object as PropType<Article>,
@@ -106,29 +128,28 @@ export default defineComponent({
   },
   emits: ['edit', 'update:selected'],
   setup(props) {
-    const selectedMedicineId = ref<number>(0);
+    const selectedMedicine = ref<Medicine|null>(null);
     watch(() => props.article, (article) => {
       if(article.medicines && article.medicines.length)
-        selectedMedicineId.value = article.medicines[0].id;
+        selectedMedicine.value = article.medicines[0];
     }, { immediate: true });
 
     return {
       ...useForms(),
       ...useDosages(),
       ...useListPackaging(),
-      ...useSaveMedicine(),
+      ...useCreateMedicine(),
+      ...useUpdateMedicine(),
       ...useSoftRemoveMedicine(),
-      updateDialog: ref<boolean>(false),
-      selectedMedicineId
+      selectedMedicine
     }
   },
   methods: {
     setSelected(med: Medicine) {
-      const { id, form, packaging, dosage } = med;
-      Object.assign(this.selectedForm, form);
-      Object.assign(this.selectedPk, packaging);
-      Object.assign(this.selectedDosage, dosage);
-      this.selectedMedicineId = id;
+      Object.assign(this.selectedForm, med.form);
+      Object.assign(this.selectedPk, med.packaging);
+      Object.assign(this.selectedDosage, med.dosage);
+      this.selectedMedicine = med;
       this.updateDialog = true;
     }
   }

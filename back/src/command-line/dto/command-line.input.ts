@@ -1,20 +1,33 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CommandLineInput {
   @Field()
-  medicine: string;
+  medicineId: number;
 
   @Field()
   quantity: number;
-
-  @Field()
-  vat: number;
 }
 @InputType()
 export class AddCommandLineInput {
   @Field()
   commandId: number;
-  @Field(() => [CommandLineInput])
-  commandLines: CommandLineInput[];
+  @Field(() => CommandLineInput)
+  commandLine: CommandLineInput;
+}
+@InputType()
+export class UpdateCommandLineInput {
+  @Field()
+  id: string;
+  @Field(() => CommandLineInput)
+  commandLine: CommandLineInput;
+}
+
+@InputType()
+export class DeleteCommandLineInput {
+  @Field(() => String)
+  commandLineId: string;
+
+  @Field(() => Int)
+  commandId: number;
 }

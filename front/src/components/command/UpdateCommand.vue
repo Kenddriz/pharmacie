@@ -1,186 +1,227 @@
 <template>
-  <q-table
-    title="Lignes de commande"
-    :rows="command?.commandLines||[]"
-    :columns="cmData"
-    row-key="name"
-    separator="cell"
-    hide-pagination
-    hide-no-data
-    class="q-ma-md"
-  >
-    <template v-slot:top-right>
-      <q-btn
-        outline
-        label="sauvegarder vos modifications"
-        class="q-mr-md"
-        color="primary"
-        icon="save"
-        no-caps
-      />
-      <q-btn
-        color="primary"
-        icon-right="archive"
-        label="version pdf"
-        no-caps
-      />
-    </template>
-    <template v-slot:body="props">
-      <q-tr :props="props">
-        <q-td key="article" :props="props">
-          {{ props.row.medicine }}
-        </q-td>
-
-        <q-td key="form" :props="props">
-          {{ props.row.form.label }}
-        </q-td>
-
-        <q-td key="quantity" :props="props">
-          {{ props.row.quantity }}
-          <q-popup-edit
-            buttons
-            label-cancel="Annuler"
-            label-set="ok"
-            :model-value="props.row.quantity"
-            v-model="props.row.quantity"
+  <q-list dense>
+    <q-expansion-item
+      expand-separator
+      icon="info"
+      label="Informations supplémentaires"
+      :caption="`Destination de la commande: ${command.provider.name}`"
+    >
+      <div class="row items-stretch q-pb-sm q-mt-sm justify-around">
+        <CardProvider flat :provider="command.provider" />
+        <q-timeline class="col-md-4 q-mt-none">
+          <div class="text-h6">A propos de la commande</div>
+          <q-timeline-entry
+            title="Date de création"
+            icon="event"
+            :body="formatDate(command.createdAt, 'DATE_TIME')"
           >
-            <q-input
-              :model-value="props.row.quantity"
-              type="number"
-              v-model.number="props.row.quantity"
-              dense autofocus
-            />
-          </q-popup-edit>
-        </q-td>
-
-        <q-td key="price" :props="props">
-          {{ props.row.price }}
-          <q-popup-edit
-            title="Prix unitaire"
-            buttons
-            label-cancel="Annuler"
-            label-set="ok"
-            :model-value="props.row.price"
-            v-model="props.row.price"
+            <template v-slot:title>
+              <div class="text-subtitle2">Date de création</div>
+            </template>
+          </q-timeline-entry>
+          <q-timeline-entry
+            icon="event"
+            :body="command.commandLines?.length + ''"
           >
-            <q-input
-              :model-value="props.row.price"
-              type="number"
-              v-model.number="props.row.price"
-              dense autofocus
-            />
-          </q-popup-edit>
-        </q-td>
-
-        <q-td key="vat" :props="props">
-          {{ props.row.vat }} %
-          <q-popup-edit
-            title="Nouveau TVA"
-            buttons
-            label-cancel="Annuler"
-            label-set="ok"
-            :model-value="props.row.vat"
-            v-model="props.row.vat"
-          >
-            <q-input
-              :model-value="props.row.vat"
-              type="number"
-              v-model.number="props.row.vat"
-              dense
-              autofocus
-              prefix="%"
-            />
-          </q-popup-edit>
-        </q-td>
-
-        <q-td key="action">
+            <template v-slot:title>
+              <div class="text-subtitle2">Nombre de ligne de commandes</div>
+            </template>
+          </q-timeline-entry>
+        </q-timeline>
+      </div>
+    </q-expansion-item>
+    <q-expansion-item
+      default-opened
+      expand-separator
+      icon="receipt"
+      label="Contenu de la commande"
+      :caption="`Il y a ${command.commandLines?.length} ligne(s)`"
+    >
+      <q-table
+        title="Lignes de commande"
+        :rows="command.commandLines"
+        :columns="cmData"
+        row-key="name"
+        separator="cell"
+        hide-pagination
+        flat
+        bordered
+        :loading="aclLoading||rclLoading||uclLoading"
+        :pagination="{page:1, rowsPerPage: command?.commandLines?.length||0}"
+        table-class="overflow-hidden"
+        no-data-label="Aucune ligne pour cette commande"
+      >
+        <template v-slot:top-right>
           <q-btn
-            round
-            icon="delete_forever"
-            color="orange"
-            size="md"
-            flat
+            no-caps
+            outline
+            color="primary"
+            label="Ajouter une ligne de commande"
+            icon-right="add"
+            class="q-mr-md"
+          >
+            <q-menu>
+              <CommandLineForm
+                class="q-pa-lg"
+                @save="addCommandLine(command.id, $event)"
+              >
+                <template v-slot:title>
+                  Nouvelle ligne de commande
+                </template>
+              </CommandLineForm>
+            </q-menu>
+          </q-btn>
+
+          <q-btn
+            color="primary"
+            icon-right="archive"
+            label="version pdf"
+            no-caps
           />
-        </q-td>
-      </q-tr>
-    </template>
-    <template v-slot:bottom-row>
-      <CommandLineRow />
-    </template>
-  </q-table>
+        </template>
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td key="medicine" :props="props">
+              {{ props.row.medicine.article.commercialName }}
+              {{ props.row.medicine.dosage.label }}
+              , {{ props.row.medicine.form.label }}
+            </q-td>
 
-  <q-list v-if="command">
-    <q-item>
-      <q-item-section side>
-        <q-icon class="q-ml-sm" name="event" color="amber" />
-      </q-item-section>
-      <q-item-section>
-        Date de commande : {{formatDate(command.provider.createdAt, 'DATE_TIME')}}
-      </q-item-section>
-    </q-item>
+            <q-td key="quantity" :props="props">
+              <UnitConverter
+                :value="props.row.quantity"
+                :units="props.row.medicine.packaging.units"
+              />
+            </q-td>
 
-    <q-item>
-      <q-item-section side>
-        <q-icon class="q-ml-sm" name="tips_and_updates" color="amber" />
-      </q-item-section>
-      <q-item-section>
-        Dernière mise à jour : {{formatDate(command.provider.updatedAt, 'DATE_TIME')}}
-      </q-item-section>
-     <!-- <q-item-section>
-        <q-checkbox
-          color="amber"
-          keep-color
-          :model-value="command.arrived"
-        />
-      </q-item-section>
-      <q-item-section>
-        Cocher si la commande est arrivée et prête à être importée dans les stocks ou magasin
-      </q-item-section>-->
-    </q-item>
+            <q-td class="row justify-around" key="action">
+              <q-btn
+                round
+                icon="delete_forever"
+                color="orange"
+                size="md"
+                flat
+                @click="removeCommandLine(command.id, props.row.id)"
+              />
+              <q-btn
+                round
+                icon="edit"
+                color="positive"
+                size="md"
+                flat
+                @click="uclDialog = true; selectedCl = props.row"
+              />
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
+    </q-expansion-item>
+  </q-list>
 
-    <q-item>
-      <q-item-section side>
+  <q-card flat bordered class="q-mt-md">
+    <q-card-actions align="around">
+      <q-btn
+        v-if="!command.delivery"
+        no-caps
+        rounded
+        icon="store"
+        color="warning"
+        label="Livraison"
+        class="col-12 col-md-3"
+        @click="$emit('deliver')"
+      />
+      <template v-else>
         <q-btn
-          v-if="command.delivery"
+          no-caps
+          rounded
           icon="store"
-          text-color="dark"
-          label="Livraison"
-          class="q-ma-md"
-          :to="`command/delivery/${command.id}`"
+          color="positive"
+          label="Infos de la livraison"
+          class="col-12 col-md-3"
+          @click="$emit('deliver')"
         />
         <q-btn
-          v-else
+          no-caps
+          rounded
           icon="receipt"
           text-color="dark"
           label="Facturation"
-          class="q-ma-md"
+          class="col-12 col-md-3"
           :to="`command/invoice/${command.id}`"
         />
-      </q-item-section>
-    </q-item>
-  </q-list>
+      </template>
+
+      <q-btn
+        no-caps
+        rounded
+        icon="delete"
+        color="red"
+        label="Supprimer"
+        class="col-12 col-md-3"
+      />
+    </q-card-actions>
+  </q-card>
+
+  <q-dialog v-model="uclDialog">
+    <q-card>
+      <CommandLineForm
+        class="q-pa-lg"
+        @save="updateCommandLine(selectedCl?.id, $event); uclDialog = false"
+        :command-line="selectedCl"
+      >
+        <template v-slot:title>
+          Mise à jour de la ligne de commande
+          <q-space />
+          <q-icon
+            color="red"
+            size="sm"
+            class="cursor-pointer"
+            name="close"
+            v-close-popup
+          />
+        </template>
+      </CommandLineForm>
+    </q-card>
+  </q-dialog>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import CommandLineRow from '../command-line/CommandLineRow.vue';
-import { Command } from '../../graphql/types';
+import { defineComponent, PropType, ref } from 'vue';
+import { Command, CommandLine } from '../../graphql/types';
 import { cmData } from '../command-line/cmData';
 import { formatDate } from '../../shared/date';
+import CommandLineForm from '../command-line/CommandLineForm.vue';
+import {
+  useAddCommandLine,
+  useRemoveCommandLine,
+  useUpdateCommandLine,
+} from '../../graphql/command-line/commandLine.service';
+import CardProvider from '../provider/CardProvider.vue';
+import UnitConverter from '../packaging/UnitConverter.vue';
 
 export default defineComponent({
   name: 'UpdateCommand',
-  components: { CommandLineRow },
+  components: { CommandLineForm, CardProvider, UnitConverter },
   props: {
     command: {
       type: Object as PropType<Command>,
       required: true
     }
   },
+  emits: ['deliver'],
   setup() {
+    const uclDialog = ref<boolean>(false);
     return {
       cmData,
+      uclDialog,
       formatDate,
+      ...useAddCommandLine(),
+      ...useRemoveCommandLine(),
+      ...useUpdateCommandLine(),
+      selectedCl: ref<CommandLine|null>(null)
     }
   }
 });
 </script>
+<style lang="scss">
+
+</style>

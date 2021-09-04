@@ -52,6 +52,7 @@ type Invoice {
   id: Float!
   date: Float!
   dueDate: Float!
+  discount: Float!
   payment: Payment
   delivery: Delivery!
   archivedAt: DateTime!
@@ -92,7 +93,7 @@ type Packaging {
 }
 
 type CommandLine {
-  id: Float!
+  id: String!
   quantity: Float!
   medicine: Medicine!
   command: Command!
@@ -108,6 +109,11 @@ type Medicine {
   packaging: Packaging!
   batches: [Batch!]!
   commandLines: [CommandLine!]
+  currentSalePrice: Float!
+  stockTotal: Int!
+  currentVat: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   archivedAt: DateTime!
 }
 
@@ -115,11 +121,10 @@ type Batch {
   id: Float!
   medicine: Medicine!
   stockMovements: [StockMovement!]!
-  manufactureDate: String!
   expirationDate: String!
-  stock: Float!
-  price: Float!
+  currentStock: Float!
   createdAt: DateTime!
+  updatedAt: DateTime!
   archivedAt: DateTime!
 }
 
@@ -142,6 +147,7 @@ type Prescription {
 
 type Sale {
   id: Float!
+  discount: Float!
   date: String!
   prescription: Prescription
   stockMovements: [StockMovement!]!
@@ -210,6 +216,7 @@ type LoginDto {
 
 type Query {
   providersPaginate(input: PaginationInput!): ProviderPagination!
+  findProviders(keyword: String!): [Provider!]!
   providers: [Provider!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   medicines: [Medicine!]!
@@ -217,13 +224,12 @@ type Query {
   dosages: [Dosage!]!
   packaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
-  delivery(id: Int!): Delivery!
-  assuredLine: [StockMovement!]!
+  findOneArticle(keyword: String!): Article
+  findAll: [Batch!]!
   findOne(id: Int!): StockMovement!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   findOneInvoice(commandId: Float!): Invoice!
   methods: [Method!]!
-  findAll: [Batch!]!
   sale(id: Int!): Sale!
   patient(id: Int!): Patient!
   whoAmI: User!
@@ -242,10 +248,11 @@ type Mutation {
   saveProvider(input: SaveProviderInput!): Provider!
   createCommand(input: CreateCommandInput!): Command!
   updateCommand(input: UpdateCommandInput!): Command!
-  addCommandLine(input: AddCommandLineInput!): CommandLine!
-  updateCommandLine(input: AddCommandLineInput!): Command!
-  removeCommandLine(id: Float!): Command!
-  saveMedicine(input: MedicineInput!): Article!
+  addCommandLine(input: AddCommandLineInput!): Command!
+  updateCommandLine(input: UpdateCommandLineInput!): CommandLine!
+  removeCommandLine(input: DeleteCommandLineInput!): Command!
+  createMedicine(input: MedicineInputForm!): Article!
+  updateMedicine(input: UpdateMedicineInput!): Medicine!
   softRemoveMedicine(input: DeleteMedicineInput!): Article!
   deleteMedicine(input: DeleteMedicineInput!): Article!
   recoverMedicine(input: DeleteMedicineInput!): Article!
@@ -257,18 +264,15 @@ type Mutation {
   updatePackaging(input: UpdatePackagingInput!): Packaging!
   saveArticle(input: SaveArticleInput!): Article!
   removeArticle(id: Int!): Article!
-  createDelivery(createDeliveryInput: CreateDeliveryInput!): Delivery!
-  updateDelivery(updateDeliveryInput: UpdateDeliveryInput!): Delivery!
+  createDelivery(input: CreateDeliveryInput!): Delivery!
   removeDelivery(id: Int!): Delivery!
-  createAssuredLine(createAssuredLineInput: StockMovementInput!): StockMovement!
   updateAssuredLine(input: UpdateStockMovementInput!): StockMovement!
-  removeAssuredLine(id: Int!): StockMovement!
   createInvoice(input: CreateInvoiceInput!): Invoice!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
   savePayment(input: SavePaymentInput!): Invoice!
   createMethod(input: MethodInput!): Method!
   updateMethod(input: MethodInput!): Method!
-  createBatch(input: CreateBatchInput!): Medicine!
+  createBatch(input: BatchFormInput!): Medicine!
   updateBatch(input: UpdateBatchInput!): Medicine!
   softRemove(id: Int!): Batch!
   createSale(createSaleInput: CreateSaleInput!): Sale!
@@ -307,6 +311,12 @@ input ContactInput {
 
 input CreateCommandInput {
   providerId: Float!
+  commandLines: [CommandLineInput!]!
+}
+
+input CommandLineInput {
+  medicineId: Float!
+  quantity: Float!
 }
 
 input UpdateCommandInput {
@@ -316,21 +326,31 @@ input UpdateCommandInput {
 
 input AddCommandLineInput {
   commandId: Float!
-  commandLines: [CommandLineInput!]!
+  commandLine: CommandLineInput!
 }
 
-input CommandLineInput {
-  medicine: String!
-  quantity: Float!
-  vat: Float!
+input UpdateCommandLineInput {
+  id: String!
+  commandLine: CommandLineInput!
 }
 
-input MedicineInput {
-  id: Int!
+input DeleteCommandLineInput {
+  commandLineId: String!
+  commandId: Int!
+}
+
+input MedicineInputForm {
   articleId: Int!
   formId: Int!
   dosageId: Int!
   packagingId: Int!
+  currentSalePrice: Float!
+  currentVat: Float!
+}
+
+input UpdateMedicineInput {
+  id: Int!
+  form: MedicineInputForm!
 }
 
 input DeleteMedicineInput {
@@ -366,24 +386,19 @@ input SaveArticleInput {
 }
 
 input CreateDeliveryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  commandId: Int!
+  forms: [AssuredLineFormInput!]!
 }
 
-input UpdateDeliveryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input StockMovementInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input AssuredLineFormInput {
+  medicineId: Float!
+  price: Float!
+  expirationDate: String!
+  vat: Float!
+  quantity: Float!
 }
 
 input UpdateStockMovementInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
 }
 
@@ -413,21 +428,15 @@ input MethodInput {
   label: String!
 }
 
-input CreateBatchInput {
+input BatchFormInput {
   medicineId: Int!
-  manufactureDate: String!
   expirationDate: String!
-  stock: Int!
-  price: Float!
+  currentStock: Int!
 }
 
 input UpdateBatchInput {
   id: Int!
-  medicineId: Int!
-  manufactureDate: String!
-  expirationDate: String!
-  stock: Int!
-  price: Float!
+  form: BatchFormInput!
 }
 
 input CreateSaleInput {

@@ -1,10 +1,7 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, Float } from '@nestjs/graphql';
 
 @InputType()
-export class MedicineInput {
-  @Field(() => Int)
-  id: number;
-
+export class MedicineInputForm {
   @Field(() => Int)
   articleId: number;
 
@@ -16,6 +13,19 @@ export class MedicineInput {
 
   @Field(() => Int)
   packagingId: number;
+
+  @Field(() => Float)
+  currentSalePrice: number;
+
+  @Field(() => Float)
+  currentVat: number;
+}
+@InputType()
+export class UpdateMedicineInput {
+  @Field(() => Int)
+  id: number;
+  @Field(() => MedicineInputForm)
+  form: MedicineInputForm;
 }
 @InputType()
 export class DeleteMedicineInput {

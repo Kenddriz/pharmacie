@@ -19,33 +19,33 @@
         title="Séléction du fournisseur"
         :rows="providers"
         :columns="cmdProviderCol"
-        :filter="filter"
         row-key="id"
         selection="single"
         v-model:selected="selectedProvider"
         :selected-rows-label="selectedRowLabel"
-        :pagination-label="paginationLabel"
         no-data-label="Aucun fournisseur"
-        rows-per-page-label="Nombre d'enregistrements par page"
-        :rows-per-page-options="[5,10,15,20]"
+        hide-pagination
+        :pagination="{ page: 1, rowsPerPage: providers.length }"
+        :loading="fpLoading"
       >
         <template v-slot:top-right>
           <q-input
             outlined
             dense
             debounce="300"
-            :model-value="filter"
-            v-model="filter"
-            placeholder="Chercher"
+            :model-value="fpInput"
+            v-model="fpInput"
+            placeholder="Mot clé"
+            @keyup.enter="findProviders"
           >
-            <template v-slot:append>
-              <q-icon name="search" />
+            <template v-slot:after>
+              <q-btn @click="findProviders" icon="search" no-caps label="Chercher" />
             </template>
           </q-input>
         </template>
         <template v-slot:body-cell-contacts="props">
           <q-td :props="props">
-            {{props.row.contacts.slice(0, 2).map(c => c.label).join(' - ')}}
+            {{getOneContact(props.row.contacts, true)}}
             <q-btn color="primary" icon="more_vert" flat>
               <q-menu anchor="center end" self="center end" auto-close>
                 <ContactList class="q-pt-sm" :contacts="props.row.contacts" />
@@ -86,7 +86,7 @@
                 />
                 <div class="q-ml-md">
                   <div class="text-h4">{{selectedProvider[0].name}}</div>
-                  <span>{{(selectedProvider[0].contacts.slice(0, 2).map(ct => ct.label).join(' - '))}}</span>
+                  <span>{{getOneContact(selectedProvider[0].contacts)}}</span>
                 </div>
               </div>
             </th>
@@ -96,27 +96,20 @@
           </tr>
         </thead>
         <tbody>
-          <CommandLineRow />
-          <!--<tr v-for="(cmd, i) in createdCmd.commandLines" :key="i">
-            <td>{{cmd.medicine}}</td>
-            <td>{{cmd.form.label}}</td>
-            <td>{{cmd.unit.label}}</td>
-            <td>{{cmd.quantity}}</td>
-            <td>{{cmd.price}}</td>
-            <td>{{cmd.vat}}</td>
-            <td></td>
-          </tr>-->
+          <CommandLineRow
+            :loading="ccLoading"
+            @onSubmit="createCommand(selectedProvider[0].id, $event)"
+          />
         </tbody>
       </q-markup-table>
 
       <q-stepper-navigation>
         <q-btn
-          v-for="(bn, index) in btnBack"
-          :key="index"
           flat
           color="primary"
-          :label="bn"
+          label="Retour"
           class="q-ml-sm"
+          @click="step = 1"
         />
       </q-stepper-navigation>
     </q-step>
@@ -124,22 +117,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { cmData } from '../command-line/cmData';
-import { Provider} from '../../graphql/types';
+import { Contact, Provider } from '../../graphql/types';
 import { cmdProviderCol } from '../provider/columns';
 import ContactList from '../contact/ContactList.vue';
 import CommandLineRow from '../command-line/CommandLineRow.vue';
+import { useFindProviders } from '../../graphql/provider/provider.service';
+import { useCreateCommand } from '../../graphql/command/command.service';
 
 export default defineComponent({
   name: 'AddCommand',
   components: {ContactList, CommandLineRow},
-  props: {
-    providers: {
-      type: Array as PropType<Provider[]>,
-      required: true
-    },
-  },
   setup() {
     const step = ref<number>(1);
     const selectedProvider = ref<Provider[]>([]);
@@ -147,15 +136,21 @@ export default defineComponent({
       cmData,
       step,
       selectedProvider,
+      ...useFindProviders(),
       filter: ref<string>(''),
       cmdProviderCol,
       selectedRowLabel: (count: number) => {
         return count + ' fournisseur séléctionné'
       },
-      paginationLabel: (firstRowIndex: number, endRowIndex: number, totalRowsNumber: number) => {
-        return firstRowIndex + '-' + endRowIndex + ' de ' + totalRowsNumber
+      getOneContact: (contacts: Contact[], each = false) => {
+        const list: string[] = [];
+        for(const contact of contacts) {
+          if(each && list.length)break;
+          else if(contact.list.length)list.push(contact.list[0])
+        }
+        return list.length ? list.join(' - ') : 'aucun contact';
       },
-      btnBack: ['Retour', 'Réinitialiser']
+      ...useCreateCommand()
     }
   }
 });

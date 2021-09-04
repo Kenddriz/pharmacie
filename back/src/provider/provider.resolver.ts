@@ -31,6 +31,13 @@ export class ProviderResolver {
   }
 
   @Query(() => [Provider])
+  async findProviders(
+    @Args({ name: 'keyword', type: () => String }) keyword: string,
+  ): Promise<Provider[]> {
+    return await this.providerService.findProviders(keyword);
+  }
+
+  @Query(() => [Provider])
   async providers(): Promise<Provider[]> {
     return await this.providerService.providers();
   }

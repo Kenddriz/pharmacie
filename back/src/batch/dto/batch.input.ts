@@ -1,31 +1,19 @@
-import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreateBatchInput {
+export class BatchFormInput {
   @Field(() => Int)
   medicineId: number;
   @Field()
-  manufactureDate: string;
-  @Field()
   expirationDate: string;
   @Field(() => Int)
-  stock: number;
-  @Field(() => Float)
-  price: number;
+  currentStock: number;
 }
 
 @InputType()
 export class UpdateBatchInput {
   @Field(() => Int)
   id: number;
-  @Field(() => Int)
-  medicineId: number;
-  @Field()
-  manufactureDate: string;
-  @Field()
-  expirationDate: string;
-  @Field(() => Int)
-  stock: number;
-  @Field(() => Float)
-  price: number;
+  @Field(() => BatchFormInput)
+  form: BatchFormInput;
 }

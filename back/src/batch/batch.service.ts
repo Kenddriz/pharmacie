@@ -25,12 +25,12 @@ export class BatchService {
   }
   async findExisting(
     medicineId: number,
-    manufactureDate: string,
+    expirationDate: string,
   ): Promise<Batch> {
     return this.repository
       .createQueryBuilder('b')
       .where('b.medicineId = :medicineId', { medicineId })
-      .andWhere('b.manufactureDate = :manufactureDate', { manufactureDate })
+      .andWhere('b.expirationDate = :expirationDate', { expirationDate })
       .getOne();
   }
 

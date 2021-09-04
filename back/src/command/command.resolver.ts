@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Root,
+} from '@nestjs/graphql';
 import { CommandService } from './command.service';
 import { Command } from './command.entity';
 import { uniqId } from '../shared/id-builder.service';
@@ -11,6 +18,7 @@ import { CommandLineService } from '../command-line/command-line.service';
 import { ProviderService } from '../provider/provider.service';
 import { Delivery } from '../delivery/delivery.entity';
 import { DeliveryService } from '../delivery/delivery.service';
+import { MedicineService } from '../medicine/medicine.service';
 
 @Resolver(() => Command)
 export class CommandResolver {
@@ -19,6 +27,7 @@ export class CommandResolver {
     private commandLineService: CommandLineService,
     private providerService: ProviderService,
     private deliveryService: DeliveryService,
+    private medicineService: MedicineService,
   ) {}
 
   @Mutation(() => Command)
@@ -27,6 +36,18 @@ export class CommandResolver {
   ): Promise<Command> {
     const command = new Command();
     command.id = await uniqId('Command');
+    const medicines = await this.medicineService.findByIds(
+      input.commandLines.map((l) => l.medicineId),
+    );
+    const lines: CommandLine[] = medicines.map((medicine) => {
+      const line = new CommandLine();
+      line.medicine = medicine;
+      line.quantity = input.commandLines.find(
+        (i) => i.medicineId === medicine.id,
+      ).quantity;
+      return line;
+    });
+    command.commandLines = lines;
     return await this.commandService.save(command);
   }
   @Mutation(() => Command)

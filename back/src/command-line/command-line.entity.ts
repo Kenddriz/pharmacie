@@ -1,14 +1,21 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from 'typeorm';
 import { Medicine } from '../medicine/medicine.entity';
 import { Command } from '../command/command.entity';
 
 @ObjectType()
-@Entity({ name: 'command-lines' })
+@Entity({ name: 'commandLines' })
 export class CommandLine {
   @Field()
-  @PrimaryColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
   @Column()

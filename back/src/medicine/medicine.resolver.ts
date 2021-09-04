@@ -8,7 +8,11 @@ import {
 } from '@nestjs/graphql';
 import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
-import { DeleteMedicineInput, MedicineInput } from './types/medicine.input';
+import {
+  DeleteMedicineInput,
+  MedicineInputForm,
+  UpdateMedicineInput,
+} from './types/medicine.input';
 import { uniqId } from '../shared/id-builder.service';
 import { Form } from '../form/form.entity';
 import { FormService } from '../form/form.service';
@@ -33,22 +37,22 @@ export class MedicineResolver {
   ) {}
 
   @Mutation(() => Article)
-  async saveMedicine(@Args('input') input: MedicineInput): Promise<Article> {
-    const { id, ...res } = input;
-    let medicine: Medicine;
-    if (id > 0) medicine = await this.medicineService.findOne(id);
-    else {
-      medicine = new Medicine();
-      medicine.id = await uniqId('Medicine');
-    }
-    medicine.article = await this.articleService.findOneById(res.articleId);
-    medicine.form = await this.formService.findOne(res.formId);
-    medicine.dosage = await this.dosageService.findOneById(res.dosageId);
-    medicine.packaging = await this.packagingService.findOneById(res.formId);
-    await this.medicineService.save(medicine);
+  async createMedicine(
+    @Args('input') input: MedicineInputForm,
+  ): Promise<Article> {
+    const medicine = new Medicine();
+    medicine.id = await uniqId('Medicine');
+    await this.save(medicine, input);
     return medicine.article;
   }
-
+  @Mutation(() => Medicine)
+  async updateMedicine(
+    @Args('input') input: UpdateMedicineInput,
+  ): Promise<Medicine> {
+    const medicine = await this.medicineService.findOne(input.id);
+    await this.save(medicine, input.form);
+    return medicine;
+  }
   @Query(() => [Medicine])
   async medicines() {
     return this.medicineService.findAll();
@@ -89,5 +93,17 @@ export class MedicineResolver {
   @ResolveField(() => [Batch])
   async batches(@Root() medicine: Medicine): Promise<Batch[]> {
     return this.batchService.findByMedicine(medicine.id);
+  }
+  private async save(
+    medicine: Medicine,
+    form: MedicineInputForm,
+  ): Promise<void> {
+    medicine.article = await this.articleService.findOneById(form.articleId);
+    medicine.form = await this.formService.findOne(form.formId);
+    medicine.dosage = await this.dosageService.findOneById(form.dosageId);
+    medicine.packaging = await this.packagingService.findOneById(form.formId);
+    medicine.currentSalePrice = form.currentSalePrice;
+    medicine.currentVat = form.currentVat;
+    await this.medicineService.save(medicine);
   }
 }

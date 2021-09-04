@@ -36,3 +36,14 @@ export const CREATE_PROVIDER = gql`
     }
   }
 `;
+
+export type FindProvidersData = {
+  findProviders: Provider[];
+}
+export const FIND_PROVIDERS = gql`
+    query FindProviders($keyword: String!) {
+      findProviders(keyword: $keyword) {
+        ${PROVIDER}
+      }
+    }
+`;

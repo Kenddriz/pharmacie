@@ -20,11 +20,11 @@ export class CommandLineService {
       .getMany();
   }
 
-  async findOne(id: number): Promise<CommandLine> {
+  async findOne(id: string): Promise<CommandLine> {
     return await this.commandLineRepository.findOne(id);
   }
 
-  async remove(id: number): Promise<number> {
+  async remove(id: string): Promise<number> {
     const query = await this.commandLineRepository.delete(id);
     return query.affected;
   }

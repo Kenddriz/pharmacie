@@ -1,33 +1,70 @@
-import { useQuery } from '@vue/apollo-composable';
-import { PAGINATE_COMMAND, PaginateCommandsData } from './command.sdl';
-import { Command, CommandPagination, PaginationInput, QueryPaginateCommandsArgs } from '../types';
+import { useQuery, useMutation, useResult } from '@vue/apollo-composable';
+import { CREATE_COMMAND, CreateCommandData, PAGINATE_COMMAND, PaginateCommandsData } from './command.sdl';
+import {
+  Command,
+  CommandLineInput,
+  MutationCreateCommandArgs,
+  PaginationInput,
+  QueryPaginateCommandsArgs,
+} from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
 import { InitialPagination } from '../utils/pagination';
+import { notify } from '../../shared/notification';
 
-export const paginationInput = reactive<PaginationInput>({
-  page: 1,
-  limit: Math.ceil((screen.height - 150)/50),
-});
 export const usePaginateCommands = () => {
-  const { onResult, loading: paginateLoading } = useQuery<
+  const paginationInput = reactive<PaginationInput>({
+    page: 1,
+    limit: Math.ceil((screen.height - 150)/50),
+  });
+
+  const { result, loading: paginateLoading } = useQuery<
     PaginateCommandsData,
     QueryPaginateCommandsArgs
     >(PAGINATE_COMMAND, { paginationInput });
 
   const selectedCmd = ref<Command|undefined>(undefined);
-  const commands = reactive<CommandPagination>(InitialPagination);
-  let selectedIndex = 0;
+  const commands = useResult(result, InitialPagination, res => {
+    if(res?.paginateCommands && res?.paginateCommands.items.length) {
+      selectedCmd.value = cloneDeep(res.paginateCommands.items[0]);
+      return res.paginateCommands;
+    }
+    return InitialPagination
+  });
   const setSelectedCmd = (index: number) => {
-    selectedCmd.value = cloneDeep(commands.items[index]);
-    selectedIndex = index;
+    Object.assign(selectedCmd.value, commands.value.items[index]);
   }
-  onResult(({ data }) => {
-    if(data.paginateCommands && data.paginateCommands.items.length) {
-      selectedCmd.value =  cloneDeep(data.paginateCommands.items[selectedIndex]);
-      Object.assign(commands, data.paginateCommands);
+  return { commands, paginateLoading, selectedCmd, setSelectedCmd }
+}
+
+export const useCreateCommand = () => {
+  const { loading: ccLoading, mutate, onDone } = useMutation<
+    CreateCommandData,
+    MutationCreateCommandArgs
+    >(CREATE_COMMAND, {
+    update(cache, { data }){
+      if(data) {
+        cache.modify({
+          fields: {
+            paginateCommands(existing: any, {toReference}) {
+              return {
+                ...existing,
+                items: [...existing.items, toReference(data.createCommand)]
+              }
+            }
+          }
+        })
+      }
     }
   });
-
-  return { commands, paginateLoading, selectedCmd, setSelectedCmd }
+  onDone(() => {
+    notify('Commande enregistrée !');
+  })
+ function createCommand(providerId: number, commandLines: CommandLineInput[]) {
+   void mutate({ input: { providerId, commandLines } });
+ }
+  return {
+    ccLoading,
+    createCommand
+  }
 }

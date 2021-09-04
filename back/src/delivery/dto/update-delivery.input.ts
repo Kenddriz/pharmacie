@@ -1,8 +1,7 @@
-import { CreateDeliveryInput } from './create-delivery.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateDeliveryInput extends PartialType(CreateDeliveryInput) {
+export class UpdateDeliveryInput {
   @Field(() => Int)
   id: number;
 }

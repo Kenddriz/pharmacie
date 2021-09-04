@@ -26,6 +26,10 @@ export class Invoice {
   @Column({ type: 'date' })
   dueDate: number;
 
+  @Field()
+  @Column({ type: 'float', default: 0 })
+  discount: number;
+
   @Field(() => Payment, { nullable: true })
   @OneToOne(() => Payment, {
     onDelete: 'CASCADE',

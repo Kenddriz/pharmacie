@@ -14,7 +14,8 @@
     >
 
       <template v-slot:top>
-        <div class="q-table__title">Livraison de commande</div>
+        <q-btn no-caps color="positive" outline rounded label="Retour" icon="arrow_back" @click="$emit('back')" />
+        <div class="q-table__title q-ml-md">Livraison de commande</div>
       </template>
       <template v-slot:top-row>
         <q-tr>
@@ -74,6 +75,7 @@ import { columns } from './data';
 
 export default defineComponent({
   name: 'Delivery',
+  emits: ['back'],
   setup() {
     return {
       columns,
