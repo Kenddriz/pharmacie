@@ -3,8 +3,6 @@ import { Invoice, InvoicePagination } from '../types';
 import { PAYMENT_PARAMS } from '../payment/payment.sdl';
 import { PROVIDER } from '../provider/provider.sdl';
 import { PAGINATION_META } from '../utils/pagination';
-import { STOCK_MVT_FIELDS } from '../stock-movement/stock-mvt.sdl';
-import { BATCH_FIELDS } from '../batch/batch.sdl';
 
 export type PaginateInvoicesData = {
   paginateInvoices: InvoicePagination
@@ -15,20 +13,17 @@ export type CreateInvoiceData = {
 export const INVOICE_FIELDS = `
     id
     dueDate
+    deliveryDate
     reference
     expense
-    discount
     ${PAYMENT_PARAMS}
     createdAt
 `;
 export const CREATE_INVOICE = gql`
   mutation CreateInvoice($input: CreateInvoiceInput!){
     createInvoice(input: $input) {
-      ${INVOICE_FIELDS}
-      stockMovements {
-        ${STOCK_MVT_FIELDS}
-        batch {${BATCH_FIELDS}}
-      }
+      id
+      invoice {${INVOICE_FIELDS}}
     }
   }
 `;

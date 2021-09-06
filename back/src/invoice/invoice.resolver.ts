@@ -38,22 +38,27 @@ export class InvoiceResolver {
     private mdS: MedicineService,
   ) {}
 
-  @Mutation(() => Invoice)
-  async createInvoice(@Args('input') input: CreateInvoiceInput) {
+  @Mutation(() => Command)
+  async createInvoice(
+    @Args('input') input: CreateInvoiceInput,
+  ): Promise<Command> {
     const invoice = new Invoice();
     invoice.id = await uniqId('Invoice');
     const { commandId, ...invoiceInput } = input.invoice;
+    const command = await this.commandService.findOneById(commandId);
     Object.assign<Invoice, Omit<InvoiceInput, 'commandId'>>(
       invoice,
       invoiceInput,
     );
-    invoice.command = await this.commandService.findOneById(commandId);
+    invoice.command = command;
+    invoice.stockMovements = [];
     const medicines = await this.mdS.findByIds(
       input.assuredLines.map((i) => i.medicineId),
     );
 
     for (const form of input.assuredLines) {
-      const medicine = medicines.find((m) => m.id === form.medicineId);
+      const { medicineId, expirationDate, ...res } = form;
+      const medicine = medicines.find((m) => m.id === medicineId);
       let batch = await this.btS.findExisting(
         form.medicineId,
         form.expirationDate,
@@ -62,25 +67,25 @@ export class InvoiceResolver {
       if (!batch) {
         batch = new Batch();
         batch.id = await uniqId('Batch');
-        batch.expirationDate = form.expirationDate;
+        batch.expirationDate = expirationDate;
         batch.medicine = medicine;
+        batch.currentStock = res.quantity;
+      } else {
+        batch.currentStock += res.quantity;
       }
       /**update current vat*/
-      medicine.currentVat = form.vat;
+      medicine.currentVat = res.vat;
       await this.mdS.save(medicine);
-      batch.currentStock += form.quantity;
       /**stock movement creation*/
       const stMvt = new StockMovement();
       stMvt.batch = await this.btS.save(batch); /**save batch*/
-      //stMvt.invoice = invoice;
-      stMvt.quantity = form.quantity;
-      stMvt.price = form.price;
+      Object.assign(stMvt, res);
       stMvt.stock = batch.currentStock;
-      stMvt.vat = form.vat;
       invoice.stockMovements.push(stMvt);
     }
     /***/
-    return this.invoiceService.save(invoice);
+    await this.invoiceService.save(invoice);
+    return command;
   }
 
   @Mutation(() => Invoice)

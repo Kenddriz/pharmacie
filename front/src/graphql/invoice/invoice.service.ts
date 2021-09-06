@@ -15,6 +15,8 @@ import {
 } from './incoice.sdl';
 import { InitialPagination } from '../utils/pagination';
 import { cloneDeep } from '../utils/utils';
+import { notify } from '../../shared/notification';
+import { Loading } from 'quasar';
 
 export const paginationInput = reactive<PaginationInput>({
   page: 1,
@@ -41,15 +43,24 @@ export const usePaginateInvoices = () => {
 }
 
 export const useCreateInvoice = () => {
-  const { mutate, loading: createInvoiceLoading} = useMutation<
+  const  ciDialog = ref<boolean>(false);
+  const { mutate, onDone } = useMutation<
     CreateInvoiceData,
     MutationCreateInvoiceArgs
     >(CREATE_INVOICE);
-  const invoiceDialog = ref<boolean>(false)
-  const createInvoice = async(input: CreateInvoiceInput) => {
-    await mutate({ input });
-    invoiceDialog.value = false;
+  onDone(({ data }) => {
+    Loading.hide();
+    if(data?.createInvoice) {
+      ciDialog.value = false;
+      notify('La facture a été enregistré!');
+    }
+  })
+  const createInvoice =(input: CreateInvoiceInput) => {
+    Loading.show({
+      message: 'Enregistrement des données ...'
+    })
+    void mutate({ input });
   }
-  return { createInvoiceLoading,createInvoice, invoiceDialog }
+  return { createInvoice, ciDialog }
 }
 

@@ -2,14 +2,18 @@ import { InputType, Field, Float } from '@nestjs/graphql';
 
 @InputType()
 export class AssuredLineInput {
+  /**For Batch*/
   @Field()
   medicineId: number;
-  @Field(() => Float)
-  price: number;
   @Field()
   expirationDate: string;
+  /**End batch*/
+  @Field(() => Float)
+  price: number;
   @Field(() => Float)
   vat: number;
+  @Field(() => Float)
+  discount: number;
   @Field()
   quantity: number;
 }
@@ -24,8 +28,6 @@ export class InvoiceInput {
   reference: string;
   @Field(() => Float)
   expense: number;
-  @Field(() => Float)
-  discount: number;
   @Field()
   deliveryDate: string;
 }

@@ -37,6 +37,7 @@ export class CommandResolver {
   ): Promise<Command> {
     const command = new Command();
     command.id = await uniqId('Command');
+    command.provider = await this.providerService.findOneById(input.providerId);
     const medicines = await this.medicineService.findByIds(
       input.commandLines.map((l) => l.medicineId),
     );

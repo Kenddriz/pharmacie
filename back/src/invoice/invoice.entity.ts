@@ -23,15 +23,11 @@ export class Invoice {
 
   @Field()
   @Column({ type: 'date' })
-  deliveryDate: number;
+  deliveryDate: string;
 
   @Field()
   @Column({ type: 'date' })
-  dueDate: number;
-
-  @Field()
-  @Column({ type: 'float', default: 0 })
-  discount: number;
+  dueDate: string;
 
   @Field(() => Payment, { nullable: true })
   @OneToOne(() => Payment, {

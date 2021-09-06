@@ -98,7 +98,7 @@
             color="warning"
             label="Passer à la facturation"
             class="col-12 col-md-3"
-            @click="cdDialog = true"
+            @click="ciDialog = true"
           />
         </div>
       </q-td>
@@ -141,7 +141,7 @@
   </q-dialog>
 
   <q-dialog
-    v-model="cdDialog"
+    v-model="ciDialog"
     persistent
     :maximized="true"
     transition-show="slide-up"
@@ -150,6 +150,8 @@
     <CreateInvoice
       :command-lines="selectedCls"
       @delete="$emit('delete')"
+      @submit="createInvoice"
+      :command-id="command.id"
     >
       <div class="text-white text-weight-bold">
         N°Commande : CM{{command.id}} - Fournisseur : {{command.provider.name}}
@@ -172,6 +174,7 @@ import {
 } from '../../graphql/command-line/commandLine.service';
 import UnitConverter from '../packaging/UnitConverter.vue';
 import CreateInvoice from '../invoice/CreateInvoice.vue';
+import { useCreateInvoice } from '../../graphql/invoice/invoice.service';
 
 export default defineComponent({
   name: 'UpdateCommand',
@@ -196,11 +199,11 @@ export default defineComponent({
       pagination,
       cmData,
       uclDialog,
-      cdDialog: ref<boolean>(false),
       formatDate,
       ...useAddCommandLine(),
       ...useRemoveCommandLine(),
       ...useUpdateCommandLine(),
+      ...useCreateInvoice(),
       updateCl: ref<CommandLine|null>(null),
       selectedCls: ref<CommandLine[]>([]),
       selectedLabel: function(nbr: number) {

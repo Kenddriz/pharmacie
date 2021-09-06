@@ -37,9 +37,10 @@ export type ArticlePagination = {
 
 export type AssuredLineInput = {
   medicineId: Scalars['Float'];
-  price: Scalars['Float'];
   expirationDate: Scalars['String'];
+  price: Scalars['Float'];
   vat: Scalars['Float'];
+  discount: Scalars['Float'];
   quantity: Scalars['Float'];
 };
 
@@ -177,9 +178,8 @@ export type FormInput = {
 export type Invoice = {
   __typename?: 'Invoice';
   id: Scalars['Float'];
-  deliveryDate: Scalars['Float'];
-  dueDate: Scalars['Float'];
-  discount: Scalars['Float'];
+  deliveryDate: Scalars['String'];
+  dueDate: Scalars['String'];
   payment?: Maybe<Payment>;
   command: Command;
   stockMovements: Array<StockMovement>;
@@ -194,7 +194,6 @@ export type InvoiceInput = {
   dueDate: Scalars['String'];
   reference: Scalars['String'];
   expense: Scalars['Float'];
-  discount: Scalars['Float'];
   deliveryDate: Scalars['String'];
 };
 
@@ -281,7 +280,7 @@ export type Mutation = {
   saveArticle: Article;
   removeArticle: Article;
   updateAssuredLine: StockMovement;
-  createInvoice: Invoice;
+  createInvoice: Command;
   updateInvoice: Invoice;
   removeInvoice: Invoice;
   savePayment: Invoice;

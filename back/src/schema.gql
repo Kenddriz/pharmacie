@@ -111,9 +111,8 @@ type Payment {
 
 type Invoice {
   id: Float!
-  deliveryDate: Float!
-  dueDate: Float!
-  discount: Float!
+  deliveryDate: String!
+  dueDate: String!
   payment: Payment
   command: Command!
   stockMovements: [StockMovement!]!
@@ -262,7 +261,7 @@ type Mutation {
   saveArticle(input: SaveArticleInput!): Article!
   removeArticle(id: Int!): Article!
   updateAssuredLine(input: UpdateStockMovementInput!): StockMovement!
-  createInvoice(input: CreateInvoiceInput!): Invoice!
+  createInvoice(input: CreateInvoiceInput!): Command!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
   removeInvoice(id: Int!): Invoice!
   savePayment(input: SavePaymentInput!): Invoice!
@@ -395,15 +394,15 @@ input InvoiceInput {
   dueDate: String!
   reference: String!
   expense: Float!
-  discount: Float!
   deliveryDate: String!
 }
 
 input AssuredLineInput {
   medicineId: Float!
-  price: Float!
   expirationDate: String!
+  price: Float!
   vat: Float!
+  discount: Float!
   quantity: Float!
 }
 
