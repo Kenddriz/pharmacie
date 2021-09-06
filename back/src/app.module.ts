@@ -13,7 +13,6 @@ import { MedicineModule } from './medicine/medicine.module';
 import { ArticleModule } from './article/article.module';
 import { DosageModule } from './dosage/dosage.module';
 import { PackagingModule } from './packaging/packaging.module';
-import { DeliveryModule } from './delivery/delivery.module';
 import { StockMovementModule } from './stock-movement/stock-movement.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { PaymentModule } from './payment/payment.module';
@@ -46,7 +45,6 @@ import { FormModule } from './form/form.module';
     ArticleModule,
     DosageModule,
     PackagingModule,
-    DeliveryModule,
     StockMovementModule,
     InvoiceModule,
     PaymentModule,

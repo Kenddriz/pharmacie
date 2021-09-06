@@ -95,7 +95,6 @@ export class FindOneArticleOption {
   packaging: Packaging = { id: 0, units: [], archivedAt: ''}
 }
 export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption) => {
-  const faInput = ref<string>('');
   const model = reactive<FindOneArticleOption>(defaultOption);
   const selectOptions = ref<Array<FindOneArticleOption>>([]);
   const options = ref<Array<FindOneArticleOption>>([]);
@@ -126,10 +125,10 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
   });
   function filterFn (val: string, update: any) {
     update(() => {
-      const needle = val.toLocaleLowerCase()
+      const needle = val.toLocaleLowerCase().trim()
       const newOptions = selectOptions.value.filter(v => v.label.toLocaleLowerCase().indexOf(needle) > -1);
-      if(!newOptions.length) {
-        void load(FIND_ONE_ARTICLE,{ keyword: faInput.value }, { fetchPolicy: 'no-cache' });
+      if(!newOptions.length && needle) {
+        void load(FIND_ONE_ARTICLE,{ keyword: needle }, { fetchPolicy: 'no-cache' });
       }
       else options.value = newOptions;
     })
@@ -137,7 +136,6 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
   return {
     filterFn,
     faLoading,
-    faInput,
     options,
     model
   }

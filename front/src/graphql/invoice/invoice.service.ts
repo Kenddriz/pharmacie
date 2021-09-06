@@ -1,20 +1,18 @@
-import { useMutation, useQuery, useResult, useLazyQuery } from '@vue/apollo-composable';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import { reactive, ref } from 'vue';
 import {
   CreateInvoiceInput,
   Invoice,
   MutationCreateInvoiceArgs,
-  PaginationInput, QueryFindOneInvoiceArgs,
+  PaginationInput,
   QueryPaginateCommandsArgs,
 } from '../types';
 import {
   CREATE_INVOICE,
   CreateInvoiceData,
-  FIND_ONE_INVOICE, FindOneInvoiceData,
   PAGINATE_INVOICES,
   PaginateInvoicesData,
 } from './incoice.sdl';
-import { formatDate } from '../../shared/date';
 import { InitialPagination } from '../utils/pagination';
 import { cloneDeep } from '../utils/utils';
 
@@ -47,30 +45,11 @@ export const useCreateInvoice = () => {
     CreateInvoiceData,
     MutationCreateInvoiceArgs
     >(CREATE_INVOICE);
-  const createInvoiceInput = reactive<CreateInvoiceInput>({
-    dueDate: formatDate(Date.now(), 'DATE_ONLY'),
-    reference: '',
-    commandId: 0
-  });
   const invoiceDialog = ref<boolean>(false)
-  const createInvoice = async(commandId: number) => {
-    createInvoiceInput.commandId = commandId;
-    await mutate({ input: createInvoiceInput });
+  const createInvoice = async(input: CreateInvoiceInput) => {
+    await mutate({ input });
     invoiceDialog.value = false;
   }
-  return { createInvoiceLoading,createInvoiceInput,createInvoice, invoiceDialog }
+  return { createInvoiceLoading,createInvoice, invoiceDialog }
 }
 
-export const useFindOneInvoice = () => {
-  const { load, loading: findInvoiceLoading, result } = useLazyQuery<
-    FindOneInvoiceData,
-    QueryFindOneInvoiceArgs
-    >(FIND_ONE_INVOICE);
-  return {
-    findOneInvoice: (commandId: number) => {
-      load(FIND_ONE_INVOICE, {commandId}, {fetchPolicy: 'no-cache'})
-    },
-    cmdInvoice: useResult(result, null, res => res?.findOneInvoice),
-    findInvoiceLoading
-  }
-}

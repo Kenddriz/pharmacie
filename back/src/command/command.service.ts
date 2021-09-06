@@ -18,8 +18,9 @@ export class CommandService {
     return await this.repository.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} command`;
+  async delete(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
   async paginate(input: PaginationInput): Promise<Pagination<Command>> {
     const queryBuilder = this.repository

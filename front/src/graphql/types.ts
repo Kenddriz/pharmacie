@@ -35,7 +35,7 @@ export type ArticlePagination = {
   meta: Meta;
 };
 
-export type AssuredLineFormInput = {
+export type AssuredLineInput = {
   medicineId: Scalars['Float'];
   price: Scalars['Float'];
   expirationDate: Scalars['String'];
@@ -69,7 +69,7 @@ export type BatchFormInput = {
 export type Command = {
   __typename?: 'Command';
   id: Scalars['Float'];
-  delivery?: Maybe<Delivery>;
+  invoice?: Maybe<Invoice>;
   commandLines?: Maybe<Array<CommandLine>>;
   provider: Provider;
   createdAt: Scalars['DateTime'];
@@ -113,15 +113,9 @@ export type CreateCommandInput = {
   commandLines: Array<CommandLineInput>;
 };
 
-export type CreateDeliveryInput = {
-  commandId: Scalars['Int'];
-  forms: Array<AssuredLineFormInput>;
-};
-
 export type CreateInvoiceInput = {
-  dueDate: Scalars['String'];
-  reference: Scalars['String'];
-  commandId: Scalars['Float'];
+  invoice: InvoiceInput;
+  assuredLines: Array<AssuredLineInput>;
 };
 
 export type CreatePackagingInput = {
@@ -160,16 +154,6 @@ export type DeleteMedicineInput = {
   articleId: Scalars['Int'];
 };
 
-export type Delivery = {
-  __typename?: 'Delivery';
-  id: Scalars['Float'];
-  command: Command;
-  invoice?: Maybe<Invoice>;
-  stockMovements: Array<StockMovement>;
-  createdAt: Scalars['DateTime'];
-  archivedAt: Scalars['DateTime'];
-};
-
 export type Dosage = {
   __typename?: 'Dosage';
   id: Scalars['Float'];
@@ -193,12 +177,25 @@ export type FormInput = {
 export type Invoice = {
   __typename?: 'Invoice';
   id: Scalars['Float'];
-  date: Scalars['Float'];
+  deliveryDate: Scalars['Float'];
   dueDate: Scalars['Float'];
   discount: Scalars['Float'];
   payment?: Maybe<Payment>;
-  delivery: Delivery;
+  command: Command;
+  stockMovements: Array<StockMovement>;
+  expense: Scalars['Float'];
+  reference: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   archivedAt: Scalars['DateTime'];
+};
+
+export type InvoiceInput = {
+  commandId: Scalars['Float'];
+  dueDate: Scalars['String'];
+  reference: Scalars['String'];
+  expense: Scalars['Float'];
+  discount: Scalars['Float'];
+  deliveryDate: Scalars['String'];
 };
 
 export type InvoicePagination = {
@@ -266,6 +263,7 @@ export type Mutation = {
   saveProvider: Provider;
   createCommand: Command;
   updateCommand: Command;
+  deleteCommand: Scalars['Boolean'];
   addCommandLine: Command;
   updateCommandLine: CommandLine;
   removeCommandLine: Command;
@@ -282,11 +280,10 @@ export type Mutation = {
   updatePackaging: Packaging;
   saveArticle: Article;
   removeArticle: Article;
-  createDelivery: Delivery;
-  removeDelivery: Delivery;
   updateAssuredLine: StockMovement;
   createInvoice: Invoice;
   updateInvoice: Invoice;
+  removeInvoice: Invoice;
   savePayment: Invoice;
   createMethod: Method;
   updateMethod: Method;
@@ -328,6 +325,11 @@ export type MutationCreateCommandArgs = {
 
 export type MutationUpdateCommandArgs = {
   input: UpdateCommandInput;
+};
+
+
+export type MutationDeleteCommandArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -411,16 +413,6 @@ export type MutationRemoveArticleArgs = {
 };
 
 
-export type MutationCreateDeliveryArgs = {
-  input: CreateDeliveryInput;
-};
-
-
-export type MutationRemoveDeliveryArgs = {
-  id: Scalars['Int'];
-};
-
-
 export type MutationUpdateAssuredLineArgs = {
   input: UpdateStockMovementInput;
 };
@@ -433,6 +425,11 @@ export type MutationCreateInvoiceArgs = {
 
 export type MutationUpdateInvoiceArgs = {
   input: UpdateInvoiceInput;
+};
+
+
+export type MutationRemoveInvoiceArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -542,6 +539,7 @@ export type Payment = {
   __typename?: 'Payment';
   id: Scalars['Float'];
   reference: Scalars['String'];
+  note: Scalars['String'];
   method: Method;
   date: Scalars['String'];
   archivedAt: Scalars['DateTime'];
@@ -587,11 +585,10 @@ export type Query = {
   packaging: Array<Packaging>;
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
-  findAll: Array<Batch>;
   findOne: StockMovement;
   paginateInvoices: InvoicePagination;
-  findOneInvoice: Invoice;
   methods: Array<Method>;
+  findAll: Array<Batch>;
   sale: Sale;
   patient: Patient;
   whoAmI: User;
@@ -631,11 +628,6 @@ export type QueryFindOneArgs = {
 
 export type QueryPaginateInvoicesArgs = {
   paginationInput: PaginationInput;
-};
-
-
-export type QueryFindOneInvoiceArgs = {
-  commandId: Scalars['Float'];
 };
 
 
@@ -695,11 +687,12 @@ export type StockMovement = {
   __typename?: 'StockMovement';
   id: Scalars['Int'];
   batch: Batch;
-  delivery?: Maybe<Delivery>;
+  invoice?: Maybe<Invoice>;
   sale?: Maybe<Sale>;
   quantity: Scalars['Float'];
   price: Scalars['Float'];
   stock: Scalars['Float'];
+  discount: Scalars['Float'];
   vat: Scalars['Float'];
 };
 
@@ -726,8 +719,7 @@ export type UpdateCommandLineInput = {
 
 export type UpdateInvoiceInput = {
   id: Scalars['Float'];
-  dueDate: Scalars['String'];
-  reference: Scalars['String'];
+  invoice: InvoiceInput;
 };
 
 export type UpdateMedicineInput = {

@@ -1,5 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryColumn, RelationId } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+  RelationId,
+} from 'typeorm';
 import { Method } from '../method/method.entity';
 
 @ObjectType()
@@ -10,8 +17,12 @@ export class Payment {
   id: number;
 
   @Field()
-  @Column()
+  @Column({ type: 'varchar', length: 25 })
   reference: string;
+
+  @Field()
+  @Column({ type: 'varchar', length: 255 })
+  note: string;
 
   @Field(() => Method)
   @ManyToOne(() => Method, (method) => method.payments, {

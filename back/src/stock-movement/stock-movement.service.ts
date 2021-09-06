@@ -22,10 +22,10 @@ export class StockMovementService {
   async findOne(id: number): Promise<StockMovement> {
     return this.repository.findOne(id);
   }
-  async findByDelivery(deliveryId: number): Promise<StockMovement[]> {
+  async findByInvoice(invoiceId: number): Promise<StockMovement[]> {
     return this.repository
       .createQueryBuilder('sm')
-      .where(`sm.deliveryId = :deliveryId`, { deliveryId })
+      .where(`sm.invoiceId = :invoiceId`, { invoiceId })
       .getMany();
   }
   async findByBatch(batchId: number): Promise<StockMovement[]> {

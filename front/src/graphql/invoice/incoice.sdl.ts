@@ -3,19 +3,38 @@ import { Invoice, InvoicePagination } from '../types';
 import { PAYMENT_PARAMS } from '../payment/payment.sdl';
 import { PROVIDER } from '../provider/provider.sdl';
 import { PAGINATION_META } from '../utils/pagination';
+import { STOCK_MVT_FIELDS } from '../stock-movement/stock-mvt.sdl';
+import { BATCH_FIELDS } from '../batch/batch.sdl';
 
 export type PaginateInvoicesData = {
   paginateInvoices: InvoicePagination
 }
-const INVOICE_PARAMS_ONLY = `
+export type CreateInvoiceData = {
+  createInvoice: Invoice
+}
+export const INVOICE_FIELDS = `
     id
     dueDate
     reference
+    expense
+    discount
     ${PAYMENT_PARAMS}
     createdAt
 `;
+export const CREATE_INVOICE = gql`
+  mutation CreateInvoice($input: CreateInvoiceInput!){
+    createInvoice(input: $input) {
+      ${INVOICE_FIELDS}
+      stockMovements {
+        ${STOCK_MVT_FIELDS}
+        batch {${BATCH_FIELDS}}
+      }
+    }
+  }
+`;
+
 const INVOICE_PARAMS = `
-  ${INVOICE_PARAMS_ONLY}
+  ${INVOICE_FIELDS}
   command{
     id
     arrived
@@ -26,25 +45,12 @@ export const PAGINATE_INVOICES = gql`
  query PaginateInvoices($paginationInput: PaginationInput!) {
   paginateInvoices(paginationInput: $paginationInput) {
     items{
-      ${INVOICE_PARAMS}
+      ${INVOICE_FIELDS}
     }
     ${PAGINATION_META}
   }
  }
 `
-export type CreateInvoiceData = {
-  createInvoice: Invoice
-}
-export const CREATE_INVOICE = gql`
-  mutation CreateInvoice($input:CreateInvoiceInput!){
-    createInvoice(input:$input){
-      delivery{
-        id
-
-      }
-    }
-  }
-`;
 
 export type UpdateInvoiceData = {
   updateInvoice: Invoice
@@ -59,8 +65,3 @@ export const UPDATE_INVOICE = gql`
 export type FindOneInvoiceData = {
   findOneInvoice: Invoice
 }
-export const FIND_ONE_INVOICE = gql`
-  query FindOneInvoice($commandId:Float!){
-    findOneInvoice(commandId:$commandId){${INVOICE_PARAMS_ONLY}}
-  }
-`;

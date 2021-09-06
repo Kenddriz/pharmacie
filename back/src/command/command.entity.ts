@@ -8,9 +8,9 @@ import {
   PrimaryColumn,
   RelationId,
 } from 'typeorm';
-import { Delivery } from '../delivery/delivery.entity';
 import { Provider } from '../provider/provider.entity';
 import { CommandLine } from '../command-line/command-line.entity';
+import { Invoice } from '../invoice/invoice.entity';
 
 @ObjectType()
 @Entity({ name: 'commands' })
@@ -19,12 +19,12 @@ export class Command {
   @PrimaryColumn()
   id: number;
 
-  @Field(() => Delivery, { nullable: true })
-  @OneToOne(() => Delivery, (delivery) => delivery.command, {
+  @Field(() => Invoice, { nullable: true })
+  @OneToOne(() => Invoice, (invoice) => invoice.command, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  delivery?: Delivery;
+  invoice?: Invoice;
 
   @Field(() => [CommandLine], { nullable: true })
   @OneToMany(() => CommandLine, (commandLine) => commandLine.command, {

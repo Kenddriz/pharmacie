@@ -1,17 +1,25 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Root } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Root,
+} from '@nestjs/graphql';
 import { StockMovementService } from './stock-movement.service';
 import { StockMovement } from './stock-movement.entity';
 import { UpdateStockMovementInput } from './dto/update-assured-line.input';
-import { Delivery } from '../delivery/delivery.entity';
-import { DeliveryService } from '../delivery/delivery.service';
 import { BatchService } from '../batch/batch.service';
 import { Batch } from '../batch/batch.entity';
+import { InvoiceService } from '../invoice/invoice.service';
+import { Invoice } from '../invoice/invoice.entity';
 
 @Resolver(() => StockMovement)
 export class StockMovementResolver {
   constructor(
     private stmService: StockMovementService,
-    private dlService: DeliveryService,
+    private invoiceService: InvoiceService,
     private btService: BatchService,
   ) {}
 
@@ -24,9 +32,9 @@ export class StockMovementResolver {
   updateAssuredLine(@Args('input') input: UpdateStockMovementInput) {
     return input;
   }
-  @ResolveField(() => Delivery)
-  async delivery(@Root() stockMovement: StockMovement): Promise<Delivery> {
-    return this.dlService.findOneById(stockMovement.deliveryId);
+  @ResolveField(() => Invoice)
+  async invoice(@Root() stockMovement: StockMovement): Promise<Invoice> {
+    return this.invoiceService.findOneById(stockMovement.invoiceId);
   }
   @ResolveField(() => Batch)
   async batch(@Root() stockMovement: StockMovement): Promise<Batch> {

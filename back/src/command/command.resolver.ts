@@ -5,6 +5,7 @@ import {
   Args,
   ResolveField,
   Root,
+  Int,
 } from '@nestjs/graphql';
 import { CommandService } from './command.service';
 import { Command } from './command.entity';
@@ -16,9 +17,9 @@ import { CommandLine } from '../command-line/command-line.entity';
 import { Provider } from '../provider/provider.entity';
 import { CommandLineService } from '../command-line/command-line.service';
 import { ProviderService } from '../provider/provider.service';
-import { Delivery } from '../delivery/delivery.entity';
-import { DeliveryService } from '../delivery/delivery.service';
 import { MedicineService } from '../medicine/medicine.service';
+import { Invoice } from '../invoice/invoice.entity';
+import { InvoiceService } from '../invoice/invoice.service';
 
 @Resolver(() => Command)
 export class CommandResolver {
@@ -26,7 +27,7 @@ export class CommandResolver {
     private commandService: CommandService,
     private commandLineService: CommandLineService,
     private providerService: ProviderService,
-    private deliveryService: DeliveryService,
+    private invoiceService: InvoiceService,
     private medicineService: MedicineService,
   ) {}
 
@@ -64,6 +65,11 @@ export class CommandResolver {
     return await this.commandService.paginate(input);
   }
 
+  @Mutation(() => Boolean)
+  async deleteCommand(@Args({ name: 'id', type: () => Int }) id: number) {
+    return await this.commandService.delete(id);
+  }
+
   /**Field resolver*/
   @ResolveField(() => [CommandLine])
   async commandLines(@Root() command: Command): Promise<CommandLine[]> {
@@ -73,8 +79,8 @@ export class CommandResolver {
   async provider(@Root() command: Command): Promise<Provider> {
     return await this.providerService.findOneById(command.providerId);
   }
-  @ResolveField(() => Delivery)
-  async delivery(@Root() command: Command): Promise<Delivery> {
-    return await this.deliveryService.findByCommandId(command.id);
+  @ResolveField(() => Invoice)
+  async invoice(@Root() command: Command): Promise<Invoice> {
+    return await this.invoiceService.findByCommandId(command.id);
   }
 }

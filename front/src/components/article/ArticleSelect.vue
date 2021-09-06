@@ -7,7 +7,6 @@
     fill-input
     :options="options"
     @filter="filterFn"
-    @input-value="faInput = $event"
     borderless
     dense
     :loading="faLoading"
@@ -41,14 +40,12 @@ export default defineComponent({
     const {
       filterFn,
       faLoading,
-      faInput,
       options,
       model
     } = useFindOneArticleForCommand(props.modelValue||new FindOneArticleOption());
     return {
       filterFn,
       faLoading,
-      faInput,
       options,
       model
     }

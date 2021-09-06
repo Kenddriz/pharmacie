@@ -1,13 +1,20 @@
 <template>
   <q-page class="row q-pa-sm">
-    <q-card bordered flat square class="col-12 col-md-9 q-ma-none">
+    <q-card bordered flat square class="col-12 col-md-8 q-ma-none">
       <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 130}px;`">
         <PaymentMode :payment-modes="paymentModes" />
         <q-separator />
         <InvoiceDetails :payment-modes="paymentModes" :invoice="selectedInvoice" />
       </ScrollArea>
     </q-card>
-    <div class="col-12 col-md-3">
+    <div class="col-12 col-md-4">
+      <div class="flex flex-center q-pa-sm" style="border-bottom: 1px solid gainsboro">
+        <q-input dense outlined label="Référence de la facture">
+          <template v-slot:after>
+            <q-btn unelevated outline color="primary" no-caps label="Chercher" icon="search"/>
+          </template>
+        </q-input>
+      </div>
       <div class="text-h6 text-center">Liste de factures</div>
       <q-list
         ref="scrollTargetRef"

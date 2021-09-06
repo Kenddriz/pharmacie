@@ -17,8 +17,12 @@ export class InvoiceService {
   async findOneById(id: number): Promise<Invoice> {
     return this.repository.findOne(id);
   }
-  async findOneByCommandId(commandId: number): Promise<Invoice> {
-    return this.repository.findOne({ where: { commandId } });
+
+  async findByCommandId(commandId: number): Promise<Invoice> {
+    return this.repository
+      .createQueryBuilder('invoice')
+      .where('invoice.commandId = :commandId', { commandId })
+      .getOne();
   }
   async paginate(input: PaginationInput): Promise<Pagination<Invoice>> {
     const queryBuilder = this.repository
@@ -26,5 +30,8 @@ export class InvoiceService {
       .orderBy('invoice.dueDate', 'ASC');
     const { page, limit } = input;
     return await paginate<Invoice>(queryBuilder, { page, limit });
+  }
+  remove(id: number) {
+    return `This action removes a #${id} delivery`;
   }
 }

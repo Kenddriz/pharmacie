@@ -8,8 +8,8 @@ import {
   RelationId,
 } from 'typeorm';
 import { Batch } from '../batch/batch.entity';
-import { Delivery } from '../delivery/delivery.entity';
 import { Sale } from '../sale/sale.entity';
+import { Invoice } from '../invoice/invoice.entity';
 
 @ObjectType()
 @Entity({ name: 'stockMovements' })
@@ -27,14 +27,14 @@ export class StockMovement {
   @RelationId((stockMovement: StockMovement) => stockMovement.batch)
   batchId: number;
 
-  @Field(() => Delivery, { nullable: true })
-  @ManyToOne(() => Delivery, (delivery) => delivery.stockMovements, {
+  @Field(() => Invoice, { nullable: true })
+  @ManyToOne(() => Invoice, (invoice) => invoice.stockMovements, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  delivery?: Delivery;
-  @RelationId((stockMovement: StockMovement) => stockMovement.delivery)
-  deliveryId: number;
+  invoice?: Invoice;
+  @RelationId((stockMovement: StockMovement) => stockMovement.invoice)
+  invoiceId: number;
 
   @Field(() => Sale, { nullable: true })
   @ManyToOne(() => Sale, (sale) => sale.stockMovements, {
@@ -55,7 +55,11 @@ export class StockMovement {
 
   @Field()
   @Column({ type: 'float' })
-  stock: number;
+  stock: number; /**stock variation**/
+
+  @Field()
+  @Column({ type: 'float', default: 0 })
+  discount: number;
 
   @Field()
   @Column({ type: 'float', default: 0 })

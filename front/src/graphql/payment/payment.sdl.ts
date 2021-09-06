@@ -9,7 +9,7 @@ export const PAYMENT_PARAMS = `
   payment{
     id
     date
-    description
+    note
     reference
     method{${METHOD_PARAMS}}
   }

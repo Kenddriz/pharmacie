@@ -17,7 +17,7 @@ export const columns = [
     label: 'PRIX',
   },
   {
-    name: 'expiration',
+    name: 'expirationDate',
     align: 'center',
     label: 'DATE DE PEREMPTION',
   },

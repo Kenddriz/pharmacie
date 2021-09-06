@@ -1,163 +1,119 @@
 <template>
-  <q-list dense>
-    <q-expansion-item
-      expand-separator
-      icon="info"
-      label="Informations supplémentaires"
-      :caption="`Destination de la commande: ${command.provider.name}`"
-    >
-      <div class="row items-stretch q-pb-sm q-mt-sm justify-around">
-        <CardProvider flat :provider="command.provider" />
-        <q-timeline class="col-md-4 q-mt-none">
-          <div class="text-h6">A propos de la commande</div>
-          <q-timeline-entry
-            title="Date de création"
-            icon="event"
-            :body="formatDate(command.createdAt, 'DATE_TIME')"
-          >
-            <template v-slot:title>
-              <div class="text-subtitle2">Date de création</div>
-            </template>
-          </q-timeline-entry>
-          <q-timeline-entry
-            icon="event"
-            :body="command.commandLines?.length + ''"
-          >
-            <template v-slot:title>
-              <div class="text-subtitle2">Nombre de ligne de commandes</div>
-            </template>
-          </q-timeline-entry>
-        </q-timeline>
-      </div>
-    </q-expansion-item>
-    <q-expansion-item
-      default-opened
-      expand-separator
-      icon="receipt"
-      label="Contenu de la commande"
-      :caption="`Il y a ${command.commandLines?.length} ligne(s)`"
-    >
-      <q-table
-        title="Lignes de commande"
-        :rows="command.commandLines"
-        :columns="cmData"
-        row-key="name"
-        separator="cell"
-        hide-pagination
-        flat
-        bordered
-        :loading="aclLoading||rclLoading||uclLoading"
-        :pagination="{page:1, rowsPerPage: command?.commandLines?.length||0}"
-        table-class="overflow-hidden"
-        no-data-label="Aucune ligne pour cette commande"
+  <q-table
+    title="Lignes de commande"
+    :rows="command.commandLines"
+    :columns="cmData"
+    row-key="id"
+    separator="cell"
+    hide-pagination
+    flat
+    bordered
+    :loading="aclLoading||rclLoading||uclLoading"
+    v-model:pagination="pagination"
+    table-class="overflow-hidden"
+    no-data-label="Aucune ligne pour cette commande"
+    :selected-rows-label="selectedLabel"
+    selection="multiple"
+    v-model:selected="selectedCls"
+  >
+    <template v-slot:top-right>
+      <q-btn
+        no-caps
+        outline
+        color="primary"
+        label="Ajouter une ligne de commande"
+        icon-right="add"
+        class="q-mr-md"
       >
-        <template v-slot:top-right>
-          <q-btn
-            no-caps
-            outline
-            color="primary"
-            label="Ajouter une ligne de commande"
-            icon-right="add"
-            class="q-mr-md"
+        <q-menu>
+          <CommandLineForm
+            class="q-pa-lg"
+            @save="addCommandLine(command.id, $event)"
           >
-            <q-menu>
-              <CommandLineForm
-                class="q-pa-lg"
-                @save="addCommandLine(command.id, $event)"
-              >
-                <template v-slot:title>
-                  Nouvelle ligne de commande
-                </template>
-              </CommandLineForm>
-            </q-menu>
-          </q-btn>
+            <template v-slot:title>
+              Nouvelle ligne de commande
+            </template>
+          </CommandLineForm>
+        </q-menu>
+      </q-btn>
 
-          <q-btn
-            color="primary"
-            icon-right="archive"
-            label="version pdf"
-            no-caps
-          />
-        </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="medicine" :props="props">
-              {{ props.row.medicine.article.commercialName }}
-              {{ props.row.medicine.dosage.label }}
-              , {{ props.row.medicine.form.label }}
-            </q-td>
-
-            <q-td key="quantity" :props="props">
-              <UnitConverter
-                :value="props.row.quantity"
-                :units="props.row.medicine.packaging.units"
-              />
-            </q-td>
-
-            <q-td class="row justify-around" key="action">
-              <q-btn
-                round
-                icon="delete_forever"
-                color="orange"
-                size="md"
-                flat
-                @click="removeCommandLine(command.id, props.row.id)"
-              />
-              <q-btn
-                round
-                icon="edit"
-                color="positive"
-                size="md"
-                flat
-                @click="uclDialog = true; selectedCl = props.row"
-              />
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </q-expansion-item>
-  </q-list>
-
-  <q-card flat bordered class="q-mt-md">
-    <q-card-actions align="around">
       <q-btn
-        v-if="!command.delivery"
+        color="primary"
+        icon-right="archive"
+        label="version pdf"
         no-caps
-        rounded
-        icon="store"
-        color="warning"
-        label="Livraison"
-        class="col-12 col-md-3"
-        @click="$emit('deliver')"
       />
-      <template v-else>
-        <q-btn
-          no-caps
-          rounded
-          icon="store"
-          color="positive"
-          label="Infos de la livraison"
-          class="col-12 col-md-3"
-          @click="$emit('deliver')"
-        />
-        <q-btn
-          no-caps
-          rounded
-          icon="receipt"
-          text-color="dark"
-          label="Facturation"
-          class="col-12 col-md-3"
-          :to="`command/invoice/${command.id}`"
-        />
-      </template>
+    </template>
+    <template v-slot:body="props">
+      <q-tr :props="props">
+        <q-td>
+          <q-checkbox color="secondary" v-model="props.selected" :model-value="props.selected" />
+        </q-td>
+        <q-td key="medicine" :props="props">
+          {{ props.row.medicine.article.commercialName }}
+          {{ props.row.medicine.dosage.label }}
+          , {{ props.row.medicine.form.label }}
+        </q-td>
 
+        <q-td key="quantity" :props="props">
+          <UnitConverter
+            :value="props.row.quantity||0"
+            :units="props.row.medicine.packaging.units"
+          />
+        </q-td>
+
+        <q-td class="row justify-around" style="height: 100%" key="action">
+          <q-btn
+            round
+            icon="delete_forever"
+            color="orange"
+            size="md"
+            flat
+            @click="removeCommandLine(command.id, props.row.id)"
+          />
+          <q-btn
+            round
+            icon="edit"
+            color="positive"
+            size="md"
+            flat
+            @click="uclDialog = true; updateCl = props.row"
+          />
+        </q-td>
+      </q-tr>
+    </template>
+    <template v-slot:bottom-row>
+      <q-td colspan="100%">
+        <div class="row items-center justify-around">
+              <span class="text-weight-bolder">
+                <q-icon size="sm" name="check_box" />
+                Séléctionner les lignes de commande assurées pour les mettre en stock
+              </span>
+          <q-btn
+            :disable="!selectedCls.length"
+            no-caps
+            unelevated
+            rounded
+            :icon="selectedCls.length ? 'local_shipping' : 'store'"
+            color="warning"
+            label="Passer à la facturation"
+            class="col-12 col-md-3"
+            @click="cdDialog = true"
+          />
+        </div>
+      </q-td>
+    </template>
+  </q-table>
+  <q-card flat bordered class="q-mt-md">
+    <q-card-actions>
       <q-btn
         no-caps
         rounded
-        icon="delete"
+        icon="delete_forever"
         color="red"
-        label="Supprimer"
+        label="Supprimer cette commande"
         class="col-12 col-md-3"
+        @click="$emit('delete')"
       />
     </q-card-actions>
   </q-card>
@@ -166,8 +122,8 @@
     <q-card>
       <CommandLineForm
         class="q-pa-lg"
-        @save="updateCommandLine(selectedCl?.id, $event); uclDialog = false"
-        :command-line="selectedCl"
+        @save="updateCommandLine(updateCl?.id, $event); uclDialog = false"
+        :command-line="updateCl"
       >
         <template v-slot:title>
           Mise à jour de la ligne de commande
@@ -183,9 +139,28 @@
       </CommandLineForm>
     </q-card>
   </q-dialog>
+
+  <q-dialog
+    v-model="cdDialog"
+    persistent
+    :maximized="true"
+    transition-show="slide-up"
+    transition-hide="slide-down"
+  >
+    <CreateInvoice
+      :command-lines="selectedCls"
+      @delete="$emit('delete')"
+    >
+      <div class="text-white text-weight-bold">
+        N°Commande : CM{{command.id}} - Fournisseur : {{command.provider.name}}
+        - Date et Heure : {{formatDate(command.createdAt, 'DATE_TIME')}}
+        - Rapport de ligne assurée : {{selectedCls.length}} / {{command.commandLines?.length}}
+      </div>
+    </CreateInvoice>
+  </q-dialog>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType, reactive, ref, watch } from 'vue';
 import { Command, CommandLine } from '../../graphql/types';
 import { cmData } from '../command-line/cmData';
 import { formatDate } from '../../shared/date';
@@ -195,29 +170,43 @@ import {
   useRemoveCommandLine,
   useUpdateCommandLine,
 } from '../../graphql/command-line/commandLine.service';
-import CardProvider from '../provider/CardProvider.vue';
 import UnitConverter from '../packaging/UnitConverter.vue';
+import CreateInvoice from '../invoice/CreateInvoice.vue';
 
 export default defineComponent({
   name: 'UpdateCommand',
-  components: { CommandLineForm, CardProvider, UnitConverter },
+  components: { CommandLineForm, UnitConverter, CreateInvoice },
   props: {
     command: {
       type: Object as PropType<Command>,
       required: true
     }
   },
-  emits: ['deliver'],
-  setup() {
+  emits: ['deliver', 'delete'],
+  setup(props) {
     const uclDialog = ref<boolean>(false);
+    const pagination = reactive({
+      page: 1,
+      rowPerPage: 0
+    });
+    watch(() => props.command.commandLines, lines => {
+      if(lines)pagination.rowPerPage = lines.length;
+    })
     return {
+      pagination,
       cmData,
       uclDialog,
+      cdDialog: ref<boolean>(false),
       formatDate,
       ...useAddCommandLine(),
       ...useRemoveCommandLine(),
       ...useUpdateCommandLine(),
-      selectedCl: ref<CommandLine|null>(null)
+      updateCl: ref<CommandLine|null>(null),
+      selectedCls: ref<CommandLine[]>([]),
+      selectedLabel: function(nbr: number) {
+        const plural =  nbr > 1 ? 's' : '';
+        return `${nbr}/${props.command.commandLines?.length} commande${plural} assurée${plural}`;
+      }
     }
   }
 });

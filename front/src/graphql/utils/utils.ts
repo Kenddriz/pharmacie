@@ -27,7 +27,6 @@ export const removeDialog = (callbackFn: () => void, msg = 'softRemove') => {
    },
  }).onCancel( () => { callbackFn(); dialog.hide(); })
 }
-
 export function convertValue (
   value: number,
   curIndex: number,
@@ -38,4 +37,6 @@ export function convertValue (
   const proportion = units[newIndex].multiplicity / units[curIndex].multiplicity;
   return isQ ? value * proportion : value / proportion;
 }
-
+export const validateDate = (val: string):boolean => {
+  return val.split('/').length === 3;
+}
