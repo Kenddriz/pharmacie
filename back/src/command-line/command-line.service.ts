@@ -17,6 +17,7 @@ export class CommandLineService {
     return this.commandLineRepository
       .createQueryBuilder('cl')
       .where('cl.commandId = :commandId', { commandId })
+      .orderBy('cl.medicineId', 'ASC')
       .getMany();
   }
 

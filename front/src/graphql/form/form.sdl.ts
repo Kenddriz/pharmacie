@@ -16,3 +16,24 @@ export const FORMS = gql`
       }
     }
 `;
+
+export type CreateFormData = {
+  createForm: Form;
+}
+export const CREATE_FORM = gql`
+  mutation CreateForm($input: CreateFormInput!) {
+    createForm(input: $input){
+      ${FORM_PARAMS}
+    }
+  }
+`;
+export type UpdateFormData = {
+  updateForm: Form;
+}
+export const UPDATE_FORM = gql`
+    mutation UpdateForm($input: UpdateFormInput!) {
+      updateForm(input: $input) {
+        ${FORM_PARAMS}
+      }
+    }
+`;

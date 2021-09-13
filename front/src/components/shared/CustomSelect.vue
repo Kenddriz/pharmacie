@@ -1,22 +1,15 @@
 <template>
   <q-select
-    transition-show="scale"
-    transition-hide="scale"
-    :dense="dense"
-    :borderless="borderless"
-    :outlined="outlined"
-    options-dense
     hide-bottom-space
     hide-hint
     v-model="model"
-    :model-value="modelValue"
-    :use-input="useInput"
     :label="label ? label : 'Options'"
     :options="opt"
     @filter="filterFn"
-    behavior="menu"
-    :emit-value="valueOnly"
-    :map-options="valueOnly"
+    emit-value
+    map-options
+    use-input
+    options-dense
     @update:model-value="$emit('update:modelValue', $event)"
   >
     <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
@@ -55,26 +48,6 @@ export default defineComponent({
     modelValue: {
       type: Number,
       default: 0
-    },
-    borderless: {
-      type: Boolean,
-      default: true
-    },
-    outlined: {
-      type: Boolean,
-      default: false
-    },
-    useInput: {
-      type: Boolean,
-      default: true
-    },
-    valueOnly: {
-      type: Boolean,
-      default: true
-    },
-    dense: {
-      type: Boolean,
-      default: true
     },
     label: String
   },

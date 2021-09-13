@@ -5,10 +5,9 @@ import { gql } from '@apollo/client/core';
 export const COMMAND_LINE = `
    id
    quantity
-   commandId
    medicine {
     ${MEDICINE_PARAMS}
-    article {commercialName }
+    article {id commercialName}
    }
 `;
 

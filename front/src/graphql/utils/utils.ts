@@ -1,6 +1,6 @@
 import { Dialog } from 'quasar';
 import { i18n } from '../../boot/i18n';
-import { Unit } from '../types';
+import { Medicine, Unit } from '../types';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -39,4 +39,7 @@ export function convertValue (
 }
 export const validateDate = (val: string):boolean => {
   return val.split('/').length === 3;
+}
+export const getMedicineName = (med: Medicine): string => {
+  return `${med.article.commercialName} ${med.dosage.label}, ${med.form.label}`;
 }

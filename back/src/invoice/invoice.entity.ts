@@ -31,6 +31,7 @@ export class Invoice {
 
   @Field(() => Payment, { nullable: true })
   @OneToOne(() => Payment, {
+    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

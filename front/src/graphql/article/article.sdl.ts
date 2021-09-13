@@ -2,6 +2,7 @@ import { Article, ArticlePagination } from '../types';
 import { gql } from '@apollo/client/core';
 import { MEDICINE_PARAMS } from '../medicine/medicine.sdl';
 import { PAGINATION_META } from '../utils/pagination';
+import { BATCH_FIELDS } from '../batch/batch.sdl';
 
 
 export type ArticlePaginationData = {
@@ -19,7 +20,10 @@ export const PAGINATE_ARTICLE = gql`
       paginateArticles(input:$input){
          items {
             ${ARTICLE_PARAMS}
-            medicines{${MEDICINE_PARAMS}}
+            medicines{
+              ${MEDICINE_PARAMS}
+              batches{${BATCH_FIELDS}}
+            }
          }
          ${PAGINATION_META}
       }

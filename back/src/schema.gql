@@ -88,7 +88,7 @@ type Prescription {
 type Sale {
   id: Float!
   discount: Float!
-  date: String!
+  createdAt: String!
   prescription: Prescription
   stockMovements: [StockMovement!]!
   archivedAt: DateTime!
@@ -105,6 +105,7 @@ type Payment {
   reference: String!
   note: String!
   method: Method!
+  invoice: Invoice!
   date: String!
   archivedAt: DateTime!
 }
@@ -215,16 +216,16 @@ type Query {
   findProviders(keyword: String!): [Provider!]!
   providers: [Provider!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
+  findCommandById(id: Int!): Command!
   medicines: [Medicine!]!
   forms: [Form!]!
   dosages: [Dosage!]!
   packaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
-  findOne(id: Int!): StockMovement!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   methods: [Method!]!
-  findAll: [Batch!]!
+  findExistingBatch(input: FindExistingBatchInput!): Batch
   sale(id: Int!): Sale!
   patient(id: Int!): Patient!
   whoAmI: User!
@@ -235,6 +236,11 @@ input PaginationInput {
   keyword: String
   page: Float!
   limit: Float!
+}
+
+input FindExistingBatchInput {
+  medicineId: Float!
+  expirationDate: String!
 }
 
 type Mutation {
@@ -252,7 +258,8 @@ type Mutation {
   softRemoveMedicine(input: DeleteMedicineInput!): Article!
   deleteMedicine(input: DeleteMedicineInput!): Article!
   recoverMedicine(input: DeleteMedicineInput!): Article!
-  saveForm(input: FormInput!): Form!
+  createForm(input: CreateFormInput!): Form
+  updateForm(input: UpdateFormInput!): Form
   removeForm(id: Int!): Form!
   saveDosage(input: SaveDosageInput!): Dosage!
   removeDosage(id: Int!): Dosage!
@@ -260,15 +267,16 @@ type Mutation {
   updatePackaging(input: UpdatePackagingInput!): Packaging!
   saveArticle(input: SaveArticleInput!): Article!
   removeArticle(id: Int!): Article!
-  updateAssuredLine(input: UpdateStockMovementInput!): StockMovement!
+  updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
   createInvoice(input: CreateInvoiceInput!): Command!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
   removeInvoice(id: Int!): Invoice!
-  savePayment(input: SavePaymentInput!): Invoice!
+  createPayment(input: CreatePaymentInput!): Invoice!
+  updatePayment(input: UpdatePaymentInput!): Payment!
   createMethod(input: MethodInput!): Method!
   updateMethod(input: MethodInput!): Method!
-  createBatch(input: BatchFormInput!): Medicine!
-  updateBatch(input: UpdateBatchInput!): Medicine!
+  createBatch(input: BatchFormInput!): Medicine
+  updateBatch(input: UpdateBatchInput!): Batch!
   softRemove(id: Int!): Batch!
   createSale(createSaleInput: CreateSaleInput!): Sale!
   updateSale(updateSaleInput: UpdateSaleInput!): Sale!
@@ -353,9 +361,13 @@ input DeleteMedicineInput {
   articleId: Int!
 }
 
-input FormInput {
-  id: Int!
+input CreateFormInput {
   label: String!
+}
+
+input UpdateFormInput {
+  label: String!
+  id: Int!
 }
 
 input SaveDosageInput {
@@ -366,11 +378,11 @@ input SaveDosageInput {
 
 input CreatePackagingInput {
   label: String!
-  multiplicity: Float!
+  multiplicity: Int!
 }
 
 input UpdatePackagingInput {
-  id: Float!
+  id: Int!
   units: [CreatePackagingInput!]!
 }
 
@@ -380,8 +392,24 @@ input SaveArticleInput {
   commercialName: String!
 }
 
-input UpdateStockMovementInput {
+input UpdateAssuredLineInput {
   id: Int!
+  updateCurVat: Boolean!
+  batch: BatchFormInput!
+  assuredLine: StockMovementFormInput!
+}
+
+input BatchFormInput {
+  medicineId: Int!
+  expirationDate: String!
+  currentStock: Int
+}
+
+input StockMovementFormInput {
+  quantity: Int!
+  price: Float!
+  vat: Float!
+  discount: Float!
 }
 
 input CreateInvoiceInput {
@@ -398,37 +426,42 @@ input InvoiceInput {
 }
 
 input AssuredLineInput {
-  medicineId: Float!
-  expirationDate: String!
+  quantity: Int!
   price: Float!
   vat: Float!
   discount: Float!
-  quantity: Float!
+  medicineId: Float!
+  expirationDate: String!
 }
 
 input UpdateInvoiceInput {
+  dueDate: String
+  reference: String
+  expense: Float
+  deliveryDate: String
   id: Float!
-  invoice: InvoiceInput!
 }
 
-input SavePaymentInput {
-  id: Float!
-  reference: String!
-  description: String!
-  date: String!
+input CreatePaymentInput {
   invoiceId: Float!
-  paymentModeId: Float!
+  form: PaymentFormInput!
+}
+
+input PaymentFormInput {
+  methodeId: Float!
+  reference: String!
+  note: String = ""
+  date: String!
+}
+
+input UpdatePaymentInput {
+  id: Float!
+  form: PaymentFormInput!
 }
 
 input MethodInput {
   id: Float
   label: String!
-}
-
-input BatchFormInput {
-  medicineId: Int!
-  expirationDate: String!
-  currentStock: Int!
 }
 
 input UpdateBatchInput {
@@ -453,8 +486,6 @@ input CreatePatientInput {
 }
 
 input UpdatePatientInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
 }
 

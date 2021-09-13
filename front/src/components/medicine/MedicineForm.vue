@@ -17,7 +17,7 @@
     />
     <q-item>
       <PackagingInput
-        label="`Prix unitaire de vente`"
+        label="Prix unitaire de vente"
         outlined
         :units="selectedPk.units"
         :value="mPrice"
@@ -36,6 +36,7 @@
         outlined
         stack-label
         label="TVA"
+        suffix="%"
       />
     </q-item>
   </q-list>

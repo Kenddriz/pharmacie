@@ -1,31 +1,31 @@
 import {
-  Medicine, MedicineInputForm,
+  MedicineInputForm,
   MutationDeleteMedicineArgs,
   MutationRecoverMedicineArgs,
   MutationCreateMedicineArgs,
   MutationSoftRemoveMedicineArgs,
   MutationUpdateMedicineArgs,
 } from '../types';
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import { useMutation } from '@vue/apollo-composable';
 import {
   CREATE_MEDICINE,
   CreateMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
   DeleteMedicineData,
-  DELETE_MEDICINE, RecoverMedicineData, MedicinesData, MEDICINES, UPDATE_MEDICINE, UpdateMedicineData,
+  DELETE_MEDICINE, RecoverMedicineData, UPDATE_MEDICINE, UpdateMedicineData,
 } from './medicine.sdl';
 import { removeDialog } from '../utils/utils';
 import { ref } from 'vue';
 
-export const useMedicines = () => {
+/*export const useMedicines = () => {
   const medicines = ref<Medicine[]>([]);
   const { loading: medLoading, onResult } = useQuery<MedicinesData>(MEDICINES);
   onResult(({ data }) => {
     if(data.medicines) medicines.value = data.medicines;
   })
   return { medicines, medLoading }
-}
+}*/
 export const useCreateMedicine = () => {
   const { mutate, loading: cmLoading } = useMutation<
     CreateMedicineData,

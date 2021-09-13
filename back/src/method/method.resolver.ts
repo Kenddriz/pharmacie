@@ -14,12 +14,11 @@ export class MethodResolver {
   @Mutation(() => Method)
   async createMethod(@Args('input') input: MethodInput) {
     let method = await this.methodService.findOneByLabel(input.label);
-    if (!method) {
-      method = new Method();
-      method.id = await uniqId('Method');
-      Object.assign<Method, MethodInput>(method, input);
-      method = await this.methodService.save(method);
-    }
+    if (method) throw new Error('exist');
+    method = new Method();
+    method.id = await uniqId('Method');
+    Object.assign<Method, MethodInput>(method, input);
+    method = await this.methodService.save(method);
     return method;
   }
   @Mutation(() => Method)

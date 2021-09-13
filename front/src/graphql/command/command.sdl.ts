@@ -1,20 +1,8 @@
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
-import { PROVIDER } from '../provider/provider.sdl';
-import { COMMAND_LINE } from '../command-line/commandLine.sdl';
 import { Command, CommandPagination } from '../types';
-import { INVOICE_FIELDS } from '../invoice/incoice.sdl';
+import { COMMAND_FIELDS, INVOICE_FIELDS } from '../invoice/incoice.sdl';
 
-export const COMMAND_FIELDS = `
-  id
-  provider{${PROVIDER}}
-  createdAt
-`;
-export const COMMAND = `
-  ${COMMAND_FIELDS}
-  commandLines{${COMMAND_LINE}}
-  invoice {${INVOICE_FIELDS}}
-`
 export type PaginateCommandsData = {
   paginateCommands: CommandPagination;
 }
@@ -22,7 +10,10 @@ export type PaginateCommandsData = {
 export const PAGINATE_COMMAND = gql`
  query PaginateCommands($paginationInput: PaginationInput!) {
   paginateCommands(paginationInput: $paginationInput) {
-    items{${COMMAND}}
+    items{
+      ${COMMAND_FIELDS}
+      invoice{${INVOICE_FIELDS}}
+    }
     ${PAGINATION_META}
   }
  }
@@ -34,7 +25,8 @@ export type CreateCommandData = {
 export const CREATE_COMMAND = gql`
     mutation CreateCommand($input: CreateCommandInput!) {
         createCommand(input: $input) {
-          ${COMMAND}
+          ${COMMAND_FIELDS}
+          invoice{${INVOICE_FIELDS}}
         }
     }
 `;

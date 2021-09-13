@@ -4,10 +4,12 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToOne,
   PrimaryColumn,
   RelationId,
 } from 'typeorm';
 import { Method } from '../method/method.entity';
+import { Invoice } from '../invoice/invoice.entity';
 
 @ObjectType()
 @Entity({ name: 'payments' })
@@ -32,6 +34,13 @@ export class Payment {
   method: Method;
   @RelationId((payment: Payment) => payment.method)
   methodId: number;
+
+  @Field(() => Invoice)
+  @OneToOne(() => Invoice, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  invoice: Invoice;
 
   @Field()
   @Column({ type: 'date' })

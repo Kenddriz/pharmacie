@@ -1,26 +1,20 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
+import { Unit } from '../packaging.entity';
 
 /**Add parent to a category*/
 @InputType()
-export class CreatePackagingInput {
+export class CreatePackagingInput extends Unit {
   @Field()
   label: string;
-
-  @Field()
+  @Field(() => Int)
   multiplicity: number;
 }
 
 /**update sale-packaging*/
 @InputType()
 export class UpdatePackagingInput {
-  @Field()
+  @Field(() => Int)
   id: number;
   @Field(() => [CreatePackagingInput])
   units: CreatePackagingInput[];
-}
-
-@InputType()
-export class DeleteCatInput {
-  @Field(() => Int)
-  id: number;
 }

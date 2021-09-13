@@ -1,24 +1,35 @@
-import { Invoice } from '../types';
+import { Invoice, Payment } from '../types';
 import { gql } from '@apollo/client/core';
 import { METHOD_PARAMS } from '../method/method.sdl';
 
-export type SavePaymentData = {
-  savePayment: Invoice
+export type CreatePaymentData = {
+  createPayment: Invoice
 }
 export const PAYMENT_PARAMS = `
-  payment{
-    id
-    date
-    note
-    reference
-    method{${METHOD_PARAMS}}
-  }
+  id
+  date
+  note
+  reference
+  method{${METHOD_PARAMS}}
 `;
- export const SAVE_PAYMENT = gql`
-  mutation SavePayment($input: SavePaymentInput!){
-    savePayment(input: $input){
+ export const CREATE_PAYMENT = gql`
+  mutation CreatePayment($input: CreatePaymentInput!){
+    createPayment(input: $input){
       id
-      ${PAYMENT_PARAMS}
+      payment{
+        ${PAYMENT_PARAMS}
+      }
     }
   }
  `;
+
+export type UpdatePaymentData = {
+ updatePayment: Payment;
+}
+export const UPDATE_PAYMENT = gql`
+  mutation UpdatePayment($input: UpdatePaymentInput!){
+    updatePayment(input: $input){
+      ${PAYMENT_PARAMS}
+    }
+  }
+`;

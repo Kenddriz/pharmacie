@@ -1,15 +1,42 @@
-import { ARTICLE_PARAMS } from '../article/article.sdl';
-import { FORM_PARAMS } from '../form/form.sdl';
-import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
+import { Batch, Medicine } from '../types';
+import { gql } from '@apollo/client/core';
 
 export const BATCH_FIELDS = `
   id
   expirationDate
   currentStock
-  medicine {
-    id
-    article{${ARTICLE_PARAMS}}
-    form {${FORM_PARAMS}}
-    packaging {${PACKAGING_PARAMS}}
+  createdAt
+`;
+
+export type CreateBatchData = {
+  createBatch: Medicine;
+}
+export const CREATE_BATCH = gql`
+  mutation CreateBatch($input: BatchFormInput!){
+    createBatch(input: $input) {
+      id
+      batches{${BATCH_FIELDS}}
+    }
+  }
+`;
+
+export type UpdateBatchData = {
+  updateBatch: Batch;
+}
+export const UPDATE_BATCH = gql`
+  mutation UpdateBatch($input: UpdateBatchInput!) {
+    updateBatch(input: $input) {
+      ${BATCH_FIELDS}
+    }
+  }
+`;
+export type FindExistingBatchData = {
+  findExistingBatch: Batch;
+}
+export const FIND_EXISTING_BATCH = gql`
+  query FindExistingBatch($input: FindExistingBatchInput!) {
+    findExistingBatch(input: $input){
+      ${BATCH_FIELDS}
+    }
   }
 `;

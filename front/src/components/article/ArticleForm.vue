@@ -1,19 +1,23 @@
 <template>
-  <q-form @submit="$emit('submit', input)" class="q-pa-md" style="min-width: 250px">
+  <q-form
+    spellcheck="false"
+    @submit="$emit('submit', input)"
+    class="q-pa-md" style="min-width: 250px"
+  >
     <slot name="title"></slot>
     <q-input
-      :dark="mode === 'update'"
       :model-value="input.dci"
       v-model="input.dci"
       dense
       label="dci"
     />
     <q-input
-      :dark="mode === 'update'"
       :model-value="input.commercialName"
       v-model="input.commercialName"
       dense
-      label="nom commercial"
+      label="nom commercial*"
+      lazy-rules
+      :rules="[ val => val && val.length > 0 || 'Nom commercial obligatoire']"
     />
     <div class="row justify-between q-mt-sm items-center">
       <q-btn
@@ -22,7 +26,7 @@
         no-caps
         rounded
         outline
-        :color="mode === 'update' ? 'white' : 'primary'"
+        color="primary"
         dense
         label="Enregistrer"
         class="q-pr-md q-pl-md"
@@ -65,7 +69,8 @@ export default defineComponent({
     });
     if(props?.model) Object.assign(input, props.model);
     return {
-      input
+      input,
+      color: props.mode === 'update' ? 'white' : 'dark'
     }
   }
 });

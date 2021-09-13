@@ -3,43 +3,54 @@ import { reactive, ref } from 'vue';
 import {
   CreateInvoiceInput,
   Invoice,
-  MutationCreateInvoiceArgs,
+  MutationCreateInvoiceArgs, MutationUpdateInvoiceArgs,
   PaginationInput,
-  QueryPaginateCommandsArgs,
+  QueryPaginateCommandsArgs, UpdateInvoiceInput,
 } from '../types';
 import {
   CREATE_INVOICE,
   CreateInvoiceData,
   PAGINATE_INVOICES,
-  PaginateInvoicesData,
+  PaginateInvoicesData, UPDATE_INVOICE, UpdateInvoiceData,
 } from './incoice.sdl';
 import { InitialPagination } from '../utils/pagination';
 import { cloneDeep } from '../utils/utils';
 import { notify } from '../../shared/notification';
 import { Loading } from 'quasar';
 
-export const paginationInput = reactive<PaginationInput>({
-  page: 1,
-  limit: Math.ceil((screen.height - 150)/50),
-});
 export const usePaginateInvoices = () => {
-  const selectedInvoice = ref<Invoice|undefined>(undefined);
-  let selectedIndex = 0;
+  const paginationInput = reactive<PaginationInput>({
+    page: 1,
+    limit: Math.ceil((screen.height - 250)/50),
+    keyword: ''
+  });
+  const selectedInvoice = ref<Invoice[]>([]);
   const setSelectedInvoice = (index: number) => {
-    selectedInvoice.value = cloneDeep(invoices.value?.items[index]);
-    selectedIndex = index;
+    Object.assign(selectedInvoice.value[0], invoices.value.items[index]);
   }
-  const { result, loading: paginateLoading } = useQuery<
+  const { result, loading: paginateLoading, refetch } = useQuery<
     PaginateInvoicesData,
     QueryPaginateCommandsArgs
-    >(PAGINATE_INVOICES, { paginationInput });
+    >(PAGINATE_INVOICES, { paginationInput: { ...paginationInput } });
   const invoices = useResult(result, InitialPagination, res => {
-    if(res?.paginateInvoices?.items?.length)
-      selectedInvoice.value =  cloneDeep(res.paginateInvoices.items[selectedIndex]);
-    return res?.paginateInvoices;
+    if(res?.paginateInvoices) {
+      const id = selectedInvoice.value[0]?.id;
+      selectedInvoice.value.length = 0;
+      const find = res.paginateInvoices.items.find(item => item.id === id)||res.paginateInvoices.items[0];
+      if(find)selectedInvoice.value = [cloneDeep(find)];
+      return res.paginateInvoices;
+    }
+    return InitialPagination;
   });
-
-  return { invoices, paginateLoading, selectedInvoice, setSelectedInvoice }
+  function findInvoices() { void refetch({ paginationInput })}
+  return {
+    invoices,
+    paginateLoading,
+    selectedInvoice,
+    setSelectedInvoice,
+    findInvoices,
+    paginationInput
+  }
 }
 
 export const useCreateInvoice = () => {
@@ -52,7 +63,7 @@ export const useCreateInvoice = () => {
     Loading.hide();
     if(data?.createInvoice) {
       ciDialog.value = false;
-      notify('La facture a été enregistré!');
+      notify('La facture a été créée!');
     }
   })
   const createInvoice =(input: CreateInvoiceInput) => {
@@ -62,5 +73,25 @@ export const useCreateInvoice = () => {
     void mutate({ input });
   }
   return { createInvoice, ciDialog }
+}
+
+export const useUpdateInvoice = (invoice: Invoice) => {
+  const { id, deliveryDate, dueDate, expense, reference } = invoice
+  const updateInput = reactive<UpdateInvoiceInput>({ id, deliveryDate, dueDate, expense, reference } )
+  const { mutate, onDone } = useMutation<
+    UpdateInvoiceData,
+    MutationUpdateInvoiceArgs
+    >(UPDATE_INVOICE);
+  onDone(({ data }) => {
+    Loading.hide();
+    if(data?.updateInvoice)notify('Mise à jour avec succès');
+  })
+  return {
+    updateInput,
+    updateInvoice: () => {
+      Loading.show({ message: 'Enregistrement des modifications ...'})
+      void mutate({ input: updateInput });
+    }
+  }
 }
 

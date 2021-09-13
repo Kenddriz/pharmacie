@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { StockMovementFormInput } from './dto/stock-movement.input';
 import { UpdateStockMovementInput } from './dto/update-assured-line.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StockMovement } from './stock-movement.entity';
@@ -32,6 +31,18 @@ export class StockMovementService {
     return this.repository
       .createQueryBuilder('sm')
       .where(`sm.batchId = :batchId`, { batchId })
+      .getMany();
+  }
+  async findInfectedEntries(
+    startAt: number,
+    batchId: number,
+  ): Promise<StockMovement[]> {
+    return this.repository
+      .createQueryBuilder('smt')
+      .where('smt.id > :startAt', { startAt })
+      .andWhere('smt.batchId = :batchId', { batchId })
+      .withDeleted()
+      .orderBy('smt.id', 'ASC')
       .getMany();
   }
   update(id: number, updateStockMovementInput: UpdateStockMovementInput) {

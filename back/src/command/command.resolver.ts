@@ -66,6 +66,12 @@ export class CommandResolver {
     return await this.commandService.paginate(input);
   }
 
+  @Query(() => Command)
+  async findCommandById(
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<Command> {
+    return this.commandService.findOneById(id);
+  }
   @Mutation(() => Boolean)
   async deleteCommand(@Args({ name: 'id', type: () => Int }) id: number) {
     return await this.commandService.delete(id);

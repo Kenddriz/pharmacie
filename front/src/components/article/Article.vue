@@ -22,21 +22,24 @@
           padding="xs"
         >
           <q-fab-action
+            square
+            label="Détails"
             padding="xs"
             color="primary"
-            @click="scope.selected = !scope.selected"
-            icon="info"
+            @click="scope.selected = true"
           />
           <q-fab-action
+            square
+            label="Editer"
             padding="xs"
             color="primary"
-            icon="rate_review"
             @click="$emit('edit', scope.row)"
           />
           <q-fab-action
+            square
+            label="Fiche de stock"
             padding="xs"
             color="primary"
-            icon="inventory_2"
             to="/main/card-stock"
           />
         </q-fab>

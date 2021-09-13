@@ -1,12 +1,15 @@
 <template>
   <q-input
+    hide-bottom-space
     borderless
     min="1"
     type="number"
     dense
     :model-value="modelValue"
-    v-model.number="modelValue"
     :disable="!units.length"
+    v-model.number="modelValue"
+    lazy-rules
+    :rules="[ val => val > 0 || 'Entrer nombre strictement positif']"
   >
     <template v-slot:prepend>
       <q-btn color="positive" icon="info" dense flat>

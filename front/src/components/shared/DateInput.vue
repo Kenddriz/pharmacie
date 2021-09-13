@@ -7,12 +7,17 @@
     :mask="$tm('local.dateMask')"
     lazy-rules
     :rules="[ val => validateDate(val) || 'Entrer une date valide']"
-  />
+  >
+    <template v-slot:append>
+      <slot></slot>
+    </template>
+  </q-input>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { validateDate } from '../../graphql/utils/utils';
+import { formatDate } from '../../shared/date';
 
 export default defineComponent({
   name: 'DateInput',
@@ -24,7 +29,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props) {
-    const model = ref<string>(props.modelValue);
+    const model = ref<string>('');
+    if(props.modelValue)model.value = formatDate(props.modelValue, 'DATE_ONLY');
     return {
       model,
       validateDate,

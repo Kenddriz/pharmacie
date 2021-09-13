@@ -6,8 +6,8 @@ export class BatchFormInput {
   medicineId: number;
   @Field()
   expirationDate: string;
-  @Field(() => Int)
-  currentStock: number;
+  @Field(() => Int, { nullable: true })
+  currentStock?: number;
 }
 
 @InputType()
@@ -16,4 +16,11 @@ export class UpdateBatchInput {
   id: number;
   @Field(() => BatchFormInput)
   form: BatchFormInput;
+}
+@InputType()
+export class FindExistingBatchInput {
+  @Field()
+  medicineId: number;
+  @Field()
+  expirationDate: string;
 }

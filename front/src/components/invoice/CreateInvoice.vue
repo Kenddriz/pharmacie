@@ -176,6 +176,25 @@
             </div>
           </template>
         </q-table>
+        <q-card-section>
+          <q-item>
+            <q-item-section avatar>
+              <q-checkbox
+                color="warning"
+                keep-color
+                size="xl"
+                :model-value="true"
+                v-model="condition"
+              />
+            </q-item-section>
+            <q-item-section>
+              Je confirme que les données saisies sont toutes correctes et prêtes à être mises en stock.
+              En acceptant la mise en stock, vous ne pourrez plus modifier
+              les lots et les entrées du stock liés à cette facture après
+              une prochaine action(une autre entrée ou sortie) modifiant le stock.
+            </q-item-section>
+          </q-item>
+        </q-card-section>
         <q-card-actions align="around">
           <q-btn
             unelevated
@@ -186,6 +205,7 @@
             label=" Mettre les produits au stock"
             icon-right="drive_file_move"
             type="submit"
+            :disable="!condition"
           />
           <q-btn
             v-close-popup
@@ -205,7 +225,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, computed } from 'vue';
+import { defineComponent, PropType, reactive, computed, ref } from 'vue';
 import { columns } from './data';
 import { CommandLine, CreateInvoiceInput } from '../../graphql/types';
 import PackagingInput from '../packaging/PackagingInput.vue';
@@ -263,7 +283,8 @@ export default defineComponent({
     return {
       cost,
       columns,
-      invoiceInput
+      invoiceInput,
+      condition: ref<boolean>(false),
     }
   }
 });

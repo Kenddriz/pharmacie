@@ -1,24 +1,25 @@
-import { useMutation, useQuery } from '@vue/apollo-composable';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import { DOSAGES_DATA, DosagesData, SAVE_DOSAGE, SaveDosageData } from './dosage.sdl';
-import {reactive, ref} from 'vue';
+import {reactive} from 'vue';
 import { Dosage, MutationSaveDosageArgs, SaveDosageInput } from '../types';
 
 export type DosageItem = Dosage & {children: Dosage[]};
 export const useDosages = () => {
-  const dosages = ref<DosageItem[]>([]);
   const selectedDosage = reactive<Dosage>({ id: 0, parentId: 0, label: ''});
-  const { loading:listLoading, onResult } = useQuery<DosagesData>(DOSAGES_DATA);
-  onResult(({ data }) => {
-    if(data?.dosages) {
-      dosages.value = data.dosages
+  const { loading:listLoading, result } = useQuery<DosagesData>(DOSAGES_DATA);
+  const dosages = useResult<DosagesData|undefined, DosageItem[], DosageItem[]>(result, [], res => {
+    if(res?.dosages) {
+      const ds = res.dosages
         .filter(u => u.parentId === 0)
         .map(u => ({
           ...u,
-          children: data.dosages.filter(c => c.parentId === u.id)
+          children: res.dosages.filter(c => c.parentId === u.id)
         }));
-      const child = data.dosages.find(u => u.parentId > 0);
+      const child = res.dosages.find(u => u.parentId > 0);
       if(child)Object.assign(selectedDosage, child);
+      return ds;
     }
+    return [];
   })
   return { listLoading, dosages, selectedDosage }
 }

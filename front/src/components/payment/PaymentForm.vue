@@ -1,92 +1,118 @@
 <template>
-  <q-form @submit="savePayment" @reset="reset">
-    <q-card flat>
-      <div class="text-h6 q-mb-md">
-        <q-icon name="info" size="md" /> Informations de payement
-      </div>
-      <q-card-section horizontal class="q-gutter-md">
-        <div class="row q-gutter-md items-start">
-          <q-input
-            :model-value="paymentInput.reference"
-            v-model="paymentInput.reference"
-            stack-label
-            outlined
-            label="Référence *"
-            hint="La référence de payement"
-            lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Veuiller entrer la référence']"
-          />
-          <q-input
-            :model-value="paymentInput.date"
-            v-model="paymentInput.date"
-            outlined
-            stack-label
-            mask="##/##/####"
-            label="Date de payment *"
-            hint="La date de payement"
-            lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Veuiller entrer la date de payement']"
-          />
-          <CustomSelect
-            outlined
-            :dense="false"
-            label="Mode de payement"
-            :options="paymentModes"
-            v-model="paymentInput.paymentModeId"
-          />
-        </div>
-        <q-input
-          :model-value="paymentInput.description"
-          v-model="paymentInput.description"
-          stack-label
-          label="Description de payement"
-          class="col"
-          outlined
-          type="textarea"
-        />
-      </q-card-section>
-      <q-card-actions>
-        <q-btn no-caps outline label="Enregistrer" type="submit" color="primary"/>
-        <q-btn no-caps outline label="Réinitialiser" type="reset" color="primary" class="q-ml-lg" />
-      </q-card-actions>
-    </q-card>
-    </q-form>
+  <q-btn icon="edit" size="sm" round flat color="positive">
+    <q-menu anchor="center middle" self="center middle">
+      <q-form @submit.prevent="submit()" @reset="reset">
+        <q-card flat class="q-pa-md">
+          <div class="text-h6 q-mb-md">
+            <q-icon name="info" size="md" />
+            {{payment ? 'Informations du payment' : 'Payement de la facture'}}
+          </div>
+          <q-card-section horizontal>
+            <div class="q-gutter-md q-mr-md">
+              <q-input
+                hide-bottom-space
+                :model-value="model.reference"
+                v-model="model.reference"
+                stack-label
+                outlined
+                label="Référence *"
+                lazy-rules
+                :rules="[ val => val && val.length > 0 || 'Veuiller entrer la référence']"
+              />
+              <DateInput
+                v-model="model.date"
+                outlined
+                label="Date de payment *"
+              />
+              <CustomSelect
+                outlined
+                label="Mode de payement"
+                :options="paymentModes"
+                v-model="model.methodeId"
+                lazy-rules
+                :rules="[ () => model.methodeId > 0 || 'Entrer le moyen de payment']"
+              />
+            </div>
+            <div class="q-gutter-sm">
+              <q-input
+                :model-value="model.note"
+                v-model="model.note"
+                stack-label
+                label="Mettre une note"
+                outlined
+                type="textarea"
+                lazy-rules
+                :rules="[ val => val.length < 255 || 'Nombre de caractère requis : <= 255']"
+              />
+              <q-btn
+                v-close-popup
+                no-caps
+                outline
+                label="Enregistrer"
+                type="submit"
+                color="primary"
+              />
+              <q-btn
+                no-caps
+                outline
+                label="Réinitialiser"
+                type="reset"
+                color="primary"
+              />
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-form>
+    </q-menu>
+  </q-btn>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watch } from 'vue';
+import { defineComponent, PropType, reactive } from 'vue';
 import CustomSelect from '../shared/CustomSelect.vue';
-import { Method, Payment } from '../../graphql/types';
-import { useSavePayment } from '../../graphql/payment/payment.service';
+import { Method, Payment, PaymentFormInput } from '../../graphql/types';
+import DateInput from '../shared/DateInput.vue';
+import { useCreatePayment, useUpdatePayment } from '../../graphql/payment/payment.service';
+
 export default defineComponent({
   name: 'PaymentForm',
-  components: { CustomSelect },
+  components: { CustomSelect, DateInput },
   props: {
     paymentModes: Array as PropType<Method[]>,
     payment: Object as PropType<Payment>,
     invoiceId: {
       type: Number,
       default: 0
-    }
+    },
   },
   setup(props) {
-    const { paymentInput,savePayment, setPayment, paymentLoading } = useSavePayment();
-    watch(() => props.payment, (payment) => {
-      if(payment) setPayment(payment);
-      paymentInput.invoiceId = props.invoiceId;
-    }, { immediate: true })
+    const model = reactive<PaymentFormInput>({
+      methodeId: 0,
+      reference: '',
+      date: '',
+      note: ''
+    });
+    function reset() {
+      Object.assign(model, {
+        methodeId: props?.payment?.method?.id||0,
+        reference: props?.payment?.reference,
+        date: props?.payment?.date,
+        note: props?.payment?.note
+      })
+    }
+    const { createPayment, cpLoading } = useCreatePayment();
+    const { updatePayment, upLoading } = useUpdatePayment();
+    function submit() {
+      if(props.payment) void updatePayment({ id: props.payment.id, form: model });
+      else void createPayment({ invoiceId: props.invoiceId, form: model })
+    }
+    reset();
     return {
-      paymentInput,savePayment, paymentLoading,
-      reset: () => {
-        if(props.payment)setPayment(props.payment);
-        else Object.keys(paymentInput).forEach((key: string) => {
-          if(key !== 'paymentModeId' && key !== 'invoiceId') {
-            Object.assign(paymentInput, {
-              [key]: (typeof paymentInput[key as keyof (typeof paymentInput)]) === 'number' ? 0 : ''
-            })
-          }
-        });
-      }
+      model,
+      cpLoading,
+      upLoading,
+      submit,
+      reset
     }
   }
 });

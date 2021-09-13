@@ -8,4 +8,6 @@ export class StockMovementFormInput {
   price: number;
   @Field(() => Float)
   vat: number;
+  @Field(() => Float)
+  discount: number;
 }

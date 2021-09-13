@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from '@vue/apollo-composable';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
   CREATE_PACKAGING,
   CreatePackagingData,
@@ -7,36 +7,42 @@ import {
   UPDATE_PACKAGING,
   UpdatePackagingData
 } from './packaging.sdl';
-import {CreatePackagingInput, MutationCreatePackagingArgs, MutationUpdatePackagingArgs, Packaging} from '../types';
+import {
+  CreatePackagingInput,
+  MutationCreatePackagingArgs,
+  MutationUpdatePackagingArgs,
+  Packaging,
+  UpdatePackagingInput,
+} from '../types';
 import {reactive, ref} from 'vue';
 import {cloneDeep} from '../utils/utils';
+import { notify } from '../../shared/notification';
 
 export const useListPackaging = () => {
-  const packagingList = ref<Packaging[]>([]);
-  const selectedPk = reactive<Packaging>({ id: 0, units: []});
-  const { onResult, loading: loadList } = useQuery<PackagingData>(PACKAGING);
-  onResult(({ data }) => {
-    if(data?.packaging && data.packaging.length) {
-      Object.assign(selectedPk, data.packaging[0]);
-      packagingList.value = cloneDeep(data.packaging);
+  const { result,  loading: loadList } = useQuery<PackagingData>(PACKAGING);
+  const selectedPk = reactive<Packaging>({ id: 0, units: [] });
+  const packagingList = useResult<PackagingData|undefined, Packaging[], Packaging[]>(result, [], res => {
+    if(res?.packaging && res.packaging.length){
+      Object.assign(selectedPk, cloneDeep(res.packaging[0]));
+      return res.packaging;
     }
-  });
-
-  const { mutate, loading: loadUpdate } = useMutation<
+    return [];
+  })
+  return { loadList, packagingList, selectedPk }
+}
+export const useUpdatePackaging = () => {
+  const { mutate, onDone } = useMutation<
     UpdatePackagingData,
     MutationUpdatePackagingArgs
     >(UPDATE_PACKAGING);
-  function updatePackage(index: number) {
-    const { id, units } = packagingList.value[index];
-    void mutate({ input: { id, units: units.map(u => ({ label: u.label, multiplicity: u.multiplicity }))} });
+  onDone(({ data }) => {
+    if(data?.updatePackaging)notify('Mise à jour avec succès !');
+  })
+  function updatePackage(input: UpdatePackagingInput) {
+    void mutate({ input });
   }
-  function removeUnit(indexP: number, indexU: number) {
-    packagingList.value[indexP].units.splice(indexU, 1);
-    updatePackage(indexP);
-  }
-  return { loadList, packagingList, updatePackage, removeUnit, loadUpdate, selectedPk }
+  return { updatePackage }
 }
-
 export const useCreatePackaging = () => {
   const creationInput = ref<CreatePackagingInput[]>([]);
   const unit = reactive<CreatePackagingInput>({ label: 'inconu', multiplicity: 1 });

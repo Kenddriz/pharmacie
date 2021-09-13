@@ -1,21 +1,22 @@
-import { InputType, Field, Float } from '@nestjs/graphql';
+import {
+  InputType,
+  Field,
+  Float,
+  OmitType,
+  PartialType,
+  Int,
+} from '@nestjs/graphql';
+import { StockMovementFormInput } from '../../stock-movement/dto/stock-movement.input';
+import { BatchFormInput } from '../../batch/dto/batch.input';
 
 @InputType()
-export class AssuredLineInput {
+export class AssuredLineInput extends StockMovementFormInput {
   /**For Batch*/
   @Field()
   medicineId: number;
   @Field()
   expirationDate: string;
   /**End batch*/
-  @Field(() => Float)
-  price: number;
-  @Field(() => Float)
-  vat: number;
-  @Field(() => Float)
-  discount: number;
-  @Field()
-  quantity: number;
 }
 
 @InputType()
@@ -41,9 +42,21 @@ export class CreateInvoiceInput {
 }
 
 @InputType()
-export class UpdateInvoiceInput {
+export class UpdateAssuredLineInput {
+  @Field(() => Int)
+  id: number;
+  @Field(() => Boolean)
+  updateCurVat: boolean;
+  @Field(() => BatchFormInput)
+  batch: BatchFormInput;
+  @Field(() => StockMovementFormInput)
+  assuredLine: StockMovementFormInput;
+}
+
+@InputType()
+export class UpdateInvoiceInput extends PartialType(
+  OmitType(InvoiceInput, ['commandId'] as const),
+) {
   @Field()
   id: number;
-  @Field(() => InvoiceInput)
-  invoice: InvoiceInput;
 }

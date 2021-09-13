@@ -36,12 +36,12 @@ export type ArticlePagination = {
 };
 
 export type AssuredLineInput = {
-  medicineId: Scalars['Float'];
-  expirationDate: Scalars['String'];
+  quantity: Scalars['Int'];
   price: Scalars['Float'];
   vat: Scalars['Float'];
   discount: Scalars['Float'];
-  quantity: Scalars['Float'];
+  medicineId: Scalars['Float'];
+  expirationDate: Scalars['String'];
 };
 
 export type AuthInput = {
@@ -64,7 +64,7 @@ export type Batch = {
 export type BatchFormInput = {
   medicineId: Scalars['Int'];
   expirationDate: Scalars['String'];
-  currentStock: Scalars['Int'];
+  currentStock?: Maybe<Scalars['Int']>;
 };
 
 export type Command = {
@@ -114,6 +114,10 @@ export type CreateCommandInput = {
   commandLines: Array<CommandLineInput>;
 };
 
+export type CreateFormInput = {
+  label: Scalars['String'];
+};
+
 export type CreateInvoiceInput = {
   invoice: InvoiceInput;
   assuredLines: Array<AssuredLineInput>;
@@ -121,12 +125,17 @@ export type CreateInvoiceInput = {
 
 export type CreatePackagingInput = {
   label: Scalars['String'];
-  multiplicity: Scalars['Float'];
+  multiplicity: Scalars['Int'];
 };
 
 export type CreatePatientInput = {
   /** Example field (placeholder) */
   exampleField: Scalars['Int'];
+};
+
+export type CreatePaymentInput = {
+  invoiceId: Scalars['Float'];
+  form: PaymentFormInput;
 };
 
 export type CreatePrescriptionInput = {
@@ -163,16 +172,16 @@ export type Dosage = {
   archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type FindExistingBatchInput = {
+  medicineId: Scalars['Float'];
+  expirationDate: Scalars['String'];
+};
+
 export type Form = {
   __typename?: 'Form';
   id: Scalars['Float'];
   label: Scalars['String'];
   archivedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type FormInput = {
-  id: Scalars['Int'];
-  label: Scalars['String'];
 };
 
 export type Invoice = {
@@ -271,7 +280,8 @@ export type Mutation = {
   softRemoveMedicine: Article;
   deleteMedicine: Article;
   recoverMedicine: Article;
-  saveForm: Form;
+  createForm?: Maybe<Form>;
+  updateForm?: Maybe<Form>;
   removeForm: Form;
   saveDosage: Dosage;
   removeDosage: Dosage;
@@ -283,11 +293,12 @@ export type Mutation = {
   createInvoice: Command;
   updateInvoice: Invoice;
   removeInvoice: Invoice;
-  savePayment: Invoice;
+  createPayment: Invoice;
+  updatePayment: Payment;
   createMethod: Method;
   updateMethod: Method;
-  createBatch: Medicine;
-  updateBatch: Medicine;
+  createBatch?: Maybe<Medicine>;
+  updateBatch: Batch;
   softRemove: Batch;
   createSale: Sale;
   updateSale: Sale;
@@ -372,8 +383,13 @@ export type MutationRecoverMedicineArgs = {
 };
 
 
-export type MutationSaveFormArgs = {
-  input: FormInput;
+export type MutationCreateFormArgs = {
+  input: CreateFormInput;
+};
+
+
+export type MutationUpdateFormArgs = {
+  input: UpdateFormInput;
 };
 
 
@@ -413,7 +429,7 @@ export type MutationRemoveArticleArgs = {
 
 
 export type MutationUpdateAssuredLineArgs = {
-  input: UpdateStockMovementInput;
+  input: UpdateAssuredLineInput;
 };
 
 
@@ -432,8 +448,13 @@ export type MutationRemoveInvoiceArgs = {
 };
 
 
-export type MutationSavePaymentArgs = {
-  input: SavePaymentInput;
+export type MutationCreatePaymentArgs = {
+  input: CreatePaymentInput;
+};
+
+
+export type MutationUpdatePaymentArgs = {
+  input: UpdatePaymentInput;
 };
 
 
@@ -540,8 +561,16 @@ export type Payment = {
   reference: Scalars['String'];
   note: Scalars['String'];
   method: Method;
+  invoice: Invoice;
   date: Scalars['String'];
   archivedAt: Scalars['DateTime'];
+};
+
+export type PaymentFormInput = {
+  methodeId: Scalars['Float'];
+  reference: Scalars['String'];
+  note?: Maybe<Scalars['String']>;
+  date: Scalars['String'];
 };
 
 export type Prescription = {
@@ -578,16 +607,16 @@ export type Query = {
   findProviders: Array<Provider>;
   providers: Array<Provider>;
   paginateCommands: CommandPagination;
+  findCommandById: Command;
   medicines: Array<Medicine>;
   forms: Array<Form>;
   dosages: Array<Dosage>;
   packaging: Array<Packaging>;
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
-  findOne: StockMovement;
   paginateInvoices: InvoicePagination;
   methods: Array<Method>;
-  findAll: Array<Batch>;
+  findExistingBatch?: Maybe<Batch>;
   sale: Sale;
   patient: Patient;
   whoAmI: User;
@@ -610,6 +639,11 @@ export type QueryPaginateCommandsArgs = {
 };
 
 
+export type QueryFindCommandByIdArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QueryPaginateArticlesArgs = {
   input: PaginationInput;
 };
@@ -620,13 +654,13 @@ export type QueryFindOneArticleArgs = {
 };
 
 
-export type QueryFindOneArgs = {
-  id: Scalars['Int'];
+export type QueryPaginateInvoicesArgs = {
+  paginationInput: PaginationInput;
 };
 
 
-export type QueryPaginateInvoicesArgs = {
-  paginationInput: PaginationInput;
+export type QueryFindExistingBatchArgs = {
+  input: FindExistingBatchInput;
 };
 
 
@@ -648,7 +682,7 @@ export type Sale = {
   __typename?: 'Sale';
   id: Scalars['Float'];
   discount: Scalars['Float'];
-  date: Scalars['String'];
+  createdAt: Scalars['String'];
   prescription?: Maybe<Prescription>;
   stockMovements: Array<StockMovement>;
   archivedAt: Scalars['DateTime'];
@@ -664,15 +698,6 @@ export type SaveDosageInput = {
   id: Scalars['Float'];
   parentId: Scalars['Float'];
   label: Scalars['String'];
-};
-
-export type SavePaymentInput = {
-  id: Scalars['Float'];
-  reference: Scalars['String'];
-  description: Scalars['String'];
-  date: Scalars['String'];
-  invoiceId: Scalars['Float'];
-  paymentModeId: Scalars['Float'];
 };
 
 export type SaveProviderInput = {
@@ -695,10 +720,24 @@ export type StockMovement = {
   vat: Scalars['Float'];
 };
 
+export type StockMovementFormInput = {
+  quantity: Scalars['Int'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  discount: Scalars['Float'];
+};
+
 export type Unit = {
   __typename?: 'Unit';
   label: Scalars['String'];
   multiplicity: Scalars['Float'];
+};
+
+export type UpdateAssuredLineInput = {
+  id: Scalars['Int'];
+  updateCurVat: Scalars['Boolean'];
+  batch: BatchFormInput;
+  assuredLine: StockMovementFormInput;
 };
 
 export type UpdateBatchInput = {
@@ -716,9 +755,17 @@ export type UpdateCommandLineInput = {
   commandLine: CommandLineInput;
 };
 
+export type UpdateFormInput = {
+  label: Scalars['String'];
+  id: Scalars['Int'];
+};
+
 export type UpdateInvoiceInput = {
+  dueDate?: Maybe<Scalars['String']>;
+  reference?: Maybe<Scalars['String']>;
+  expense?: Maybe<Scalars['Float']>;
+  deliveryDate?: Maybe<Scalars['String']>;
   id: Scalars['Float'];
-  invoice: InvoiceInput;
 };
 
 export type UpdateMedicineInput = {
@@ -727,14 +774,17 @@ export type UpdateMedicineInput = {
 };
 
 export type UpdatePackagingInput = {
-  id: Scalars['Float'];
+  id: Scalars['Int'];
   units: Array<CreatePackagingInput>;
 };
 
 export type UpdatePatientInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
   id: Scalars['Int'];
+};
+
+export type UpdatePaymentInput = {
+  id: Scalars['Float'];
+  form: PaymentFormInput;
 };
 
 export type UpdatePrescriptionInput = {
@@ -746,10 +796,6 @@ export type UpdatePrescriptionInput = {
 export type UpdateSaleInput = {
   /** Example field (placeholder) */
   exampleField?: Maybe<Scalars['Int']>;
-  id: Scalars['Int'];
-};
-
-export type UpdateStockMovementInput = {
   id: Scalars['Int'];
 };
 

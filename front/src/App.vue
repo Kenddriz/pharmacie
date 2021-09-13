@@ -10,7 +10,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 20px;

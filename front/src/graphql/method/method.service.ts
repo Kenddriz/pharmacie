@@ -2,18 +2,24 @@ import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import { reactive, ref } from 'vue';
 import { CREATE_METHOD, CreateMethodData, METHODS, MethodsData, UPDATE_METHOD, UpdateMethodData } from './method.sdl';
 import { Method, MethodInput, MutationCreateMethodArgs, MutationUpdateMethodArgs } from '../types';
+import { notify } from '../../shared/notification';
 
-export const usePaymentModes = () => {
-  const {result, loading: listLoading} = useQuery<MethodsData>(METHODS);
+export const useMethods = () => {
+  const {result, loading: pmLoading} = useQuery<MethodsData>(METHODS);
+  const defaultValue:MethodsData = { methods: [] };
+  const paymentModes = useResult<MethodsData|undefined, MethodsData, MethodsData>(result, defaultValue, res => {
+    if(res?.methods)return res;
+    return defaultValue;
+  });
   return {
-    listLoading,
-    paymentModes: useResult(result, [], res => res?.methods)
+    pmLoading,
+    paymentModes
   }
 }
 export const useCreatePaymentsMode = () => {
   const creationInput = reactive<MethodInput>({ label: '' });
   const creationDialog = ref<boolean>(false);
-  const {mutate, loading: creationLoading} = useMutation<
+  const {mutate, loading: creationLoading, onDone} = useMutation<
     CreateMethodData,
     MutationCreateMethodArgs
     >(CREATE_METHOD, {
@@ -29,6 +35,10 @@ export const useCreatePaymentsMode = () => {
         }
       },
   });
+  onDone(({ data }) => {
+    if(data?.createMethod)
+      notify('Moyen de payement < ' + data.createMethod.label + ' > enregistré');
+  })
   const submitCreation = async () => {
     await mutate({ input: creationInput });
     creationDialog.value = false;
@@ -57,31 +67,3 @@ export const useUpdatePaymentsMode = () => {
   }
   return { submitUpdate,creationLoading, updateInput, updateDialog, setUpdateInput }
 }
-
-/*export const useRemovePaymentMode = () => {
-  const { loading: removePaymentModeLoading, mutate} = useMutation<
-    RemovePaymentModeData,
-    MutationRemovePaymentModeArgs
-    >(REMOVE_PAYMENT_MODE, {
-      update: (cache, { data}) => {
-        const payment = data?.removePaymentMode.payment;
-        if(data?.removePaymentMode && !payment) {
-          cache.modify({
-            fields: {
-              paymentModes: (existingData: PaymentMode[], { readField}) => {
-                return existingData.filter(
-                  commentRef => data.removePaymentMode.id !== readField('id', commentRef)
-                );
-              }
-            }
-          })
-        }
-        else if(payment)
-          notify('<div>Impossible de supprimer!Des payments utilisent ce mode</div><div> y compris ce dont la référence n°' + payment.reference + '</div>')
-      }
-  });
-  const submitRemovePaymentMode = async (id: number) => {
-    await mutate({ id });
-  }
-  return {submitRemovePaymentMode, removePaymentModeLoading}
-}*/

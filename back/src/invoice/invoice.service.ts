@@ -25,8 +25,10 @@ export class InvoiceService {
       .getOne();
   }
   async paginate(input: PaginationInput): Promise<Pagination<Invoice>> {
+    const keyword = `%${input.keyword}%`;
     const queryBuilder = this.repository
       .createQueryBuilder('invoice')
+      .where('invoice.reference ILIKE :keyword', { keyword })
       .orderBy('invoice.dueDate', 'ASC');
     const { page, limit } = input;
     return await paginate<Invoice>(queryBuilder, { page, limit });

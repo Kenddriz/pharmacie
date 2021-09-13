@@ -1,21 +1,30 @@
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class SavePaymentInput {
+export class PaymentFormInput {
   @Field()
-  id: number;
+  methodeId: number;
+
   @Field()
   reference: string;
 
-  @Field()
-  description: string;
+  @Field({ defaultValue: '' })
+  note: string;
 
   @Field()
   date: string;
-
+}
+@InputType()
+export class CreatePaymentInput {
   @Field()
   invoiceId: number;
-
+  @Field(() => PaymentFormInput)
+  form: PaymentFormInput;
+}
+@InputType()
+export class UpdatePaymentInput {
   @Field()
-  paymentModeId: number;
+  id: number;
+  @Field(() => PaymentFormInput)
+  form: PaymentFormInput;
 }

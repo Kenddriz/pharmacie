@@ -4,25 +4,17 @@ import { FORM_PARAMS } from '../form/form.sdl';
 import { Article, Medicine } from '../types';
 import { gql } from '@apollo/client/core';
 
-export const MEDICINE_PARAMS = `
+export const MEDICINE_FIELDS = `
   id
   form{${FORM_PARAMS}}
   dosage{${DOSAGE_PARAMS}}
   packaging{${PACKAGING_PARAMS}}
+`;
+export const MEDICINE_PARAMS = `
+  ${MEDICINE_FIELDS}
   currentSalePrice
   currentVat
   stockTotal
-`;
-export type MedicinesData = {
-  medicines: Medicine[];
-}
-export const MEDICINES = gql`
-  query Medicines {
-    medicines {
-      ${MEDICINE_PARAMS}
-      article {commercialName }
-    }
-  }
 `;
 export type CreateMedicineData = {
   createMedicine: Article

@@ -13,7 +13,13 @@ export class FormService {
   async findAll(): Promise<Form[]> {
     return this.repository.find();
   }
-
+  async findOneByLabel(label: string): Promise<Form> {
+    label = label.toLowerCase();
+    return this.repository
+      .createQueryBuilder()
+      .where('LOWER(label) = :label', { label })
+      .getOne();
+  }
   async findOne(id: number) {
     return this.repository.findOne(id);
   }

@@ -26,7 +26,7 @@ export class Sale {
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })
-  date: string;
+  createdAt: string;
 
   @Field(() => Prescription, { nullable: true })
   @OneToOne(() => Prescription, (prescription) => prescription.sale, {

@@ -4,7 +4,6 @@
       v-model="splitterModel"
       style="height: 83vh"
     >
-
       <template v-slot:before>
         <Article
           v-model:selected="selected"
@@ -27,44 +26,26 @@
           </template>
         </Article>
       </template>
-
       <template v-slot:separator>
         <q-avatar color="amber" text-color="white" size="lg" icon="drag_indicator" />
       </template>
-
       <template v-slot:after>
-        <q-splitter
-          v-model="insideModel"
-        >
-
-          <template v-slot:before>
-            <Medicine :article="selected[0]">
-              <template v-slot:add>
-                <q-menu>
-                  <MedicineForm />
-                </q-menu>
-              </template>
-            </Medicine>
-          </template>
-
-          <template v-slot:separator>
-            <q-avatar color="amber" text-color="white" size="lg" icon="drag_indicator" />
-          </template>
-
-          <template v-slot:after>
-            <Batch />
-          </template>
-
-        </q-splitter>
+        <div v-if="listLoading" class="row full-height justify-center items-center">
+          <q-spinner-oval size="8rem" color="positive" />
+        </div>
+        <template v-else-if="selected.length">
+          <div class="text-h6 text-center">
+            Détails d'article «{{selected[0].commercialName}}»
+          </div>
+          <Medicine :article="selected[0]" />
+        </template>
       </template>
-
     </q-splitter>
     <!--dialog -->
     <q-dialog v-model="articleDialog">
-      <q-card class="bg-primary text-white">
-        <q-bar>
-          <q-icon name="info" />
-          <q-icon name="delete_forever" />
+      <q-card square>
+        <q-bar class="bg-primary text-white">
+          <q-icon size="sm" color="warning" name="delete_forever" />
           <q-space />
 
           <q-btn dense flat icon="close" v-close-popup>
@@ -87,16 +68,13 @@ import Article from '../../components/article/Article.vue';
 import { useArticle, useSaveArticle } from '../../graphql/article/article.service';
 import ArticleForm from '../../components/article/ArticleForm.vue';
 import Medicine from '../../components/medicine/Medicine.vue';
-import MedicineForm from '../../components/medicine/MedicineForm.vue';
-import Batch from '../../components/batch/Batch.vue';
 
 export default {
   name: 'MedicinePage',
-  components: {Article, ArticleForm, Medicine, MedicineForm, Batch},
+  components: {Article, ArticleForm, Medicine},
   setup () {
     return {
       splitterModel: ref(25), // start at 50%
-      insideModel: ref(50),
       ...useArticle(),
       ...useSaveArticle()
     }

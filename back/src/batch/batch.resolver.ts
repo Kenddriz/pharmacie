@@ -1,15 +1,19 @@
 import {
   Resolver,
-  Query,
   Mutation,
   Args,
   Int,
   ResolveField,
   Root,
+  Query,
 } from '@nestjs/graphql';
 import { BatchService } from './batch.service';
 import { Batch } from './batch.entity';
-import { BatchFormInput, UpdateBatchInput } from './dto/batch.input';
+import {
+  BatchFormInput,
+  FindExistingBatchInput,
+  UpdateBatchInput,
+} from './dto/batch.input';
 import { MedicineService } from '../medicine/medicine.service';
 import { uniqId } from '../shared/id-builder.service';
 import { Medicine } from '../medicine/medicine.entity';
@@ -24,13 +28,13 @@ export class BatchResolver {
     private mdS: MedicineService,
   ) {}
 
-  @Mutation(() => Medicine)
+  @Mutation(() => Medicine, { nullable: true })
   async createBatch(@Args('input') input: BatchFormInput): Promise<Medicine> {
     let batch = await this.batchService.findExisting(
       input.medicineId,
       input.expirationDate,
     );
-    if (batch) throw new Error('exist');
+    if (batch) return null;
     batch = new Batch();
     batch.id = await uniqId('Batch');
     batch.medicine = await this.mdS.findOne(input.medicineId);
@@ -38,26 +42,29 @@ export class BatchResolver {
     await this.batchService.save(batch);
     return batch.medicine;
   }
-  @Mutation(() => Medicine)
-  async updateBatch(@Args('input') input: UpdateBatchInput): Promise<Medicine> {
+  @Mutation(() => Batch)
+  async updateBatch(@Args('input') input: UpdateBatchInput): Promise<Batch> {
     let batch = await this.batchService.findExisting(
       input.form.medicineId,
       input.form.expirationDate,
     );
-    if (batch && batch.id !== input.id) throw new Error('exist');
+    if (batch && batch.id !== input.id) return null;
     else if (!batch) batch = await this.batchService.findOne(input.id);
-    Object.assign(batch, input);
-    await this.batchService.save(batch);
-    return this.mdS.findOne(input.form.medicineId);
+    Object.assign(batch, input.form);
+    return await this.batchService.save(batch);
   }
 
-  @Query(() => [Batch])
-  findAll() {
-    return this.batchService.findAll();
+  @Query(() => Batch, { nullable: true })
+  async findExistingBatch(
+    @Args('input') input: FindExistingBatchInput,
+  ): Promise<Batch> {
+    return this.batchService.findExisting(
+      input.medicineId,
+      input.expirationDate,
+    );
   }
-
   @Mutation(() => Batch)
-  softRemove(@Args('id', { type: () => Int }) id: number) {
+  async softRemove(@Args('id', { type: () => Int }) id: number) {
     return this.batchService.softRemove(id);
   }
   /**field resolver*/

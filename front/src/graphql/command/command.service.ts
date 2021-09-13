@@ -44,6 +44,7 @@ export const usePaginateCommands = () => {
   function setSelectedCmd(index: number) {
     Object.assign(selectedCmd.value[0], commands.value.items[index]);
   }
+
   return {
     commands,
     pcLoading,

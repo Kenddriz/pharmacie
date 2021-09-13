@@ -16,7 +16,7 @@
       <div class="row no-wrap q-gutter-md">
         <q-card
           bordered
-          v-for="(p,i) in paymentModes"
+          v-for="(p,i) in paymentModes.methods"
           :key="i"
           class="mCard justify-center items-center column"
           @click="setUpdateInput(p)"
@@ -47,23 +47,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 import ScrollArea from '../shared/ScrollArea.vue';
 import {
-  useCreatePaymentsMode,
+  useCreatePaymentsMode, useMethods,
   useUpdatePaymentsMode,
 } from '../../graphql/method/method.service';
 import PaymentModeForm from './MethodForm.vue';
-import { Method } from '../../graphql/types';
 
 export default defineComponent({
   name: 'PaymentMode',
   components: { ScrollArea, PaymentModeForm },
-  props: {paymentModes: Array as PropType<Method[]>},
   setup() {
     return {
       ...useCreatePaymentsMode(),
       ...useUpdatePaymentsMode(),
+      ...useMethods()
     }
   },
   methods: {

@@ -33,28 +33,26 @@
             </q-input>
           </div>
           <div class="row q-gutter-xs">
-            <div>
-              <q-btn-toggle
-                :model-value="isGrid"
-                class="border-primary"
-                dense
-                v-model="isGrid"
-                text-color="primary"
-                color="white"
-                toggle-text-color="white"
-                toggle-color="primary"
-                unelevated
-                no-caps
-                :options="viewModeOptions"
-              >
-                <template v-slot:false>
-                  <q-icon name="view_list" />
-                </template>
-                <template v-slot:true>
-                  <q-icon name="apps" />
-                </template>
-              </q-btn-toggle>
-            </div>
+            <q-btn-toggle
+              :model-value="isGrid"
+              class="border-primary"
+              dense
+              v-model="isGrid"
+              text-color="primary"
+              color="white"
+              toggle-text-color="white"
+              toggle-color="primary"
+              unelevated
+              no-caps
+              :options="viewModeOptions"
+            >
+              <template v-slot:false>
+                <q-icon name="view_list" />
+              </template>
+              <template v-slot:true>
+                <q-icon name="apps" />
+              </template>
+            </q-btn-toggle>
           </div>
         </div>
       </template>
@@ -104,8 +102,8 @@
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <div class="text-left">Courbe commande: {{ props.row.name }}.</div>
+          <q-td no-hover colspan="100%">
+            Courbe commande: {{ props.row.name }}.
           </q-td>
         </q-tr>
       </template>

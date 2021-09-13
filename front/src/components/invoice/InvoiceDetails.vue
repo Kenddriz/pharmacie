@@ -1,15 +1,12 @@
 <template>
-   <div class="text-h6 q-ma-md">
-    <q-icon name="info" size="md" /> Détails de la facture
-   </div>
-   <q-card v-if="invoice" flat>
-     <q-card-section horizontal>
-       <div>
-         <div class="text-subtitle1 text-grey text-center">Fourniseur</div>
-         <CardProvider :provider="invoice.command.provider" :flat="true" />
-       </div>
+   <q-card flat>
+     <q-card-section class="text-h6 q-pb-sm">Détails de la facture</q-card-section>
+     <q-card-section horizontal class="q-mb-sm">
        <q-list>
-         <q-item-label header>Informations supplémentaires</q-item-label>
+         <q-item-label header>
+           Informations supplémentaires
+           <UpdateInvoice :invoice="invoice" />
+         </q-item-label>
          <q-item>
            <q-item-section avatar>
              <q-icon name="add_business" />
@@ -33,50 +30,67 @@
              <q-icon name="event_available" />
            </q-item-section>
            <q-item-section>
+             <q-item-label>Date de livraison</q-item-label>
+             <q-item-label caption>{{formatDate(invoice.deliveryDate, 'DATE_ONLY')}}</q-item-label>
+           </q-item-section>
+         </q-item>
+         <q-item>
+           <q-item-section avatar>
+             <q-icon name="event_available" />
+           </q-item-section>
+           <q-item-section>
              <q-item-label>Date d'échéance</q-item-label>
              <q-item-label caption>{{formatDate(invoice.dueDate, 'DATE_ONLY')}}</q-item-label>
            </q-item-section>
          </q-item>
+         <q-item>
+           <q-item-section avatar>
+             <q-icon name="money" />
+           </q-item-section>
+           <q-item-section>
+             <q-item-label>Frais divers</q-item-label>
+             <q-item-label caption>{{invoice.expense}}</q-item-label>
+           </q-item-section>
+         </q-item>
        </q-list>
        <div class="col">
-         <div class="text-subtitle1 text-grey text-center">Status</div>
+         <div class="text-subtitle1 text-dark text-center">
+           Payment <PaymentForm
+           :invoice-id="invoice.id"
+           :payment="invoice.payment"
+           :payment-modes="paymentModes.methods"
+         />
+         </div>
          <q-card
            style="height: calc(100% - 26px)"
            square bordered flat
-           class="column justify-center items-center text-h2"
+           class="column justify-center items-center text-h3"
          >
-           {{invoice.payment ? 'Reglée' : 'Impayée'}}
+           Status : {{invoice.payment ? 'Reglée' : 'Impayée'}}
          </q-card>
        </div>
-     </q-card-section>
-     <q-separator spaced />
-     <q-card-section>
-       <PaymentForm
-         :payment="invoice.payment"
-         :payment-modes="paymentModes"
-         :invoiceId="invoice.id"
-       />
      </q-card-section>
    </q-card>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Invoice, Method } from '../../graphql/types';
+import { Invoice } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
-import CardProvider from '../provider/CardProvider.vue';
-import PaymentForm from '../../components/payment/PaymentForm.vue'
+import UpdateInvoice from './UpdateInvoice.vue';
+import PaymentForm from '../payment/PaymentForm.vue';
+import { useMethods } from '../../graphql/method/method.service';
 
 export default defineComponent({
   name: 'InvoiceDetails',
-  components: { CardProvider, PaymentForm },
+  components: { UpdateInvoice, PaymentForm },
   props: {
-    invoice: Object as PropType<Invoice>,
-    paymentModes: Array as PropType<Method[]>
+    invoice: Object as PropType<Invoice>
   },
   setup() {
     return {
-      formatDate
+      formatDate,
+      ...useMethods()
     }
   }
 });

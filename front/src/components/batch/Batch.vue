@@ -2,23 +2,24 @@
   <div class="q-pa-md q-gutter-sm">
     <div class="q-table__title q-mb-md">
       Lots
-      <q-btn class="q-ml-lg" round color="positive" size="sm" glossy icon="add">
-        <q-menu>
-          <BatchForm />
-        </q-menu>
+      <q-btn class="q-ml-lg" round color="positive" size="xs" icon="add">
+        <BatchForm
+          :units="medicine.packaging.units"
+          :medicine-id="medicine.id"
+        />
       </q-btn>
     </div>
     <q-list>
-      <q-expansion-item v-for="(lot, index) in 4" :key="index">
+      <q-expansion-item v-for="(batch, index) in medicine.batches" :key="index">
         <template v-slot:header>
           <q-item-section avatar>
             <q-avatar size="sm" color="primary" text-color="white">
-              {{ lot }}
+              {{ index }}
             </q-avatar>
           </q-item-section>
 
           <q-item-section>
-            45/12/2021
+            {{formatDate(batch.expirationDate, 'DATE_ONLY')}}
           </q-item-section>
 
           <q-item-section side>
@@ -30,20 +31,25 @@
             <q-list class="col">
               <q-item>
                 <q-item-section>
-                  <q-item-label>Date de fabrication</q-item-label>
-                  <q-item-label caption>12/12/2022</q-item-label>
+                  <q-item-label>Date d'ajout</q-item-label>
+                  <q-item-label caption>{{formatDate(batch.createdAt, 'DATE_TIME')}}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label>Prix unitaire</q-item-label>
-                  <q-item-label caption>4560</q-item-label>
+                  <q-item-label>Jours restants</q-item-label>
+                  <q-item-label caption>60</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                   <q-item-label>Quantité</q-item-label>
-                  <q-item-label caption>35 000</q-item-label>
+                  <UnitConverter
+                    class="text-grey text-caption"
+                    align="left"
+                    :value="batch.currentStock"
+                    :units="medicine.packaging.units"
+                  />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -69,7 +75,13 @@
                 outline
                 icon="edit"
                 label="Editer"
-              />
+              >
+                <BatchForm
+                  :units="medicine.packaging.units"
+                  :medicine-id="medicine.id"
+                  :batch="batch"
+                />
+              </q-btn>
               <q-btn
                 align="left"
                 color="orange"
@@ -90,10 +102,26 @@
 
 <script lang="ts">
 import BatchForm from './BatchForm.vue';
-export default {
+import { defineComponent, PropType } from 'vue';
+import { Medicine } from '../../graphql/types';
+import { formatDate } from '../../shared/date';
+import UnitConverter from '../packaging/UnitConverter.vue';
+
+export default defineComponent({
   name: 'Batch',
-  components: { BatchForm }
-};
+  components: { BatchForm, UnitConverter },
+  props: {
+    medicine: {
+      type: Object as PropType<Medicine>,
+      required: true
+    }
+  },
+  setup() {
+    return {
+      formatDate
+    }
+  }
+});
 </script>
 
 <style scoped>
