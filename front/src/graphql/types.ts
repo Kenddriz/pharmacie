@@ -603,7 +603,7 @@ export type ProviderPagination = {
 
 export type Query = {
   __typename?: 'Query';
-  providersPaginate: ProviderPagination;
+  paginateProviders: ProviderPagination;
   findProviders: Array<Provider>;
   providers: Array<Provider>;
   paginateCommands: CommandPagination;
@@ -624,7 +624,7 @@ export type Query = {
 };
 
 
-export type QueryProvidersPaginateArgs = {
+export type QueryPaginateProvidersArgs = {
   input: PaginationInput;
 };
 

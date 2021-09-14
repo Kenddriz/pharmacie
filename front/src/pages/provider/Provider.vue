@@ -5,14 +5,16 @@
       square
       bordered
       :grid="isGrid"
-      :rows="providers"
+      :rows="providers.items"
       :columns="columns"
-      :pagination="{page: 1, rowsPerPage: 10}"
+      :pagination="{page: 1, rowsPerPage: paginateInput.limit}"
       row-key="id"
       flat
       class="col"
       card-container-class="fa-border items-start"
       no-data-label="Aucune page trouvé..."
+      hide-pagination
+      :loading="ppLoading"
     >
       <template v-slot:top>
         <div class="column full-width q-gutter-xs">
@@ -20,40 +22,46 @@
             <q-toolbar-title class="text-bold">Mes fournisseurs</q-toolbar-title>
             <q-space />
             <q-input
-              model-value=""
+              :model-value="paginateInput.keyword"
+              v-model="paginateInput.keyword"
               dense
               debounce="100"
-              class="col-xs-12 col-md-3 col-lg-2"
+              class="col-xs-12 col-md-4 col-lg-3"
               color="primary"
               label="Chercher ..."
+              @keydown.enter="searchProvider"
             >
               <template v-slot:append>
-                <q-icon name="search" />
+                <q-btn
+                  @click="searchProvider"
+                  unelevated
+                  icon="search"
+                  label="Envoyer"
+                  no-caps
+                />
               </template>
             </q-input>
           </div>
-          <div class="row q-gutter-xs">
-            <q-btn-toggle
-              :model-value="isGrid"
-              class="border-primary"
-              dense
-              v-model="isGrid"
-              text-color="primary"
-              color="white"
-              toggle-text-color="white"
-              toggle-color="primary"
-              unelevated
-              no-caps
-              :options="viewModeOptions"
-            >
-              <template v-slot:false>
-                <q-icon name="view_list" />
-              </template>
-              <template v-slot:true>
-                <q-icon name="apps" />
-              </template>
-            </q-btn-toggle>
-          </div>
+          <q-btn-toggle
+            :model-value="isGrid"
+            class="border-primary"
+            dense
+            v-model="isGrid"
+            text-color="primary"
+            color="white"
+            toggle-text-color="white"
+            toggle-color="primary"
+            unelevated
+            no-caps
+            :options="viewModeOptions"
+          >
+            <template v-slot:false>
+              <q-icon name="view_list" />
+            </template>
+            <template v-slot:true>
+              <q-icon name="apps" />
+            </template>
+          </q-btn-toggle>
         </div>
       </template>
       <template v-slot:header="props">
@@ -103,23 +111,33 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td no-hover colspan="100%">
-            Courbe commande: {{ props.row.name }}.
+            <ProviderCommands
+              :provider-id="props.row.id"
+              @add="openAddCmdDialog(props.row)"
+            />
           </q-td>
         </q-tr>
       </template>
-
       <!-- Card body for Grid view mod -->
-
       <template v-slot:item="props">
         <CardItem @edit="setUpdateInput($event)" :provider="props.row"/>
       </template>
-
       <!-- //pagination -->
-      <template v-slot:bottom>
+      <template v-if="providers.meta.totalPages > 1" v-slot:bottom>
         <div class="row full-width justify-center">
+          <q-pagination
+            :model-value="providers.meta.currentPage"
+            v-model="paginateInput.page"
+            color="black"
+            :max="providers.meta.totalPages"
+            :max-pages="providers.meta.itemsPerPage"
+            :boundary-numbers="false"
+            @update:model-value="searchProvider"
+          />
         </div>
       </template>
     </q-table>
+    <!---update provider --->
     <q-dialog v-model="show">
       <ProviderForm
         mode="update"
@@ -128,28 +146,58 @@
         @submit="updateProvider($event)"
       />
     </q-dialog>
+    <!---add command--->
+    <q-dialog full-width full-height v-model="addCmdDialog.show">
+      <q-card>
+        <q-card-section>
+          <AddCommand :provider="addCmdDialog.provider">
+            <template v-slot:end>
+              <q-btn unelevated icon="close" text-color="red" @click="addCmdDialog.show = false" />
+            </template>
+          </AddCommand>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
-  import ProviderForm from '../../components/provider/ProviderForm.vue';
-  import CardItem from '../../components/provider/CardItem.vue';
-  import { columns } from '../../components/provider/columns';
-  import { useProviders, useSaveProvider } from '../../graphql/provider/provider.service';
+import { defineComponent, reactive, ref } from 'vue';
+import ProviderForm from '../../components/provider/ProviderForm.vue';
+import CardItem from '../../components/provider/CardItem.vue';
+import ProviderCommands from '../../components/provider/ProviderCommands.vue';
+import { columns } from '../../components/provider/columns';
+import { usePaginateProviders, useSaveProvider } from '../../graphql/provider/provider.service';
+import AddCommand from '../../components/command/AddCommand.vue';
+import { Provider } from '../../graphql/types';
 
   export default defineComponent({
     name: 'Provider',
-    components: { ProviderForm, CardItem },
+    components: {
+      ProviderForm,
+      CardItem,
+      ProviderCommands,
+      AddCommand
+    },
     setup() {
+      const addCmdDialog = reactive<{show: boolean; provider: Provider|null}>({
+        show: false,
+        provider: null
+      });
+      function openAddCmdDialog(provider: Provider) {
+        addCmdDialog.provider = provider;
+        addCmdDialog.show = true;
+      }
       return {
         isGrid: ref<boolean>(false),
+        openAddCmdDialog,
+        addCmdDialog,
         viewModeOptions: [
           { value: false, slot: 'false' },
           { value: true, slot: 'true' }
         ],
         columns,
-        ...useProviders(),
+        ...usePaginateProviders(),
         ...useSaveProvider()
       }
     }

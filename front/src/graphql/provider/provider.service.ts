@@ -4,12 +4,18 @@ import {
   SaveProviderData,
   PROVIDERS,
   ProvidersData,
-  FindProvidersData,
-  FIND_PROVIDERS,
+  PaginateProvidersData,
+  PAGINATE_PROVIDERS,
 } from './provider.sdl';
-import { SaveProviderInput, MutationSaveProviderArgs, Provider, QueryFindProvidersArgs } from '../types';
+import {
+  SaveProviderInput,
+  MutationSaveProviderArgs,
+  Provider,
+  PaginationInput, QueryPaginateProvidersArgs, ProviderPagination,
+} from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
+import { InitialPagination } from '../utils/pagination';
 
 export const defaultProviderInput: SaveProviderInput = {
   id: 0,
@@ -73,25 +79,28 @@ export const useSaveProvider = () => {
   }
 }
 
-export const useFindProviders = () => {
-  const fpInput = ref<string>('');
-  const providers = ref<Provider[]>([]);
-  const { loading: fpLoading, onResult, refetch } = useQuery<
-    FindProvidersData,
-    QueryFindProvidersArgs
-    >(FIND_PROVIDERS, { keyword: cloneDeep(fpInput.value) }, {
-      fetchPolicy: 'no-cache',
+export const usePaginateProviders = () => {
+  const paginateInput = reactive<PaginationInput>({
+    keyword: '',
+    page: 1,
+    limit: 5
   });
-  onResult(({ data }) => {
-    providers.value = data.findProviders;
-  });
-  function findProviders() {
-    void refetch({ keyword: fpInput.value });
+  const { loading: ppLoading, result, refetch } = useQuery<
+    PaginateProvidersData,
+    QueryPaginateProvidersArgs
+    >(PAGINATE_PROVIDERS, { input: cloneDeep(paginateInput) });
+  function searchProvider() {
+    void refetch({ input: paginateInput });
   }
+  const providers = useResult<
+    PaginateProvidersData|undefined,
+    ProviderPagination,
+    ProviderPagination
+    >(result, InitialPagination, res => res?.paginateProviders||InitialPagination)
   return {
-    fpLoading,
-    fpInput,
+    searchProvider,
+    ppLoading,
     providers,
-    findProviders
+    paginateInput
   }
 }

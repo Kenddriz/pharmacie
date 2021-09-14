@@ -212,7 +212,7 @@ type LoginDto {
 }
 
 type Query {
-  providersPaginate(input: PaginationInput!): ProviderPagination!
+  paginateProviders(input: PaginationInput!): ProviderPagination!
   findProviders(keyword: String!): [Provider!]!
   providers: [Provider!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!

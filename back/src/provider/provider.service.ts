@@ -37,9 +37,9 @@ export class ProviderService {
 
   async paginate(input: PaginationInput): Promise<Pagination<Provider>> {
     const queryBuilder = this.repository
-      .createQueryBuilder()
-      .where('name LIKE :keyword', { keyword: `%${input.keyword}%` })
-      .orderBy('created_at', 'DESC');
+      .createQueryBuilder('pro')
+      .where('pro.name ILIKE :keyword', { keyword: `%${input.keyword}%` })
+      .orderBy('pro.createdAt', 'DESC');
 
     const options: IPaginationOptions = {
       page: input.page,

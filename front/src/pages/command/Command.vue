@@ -20,7 +20,7 @@
           <q-tab-panels keep-alive swipeable v-model="tab" animated>
             <q-tab-panel name="add" class="q-pa-none">
               <ScrollArea :style="heightStyle" class="q-pa-md">
-                <AddCommand :providers="providers" />
+                <AddCommandTab />
               </ScrollArea>
             </q-tab-panel>
 
@@ -155,22 +155,20 @@ import { defineComponent, ref } from 'vue';
 import { formatDate } from '../../shared/date';
 import ScrollArea from '../../components/shared/ScrollArea.vue';
 import { useDeleteCommand, usePaginateCommands } from '../../graphql/command/command.service';
-import AddCommand from '../../components/command/AddCommand.vue';
-import { useProviders } from '../../graphql/provider/provider.service';
+import AddCommandTab from '../../components/command/AddCommandTab.vue';
 import UpdateCommand from '../../components/command/UpdateCommand.vue';
 import CardProvider from '../../components/provider/CardProvider.vue';
 import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue'
 
 export default defineComponent({
   name: 'Command',
-  components: { ScrollArea, CardProvider,  AddCommand, UpdateCommand, CommandLineDetails },
+  components: { ScrollArea, CardProvider,  AddCommandTab, UpdateCommand, CommandLineDetails },
   setup() {
     return {
       deliveryPan: ref<string>('command'),
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      ...useProviders(),
       ...useDeleteCommand(),
       heightStyle: `height:${screen.height - 250}px`
     }

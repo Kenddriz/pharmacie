@@ -1,6 +1,6 @@
 import { Dialog } from 'quasar';
 import { i18n } from '../../boot/i18n';
-import { Medicine, Unit } from '../types';
+import { Contact, Medicine, Unit } from '../types';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -42,4 +42,12 @@ export const validateDate = (val: string):boolean => {
 }
 export const getMedicineName = (med: Medicine): string => {
   return `${med.article.commercialName} ${med.dosage.label}, ${med.form.label}`;
+}
+export const getOneContact = (contacts: Contact[], each = false) => {
+  const list: string[] = [];
+  for(const contact of contacts) {
+    if(each && list.length)break;
+    else if(contact.list.length)list.push(contact.list[0])
+  }
+  return list.length ? list.join(' - ') : 'aucun contact';
 }

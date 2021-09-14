@@ -4707,7 +4707,7 @@
         "description": null,
         "fields": [
           {
-            "name": "providersPaginate",
+            "name": "paginateProviders",
             "description": null,
             "args": [
               {

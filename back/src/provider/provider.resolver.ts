@@ -24,7 +24,7 @@ export class ProviderResolver {
   }
 
   @Query(() => ProviderPagination)
-  async providersPaginate(
+  async paginateProviders(
     @Args('input') input: PaginationInput,
   ): Promise<ProviderPagination> {
     return await this.providerService.paginate(input);

@@ -1,157 +1,139 @@
 <template>
-  <q-stepper
-    v-model="step"
-    vertical
-    color="dark"
-    done-color="positive"
-    animated
-    keep-alive
+  <q-markup-table
+    v-if="provider"
     flat
+    bordered
+    separator="cell"
   >
-    <q-step
-      :name="1"
-      title="Choix de fournisseur"
-      icon="settings"
-      :done="step > 1"
-    >
-      <q-table
-        flat
-        title="Séléction du fournisseur"
-        :rows="providers"
-        :columns="cmdProviderCol"
-        row-key="id"
-        selection="single"
-        v-model:selected="selectedProvider"
-        :selected-rows-label="selectedRowLabel"
-        no-data-label="Aucun fournisseur"
-        hide-pagination
-        :pagination="{ page: 1, rowsPerPage: providers.length }"
-        :loading="fpLoading"
-      >
-        <template v-slot:top-right>
-          <q-input
-            outlined
-            dense
-            debounce="300"
-            :model-value="fpInput"
-            v-model="fpInput"
-            placeholder="Mot clé"
-            @keyup.enter="findProviders"
-          >
-            <template v-slot:after>
-              <q-btn @click="findProviders" icon="search" no-caps label="Chercher" />
-            </template>
-          </q-input>
-        </template>
-        <template v-slot:body-cell-contacts="props">
-          <q-td :props="props">
-            {{getOneContact(props.row.contacts, true)}}
-            <q-btn color="primary" icon="more_vert" flat>
-              <q-menu anchor="center end" self="center end" auto-close>
-                <ContactList class="q-pt-sm" :contacts="props.row.contacts" />
-              </q-menu>
-            </q-btn>
-          </q-td>
-        </template>
-      </q-table>
-      <q-stepper-navigation>
-        <q-btn
-          no-caps
-          unelevated
-          :disable="!selectedProvider.length"
-          color="primary"
-          label="suivant"
-          @click="step = 2"
-        />
-      </q-stepper-navigation>
-    </q-step>
-
-    <q-step
-      :name="2"
-      title="Liste de médicaments à commander"
-      :caption="selectedProvider.length ? 'Chez ' + selectedProvider[0].name : ''"
-      icon="create_new_folder"
-      :done="step > 2"
-    >
-      <q-markup-table flat bordered separator="cell">
-        <thead >
-          <tr v-if="selectedProvider.length">
-            <th colspan="7">
-              <div class="row no-wrap items-center">
-                <q-img
-                  style="width: 70px"
-                  :ratio="1"
-                  class="rounded-borders"
-                  src="register.jpg"
-                />
-                <div class="q-ml-md">
-                  <div class="text-h4">{{selectedProvider[0].name}}</div>
-                  <span>{{getOneContact(selectedProvider[0].contacts)}}</span>
-                </div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th v-for="(col, index) in cmData" :key="index">{{col.label}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <CommandLineRow
-            :loading="ccLoading"
-            @onSubmit="createCommand(selectedProvider[0].id, $event)"
+    <thead >
+    <tr>
+      <th colspan="3">
+        <div class="row no-wrap items-center">
+          <q-img
+            style="width: 70px"
+            :ratio="1"
+            class="rounded-borders"
+            src="register.jpg"
           />
-        </tbody>
-      </q-markup-table>
-
-      <q-stepper-navigation>
-        <q-btn
-          flat
-          color="primary"
-          label="Retour"
-          class="q-ml-sm"
-          @click="step = 1"
-        />
-      </q-stepper-navigation>
-    </q-step>
-  </q-stepper>
+          <div class="q-ml-md">
+            <div class="text-h4">{{provider.name}}</div>
+            <span>{{getOneContact(provider.contacts)}}</span>
+          </div>
+          <q-space />
+          <slot name="end"></slot>
+        </div>
+      </th>
+    </tr>
+    <tr>
+      <th v-for="(col, index) in cmData" :key="index">{{col.label}}</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr class="q-tr--no-hover">
+        <td colspan="7">
+          <!--@click="addAddCmdLine"-->
+          <q-btn
+            label="Nouvelle ligne"
+            class="q-mr-md"
+            color="primary"
+            icon="add"
+            no-caps
+            @click="addLine"
+          />
+          <!-- v-if="input.commandLines.length"-->
+          <q-btn
+            v-close-popup
+            no-caps
+            outline
+            color="primary"
+            label="Enregistrer la commande"
+            icon-right="save"
+            @click="submit"
+            :disable="!commandLineInput.length"
+            :loading="ccLoading"
+          />
+        </td>
+      </tr>
+      <tr class="q-tr--no-hover" v-for="(ipt, index) in commandLineInput" :key="index">
+        <td>
+          <ArticleSelect @update="setLine($event, index)" />
+        </td>
+        <td>
+          <PackagingInput
+            :units="ipt.pkg.units"
+            @set-model="ipt.quantity = $event"
+          />
+        </td>
+        <td>
+          <q-btn
+            icon="delete"
+            round
+            unelevated
+            dense
+            text-color="orange"
+            @click="removeLine(index)"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </q-markup-table>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { cmData } from '../command-line/cmData';
-import { Contact, Provider } from '../../graphql/types';
-import { cmdProviderCol } from '../provider/columns';
-import ContactList from '../contact/ContactList.vue';
-import CommandLineRow from '../command-line/CommandLineRow.vue';
-import { useFindProviders } from '../../graphql/provider/provider.service';
+import { defineComponent, PropType, ref } from 'vue';
+import ArticleSelect from '../article/ArticleSelect.vue';
+import { CommandLineInput, Packaging, Provider } from '../../graphql/types';
+import { FindOneArticleOption } from '../../graphql/article/article.service';
+import PackagingInput from '../packaging/PackagingInput.vue';
 import { useCreateCommand } from '../../graphql/command/command.service';
+import { getOneContact } from '../../graphql/utils/utils';
+import { cmData } from '../command-line/cmData';
 
 export default defineComponent({
   name: 'AddCommand',
-  components: {ContactList, CommandLineRow},
-  setup() {
-    const step = ref<number>(1);
-    const selectedProvider = ref<Provider[]>([]);
-    return {
-      cmData,
-      step,
-      selectedProvider,
-      ...useFindProviders(),
-      filter: ref<string>(''),
-      cmdProviderCol,
-      selectedRowLabel: (count: number) => {
-        return count + ' fournisseur séléctionné'
-      },
-      getOneContact: (contacts: Contact[], each = false) => {
-        const list: string[] = [];
-        for(const contact of contacts) {
-          if(each && list.length)break;
-          else if(contact.list.length)list.push(contact.list[0])
-        }
-        return list.length ? list.join(' - ') : 'aucun contact';
-      },
-      ...useCreateCommand()
+  components: { ArticleSelect, PackagingInput },
+  props: {
+    provider: {
+      type: Object as PropType<Provider>,
+      required: true
     }
-  }
+  },
+  setup(props) {
+    const { ccLoading, createCommand } = useCreateCommand();
+    const commandLineInput = ref<(CommandLineInput & { pkg: Packaging })[]>([]);
+    function addLine() {
+      commandLineInput.value.push({
+        medicineId: 0, quantity: 1,
+        pkg: { id: 0, units: [] }
+      })
+    }
+    function removeLine(index: number) {
+      commandLineInput.value.splice(index, 1);
+    }
+    function setLine(data: FindOneArticleOption, index: number) {
+      commandLineInput.value[index].pkg = data.packaging;
+      commandLineInput.value[index].medicineId = data.value;
+    }
+    function submit() {
+      const commandLines: CommandLineInput[] = [];
+      commandLineInput.value.forEach(val => {
+        const { quantity, medicineId } = val;
+        if(medicineId > 0)commandLines.push({ quantity, medicineId });
+      });
+      if(commandLines.length) {
+        createCommand(props.provider.id, commandLines);
+        commandLineInput.value.length = 0;
+      }
+    }
+    return {
+      commandLineInput,
+      addLine,
+      removeLine,
+      setLine,
+      submit,
+      ccLoading,
+      getOneContact,
+      cmData,
+    }
+  },
 });
 </script>

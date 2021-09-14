@@ -1,5 +1,6 @@
 import {gql} from '@apollo/client/core';
-import { Provider } from '../types';
+import { Provider, ProviderPagination } from '../types';
+import { PAGINATION_META } from '../utils/pagination';
 
 export const PROVIDER = `
   id
@@ -37,13 +38,14 @@ export const CREATE_PROVIDER = gql`
   }
 `;
 
-export type FindProvidersData = {
-  findProviders: Provider[];
+export type PaginateProvidersData = {
+  paginateProviders: ProviderPagination;
 }
-export const FIND_PROVIDERS = gql`
-    query FindProviders($keyword: String!) {
-      findProviders(keyword: $keyword) {
-        ${PROVIDER}
-      }
+export const PAGINATE_PROVIDERS = gql`
+  query PaginateProviders($input:PaginationInput!){
+    paginateProviders(input: $input){
+      items{${PROVIDER}}
+      ${PAGINATION_META}
     }
+  }
 `;
