@@ -11,7 +11,9 @@ import {
   CREATE_INVOICE,
   CreateInvoiceData,
   PAGINATE_INVOICES,
-  PaginateInvoicesData, UPDATE_INVOICE, UpdateInvoiceData,
+  PaginateInvoicesData,
+  UPDATE_INVOICE,
+  UpdateInvoiceData,
 } from './incoice.sdl';
 import { InitialPagination } from '../utils/pagination';
 import { cloneDeep } from '../utils/utils';
@@ -75,9 +77,7 @@ export const useCreateInvoice = () => {
   return { createInvoice, ciDialog }
 }
 
-export const useUpdateInvoice = (invoice: Invoice) => {
-  const { id, deliveryDate, dueDate, expense, reference } = invoice
-  const updateInput = reactive<UpdateInvoiceInput>({ id, deliveryDate, dueDate, expense, reference } )
+export const useUpdateInvoice = () => {
   const { mutate, onDone } = useMutation<
     UpdateInvoiceData,
     MutationUpdateInvoiceArgs
@@ -87,10 +87,9 @@ export const useUpdateInvoice = (invoice: Invoice) => {
     if(data?.updateInvoice)notify('Mise à jour avec succès');
   })
   return {
-    updateInput,
-    updateInvoice: () => {
+    updateInvoice: (input: UpdateInvoiceInput) => {
       Loading.show({ message: 'Enregistrement des modifications ...'})
-      void mutate({ input: updateInput });
+      void mutate({ input });
     }
   }
 }

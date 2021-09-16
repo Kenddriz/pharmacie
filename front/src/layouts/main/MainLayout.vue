@@ -19,7 +19,12 @@
 
               <q-list separator>
                 <q-item-label header>PHARMANAGER</q-item-label>
-                <q-item v-for="(item, index) in sItems" :key="index">
+                <q-item
+                  v-for="(item, index) in sItems"
+                  :key="index"
+                  :to="`/main/${item.to}`"
+                  exact-active-class="text-primary"
+                >
                   <q-item-section avatar>
                     <q-icon :name="item.icon" size="xs" class="q-ml-md" color="teal" />
                   </q-item-section>

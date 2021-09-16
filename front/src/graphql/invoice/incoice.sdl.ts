@@ -5,7 +5,6 @@ import { PAGINATION_META } from '../utils/pagination';
 import { STOCK_MVT_FIELDS } from '../stock-movement/stock-mvt.sdl';
 import { MEDICINE_FIELDS } from '../medicine/medicine.sdl';
 import { ARTICLE_PARAMS } from '../article/article.sdl';
-import { PROVIDER } from '../provider/provider.sdl';
 import { COMMAND_LINE } from '../command-line/commandLine.sdl';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
 
@@ -15,9 +14,21 @@ export type PaginateInvoicesData = {
 export type CreateInvoiceData = {
   createInvoice: Command
 }
+export const PROVIDER_FIELDS = `
+  id
+  name
+  address
+  logo
+  contacts {
+    type
+    list
+  }
+  createdAt
+  updatedAt
+`
+
 export const COMMAND_FIELDS = `
   id
-  provider{${PROVIDER}}
   commandLines{${COMMAND_LINE}}
   createdAt
 `;
@@ -29,6 +40,7 @@ export const INVOICE_PARAMS = `
   reference
   expense
 `;
+
 export const INVOICE_FIELDS = `
     ${INVOICE_PARAMS}
     payment{${PAYMENT_PARAMS}}
@@ -45,6 +57,7 @@ export const INVOICE_FIELDS = `
     }
     createdAt
 `;
+
 export const CREATE_INVOICE = gql`
   mutation CreateInvoice($input: CreateInvoiceInput!){
     createInvoice(input: $input) {
@@ -59,7 +72,10 @@ export const PAGINATE_INVOICES = gql`
   paginateInvoices(paginationInput: $paginationInput) {
     items{
       ${INVOICE_FIELDS}
-      command{${COMMAND_FIELDS}}
+      command{
+        ${COMMAND_FIELDS}
+        provider{${PROVIDER_FIELDS}}
+      }
     }
     ${PAGINATION_META}
   }

@@ -19,6 +19,7 @@ export default {
     removeForever: 'Si vous le supprimer, il sera définitivement supprimé<br> et irrécupérable</br>.'
   },
   local: {
-    dateMask: '##/##/####'
+    dateMask: '##/##/####',
+    monthsShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sept', 'Oct', 'Nov', 'Dec']
   }
 };

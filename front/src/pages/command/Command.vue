@@ -70,7 +70,6 @@
                    <UpdateCommand
                      v-if="!selectedCmd[0].invoice"
                       :command="selectedCmd[0]"
-                      @delete="deleteCommand(selectedCmd[0].id)"
                     />
                     <CommandLineDetails
                       v-else
@@ -154,7 +153,7 @@
 import { defineComponent, ref } from 'vue';
 import { formatDate } from '../../shared/date';
 import ScrollArea from '../../components/shared/ScrollArea.vue';
-import { useDeleteCommand, usePaginateCommands } from '../../graphql/command/command.service';
+import { usePaginateCommands } from '../../graphql/command/command.service';
 import AddCommandTab from '../../components/command/AddCommandTab.vue';
 import UpdateCommand from '../../components/command/UpdateCommand.vue';
 import CardProvider from '../../components/provider/CardProvider.vue';
@@ -169,7 +168,6 @@ export default defineComponent({
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      ...useDeleteCommand(),
       heightStyle: `height:${screen.height - 250}px`
     }
   }

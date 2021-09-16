@@ -9,7 +9,7 @@ import {
 } from './command.sdl';
 import {
   Command,
-  CommandLineInput,
+  CommandLineInput, Meta,
   MutationCreateCommandArgs, MutationDeleteCommandArgs,
   PaginationInput,
   QueryPaginateCommandsArgs,
@@ -18,7 +18,13 @@ import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { InitialPagination } from '../utils/pagination';
 import { notify } from '../../shared/notification';
+import { deleteCommandCache } from './update.cache';
 
+export type Serie = {
+  name: string,
+  type: string,
+  data: Array<number>
+}
 export const usePaginateCommands = () => {
   const paginationInput = reactive<PaginationInput>({
     page: 1,
@@ -66,6 +72,15 @@ export const useCreateCommand = () => {
                 ...existing,
                 items: [...existing.items, toReference(data.createCommand)]
               }
+            },
+            providerCommands(existingRef: any, { toReference }){
+              const meta: Meta = { ...existingRef.meta };
+              meta.totalItems += 1;
+              meta.totalPages += 1;
+              return {
+                ...existingRef,
+                meta: toReference(meta)
+              }
             }
           }
         })
@@ -102,10 +117,10 @@ export const useDeleteCommand = () => {
               cache.modify({
                 fields: {
                   paginateCommands(existingRef: any, { readField }) {
-                    return {
-                      ...existingRef,
-                      items: existingRef.items.filter((eRef: any) => readField('id', eRef) !== id)
-                    }
+                    return deleteCommandCache(existingRef, readField, id);
+                  },
+                  providerCommands(existingRef: any, { readField }) {
+                    return deleteCommandCache(existingRef, readField, id);
                   }
                 }
               })

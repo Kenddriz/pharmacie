@@ -89,22 +89,21 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { Provider } from '../../graphql/types';
 import { cmdProviderCol } from '../provider/columns';
 import ContactList from '../contact/ContactList.vue';
 import AddCommand from './AddCommand.vue';
 import { usePaginateProviders } from '../../graphql/provider/provider.service';
 import { getOneContact } from '../../graphql/utils/utils';
+import { Provider } from '../../graphql/types';
 
 export default defineComponent({
   name: 'AddCommandTab',
   components: {ContactList, AddCommand},
   setup() {
     const step = ref<number>(1);
-    const selectedProvider = ref<Provider[]>([]);
     return {
+      selectedProvider: ref<Provider[]>([]),
       step,
-      selectedProvider,
       ...usePaginateProviders(),
       filter: ref<string>(''),
       cmdProviderCol,

@@ -107,13 +107,14 @@
   <q-card flat bordered class="q-mt-md">
     <q-card-actions>
       <q-btn
+        v-close-popup
         no-caps
         rounded
         icon="delete_forever"
         color="red"
         label="Supprimer cette commande"
         class="col-12 col-md-3"
-        @click="$emit('delete')"
+        @click="deleteCommand(command.id)"
       />
     </q-card-actions>
   </q-card>
@@ -149,7 +150,7 @@
   >
     <CreateInvoice
       :command-lines="selectedCls"
-      @delete="$emit('delete')"
+      @delete="deleteCommand(command.id)"
       @submit="createInvoice"
       :command-id="command.id"
     >
@@ -175,6 +176,7 @@ import {
 import UnitConverter from '../packaging/UnitConverter.vue';
 import CreateInvoice from '../invoice/CreateInvoice.vue';
 import { useCreateInvoice } from '../../graphql/invoice/invoice.service';
+import { useDeleteCommand } from '../../graphql/command/command.service';
 
 export default defineComponent({
   name: 'UpdateCommand',
@@ -204,6 +206,7 @@ export default defineComponent({
       ...useRemoveCommandLine(),
       ...useUpdateCommandLine(),
       ...useCreateInvoice(),
+      ...useDeleteCommand(),
       updateCl: ref<CommandLine|null>(null),
       selectedCls: ref<CommandLine[]>([]),
       selectedLabel: function(nbr: number) {

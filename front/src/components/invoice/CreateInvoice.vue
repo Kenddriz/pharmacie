@@ -1,6 +1,6 @@
 <template>
   <q-card>
-    <q-toolbar class="bg-teal-5 glossy">
+    <q-toolbar class="bg-teal-5">
       <slot></slot>
       <q-space />
       <q-btn color="red" dense flat icon="close" v-close-popup>
@@ -90,7 +90,6 @@
               <q-td key="quantity" no-hover>
                 <PackagingInput
                   min="0"
-                  hide-bottom-space
                   :value="props.row.quantity"
                   :units="commandLines[props.pageIndex].medicine.packaging.units"
                   @set-model="props.row.quantity = $event"
@@ -102,7 +101,6 @@
               <q-td key="price" no-hover>
                 <PackagingInput
                   min="0"
-                  hide-bottom-space
                   :value="props.row.price"
                   :units="commandLines[props.pageIndex].medicine.packaging.units"
                   @set-model="props.row.price = $event"
@@ -144,6 +142,7 @@
               </q-td>
               <q-td key="expirationDate" no-hover :props="props">
                 <DateInput
+                  dense
                   placeholder="date d'expiration"
                   borderless
                   v-model="props.row.expirationDate"
@@ -163,7 +162,7 @@
           </template>
           <template v-slot:bottom>
             <div class="row full-width items-center justify-around">
-              <div class="text-center text-weight-bold text-grey-14 text-subtitle1">
+              <div class="text-center text-weight-bold text-dark text-subtitle1">
                 <q-icon name="border_color" size="xs" />
                 Adapter les valeurs conformement à tout ce que le fournisseur a livré.
               </div>
@@ -176,25 +175,6 @@
             </div>
           </template>
         </q-table>
-        <q-card-section>
-          <q-item>
-            <q-item-section avatar>
-              <q-checkbox
-                color="warning"
-                keep-color
-                size="xl"
-                :model-value="true"
-                v-model="condition"
-              />
-            </q-item-section>
-            <q-item-section>
-              Je confirme que les données saisies sont toutes correctes et prêtes à être mises en stock.
-              En acceptant la mise en stock, vous ne pourrez plus modifier
-              les lots et les entrées du stock liés à cette facture après
-              une prochaine action(une autre entrée ou sortie) modifiant le stock.
-            </q-item-section>
-          </q-item>
-        </q-card-section>
         <q-card-actions align="around">
           <q-btn
             unelevated
@@ -205,7 +185,6 @@
             label=" Mettre les produits au stock"
             icon-right="drive_file_move"
             type="submit"
-            :disable="!condition"
           />
           <q-btn
             v-close-popup
@@ -283,8 +262,7 @@ export default defineComponent({
     return {
       cost,
       columns,
-      invoiceInput,
-      condition: ref<boolean>(false),
+      invoiceInput
     }
   }
 });

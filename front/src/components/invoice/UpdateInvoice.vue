@@ -1,9 +1,9 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
     <q-menu>
-      <q-form @submit.prevent="updateInvoice" class="q-pa-md">
+      <q-form @submit.prevent="updateInvoice(updateInput)" class="q-pa-md">
         <p class="text-center text-subtitle1">
-          Modification de la facture
+          Modification de la facture {{invoice.reference}}
         </p>
         <q-card flat>
           <q-card-section horizontal>
@@ -74,8 +74,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Invoice } from '../../graphql/types';
+import { defineComponent, PropType, reactive, watch } from 'vue';
+import { Invoice, UpdateInvoiceInput } from '../../graphql/types';
 import { useUpdateInvoice } from '../../graphql/invoice/invoice.service';
 import DateInput from '../shared/DateInput.vue';
 
@@ -85,12 +85,23 @@ export default defineComponent({
   props: {
     invoice: {
       type: Object as PropType<Invoice>,
-      default: () => ({})
+      required: true
     }
   },
   setup(props) {
+    const updateInput = reactive<UpdateInvoiceInput>({
+      id: 0, deliveryDate: '', dueDate: '', expense: 0, reference: ''
+    });
+    function setUpdateInput() {
+      const { id, deliveryDate, dueDate, expense, reference } = props.invoice;
+      Object.assign(updateInput, { id, deliveryDate, dueDate, expense, reference });
+    }
+    watch(() => props.invoice, () => {
+      setUpdateInput();
+    }, { deep: true, immediate: true })
     return {
-      ...useUpdateInvoice(props.invoice)
+      ...useUpdateInvoice(),
+      updateInput
     }
   }
 });

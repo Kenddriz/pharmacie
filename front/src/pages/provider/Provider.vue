@@ -1,6 +1,10 @@
 <template>
   <q-page class="row justify-center items-start q-pa-md">
-    <ProviderForm square flat class="col-12 col-md-3" @submit="createProvider($event)" />
+    <ProviderForm
+      square
+      flat class="col-12 col-md-3"
+      @submit="createProvider($event)"
+    />
     <q-table
       square
       bordered
@@ -112,8 +116,10 @@
         <q-tr v-show="props.expand" :props="props">
           <q-td no-hover colspan="100%">
             <ProviderCommands
-              :provider-id="props.row.id"
+              :expand="props.expand"
+              :provider="props.row"
               @add="openAddCmdDialog(props.row)"
+              @more="openMoreCmdDialog($event)"
             />
           </q-td>
         </q-tr>
@@ -147,7 +153,11 @@
       />
     </q-dialog>
     <!---add command--->
-    <q-dialog full-width full-height v-model="addCmdDialog.show">
+    <q-dialog
+      full-width
+      full-height
+      v-model="addCmdDialog.show"
+    >
       <q-card>
         <q-card-section>
           <AddCommand :provider="addCmdDialog.provider">
@@ -155,6 +165,34 @@
               <q-btn unelevated icon="close" text-color="red" @click="addCmdDialog.show = false" />
             </template>
           </AddCommand>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!--command details-->
+    <q-dialog
+      full-width
+      full-height
+      v-model="moreCmdDialog.show"
+      v-if="moreCmdDialog.command"
+    >
+      <q-card>
+        <q-bar class="bg-primary text-white">
+          <q-icon size="md" name="person" />
+          <div class="text-h6">
+            {{moreCmdDialog.command?.provider.name}} - {{moreCmdDialog.command?.provider.address}}
+          </div>
+          <q-space />
+          <q-btn v-close-popup color="red" flat round icon="close" />
+        </q-bar>
+        <q-card-section>
+          <CommandLineDetails
+            v-if="moreCmdDialog.command?.invoice"
+            :command="moreCmdDialog.command"
+          />
+          <UpdateCommand
+            v-else
+            :command="moreCmdDialog.command"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -169,7 +207,9 @@ import ProviderCommands from '../../components/provider/ProviderCommands.vue';
 import { columns } from '../../components/provider/columns';
 import { usePaginateProviders, useSaveProvider } from '../../graphql/provider/provider.service';
 import AddCommand from '../../components/command/AddCommand.vue';
-import { Provider } from '../../graphql/types';
+import { Command, Provider } from '../../graphql/types';
+import UpdateCommand from '../../components/command/UpdateCommand.vue';
+import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue';
 
   export default defineComponent({
     name: 'Provider',
@@ -177,7 +217,9 @@ import { Provider } from '../../graphql/types';
       ProviderForm,
       CardItem,
       ProviderCommands,
-      AddCommand
+      AddCommand,
+      UpdateCommand,
+      CommandLineDetails
     },
     setup() {
       const addCmdDialog = reactive<{show: boolean; provider: Provider|null}>({
@@ -188,10 +230,22 @@ import { Provider } from '../../graphql/types';
         addCmdDialog.provider = provider;
         addCmdDialog.show = true;
       }
+
+      const moreCmdDialog = reactive<{show: boolean; command: Command|null}>({
+        show: false,
+        command: null
+      });
+      function openMoreCmdDialog(command: Command) {
+        moreCmdDialog.command = command;
+        moreCmdDialog.show = true;
+      }
+
       return {
         isGrid: ref<boolean>(false),
         openAddCmdDialog,
         addCmdDialog,
+        moreCmdDialog,
+        openMoreCmdDialog,
         viewModeOptions: [
           { value: false, slot: 'false' },
           { value: true, slot: 'true' }

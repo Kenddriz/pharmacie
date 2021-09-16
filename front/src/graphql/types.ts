@@ -595,6 +595,25 @@ export type Provider = {
   archivedAt: Scalars['DateTime'];
 };
 
+export type ProviderCommandsChart = {
+  __typename?: 'ProviderCommandsChart';
+  month: Scalars['Float'];
+  command: Scalars['Float'];
+  invoice: Scalars['Float'];
+};
+
+export type ProviderCommandsChartInput = {
+  year: Scalars['Int'];
+  providerId: Scalars['Int'];
+};
+
+export type ProviderCommandsInput = {
+  year: Scalars['Int'];
+  providerId: Scalars['Int'];
+  page: Scalars['Int'];
+  limit: Scalars['Int'];
+};
+
 export type ProviderPagination = {
   __typename?: 'ProviderPagination';
   items: Array<Provider>;
@@ -604,8 +623,9 @@ export type ProviderPagination = {
 export type Query = {
   __typename?: 'Query';
   paginateProviders: ProviderPagination;
-  findProviders: Array<Provider>;
   providers: Array<Provider>;
+  providerCommands: CommandPagination;
+  providerCommandsChart: Array<ProviderCommandsChart>;
   paginateCommands: CommandPagination;
   findCommandById: Command;
   medicines: Array<Medicine>;
@@ -629,8 +649,13 @@ export type QueryPaginateProvidersArgs = {
 };
 
 
-export type QueryFindProvidersArgs = {
-  keyword: Scalars['String'];
+export type QueryProviderCommandsArgs = {
+  input: ProviderCommandsInput;
+};
+
+
+export type QueryProviderCommandsChartArgs = {
+  input: ProviderCommandsChartInput;
 };
 
 

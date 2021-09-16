@@ -34,10 +34,12 @@ export const pItems = [
 export const sItems = [
   {
     label: 'Tableau de board',
-    icon: 'dashboard'
+    icon: 'dashboard',
+    to: 'dashboard'
   },
   {
     label: 'Compte',
-    icon: 'settings'
+    icon: 'settings',
+    to: 'settings'
   }
 ]

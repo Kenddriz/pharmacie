@@ -9,13 +9,18 @@ const routes: RouteRecordRaw[] = [
     path: '/main',
     component: () => import('layouts/main/MainLayout.vue'),
     children: [
-      { path: '', alias: 'unit', component: () => import('pages/Units.vue') },
+      {
+        path: '',
+        alias: 'dashboard',
+        component: () => import('pages/dashboard/Dashboard.vue')
+      },
+      { path: 'unit', component: () => import('pages/Units.vue') },
       { path: 'provider', component: () => import('pages/provider/Provider.vue') },
-      { path: 'medicine', component: () => import('src/pages/medicine/MedicinePage.vue') },
-      { path: 'command', component: () => import('src/pages/command/Command.vue') },
-      { path: 'card-stock', component: () => import('src/pages/CardStock.vue') },
-      { path: 'invoice', component: () => import('src/pages/invoice/Invoice.vue') },
-      { path: 'sale', component: () => import('src/pages/sale/Sale.vue') }
+      { path: 'medicine', component: () => import('pages/medicine/MedicinePage.vue') },
+      { path: 'command', component: () => import('pages/command/Command.vue') },
+      { path: 'card-stock', component: () => import('pages/CardStock.vue') },
+      { path: 'invoice', component: () => import('pages/invoice/Invoice.vue') },
+      { path: 'sale', component: () => import('pages/sale/Sale.vue') }
     ],
   },
 
