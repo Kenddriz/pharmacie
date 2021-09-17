@@ -87,7 +87,6 @@ type Prescription {
 
 type Sale {
   id: Float!
-  discount: Float!
   createdAt: String!
   prescription: Prescription
   stockMovements: [StockMovement!]!
@@ -197,8 +196,19 @@ type CommandPagination {
   meta: Meta!
 }
 
+type ProviderCommandsChart {
+  month: Float!
+  command: Float!
+  invoice: Float!
+}
+
 type ArticlePagination {
   items: [Article!]!
+  meta: Meta!
+}
+
+type StockMovementPagination {
+  items: [StockMovement!]!
   meta: Meta!
 }
 
@@ -213,8 +223,9 @@ type LoginDto {
 
 type Query {
   paginateProviders(input: PaginationInput!): ProviderPagination!
-  findProviders(keyword: String!): [Provider!]!
   providers: [Provider!]!
+  providerCommands(input: ProviderCommandsInput!): CommandPagination!
+  providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
   medicines: [Medicine!]!
@@ -223,17 +234,36 @@ type Query {
   packaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
+  paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
   sale(id: Int!): Sale!
-  patient(id: Int!): Patient!
+  prescription: [Prescription!]!
+  patient: [Patient!]!
   whoAmI: User!
-  prescription(id: Int!): Prescription!
 }
 
 input PaginationInput {
   keyword: String
+  page: Float!
+  limit: Float!
+}
+
+input ProviderCommandsInput {
+  year: Int!
+  providerId: Int!
+  page: Int!
+  limit: Int!
+}
+
+input ProviderCommandsChartInput {
+  year: Int!
+  providerId: Int!
+}
+
+input PaginateStockMovementInput {
+  medicineId: Float!
   page: Float!
   limit: Float!
 }
@@ -281,13 +311,12 @@ type Mutation {
   createSale(createSaleInput: CreateSaleInput!): Sale!
   updateSale(updateSaleInput: UpdateSaleInput!): Sale!
   removeSale(id: Int!): Sale!
-  createPatient(createPatientInput: CreatePatientInput!): Patient!
-  updatePatient(updatePatientInput: UpdatePatientInput!): Patient!
+  findAll: Prescription!
+  updatePrescription(input: UpdatePrescriptionInput!): Prescription!
+  removePrescription(id: Int!): Prescription!
+  updatePatient(input: UpdatePatientInput!): Patient!
   removePatient(id: Int!): Patient!
   login(input: AuthInput!): LoginDto!
-  createPrescription(createPrescriptionInput: CreatePrescriptionInput!): Prescription!
-  updatePrescription(updatePrescriptionInput: UpdatePrescriptionInput!): Prescription!
-  removePrescription(id: Int!): Prescription!
 }
 
 input CreateUserInput {
@@ -480,9 +509,10 @@ input UpdateSaleInput {
   id: Int!
 }
 
-input CreatePatientInput {
+input UpdatePrescriptionInput {
   """Example field (placeholder)"""
-  exampleField: Int!
+  exampleField: Int
+  id: Int!
 }
 
 input UpdatePatientInput {
@@ -492,15 +522,4 @@ input UpdatePatientInput {
 input AuthInput {
   username: String!
   password: String!
-}
-
-input CreatePrescriptionInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdatePrescriptionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }

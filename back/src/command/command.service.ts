@@ -4,6 +4,11 @@ import { Command } from './command.entity';
 import { Repository } from 'typeorm';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
+import {
+  ProviderCommandsChartInput,
+  ProviderCommandsInput,
+} from './dto/command.input';
+import { ProviderCommandsChart } from './dto/command.dto';
 
 @Injectable()
 export class CommandService {
@@ -29,5 +34,36 @@ export class CommandService {
 
     const { page, limit } = input;
     return await paginate<Command>(queryBuilder, { page, limit });
+  }
+  async providerCommands(
+    input: ProviderCommandsInput,
+  ): Promise<Pagination<Command>> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('c')
+      .where('c.providerId = :providerId', { providerId: input.providerId })
+      .andWhere('EXTRACT(YEAR FROM c.createdAt) = :year', { year: input.year })
+      .orderBy('c.createdAt', 'DESC');
+    return await paginate<Command>(queryBuilder, {
+      page: input.page,
+      limit: input.limit,
+    });
+  }
+
+  async providerCommandsChart(
+    input: ProviderCommandsChartInput,
+  ): Promise<ProviderCommandsChart[]> {
+    return this.repository
+      .createQueryBuilder('cmd')
+      .leftJoin('invoices', 'inv', 'cmd.id = inv.commandId')
+      .select('EXTRACT(MONTH FROM cmd.createdAt)', 'month')
+      .addSelect('COUNT(cmd.id)', 'command')
+      .addSelect('COUNT(inv.id)', 'invoice')
+      .where('EXTRACT(YEAR FROM cmd.createdAt) = :year', { year: input.year })
+      .andWhere('cmd.providerId = :providerId', {
+        providerId: input.providerId,
+      })
+      .groupBy('month')
+      .orderBy('month', 'ASC')
+      .getRawMany();
   }
 }

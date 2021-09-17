@@ -16,3 +16,13 @@ export class CommandPagination {
   @Field(() => Meta)
   meta: Meta;
 }
+
+@ObjectType()
+export class ProviderCommandsChart {
+  @Field()
+  month: number;
+  @Field()
+  command: number;
+  @Field()
+  invoice: number;
+}

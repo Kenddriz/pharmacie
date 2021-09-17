@@ -1,4 +1,11 @@
-import { Resolver, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Args,
+  ResolveField,
+  Root,
+  Query,
+} from '@nestjs/graphql';
 import { StockMovementService } from './stock-movement.service';
 import { StockMovement } from './stock-movement.entity';
 import { BatchService } from '../batch/batch.service';
@@ -7,6 +14,10 @@ import { InvoiceService } from '../invoice/invoice.service';
 import { Invoice } from '../invoice/invoice.entity';
 import { UpdateAssuredLineInput } from '../invoice/dto/invoice.input';
 import { MedicineService } from '../medicine/medicine.service';
+import { StockMovementPagination } from './dto/stock-movement.output';
+import { PaginateStockMovementInput } from './dto/stock-movement.input';
+import { Sale } from '../sale/sale.entity';
+import { SaleService } from '../sale/sale.service';
 
 @Resolver(() => StockMovement)
 export class StockMovementResolver {
@@ -15,6 +26,7 @@ export class StockMovementResolver {
     private invoiceService: InvoiceService,
     private batchService: BatchService,
     private medicineService: MedicineService,
+    private saleService: SaleService,
   ) {}
 
   @Mutation(() => StockMovement)
@@ -63,6 +75,12 @@ export class StockMovementResolver {
     return await this.stmService.save(alterationCause);
   }
 
+  @Query(() => StockMovementPagination)
+  async paginateStockMovement(
+    @Args('input') input: PaginateStockMovementInput,
+  ): Promise<StockMovementPagination> {
+    return this.stmService.paginate(input);
+  }
   @ResolveField(() => Invoice)
   async invoice(@Root() stockMovement: StockMovement): Promise<Invoice> {
     return this.invoiceService.findOneById(stockMovement.invoiceId);
@@ -70,5 +88,9 @@ export class StockMovementResolver {
   @ResolveField(() => Batch)
   async batch(@Root() stockMovement: StockMovement): Promise<Batch> {
     return this.batchService.findOne(stockMovement.batchId);
+  }
+  @ResolveField(() => Sale)
+  async sale(@Root() stockMovement: StockMovement): Promise<Sale> {
+    return this.saleService.findOneById(stockMovement.saleId);
   }
 }

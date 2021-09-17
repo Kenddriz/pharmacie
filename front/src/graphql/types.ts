@@ -128,19 +128,9 @@ export type CreatePackagingInput = {
   multiplicity: Scalars['Int'];
 };
 
-export type CreatePatientInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
-};
-
 export type CreatePaymentInput = {
   invoiceId: Scalars['Float'];
   form: PaymentFormInput;
-};
-
-export type CreatePrescriptionInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
 };
 
 export type CreateSaleInput = {
@@ -303,13 +293,12 @@ export type Mutation = {
   createSale: Sale;
   updateSale: Sale;
   removeSale: Sale;
-  createPatient: Patient;
+  findAll: Prescription;
+  updatePrescription: Prescription;
+  removePrescription: Prescription;
   updatePatient: Patient;
   removePatient: Patient;
   login: LoginDto;
-  createPrescription: Prescription;
-  updatePrescription: Prescription;
-  removePrescription: Prescription;
 };
 
 
@@ -498,13 +487,18 @@ export type MutationRemoveSaleArgs = {
 };
 
 
-export type MutationCreatePatientArgs = {
-  createPatientInput: CreatePatientInput;
+export type MutationUpdatePrescriptionArgs = {
+  input: UpdatePrescriptionInput;
+};
+
+
+export type MutationRemovePrescriptionArgs = {
+  id: Scalars['Int'];
 };
 
 
 export type MutationUpdatePatientArgs = {
-  updatePatientInput: UpdatePatientInput;
+  input: UpdatePatientInput;
 };
 
 
@@ -517,26 +511,17 @@ export type MutationLoginArgs = {
   input: AuthInput;
 };
 
-
-export type MutationCreatePrescriptionArgs = {
-  createPrescriptionInput: CreatePrescriptionInput;
-};
-
-
-export type MutationUpdatePrescriptionArgs = {
-  updatePrescriptionInput: UpdatePrescriptionInput;
-};
-
-
-export type MutationRemovePrescriptionArgs = {
-  id: Scalars['Int'];
-};
-
 export type Packaging = {
   __typename?: 'Packaging';
   id: Scalars['Float'];
   units: Array<Unit>;
   archivedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type PaginateStockMovementInput = {
+  medicineId: Scalars['Float'];
+  page: Scalars['Float'];
+  limit: Scalars['Float'];
 };
 
 export type PaginationInput = {
@@ -634,13 +619,14 @@ export type Query = {
   packaging: Array<Packaging>;
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
+  paginateStockMovement: StockMovementPagination;
   paginateInvoices: InvoicePagination;
   methods: Array<Method>;
   findExistingBatch?: Maybe<Batch>;
   sale: Sale;
-  patient: Patient;
+  prescription: Array<Prescription>;
+  patient: Array<Patient>;
   whoAmI: User;
-  prescription: Prescription;
 };
 
 
@@ -679,6 +665,11 @@ export type QueryFindOneArticleArgs = {
 };
 
 
+export type QueryPaginateStockMovementArgs = {
+  input: PaginateStockMovementInput;
+};
+
+
 export type QueryPaginateInvoicesArgs = {
   paginationInput: PaginationInput;
 };
@@ -693,20 +684,9 @@ export type QuerySaleArgs = {
   id: Scalars['Int'];
 };
 
-
-export type QueryPatientArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryPrescriptionArgs = {
-  id: Scalars['Int'];
-};
-
 export type Sale = {
   __typename?: 'Sale';
   id: Scalars['Float'];
-  discount: Scalars['Float'];
   createdAt: Scalars['String'];
   prescription?: Maybe<Prescription>;
   stockMovements: Array<StockMovement>;
@@ -750,6 +730,12 @@ export type StockMovementFormInput = {
   price: Scalars['Float'];
   vat: Scalars['Float'];
   discount: Scalars['Float'];
+};
+
+export type StockMovementPagination = {
+  __typename?: 'StockMovementPagination';
+  items: Array<StockMovement>;
+  meta: Meta;
 };
 
 export type Unit = {

@@ -18,7 +18,7 @@ import { InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
 
-export const useArticle = () => {
+export const usePaginateArticle = () => {
   const searchInput = reactive<PaginationInput>({
     limit: 20,
     keyword: '',

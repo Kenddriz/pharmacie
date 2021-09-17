@@ -1,5 +1,5 @@
 <template>
-  <q-splitter v-model="insideModel">
+  <q-splitter :model-value="insideModel" v-model="insideModel">
     <template v-slot:before>
       <div class="q-pa-md">
         <q-linear-progress
@@ -38,7 +38,7 @@
             bordered
             v-for="med in article.medicines||[]"
             :key="med.id"
-            :class="selected[0].id === med.id ? 'bg-teal-2' : ''"
+            :class="selected[0].id === med.id ? 'bg-brown-1' : ''"
           >
             <q-list dense>
               <q-item class="q-mt-sm">
@@ -80,6 +80,7 @@
                 </q-item-section>
               </q-item>
             </q-list>
+            <q-separator />
             <q-card-actions align="around">
               <q-btn
                 icon="read_more"
@@ -99,6 +100,13 @@
                 color="primary"
                 flat
               />
+              <q-btn
+                color="brown"
+                flat
+                @click="movementStock(med)"
+              >
+                <q-icon size="xs" name="inventory_2" />
+              </q-btn>
             </q-card-actions>
           </q-card>
         </div>
@@ -114,35 +122,6 @@
       />
     </template>
   </q-splitter>
-
-  <q-dialog v-if="selected.length" v-model="updateDialog">
-    <q-card>
-      <q-bar class="bg-primary text-white">
-        <q-icon
-          @click="softRemoveMedicine(article.id, selected[0].id)"
-          class="cursor-pointer"
-          name="delete_sweep"
-        />
-        <q-space />
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-primary">Fermer</q-tooltip>
-        </q-btn>
-      </q-bar>
-      <MedicineForm
-        :forms="forms"
-        :selectedForm="selectedForm"
-        :dosages="dosages"
-        :selectedDosage="selectedDosage"
-        :packaging="packagingList"
-        :selectedPk="selectedPk"
-        :articleId="article.id"
-        :price="selected[0].currentSalePrice"
-        :vat="selected[0].currentVat"
-        @submit="updateMedicine(selected[0].id,$event)"
-      >
-      </MedicineForm>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -155,6 +134,8 @@ import { useCreateMedicine, useUpdateMedicine, useSoftRemoveMedicine } from '../
 import MedicineForm from './MedicineForm.vue';
 import UnitConverter from '../packaging/UnitConverter.vue';
 import Batch from '../batch/Batch.vue';
+import CardStock from './CardStock.vue';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'Medicine',
@@ -175,7 +156,7 @@ export default defineComponent({
       }
       else selected.value.length = 0;
     }, { immediate: true });
-
+    const {dialog} = useQuasar();
     return {
       ...useForms(),
       ...useDosages(),
@@ -185,6 +166,12 @@ export default defineComponent({
       ...useSoftRemoveMedicine(),
       selected,
       insideModel: ref(50),
+      movementStock: (medicine: Medicine) => {
+        dialog({
+          component: CardStock,
+          componentProps: { medicine: { ...medicine, article: props.article } }
+        });
+      }
     }
   },
   methods: {

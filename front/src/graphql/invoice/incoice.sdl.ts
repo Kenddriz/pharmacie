@@ -2,7 +2,6 @@ import { gql } from '@apollo/client/core';
 import { Command, Invoice, InvoicePagination } from '../types';
 import { PAYMENT_PARAMS } from '../payment/payment.sdl';
 import { PAGINATION_META } from '../utils/pagination';
-import { STOCK_MVT_FIELDS } from '../stock-movement/stock-mvt.sdl';
 import { MEDICINE_FIELDS } from '../medicine/medicine.sdl';
 import { ARTICLE_PARAMS } from '../article/article.sdl';
 import { COMMAND_LINE } from '../command-line/commandLine.sdl';
@@ -14,6 +13,14 @@ export type PaginateInvoicesData = {
 export type CreateInvoiceData = {
   createInvoice: Command
 }
+export const STOCK_MVT_FIELDS = `
+  id
+  quantity
+  price
+  discount
+  stock
+  vat
+`
 export const PROVIDER_FIELDS = `
   id
   name

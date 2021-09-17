@@ -5,10 +5,22 @@ import { SaveProviderInput } from './types/provider.input';
 import { uniqId } from '../shared/id-builder.service';
 import { PaginationInput } from '../shared/shared.input';
 import { ProviderPagination } from './types/provider.dto';
+import { CommandService } from '../command/command.service';
+import {
+  CommandPagination,
+  ProviderCommandsChart,
+} from '../command/dto/command.dto';
+import {
+  ProviderCommandsChartInput,
+  ProviderCommandsInput,
+} from '../command/dto/command.input';
 
 @Resolver(() => Provider)
 export class ProviderResolver {
-  constructor(private providerService: ProviderService) {}
+  constructor(
+    private providerService: ProviderService,
+    private commandService: CommandService,
+  ) {}
 
   @Mutation(() => Provider)
   async saveProvider(@Args('input') input: SaveProviderInput) {
@@ -31,14 +43,19 @@ export class ProviderResolver {
   }
 
   @Query(() => [Provider])
-  async findProviders(
-    @Args({ name: 'keyword', type: () => String }) keyword: string,
-  ): Promise<Provider[]> {
-    return await this.providerService.findProviders(keyword);
-  }
-
-  @Query(() => [Provider])
   async providers(): Promise<Provider[]> {
     return await this.providerService.providers();
+  }
+  @Query(() => CommandPagination)
+  async providerCommands(
+    @Args('input') input: ProviderCommandsInput,
+  ): Promise<CommandPagination> {
+    return this.commandService.providerCommands(input);
+  }
+  @Query(() => [ProviderCommandsChart])
+  async providerCommandsChart(
+    @Args('input') input: ProviderCommandsChartInput,
+  ): Promise<ProviderCommandsChart[]> {
+    return this.commandService.providerCommandsChart(input);
   }
 }

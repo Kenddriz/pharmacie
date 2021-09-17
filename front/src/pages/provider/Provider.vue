@@ -69,7 +69,7 @@
         </div>
       </template>
       <template v-slot:header="props">
-        <q-tr :props="props">
+        <q-tr no-hover :props="props">
           <q-th auto-width />
           <q-th
             v-for="col in props.cols"
@@ -91,7 +91,7 @@
       </template>
       <!-- Table body for table view mod-->
       <template v-slot:body="props">
-        <q-tr :props="props">
+        <q-tr no-hover :props="props">
           <q-td auto-width>
             <q-btn
               size="sm"
@@ -113,7 +113,7 @@
             <q-btn icon="delete" size="sm" round color="warning" />
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props">
+        <q-tr no-hover v-show="props.expand" :props="props">
           <q-td no-hover colspan="100%">
             <ProviderCommands
               :expand="props.expand"

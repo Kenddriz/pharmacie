@@ -21,5 +21,12 @@ export default {
   local: {
     dateMask: '##/##/####',
     monthsShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sept', 'Oct', 'Nov', 'Dec']
+  },
+  meta: {
+    itemCount: 'Nombre d\'éléments',
+    totalItems: 'Total d\'éléments',
+    itemsPerPage: 'Eléments par page',
+    totalPages: 'Toal de Pages',
+    currentPage: 'Page actuelle'
   }
 };

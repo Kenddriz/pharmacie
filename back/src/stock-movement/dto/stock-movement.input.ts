@@ -11,3 +11,12 @@ export class StockMovementFormInput {
   @Field(() => Float)
   discount: number;
 }
+@InputType()
+export class PaginateStockMovementInput {
+  @Field()
+  medicineId: number;
+  @Field()
+  page: number;
+  @Field()
+  limit: number;
+}

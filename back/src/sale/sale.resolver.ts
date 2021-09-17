@@ -1,12 +1,17 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Root } from '@nestjs/graphql';
 import { SaleService } from './sale.service';
 import { Sale } from './sale.entity';
 import { CreateSaleInput } from './dto/create-sale.input';
 import { UpdateSaleInput } from './dto/update-sale.input';
+import { PrescriptionService } from '../prescription/prescription.service';
+import { Prescription } from '../prescription/prescription.entity';
 
 @Resolver(() => Sale)
 export class SaleResolver {
-  constructor(private readonly saleService: SaleService) {}
+  constructor(
+    private saleService: SaleService,
+    private prescriptionService: PrescriptionService,
+  ) {}
 
   @Mutation(() => Sale)
   createSale(@Args('createSaleInput') createSaleInput: CreateSaleInput) {
@@ -31,5 +36,9 @@ export class SaleResolver {
   @Mutation(() => Sale)
   removeSale(@Args('id', { type: () => Int }) id: number) {
     return this.saleService.remove(id);
+  }
+  @ResolveField(() => Prescription)
+  async prescription(@Root() sale: Sale): Promise<Prescription> {
+    return this.prescriptionService.findOneById(sale.prescriptionId);
   }
 }

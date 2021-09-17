@@ -65,7 +65,7 @@
 <script lang="ts">
 import { ref } from 'vue';
 import Article from '../../components/article/Article.vue';
-import { useArticle, useSaveArticle } from '../../graphql/article/article.service';
+import { usePaginateArticle, useSaveArticle } from '../../graphql/article/article.service';
 import ArticleForm from '../../components/article/ArticleForm.vue';
 import Medicine from '../../components/medicine/Medicine.vue';
 
@@ -75,7 +75,7 @@ export default {
   setup () {
     return {
       splitterModel: ref(25), // start at 50%
-      ...useArticle(),
+      ...usePaginateArticle(),
       ...useSaveArticle()
     }
   }

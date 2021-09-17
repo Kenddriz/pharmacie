@@ -1,9 +1,20 @@
-import { useMutation } from '@vue/apollo-composable';
-import { UPDATE_ASSURED_LINE, UpdateAssuredLineData } from './stock-mvt.sdl';
-import { MutationUpdateAssuredLineArgs, StockMovement, UpdateAssuredLineInput } from '../types';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
+import {
+  PAGINATE_STOCK_MOVEMENT,
+  PaginateStockMovementData,
+  UPDATE_ASSURED_LINE,
+  UpdateAssuredLineData,
+} from './stock-mvt.sdl';
+import {
+  MutationUpdateAssuredLineArgs, PaginateStockMovementInput,
+  QueryPaginateStockMovementArgs,
+  StockMovement,
+  UpdateAssuredLineInput,
+} from '../types';
 import { computed, reactive } from 'vue';
 import { Loading } from 'quasar';
 import { notify } from '../../shared/notification';
+import { InitialPagination } from '../utils/pagination';
 
 export const useUpdateAssuredLine = (stm: StockMovement) => {
   const updateInput = reactive<UpdateAssuredLineInput>({
@@ -51,5 +62,23 @@ export const useUpdateAssuredLine = (stm: StockMovement) => {
     ualLoading,
     updateAssuredLine,
     states
+  }
+}
+
+export const usePaginateStockMovement = (medicineId: number) => {
+  const stmInput = reactive<PaginateStockMovementInput>({
+    medicineId,
+    limit: 10,
+    page: 1
+  });
+  const { loading, result } = useQuery<
+    PaginateStockMovementData,
+    QueryPaginateStockMovementArgs
+    >(PAGINATE_STOCK_MOVEMENT, { input: stmInput});
+  const stockMovements = useResult(result, InitialPagination, pick => pick?.paginateStockMovement||InitialPagination);
+  return {
+    loading,
+    stmInput,
+    stockMovements
   }
 }

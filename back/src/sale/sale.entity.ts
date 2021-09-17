@@ -1,6 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import {
-  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
@@ -19,10 +18,6 @@ export class Sale {
   @Field()
   @PrimaryColumn()
   id: number;
-
-  @Field()
-  @Column({ type: 'float' })
-  discount: number; /**discount sale price**/
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })

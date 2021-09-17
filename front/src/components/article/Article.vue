@@ -35,13 +35,6 @@
             color="primary"
             @click="$emit('edit', scope.row)"
           />
-          <q-fab-action
-            square
-            label="Fiche de stock"
-            padding="xs"
-            color="primary"
-            to="/main/card-stock"
-          />
         </q-fab>
       </template>
       <template v-slot:top>
@@ -66,6 +59,7 @@
             </template>
           </q-input>
           <q-pagination
+            v-if="articlePagination.meta.totalPages > 1"
             :model-value="page"
             outline
             color="grey"

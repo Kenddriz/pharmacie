@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, computed, ref } from 'vue';
+import { defineComponent, PropType, reactive, computed } from 'vue';
 import { columns } from './data';
 import { CommandLine, CreateInvoiceInput } from '../../graphql/types';
 import PackagingInput from '../packaging/PackagingInput.vue';

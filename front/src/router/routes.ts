@@ -18,7 +18,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'provider', component: () => import('pages/provider/Provider.vue') },
       { path: 'medicine', component: () => import('pages/medicine/MedicinePage.vue') },
       { path: 'command', component: () => import('pages/command/Command.vue') },
-      { path: 'card-stock', component: () => import('pages/CardStock.vue') },
       { path: 'invoice', component: () => import('pages/invoice/Invoice.vue') },
       { path: 'sale', component: () => import('pages/sale/Sale.vue') }
     ],

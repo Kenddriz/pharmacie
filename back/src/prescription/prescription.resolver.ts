@@ -1,35 +1,47 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Root,
+} from '@nestjs/graphql';
 import { PrescriptionService } from './prescription.service';
 import { Prescription } from './prescription.entity';
-import { CreatePrescriptionInput } from './dto/create-prescription.input';
 import { UpdatePrescriptionInput } from './dto/update-prescription.input';
+import { PatientService } from '../patient/patient.service';
+import { Patient } from '../patient/patient.entity';
 
 @Resolver(() => Prescription)
 export class PrescriptionResolver {
-  constructor(private readonly prescriptionService: PrescriptionService) {}
+  constructor(
+    private prescriptionService: PrescriptionService,
+    private patientService: PatientService,
+  ) {}
 
   @Mutation(() => Prescription)
-  createPrescription(@Args('createPrescriptionInput') createPrescriptionInput: CreatePrescriptionInput) {
-    return this.prescriptionService.create(createPrescriptionInput);
-  }
-
   @Query(() => [Prescription], { name: 'prescription' })
   findAll() {
     return this.prescriptionService.findAll();
   }
 
-  @Query(() => Prescription, { name: 'prescription' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.prescriptionService.findOne(id);
-  }
-
   @Mutation(() => Prescription)
-  updatePrescription(@Args('updatePrescriptionInput') updatePrescriptionInput: UpdatePrescriptionInput) {
-    return this.prescriptionService.update(updatePrescriptionInput.id, updatePrescriptionInput);
+  async updatePrescription(
+    @Args('input')
+    input: UpdatePrescriptionInput,
+  ) {
+    const prescription = await this.prescriptionService.findOneById(input.id);
+    Object.assign(prescription, input);
+    return this.prescriptionService.save(prescription);
   }
 
   @Mutation(() => Prescription)
   removePrescription(@Args('id', { type: () => Int }) id: number) {
     return this.prescriptionService.remove(id);
+  }
+  @ResolveField(() => Patient)
+  async patient(@Root() prescription: Prescription): Promise<Patient> {
+    return this.patientService.findOneById(prescription.patientId);
   }
 }
