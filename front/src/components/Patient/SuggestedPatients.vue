@@ -18,6 +18,7 @@
       :showCloseIcon="true"
       id="overlay_panel"
       class="text-blue-grey-14"
+      :base-z-index="5000"
     >
       <q-list padding>
         <q-item

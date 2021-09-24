@@ -16,8 +16,8 @@
         label=" Avec ordonnance"
         @update:model-value="$emit('update:saleType', $event)"
       >
-        <q-menu ref="typeMenu" fit>
-          <q-card>
+        <q-menu ref="typeMenu" fit persistent>
+          <q-card class="q-pb-md">
             <q-item-label class="q-pb-none row justify-between items-center" header>
               Informations d'ordonnance
               <q-btn
