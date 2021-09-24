@@ -26,7 +26,7 @@
             <q-item-section>{{prescription[1]}}</q-item-section>
           </template>
           <q-item-section>{{formatDate(sale.createdAt, 'DATE_ONLY')}}</q-item-section>
-          <q-item-section v-if="size = sale.stockMovements.length" top side>
+          <q-item-section v-if="(size = sale.stockMovements.length)!==undefined" top side>
             {{size}} ligne{{size > 1 ? 's' : ''}}
           </q-item-section>
         </q-item>
