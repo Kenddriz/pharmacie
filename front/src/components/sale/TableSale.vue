@@ -20,7 +20,7 @@
             outline
             dense
             text-color="primary"
-            :label="`${searchTool ? 'Fermer' : 'Ouvrir' } l'outil de recherche`"
+            :label="`${searchTool ? 'Fermer' : 'Ouvrir' } l'outil de recherche ${searchTool}`"
             size="md"
             :icon-right="searchTool ? 'close' : 'search'"
             class="full-width"
@@ -119,7 +119,6 @@
       text-color="white"
       color="primary"
       v-touch-pan.prevent.mouse="moveFab"
-      @click="searchTool = !searchTool"
       v-ripple
     >
       <q-icon
@@ -131,10 +130,9 @@
       />
       <q-menu
         max-height="86vh"
-        :model-value="searchTool"
+        v-model="searchTool"
         anchor="bottom left"
         self="bottom right"
-        @before-hide="searchTool = false"
       >
         <SearchTool
           @add-shop="addShop"
