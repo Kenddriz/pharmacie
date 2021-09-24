@@ -72,7 +72,6 @@ export default defineComponent({
           });
           return;
         }
-
         update(() => {
           const needle = val.toLowerCase();
           opt.value = opt.value.filter(

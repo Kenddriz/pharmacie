@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSaleInput } from './dto/create-sale.input';
-import { UpdateSaleInput } from './dto/update-sale.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Sale } from './sale.entity';
 import { Repository } from 'typeorm';
+import { PaginationInput } from '../shared/shared.input';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class SaleService {
@@ -11,8 +11,8 @@ export class SaleService {
     @InjectRepository(Sale)
     private repository: Repository<Sale>,
   ) {}
-  create(createSaleInput: CreateSaleInput) {
-    return 'This action adds a new sale';
+  async save(sale: Sale) {
+    return this.repository.save(sale);
   }
 
   findAll() {
@@ -25,11 +25,23 @@ export class SaleService {
   async findOneById(id: number): Promise<Sale> {
     return this.repository.findOne(id);
   }
-  update(id: number, updateSaleInput: UpdateSaleInput) {
-    return `This action updates a #${id} sale`;
+  async softRemove(id: number): Promise<boolean> {
+    const sale = await this.findOneWithChildren(id);
+    const removed = await this.repository.softRemove(sale);
+    return !!removed;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} sale`;
+  async findOneWithChildren(id: number): Promise<Sale> {
+    return this.repository.findOne(id, {
+      relations: ['stockMovements', 'prescriptions'],
+    });
+  }
+  async remove(sale: Sale) {
+    return this.repository.remove(sale);
+  }
+  async paginate(input: PaginationInput): Promise<Pagination<Sale>> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('s')
+      .orderBy('s.createdAt', 'DESC');
+    return await paginate<Sale>(queryBuilder, { ...input });
   }
 }

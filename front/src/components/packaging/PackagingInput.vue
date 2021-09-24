@@ -10,11 +10,12 @@
     v-model.number="modelValue"
     lazy-rules
     :rules="[ val => val > 0 || 'Entrer nombre strictement positif']"
+    input-class="text-blue-grey-14"
   >
     <template v-slot:prepend>
       <q-btn color="positive" icon="info" dense flat>
-        <q-menu anchor="center middle" self="center middle">
-          <q-item>
+        <q-menu style="width: fit-content" fit auto-close anchor="center middle" self="center middle">
+          <q-item v-close-popup>
             <q-item-section v-for="(u, index) in units" :key="index">
               <q-item-label lines="1">{{u.label}}</q-item-label>
               <q-item-label caption>{{`${u.multiplicity} ${units[index + 1] ? ' = ' : ''}`}}</q-item-label>

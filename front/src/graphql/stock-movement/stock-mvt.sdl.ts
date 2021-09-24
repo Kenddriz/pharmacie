@@ -1,7 +1,7 @@
-import { StockMovement, StockMovementPagination } from '../types';
+import { CancelSaleLineOutput, StockMovement, StockMovementPagination } from '../types';
 import { gql } from '@apollo/client/core';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
-import { PATIENT_FIELDS } from '../patient.sdl';
+import { PATIENT_FIELDS } from '../patient/patient.sdl';
 import { PROVIDER_FIELDS, STOCK_MVT_FIELDS } from '../invoice/incoice.sdl';
 import { PAGINATION_META } from '../utils/pagination';
 
@@ -49,6 +49,36 @@ export const PAGINATE_STOCK_MOVEMENT = gql`
           }
         }
         ${PAGINATION_META}
+      }
+    }
+`;
+
+export type UpdateSaleLineData = {
+  updateSaleLine: StockMovement;
+}
+export const UPDATE_SALE_LINE = gql`
+    mutation UpdateSaleLine($input: UpdateSaleLineInput!) {
+      updateSaleLine(input: $input) {
+        ${STOCK_MVT_FIELDS}
+        batch { id currentStock }
+      }
+    }
+`;
+
+export type CancelSaleLinesData = {
+  cancelSaleLines: CancelSaleLineOutput;
+}
+
+export const CANCEL_SALE_LINES = gql`
+    mutation CancelSaleLines($input: CancelSaleLinesInput!) {
+      cancelSaleLines(input: $input) {
+        sale{
+          id
+          stockMovements{
+            ${STOCK_MVT_FIELDS}
+          }
+        }
+        batches { id currentStock }
       }
     }
 `;

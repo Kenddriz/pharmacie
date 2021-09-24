@@ -70,11 +70,11 @@ type Packaging {
 
 type Patient {
   id: Float!
-  lastName: String!
-  firstName: String!
+  name: String!
   phone: String!
   prescriptions: [Prescription!]!
   archivedAt: DateTime!
+  createdAt: DateTime!
 }
 
 type Prescription {
@@ -82,12 +82,13 @@ type Prescription {
   reference: String!
   description: String!
   patient: Patient!
+  sale: Sale!
   archivedAt: DateTime!
 }
 
 type Sale {
   id: Float!
-  createdAt: String!
+  createdAt: DateTime!
   prescription: Prescription
   stockMovements: [StockMovement!]!
   archivedAt: DateTime!
@@ -212,8 +213,18 @@ type StockMovementPagination {
   meta: Meta!
 }
 
+type CancelSaleLineOutput {
+  sale: Sale!
+  batches: [Batch!]!
+}
+
 type InvoicePagination {
   items: [Invoice!]!
+  meta: Meta!
+}
+
+type SalePagination {
+  items: [Sale!]!
   meta: Meta!
 }
 
@@ -238,9 +249,8 @@ type Query {
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
-  sale(id: Int!): Sale!
-  prescription: [Prescription!]!
-  patient: [Patient!]!
+  paginateSales(paginationInput: PaginationInput!): SalePagination!
+  findSuggestedPatients(keyword: String!): [Patient!]!
   whoAmI: User!
 }
 
@@ -298,6 +308,9 @@ type Mutation {
   saveArticle(input: SaveArticleInput!): Article!
   removeArticle(id: Int!): Article!
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
+  updateSaleLine(input: UpdateSaleLineInput!): StockMovement!
+  cancelSaleLines(input: CancelSaleLinesInput!): CancelSaleLineOutput!
+  addSaleLine(input: AddSaleLine!): Sale!
   createInvoice(input: CreateInvoiceInput!): Command!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
   removeInvoice(id: Int!): Invoice!
@@ -308,12 +321,11 @@ type Mutation {
   createBatch(input: BatchFormInput!): Medicine
   updateBatch(input: UpdateBatchInput!): Batch!
   softRemove(id: Int!): Batch!
-  createSale(createSaleInput: CreateSaleInput!): Sale!
-  updateSale(updateSaleInput: UpdateSaleInput!): Sale!
+  createSale(input: CreateSaleInput!): Sale!
   removeSale(id: Int!): Sale!
-  findAll: Prescription!
+  createPrescription(input: CreatePrescriptionInput!): Sale!
   updatePrescription(input: UpdatePrescriptionInput!): Prescription!
-  removePrescription(id: Int!): Prescription!
+  deletePrescription(input: DeletePrescriptionInput!): Sale!
   updatePatient(input: UpdatePatientInput!): Patient!
   removePatient(id: Int!): Patient!
   login(input: AuthInput!): LoginDto!
@@ -441,6 +453,28 @@ input StockMovementFormInput {
   discount: Float!
 }
 
+input UpdateSaleLineInput {
+  quantity: Int!
+  price: Float!
+  vat: Float!
+  discount: Float!
+  batchId: Int!
+  id: Int!
+}
+
+input CancelSaleLinesInput {
+  saleId: Int!
+  saleLineIds: [Int!]!
+}
+
+input AddSaleLine {
+  quantity: Int!
+  price: Float!
+  vat: Float!
+  discount: Float!
+  saleId: Int!
+}
+
 input CreateInvoiceInput {
   invoice: InvoiceInput!
   assuredLines: [AssuredLineInput!]!
@@ -499,20 +533,47 @@ input UpdateBatchInput {
 }
 
 input CreateSaleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  prescription: PrescriptionInput
+  saleLines: [SaleLineInput!]!
 }
 
-input UpdateSaleInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input PrescriptionInput {
+  reference: String!
+  description: String!
+  patient: CreatePatientInput!
+}
+
+input CreatePatientInput {
+  id: Int
+  name: String!
+  phone: String!
+}
+
+input SaleLineInput {
+  quantity: Int!
+  price: Float!
+  vat: Float!
+  discount: Float!
+  batchId: Int!
+}
+
+input CreatePrescriptionInput {
+  reference: String!
+  description: String!
+  patient: CreatePatientInput!
+  saleId: Float!
 }
 
 input UpdatePrescriptionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  reference: String
+  description: String
+  patient: CreatePatientInput
   id: Int!
+}
+
+input DeletePrescriptionInput {
+  id: Float!
+  saleId: Float!
 }
 
 input UpdatePatientInput {

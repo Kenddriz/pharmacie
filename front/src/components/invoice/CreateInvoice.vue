@@ -78,6 +78,10 @@
 
           <template v-slot:top>
             <div class="q-table__title q-ml-md">Liste de produits livrés</div>
+            <div class="q-ml-md">
+              [ <q-icon name="border_color" size="xs" />
+              Adapter les valeurs conformement à tout ce que le fournisseur a livré.]
+            </div>
           </template>
 
           <template v-slot:body="props">
@@ -161,17 +165,10 @@
             </q-tr>
           </template>
           <template v-slot:bottom>
-            <div class="row full-width items-center justify-around">
-              <div class="text-center text-weight-bold text-dark text-subtitle1">
-                <q-icon name="border_color" size="xs" />
-                Adapter les valeurs conformement à tout ce que le fournisseur a livré.
-              </div>
-              <div class="text-body2">
-                [ TTC : HT + TVA = {{cost.ht + cost.tva}},
-                Net à payer : TTC - REMISE = {{cost.discount}},
-                Coût d'achat : Net à payer + Dépense = {{cost.total}}
-                ]
-              </div>
+            <div class="row text-body2 full-width items-center">
+              [ TTC : HT + TVA = {{cost.ht + cost.tva}},
+              Net à payer : TTC - Remise = {{cost.discount}},
+              Coût d'achat : Net à payer + Dépense = {{cost.total}} ]
             </div>
           </template>
         </q-table>

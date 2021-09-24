@@ -14,19 +14,17 @@ export class PrescriptionService {
     return this.repository.save(prescription);
   }
 
-  findAll() {
-    return `This action returns all prescription`;
-  }
-
   async findOneById(id: number): Promise<Prescription> {
     return this.repository.findOne(id);
   }
 
-  update(id: number, updatePrescriptionInput: UpdatePrescriptionInput) {
-    return `This action updates a #${id} prescription`;
+  async findBySale(saleId: number): Promise<Prescription> {
+    return this.repository
+      .createQueryBuilder(`p`)
+      .where(`p.saleId = :saleId`, { saleId })
+      .getOne();
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} prescription`;
+  async remove(id: number) {
+    return this.repository.delete(id);
   }
 }

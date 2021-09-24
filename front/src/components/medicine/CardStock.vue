@@ -54,7 +54,7 @@
             <template v-else>
               <td>{{formatDate(stm.sale.createdAt, 'DATE_TIME')}}</td>
               <td>
-                <template v-if="patient = invoice.sale.prescription.patient">
+                <template v-if="model.patient = invoice.sale.prescription.patient">
                   {{patient.lastName}}  {{patient.firstName}} -  {{patient.phone}}
                 </template>
                 <template v-else>

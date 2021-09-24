@@ -28,5 +28,9 @@ export default {
     itemsPerPage: 'Eléments par page',
     totalPages: 'Toal de Pages',
     currentPage: 'Page actuelle'
+  },
+  sale: {
+    cancelLine: 'La quantité vendue se remettra en stock',
+    cancelAll: 'Toutes quantités vendues se remettrons en stock'
   }
 };

@@ -1,12 +1,13 @@
 import { Dialog } from 'quasar';
 import { i18n } from '../../boot/i18n';
-import { Contact, Medicine, Unit } from '../types';
+import { Contact, Medicine, SaleLineInput, StockMovement, Unit } from '../types';
+import moment from 'moment';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
 }
 
-export const removeDialog = (callbackFn: () => void, msg = 'softRemove') => {
+export const removeDialog = (callbackFn: () => void, msg:'softRemove'|'removeForever' = 'softRemove') => {
   const dialog = Dialog.create({
     title: i18n.global.tm('remove.title') + '',
     message: i18n.global.tm('remove.' + msg) + '',
@@ -50,4 +51,25 @@ export const getOneContact = (contacts: Contact[], each = false) => {
     else if(contact.list.length)list.push(contact.list[0])
   }
   return list.length ? list.join(' - ') : 'aucun contact';
+}
+export const leftDays = (exp: number|string) => {
+  return moment(exp).diff(Date.now(), 'days') + 1;
+}
+export const subdivideToUnits = (val: number, units: Unit[]): number[] => {
+  const size = units.length;
+  const subdivided = Array(units.length).fill(0);
+  let remain = val;
+  const divisor = units[size - 1].multiplicity;
+  units.forEach((unit, index) => {
+    const q = remain * unit.multiplicity;
+    subdivided[index] = Math.floor( q / divisor);
+    remain = q%divisor;
+  });
+  return subdivided;
+}
+
+export const saleLineCost = (input: SaleLineInput|StockMovement): number => {
+  let c = input.price * input.quantity;
+  c += (c * (input.vat / 100)) - (c * (input.discount/100));
+  return c;
 }

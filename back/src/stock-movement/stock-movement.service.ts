@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StockMovement } from './stock-movement.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { PaginateStockMovementInput } from './dto/stock-movement.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
@@ -28,27 +28,46 @@ export class StockMovementService {
       .where(`sm.invoiceId = :invoiceId`, { invoiceId })
       .getMany();
   }
+  async findBySale(saleId: number): Promise<StockMovement[]> {
+    return this.repository
+      .createQueryBuilder('sm')
+      .where(`sm.saleId = :saleId`, { saleId })
+      .getMany();
+  }
   async findByBatch(batchId: number): Promise<StockMovement[]> {
     return this.repository
       .createQueryBuilder('sm')
       .where(`sm.batchId = :batchId`, { batchId })
       .getMany();
   }
-  async findInfectedEntries(
+  async updateInfected(
     startAt: number,
     batchId: number,
-  ): Promise<StockMovement[]> {
+    qDelta: number,
+    sign = '-',
+  ): Promise<UpdateResult> {
+    return this.repository
+      .createQueryBuilder()
+      .update()
+      .set({ stock: () => `stock ${sign} ${qDelta}` })
+      .where('id > :startAt', { startAt })
+      .andWhere('batchId = :batchId', { batchId })
+      .execute();
+  }
+  async findLastInfected(
+    startAt: number,
+    batchId: number,
+  ): Promise<StockMovement> {
     return this.repository
       .createQueryBuilder('smt')
       .where('smt.id > :startAt', { startAt })
       .andWhere('smt.batchId = :batchId', { batchId })
       .withDeleted()
-      .orderBy('smt.id', 'ASC')
-      .getMany();
+      .orderBy('smt.id', 'DESC')
+      .getOne();
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} assuredLine`;
+  async delete(id: number): Promise<DeleteResult> {
+    return this.repository.delete(id);
   }
   async paginate(
     input: PaginateStockMovementInput,

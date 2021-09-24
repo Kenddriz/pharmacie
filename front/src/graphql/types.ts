@@ -18,6 +18,14 @@ export type AddCommandLineInput = {
   commandLine: CommandLineInput;
 };
 
+export type AddSaleLine = {
+  quantity: Scalars['Int'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  discount: Scalars['Float'];
+  saleId: Scalars['Int'];
+};
+
 export type Article = {
   __typename?: 'Article';
   id: Scalars['Float'];
@@ -65,6 +73,17 @@ export type BatchFormInput = {
   medicineId: Scalars['Int'];
   expirationDate: Scalars['String'];
   currentStock?: Maybe<Scalars['Int']>;
+};
+
+export type CancelSaleLineOutput = {
+  __typename?: 'CancelSaleLineOutput';
+  sale: Sale;
+  batches: Array<Batch>;
+};
+
+export type CancelSaleLinesInput = {
+  saleId: Scalars['Int'];
+  saleLineIds: Array<Scalars['Int']>;
 };
 
 export type Command = {
@@ -128,14 +147,27 @@ export type CreatePackagingInput = {
   multiplicity: Scalars['Int'];
 };
 
+export type CreatePatientInput = {
+  id?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
+  phone: Scalars['String'];
+};
+
 export type CreatePaymentInput = {
   invoiceId: Scalars['Float'];
   form: PaymentFormInput;
 };
 
+export type CreatePrescriptionInput = {
+  reference: Scalars['String'];
+  description: Scalars['String'];
+  patient: CreatePatientInput;
+  saleId: Scalars['Float'];
+};
+
 export type CreateSaleInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int'];
+  prescription?: Maybe<PrescriptionInput>;
+  saleLines: Array<SaleLineInput>;
 };
 
 export type CreateUserInput = {
@@ -152,6 +184,11 @@ export type DeleteCommandLineInput = {
 export type DeleteMedicineInput = {
   medicineId: Scalars['Int'];
   articleId: Scalars['Int'];
+};
+
+export type DeletePrescriptionInput = {
+  id: Scalars['Float'];
+  saleId: Scalars['Float'];
 };
 
 export type Dosage = {
@@ -280,6 +317,9 @@ export type Mutation = {
   saveArticle: Article;
   removeArticle: Article;
   updateAssuredLine: StockMovement;
+  updateSaleLine: StockMovement;
+  cancelSaleLines: CancelSaleLineOutput;
+  addSaleLine: Sale;
   createInvoice: Command;
   updateInvoice: Invoice;
   removeInvoice: Invoice;
@@ -291,11 +331,10 @@ export type Mutation = {
   updateBatch: Batch;
   softRemove: Batch;
   createSale: Sale;
-  updateSale: Sale;
   removeSale: Sale;
-  findAll: Prescription;
+  createPrescription: Sale;
   updatePrescription: Prescription;
-  removePrescription: Prescription;
+  deletePrescription: Sale;
   updatePatient: Patient;
   removePatient: Patient;
   login: LoginDto;
@@ -422,6 +461,21 @@ export type MutationUpdateAssuredLineArgs = {
 };
 
 
+export type MutationUpdateSaleLineArgs = {
+  input: UpdateSaleLineInput;
+};
+
+
+export type MutationCancelSaleLinesArgs = {
+  input: CancelSaleLinesInput;
+};
+
+
+export type MutationAddSaleLineArgs = {
+  input: AddSaleLine;
+};
+
+
 export type MutationCreateInvoiceArgs = {
   input: CreateInvoiceInput;
 };
@@ -473,12 +527,7 @@ export type MutationSoftRemoveArgs = {
 
 
 export type MutationCreateSaleArgs = {
-  createSaleInput: CreateSaleInput;
-};
-
-
-export type MutationUpdateSaleArgs = {
-  updateSaleInput: UpdateSaleInput;
+  input: CreateSaleInput;
 };
 
 
@@ -487,13 +536,18 @@ export type MutationRemoveSaleArgs = {
 };
 
 
+export type MutationCreatePrescriptionArgs = {
+  input: CreatePrescriptionInput;
+};
+
+
 export type MutationUpdatePrescriptionArgs = {
   input: UpdatePrescriptionInput;
 };
 
 
-export type MutationRemovePrescriptionArgs = {
-  id: Scalars['Int'];
+export type MutationDeletePrescriptionArgs = {
+  input: DeletePrescriptionInput;
 };
 
 
@@ -533,11 +587,11 @@ export type PaginationInput = {
 export type Patient = {
   __typename?: 'Patient';
   id: Scalars['Float'];
-  lastName: Scalars['String'];
-  firstName: Scalars['String'];
+  name: Scalars['String'];
   phone: Scalars['String'];
   prescriptions: Array<Prescription>;
   archivedAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime'];
 };
 
 export type Payment = {
@@ -564,7 +618,14 @@ export type Prescription = {
   reference: Scalars['String'];
   description: Scalars['String'];
   patient: Patient;
+  sale: Sale;
   archivedAt: Scalars['DateTime'];
+};
+
+export type PrescriptionInput = {
+  reference: Scalars['String'];
+  description: Scalars['String'];
+  patient: CreatePatientInput;
 };
 
 export type Provider = {
@@ -623,9 +684,8 @@ export type Query = {
   paginateInvoices: InvoicePagination;
   methods: Array<Method>;
   findExistingBatch?: Maybe<Batch>;
-  sale: Sale;
-  prescription: Array<Prescription>;
-  patient: Array<Patient>;
+  paginateSales: SalePagination;
+  findSuggestedPatients: Array<Patient>;
   whoAmI: User;
 };
 
@@ -680,17 +740,36 @@ export type QueryFindExistingBatchArgs = {
 };
 
 
-export type QuerySaleArgs = {
-  id: Scalars['Int'];
+export type QueryPaginateSalesArgs = {
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryFindSuggestedPatientsArgs = {
+  keyword: Scalars['String'];
 };
 
 export type Sale = {
   __typename?: 'Sale';
   id: Scalars['Float'];
-  createdAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   prescription?: Maybe<Prescription>;
   stockMovements: Array<StockMovement>;
   archivedAt: Scalars['DateTime'];
+};
+
+export type SaleLineInput = {
+  quantity: Scalars['Int'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  discount: Scalars['Float'];
+  batchId: Scalars['Int'];
+};
+
+export type SalePagination = {
+  __typename?: 'SalePagination';
+  items: Array<Sale>;
+  meta: Meta;
 };
 
 export type SaveArticleInput = {
@@ -799,14 +878,18 @@ export type UpdatePaymentInput = {
 };
 
 export type UpdatePrescriptionInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
+  reference?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  patient?: Maybe<CreatePatientInput>;
   id: Scalars['Int'];
 };
 
-export type UpdateSaleInput = {
-  /** Example field (placeholder) */
-  exampleField?: Maybe<Scalars['Int']>;
+export type UpdateSaleLineInput = {
+  quantity: Scalars['Int'];
+  price: Scalars['Float'];
+  vat: Scalars['Float'];
+  discount: Scalars['Float'];
+  batchId: Scalars['Int'];
   id: Scalars['Int'];
 };
 

@@ -14,10 +14,18 @@ import { InvoiceService } from '../invoice/invoice.service';
 import { Invoice } from '../invoice/invoice.entity';
 import { UpdateAssuredLineInput } from '../invoice/dto/invoice.input';
 import { MedicineService } from '../medicine/medicine.service';
-import { StockMovementPagination } from './dto/stock-movement.output';
-import { PaginateStockMovementInput } from './dto/stock-movement.input';
+import {
+  CancelSaleLineOutput,
+  StockMovementPagination,
+} from './dto/stock-movement.output';
+import {
+  AddSaleLine,
+  CancelSaleLinesInput,
+  PaginateStockMovementInput,
+} from './dto/stock-movement.input';
 import { Sale } from '../sale/sale.entity';
 import { SaleService } from '../sale/sale.service';
+import { UpdateSaleLineInput } from '../sale/dto/sale.input';
 
 @Resolver(() => StockMovement)
 export class StockMovementResolver {
@@ -34,24 +42,21 @@ export class StockMovementResolver {
     @Args('input') input: UpdateAssuredLineInput,
   ): Promise<StockMovement> {
     const { id, batch, assuredLine } = input;
-    const alterationCause = await this.stmService.findOne(id);
+    const altered = await this.stmService.findOne(id);
     const qDelta =
-      assuredLine.quantity - alterationCause.quantity; /**Quantity variation*/
+      assuredLine.quantity - altered.quantity; /**Quantity variation*/
 
-    Object.assign(alterationCause, assuredLine);
-    alterationCause.stock += qDelta;
-    const smts = await this.stmService.findInfectedEntries(
-      id,
-      alterationCause.batchId,
-    );
-    for (const smt of smts) {
-      smt.stock += qDelta;
-      await this.stmService.save(smt);
+    Object.assign(altered, assuredLine);
+    if (qDelta !== 0) {
+      altered.stock += qDelta;
+      await this.stmService.updateInfected(id, altered.batchId, qDelta, '+');
     }
 
-    const curbatch = await this.batchService.findOne(alterationCause.batchId);
-    curbatch.currentStock =
-      smts[smts.length - 1]?.stock || alterationCause.stock;
+    /**Current stock of batch is the latest movement stock infected**/
+    const latest = await this.stmService.findLastInfected(id, altered.batchId);
+    const curBatch = await this.batchService.findOne(altered.batchId);
+    curBatch.currentStock = latest?.stock || altered.stock;
+
     if (input.updateCurVat) {
       const medicine = await this.medicineService.findOne(batch.medicineId);
       medicine.currentVat = assuredLine.vat;
@@ -64,15 +69,65 @@ export class StockMovementResolver {
     );
 
     if (!newBatch) {
-      curbatch.expirationDate = batch.expirationDate;
-    } else if (newBatch?.id !== curbatch.id) {
+      curBatch.expirationDate = batch.expirationDate;
+    } else if (newBatch?.id !== curBatch.id) {
       newBatch.currentStock += assuredLine.quantity;
-      alterationCause.batch = newBatch;
-      alterationCause.stock = newBatch.currentStock;
+      altered.batch = newBatch;
+      altered.stock = newBatch.currentStock;
     }
-    await this.batchService.save(curbatch);
+    await this.batchService.save(curBatch);
 
-    return await this.stmService.save(alterationCause);
+    return await this.stmService.save(altered);
+  }
+
+  @Mutation(() => StockMovement)
+  async updateSaleLine(@Args('input') input: UpdateSaleLineInput) {
+    const { id, batchId, ...stmInput } = input;
+    const altered = await this.stmService.findOne(id);
+    const qDelta = stmInput.quantity - altered.quantity;
+    if (qDelta !== 0) {
+      altered.stock -= qDelta;
+      await this.stmService.updateInfected(id, batchId, qDelta);
+    }
+    Object.assign(altered, stmInput);
+    /**Current stock of batch is the latest movement stock infected**/
+    const latest = await this.stmService.findLastInfected(id, batchId);
+    const curBatch = await this.batchService.findOne(altered.batchId);
+    curBatch.currentStock = latest?.stock || altered.stock;
+    await this.batchService.save(curBatch);
+
+    return this.stmService.save(altered);
+  }
+
+  @Mutation(() => CancelSaleLineOutput)
+  async cancelSaleLines(
+    @Args('input') input: CancelSaleLinesInput,
+  ): Promise<CancelSaleLineOutput> {
+    const batches: Batch[] = [];
+
+    for (const id of input.saleLineIds) {
+      const { batchId, quantity } = await this.stmService.findOne(id);
+      await this.stmService.updateInfected(id, batchId, quantity, '+');
+      const batch = await this.batchService.findOne(batchId);
+      batch.currentStock += quantity;
+      await this.batchService.save(batch);
+      await this.stmService.delete(id);
+      batches.push(batch);
+    }
+    const sale = await this.saleService.findOneById(input.saleId);
+    /**if no sale lines, remove forever**/
+    return { sale, batches };
+  }
+
+  @Mutation(() => Sale)
+  async addSaleLine(@Args('input') input: AddSaleLine): Promise<Sale> {
+    const { saleId, ...stmInput } = input;
+    const sale = await this.saleService.findOneById(saleId);
+    const stm = new StockMovement();
+    Object.assign(stm, stmInput);
+    stm.sale = sale;
+    await this.stmService.save(stm);
+    return sale;
   }
 
   @Query(() => StockMovementPagination)

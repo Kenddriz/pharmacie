@@ -27,7 +27,7 @@ export class ArticleService {
     return this.repository.findOne(id);
   }
   async findOne(keyword: string): Promise<Article> {
-    keyword = `%${keyword}%`;
+    keyword = `${keyword}%`;
     return this.repository.findOne({
       where: [{ dci: ILike(keyword) }, { commercialName: ILike(keyword) }],
     });

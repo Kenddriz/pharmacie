@@ -7,9 +7,9 @@ import { UpdatePatientInput } from './dto/update-patient.input';
 export class PatientResolver {
   constructor(private readonly patientService: PatientService) {}
 
-  @Query(() => [Patient], { name: 'patient' })
-  findAll() {
-    return this.patientService.findAll();
+  @Query(() => [Patient])
+  async findSuggestedPatients(@Args('keyword') keyword: string): Promise<Patient[]> {
+    return this.patientService.findSuggestions(keyword);
   }
 
   @Mutation(() => Patient)

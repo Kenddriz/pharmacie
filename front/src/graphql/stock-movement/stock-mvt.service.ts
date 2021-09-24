@@ -1,15 +1,18 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
+  CANCEL_SALE_LINES, CancelSaleLinesData,
   PAGINATE_STOCK_MOVEMENT,
   PaginateStockMovementData,
-  UPDATE_ASSURED_LINE,
-  UpdateAssuredLineData,
+  UPDATE_ASSURED_LINE, UPDATE_SALE_LINE,
+  UpdateAssuredLineData, UpdateSaleLineData,
 } from './stock-mvt.sdl';
 import {
-  MutationUpdateAssuredLineArgs, PaginateStockMovementInput,
+  CancelSaleLinesInput,
+  MutationCancelSaleLinesArgs,
+  MutationUpdateAssuredLineArgs, MutationUpdateSaleLineArgs, PaginateStockMovementInput,
   QueryPaginateStockMovementArgs,
   StockMovement,
-  UpdateAssuredLineInput,
+  UpdateAssuredLineInput, UpdateSaleLineInput,
 } from '../types';
 import { computed, reactive } from 'vue';
 import { Loading } from 'quasar';
@@ -81,4 +84,44 @@ export const usePaginateStockMovement = (medicineId: number) => {
     stmInput,
     stockMovements
   }
+}
+
+export const useUpdateSaleLine = (stm: StockMovement) => {
+  const { mutate, onDone } = useMutation<
+    UpdateSaleLineData,
+    MutationUpdateSaleLineArgs
+    >(UPDATE_SALE_LINE);
+    onDone(() => {
+      Loading.hide();
+      notify('L\'Opération a reussi !')
+    });
+    const uslInput = reactive<UpdateSaleLineInput>({
+      id: stm.id,
+      batchId: stm.batch.id,
+      quantity: stm.quantity,
+      price: stm.price,
+      vat: stm.vat,
+      discount: stm.discount
+    });
+    function updateSaleLine() {
+      Loading.show({ message: 'Enregistrement ...'})
+      void mutate({input: uslInput});
+    }
+    return { updateSaleLine, uslInput }
+}
+
+export const useCancelSaleLines = () => {
+  const { mutate, onDone } = useMutation<
+    CancelSaleLinesData,
+    MutationCancelSaleLinesArgs
+    >(CANCEL_SALE_LINES);
+  onDone(() => {
+    Loading.hide();
+    notify('L\'opération a reussi');
+  });
+  function cancelSaleLine(input: CancelSaleLinesInput) {
+    Loading.show({ message: 'Annulation ...' });
+    void mutate({ input });
+  }
+  return {cancelSaleLine}
 }

@@ -1,6 +1,6 @@
 import { Article, ArticlePagination } from '../types';
 import { gql } from '@apollo/client/core';
-import { MEDICINE_PARAMS } from '../medicine/medicine.sdl';
+import { MEDICINE_FIELDS, MEDICINE_PARAMS } from '../medicine/medicine.sdl';
 import { PAGINATION_META } from '../utils/pagination';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
 
@@ -42,7 +42,7 @@ export const SAVE_ARTICLE = gql`
     }
   }
 `;
-export type FindOneArticle = {
+export type FindOneArticleData = {
   findOneArticle: Article;
 }
 
@@ -50,7 +50,19 @@ export const FIND_ONE_ARTICLE = gql`
     query findOneArticle($keyword: String!) {
       findOneArticle(keyword: $keyword) {
         ${ARTICLE_PARAMS}
-        medicines{${MEDICINE_PARAMS}}
+        medicines{${MEDICINE_FIELDS}}
       }
     }
+`;
+
+export const FIND_ARTICLE_SALE = gql`
+  query findOneArticle($keyword: String!) {
+    findOneArticle(keyword: $keyword) {
+      ${ARTICLE_PARAMS}
+      medicines{
+        ${MEDICINE_PARAMS}
+        batches{${BATCH_FIELDS}}
+      }
+    }
+  }
 `;

@@ -17,6 +17,11 @@ export class BatchService {
   async findOne(id: number): Promise<Batch> {
     return this.repository.findOne(id);
   }
+  async findByIds(ids: number[]): Promise<Batch[]> {
+    return this.repository.findByIds(ids, {
+      relations: ['medicine'],
+    });
+  }
   async findByMedicine(medicineId: number): Promise<Batch[]> {
     return this.repository
       .createQueryBuilder('b')

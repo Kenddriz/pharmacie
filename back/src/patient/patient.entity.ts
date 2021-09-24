@@ -1,21 +1,24 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
 
 @ObjectType()
 @Entity({ name: 'patients' })
 export class Patient {
   @Field()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
   @Column()
-  lastName: string;
-
-  @Field()
-  @Column()
-  firstName: string;
+  name: string;
 
   @Field()
   @Column()
@@ -31,4 +34,8 @@ export class Patient {
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })
   archivedAt: Date;
+
+  @Field()
+  @CreateDateColumn({ type: 'timestamp'})
+  createdAt: Date;
 }

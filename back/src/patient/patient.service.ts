@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UpdatePatientInput } from './dto/update-patient.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './patient.entity';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class PatientService {
@@ -20,6 +20,14 @@ export class PatientService {
 
   async findOneById(id: number) {
     return this.repository.findOne(id);
+  }
+
+  async findSuggestions(keyword: string): Promise<Patient[]> {
+    keyword = `%${keyword}%`;
+    return this.repository.find({
+      where: [{ phone: Like(keyword) }, { name: ILike(keyword) }],
+      take: 4,
+    });
   }
 
   update(id: number, updatePatientInput: UpdatePatientInput) {

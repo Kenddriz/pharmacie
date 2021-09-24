@@ -144,7 +144,8 @@
   <q-dialog
     v-model="ciDialog"
     persistent
-    :maximized="true"
+    full-width
+    full-height
     transition-show="slide-up"
     transition-hide="slide-down"
   >

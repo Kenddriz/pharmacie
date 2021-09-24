@@ -1,10 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import {
-  Column, DeleteDateColumn,
+  Column,
+  DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
 import { Patient } from '../patient/patient.entity';
@@ -14,7 +16,7 @@ import { Sale } from '../sale/sale.entity';
 @Entity({ name: 'prescriptions' })
 export class Prescription {
   @Field()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('rowid')
   id: number;
 
   @Field()
@@ -35,11 +37,15 @@ export class Prescription {
   @RelationId((prescription: Prescription) => prescription.patient)
   patientId: number;
 
+  @Field(() => Sale)
   @OneToOne(() => Sale, (sale) => sale.prescription, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
+  @JoinColumn()
   sale: Sale;
+  @RelationId((prescription: Prescription) => prescription.sale)
+  saleId: number;
 
   @Field()
   @DeleteDateColumn({ type: 'timestamp' })

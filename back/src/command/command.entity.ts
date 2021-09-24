@@ -44,7 +44,7 @@ export class Command {
   providerId: number;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @Field()

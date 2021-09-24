@@ -8,7 +8,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { ApolloLink } from '@apollo/client/core';
 import { onError } from '@apollo/client/link/error';
-import { Notify } from 'quasar';
+import { Loading, Notify } from 'quasar';
 import { createUploadLink } from 'apollo-upload-client';
 import {DefaultApolloClient} from '@vue/apollo-composable';
 
@@ -51,6 +51,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     message: error,
     type: 'warning',
   });
+  Loading.hide();
 });
 
 // const uploadLink = createUploadLink({ uri: 'http://localhost:3000/graphql', fetchOptions: {mode: 'no-cors'}  });

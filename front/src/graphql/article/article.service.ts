@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
-  ArticlePaginationData,
-  FIND_ONE_ARTICLE, FindOneArticle,
+  ArticlePaginationData, FIND_ARTICLE_SALE,
+  FIND_ONE_ARTICLE, FindOneArticleData,
   PAGINATE_ARTICLE,
   SAVE_ARTICLE,
   SaveArticleData,
@@ -18,13 +18,13 @@ import { InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
 
-export const usePaginateArticle = () => {
+export const usePaginateArticle = (limit = 20) => {
   const searchInput = reactive<PaginationInput>({
-    limit: 20,
+    limit,
     keyword: '',
     page: 1
   });
-  const {result, loading: listLoading, refetch} = useQuery<
+  const {result, loading: listLoading, refetch, onResult } = useQuery<
     ArticlePaginationData,
     QueryPaginateArticlesArgs
     >(PAGINATE_ARTICLE, { input: cloneDeep(searchInput) });
@@ -34,12 +34,14 @@ export const usePaginateArticle = () => {
     selected.value = data.items.slice(0, 1);
     return data;
   });
+  onResult(() => listLoading.value = false);
   return {
     listLoading,
     searchInput,
     articles,
     selected,
     submitSearch: function() {
+      listLoading.value = true;
       void refetch({ input: searchInput });
     }
   }
@@ -104,7 +106,7 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
   }
 
   const { loading: faLoading, onResult, load } = useLazyQuery<
-    FindOneArticle,
+    FindOneArticleData,
     QueryFindOneArticleArgs
     >(FIND_ONE_ARTICLE);
   onResult(({ data }) => {
@@ -115,7 +117,6 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
         label: `${data.findOneArticle.commercialName} ${med.dosage.label}, ${med.form.label}`,
         packaging: med.packaging
       }));
-      //Object.assign(model, selectOptions.value[0]);
       options.value = cloneDeep(selectOptions.value);
     } else {
       selectOptions.value.length = 0;
@@ -138,5 +139,23 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
     faLoading,
     options,
     model
+  }
+}
+
+export const useFindOneArticle = () => {
+  const keyword = ref<string>('');
+  const { loading: faLoading, result, load } = useLazyQuery<
+    FindOneArticleData,
+    QueryFindOneArticleArgs
+    >(FIND_ARTICLE_SALE);
+  function findArticle() {
+    if(keyword.value) void load(FIND_ARTICLE_SALE,{keyword: keyword.value });
+  }
+  const article = useResult(result, null, pick => pick?.findOneArticle);
+  return {
+    faLoading,
+    findArticle,
+    article,
+    keyword
   }
 }

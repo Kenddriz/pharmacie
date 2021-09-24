@@ -1,11 +1,12 @@
 import { Notify } from 'quasar';
 
-export const notify = (message: string) => {
+export const notify = (message: string, color='positive') => {
     Notify.create({
       message: message,
-      color: 'positive',
+      color,
       position: 'bottom-right',
       multiLine: true,
-      html: true
+      html: true,
+      icon: 'info'
     });
 }

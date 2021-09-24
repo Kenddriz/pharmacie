@@ -20,3 +20,18 @@ export class PaginateStockMovementInput {
   @Field()
   limit: number;
 }
+
+@InputType()
+export class AddSaleLine extends StockMovementFormInput{
+  @Field(() => Int)
+  saleId: number;
+}
+
+@InputType()
+export class CancelSaleLinesInput {
+  @Field(() => Int)
+  saleId: number;
+
+  @Field(() => [Int])
+  saleLineIds: number[];
+}

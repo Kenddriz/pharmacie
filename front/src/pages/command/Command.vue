@@ -104,10 +104,9 @@
           <div>Détails de livraison</div>
         </q-tab-panel>
       </q-tab-panels>
-
     </q-card>
     <div class="col-12 col-md-3">
-      <div class="text-h6 text-center">Liste des commandes</div>
+      <div class="text-h6 text-center">Liste de commandes</div>
       <q-list
         ref="scrollTargetRef"
         :style="`max-height: ${$q.screen.height - 150}px`"
@@ -137,13 +136,6 @@
             <q-icon size="xs" v-else color="warning" name="remove_done" />
           </q-item-section>
         </q-item>
-        <!--<q-infinite-scroll @load="setPage" :offset="$q.screen.height - 150" scroll-target="scrollTargetRef">
-          <template v-slot:loading>
-            <div class="row justify-center q-my-md">
-              <q-spinner-dots color="primary" size="40px" />
-            </div>
-          </template>
-        </q-infinite-scroll>--->
       </q-list>
     </div>
   </q-page>

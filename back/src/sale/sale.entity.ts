@@ -3,11 +3,9 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
-  PrimaryColumn,
-  RelationId,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
@@ -16,12 +14,12 @@ import { StockMovement } from '../stock-movement/stock-movement.entity';
 @Entity({ name: 'sales' })
 export class Sale {
   @Field()
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('rowid')
   id: number;
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: string;
+  createdAt: Date;
 
   @Field(() => Prescription, { nullable: true })
   @OneToOne(() => Prescription, (prescription) => prescription.sale, {
@@ -29,10 +27,7 @@ export class Sale {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn()
   prescription?: Prescription;
-  @RelationId((sale: Sale) => sale.prescription)
-  prescriptionId: number;
 
   @Field(() => [StockMovement])
   @OneToMany(() => StockMovement, (stockMovement) => stockMovement.sale, {

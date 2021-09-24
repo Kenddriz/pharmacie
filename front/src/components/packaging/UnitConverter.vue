@@ -5,8 +5,9 @@
     :label="(showValue ? modelValue : '') + (isQ ? ' ' : 'Ar/') + units[suIndex]?.label"
     icon-right="expand_more"
     no-caps
+    text-color="text-blue-grey-14"
   >
-    <q-menu>
+    <q-menu auto-close>
       <q-list dense padding>
         <q-item
           v-for="(u, index) in units"
@@ -15,6 +16,7 @@
           :active="index === suIndex"
           active-class="text-positive"
           @click="selectUnit(index)"
+          v-close-popup
         >
           <q-item-section>{{u.label}}</q-item-section>
         </q-item>
