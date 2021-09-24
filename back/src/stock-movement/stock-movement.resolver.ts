@@ -19,13 +19,12 @@ import {
   StockMovementPagination,
 } from './dto/stock-movement.output';
 import {
-  AddSaleLine,
   CancelSaleLinesInput,
   PaginateStockMovementInput,
 } from './dto/stock-movement.input';
 import { Sale } from '../sale/sale.entity';
 import { SaleService } from '../sale/sale.service';
-import { UpdateSaleLineInput } from '../sale/dto/sale.input';
+import { AddSaleLineInput, UpdateSaleLineInput } from '../sale/dto/sale.input';
 
 @Resolver(() => StockMovement)
 export class StockMovementResolver {
@@ -120,13 +119,23 @@ export class StockMovementResolver {
   }
 
   @Mutation(() => Sale)
-  async addSaleLine(@Args('input') input: AddSaleLine): Promise<Sale> {
-    const { saleId, ...stmInput } = input;
+  async addSaleLines(@Args('input') input: AddSaleLineInput): Promise<Sale> {
+    const { saleId, saleLines } = input;
     const sale = await this.saleService.findOneById(saleId);
-    const stm = new StockMovement();
-    Object.assign(stm, stmInput);
-    stm.sale = sale;
-    await this.stmService.save(stm);
+    for (const line of saleLines) {
+      const { batchId, ...stmInput } = line;
+
+      const batch = await this.batchService.findOne(batchId);
+      batch.currentStock -= stmInput.quantity;
+      await this.batchService.save(batch);
+
+      const stm = new StockMovement();
+      Object.assign(stm, stmInput);
+      stm.batch = batch;
+      stm.stock = batch.currentStock;
+      stm.sale = sale;
+      await this.stmService.save(stm);
+    }
     return sale;
   }
 

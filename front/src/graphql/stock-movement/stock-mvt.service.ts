@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
+  ADD_SALE_LINES, AddSaleLinesData,
   CANCEL_SALE_LINES, CancelSaleLinesData,
   PAGINATE_STOCK_MOVEMENT,
   PaginateStockMovementData,
@@ -7,7 +8,9 @@ import {
   UpdateAssuredLineData, UpdateSaleLineData,
 } from './stock-mvt.sdl';
 import {
+  AddSaleLineInput,
   CancelSaleLinesInput,
+  MutationAddSaleLinesArgs,
   MutationCancelSaleLinesArgs,
   MutationUpdateAssuredLineArgs, MutationUpdateSaleLineArgs, PaginateStockMovementInput,
   QueryPaginateStockMovementArgs,
@@ -124,4 +127,16 @@ export const useCancelSaleLines = () => {
     void mutate({ input });
   }
   return {cancelSaleLine}
+}
+
+export const useAddSaleLines = () => {
+  const { mutate, onDone } = useMutation<
+    AddSaleLinesData,
+    MutationAddSaleLinesArgs
+    >(ADD_SALE_LINES);
+  function addSaleLines(input: AddSaleLineInput) {
+    Loading.show({ message: 'Enregistrement ...'});
+    void mutate({ input });
+  }
+  return { onDone, addSaleLines }
 }

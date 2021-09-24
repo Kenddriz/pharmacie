@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3.4.5",
     "@quasar/extras": "^1.0.0",
+    "@tauri-apps/api": "^1.0.0-beta.8",
     "@vue/apollo-composable": "^4.0.0-alpha.14",
     "add": "^2.0.6",
     "apexcharts": "^3.28.1",
@@ -31,6 +32,7 @@
     "@graphql-codegen/introspection": "1.18.2",
     "@graphql-codegen/typescript": "1.22.0",
     "@quasar/app": "^3.0.0",
+    "@tauri-apps/cli": "^1.0.0-beta.10",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/node": "^10.17.15",
     "@typescript-eslint/eslint-plugin": "^4.16.1",

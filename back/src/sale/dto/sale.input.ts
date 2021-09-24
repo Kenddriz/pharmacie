@@ -20,3 +20,11 @@ export class UpdateSaleLineInput extends SaleLineInput {
   @Field(() => Int)
   id: number;
 }
+@InputType()
+export class AddSaleLineInput {
+  @Field(() => Int)
+  saleId: number;
+
+  @Field(() => [SaleLineInput])
+  saleLines: SaleLineInput[];
+}

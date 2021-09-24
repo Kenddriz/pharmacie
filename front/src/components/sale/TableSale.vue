@@ -37,7 +37,7 @@
         :key="batch.id"
         class="q-tr--no-hover"
       >
-        <td>{{index + 1}}</td>
+        <td class="text-center">{{batch.id}}</td>
         <td>
           <q-item-section>
             <q-item-label>
@@ -143,7 +143,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, PropType, ref, watch } from 'vue';
 import SearchTool from './SearchTool.vue';
 import DiscountCalculator from './create/DiscountCalculator.vue';
 import CommonSaleHeader from './CommonSaleHeader.vue';
@@ -167,6 +167,10 @@ export default defineComponent({
     done: {
       type: Boolean,
       default: false
+    },
+    existingIds: {
+      type: Array as PropType<number[]>,
+      default: () =>([])
     }
   },
   setup(props) {
@@ -197,7 +201,9 @@ export default defineComponent({
       if(x)uSize.value = x.medicine.packaging.units.length;
     }
     function addShop(batch: Batch) {
-      if(!shop.value.find(s => s.id === batch.id)) {
+      const source1 = shop.value.find(s => s.id === batch.id);
+      const source2 = props.existingIds.find(id => id === batch.id);
+      if(!source1 && !source2) {
         shop.value.push(batch);
         saleLines.value.push({
           batchId: batch.id,
@@ -211,7 +217,7 @@ export default defineComponent({
         position: 'top-right',
         color: 'warning',
         icon: 'warning',
-        message: 'Déjà en cours !'
+        message: source1 ? 'Déjà en cours !': 'Déjà dans la liste de vente !'
       })
     }
     function removeShop(index: number) {
@@ -255,5 +261,4 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-td{text-align: center}
 </style>

@@ -18,12 +18,9 @@ export type AddCommandLineInput = {
   commandLine: CommandLineInput;
 };
 
-export type AddSaleLine = {
-  quantity: Scalars['Int'];
-  price: Scalars['Float'];
-  vat: Scalars['Float'];
-  discount: Scalars['Float'];
+export type AddSaleLineInput = {
   saleId: Scalars['Int'];
+  saleLines: Array<SaleLineInput>;
 };
 
 export type Article = {
@@ -319,7 +316,7 @@ export type Mutation = {
   updateAssuredLine: StockMovement;
   updateSaleLine: StockMovement;
   cancelSaleLines: CancelSaleLineOutput;
-  addSaleLine: Sale;
+  addSaleLines: Sale;
   createInvoice: Command;
   updateInvoice: Invoice;
   removeInvoice: Invoice;
@@ -471,8 +468,8 @@ export type MutationCancelSaleLinesArgs = {
 };
 
 
-export type MutationAddSaleLineArgs = {
-  input: AddSaleLine;
+export type MutationAddSaleLinesArgs = {
+  input: AddSaleLineInput;
 };
 
 

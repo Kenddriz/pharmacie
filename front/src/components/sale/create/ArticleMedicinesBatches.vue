@@ -12,6 +12,14 @@
       >
         <q-item-section side>
           <q-item-label>
+            Lot
+          </q-item-label>
+          <q-item-label caption>
+            N°{{batch.id}}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-item-label>
             Date exp : {{ formatDate(batch.expirationDate, 'DATE_ONLY') }}
           </q-item-label>
           <q-item-label class="text-deep-orange" caption>

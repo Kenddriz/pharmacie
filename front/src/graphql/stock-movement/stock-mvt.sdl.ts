@@ -1,9 +1,10 @@
-import { CancelSaleLineOutput, StockMovement, StockMovementPagination } from '../types';
+import { CancelSaleLineOutput, Sale, StockMovement, StockMovementPagination } from '../types';
 import { gql } from '@apollo/client/core';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
 import { PATIENT_FIELDS } from '../patient/patient.sdl';
-import { PROVIDER_FIELDS, STOCK_MVT_FIELDS } from '../invoice/incoice.sdl';
+import { PROVIDER_FIELDS, STOCK_MVT_DTO, STOCK_MVT_FIELDS } from '../invoice/incoice.sdl';
 import { PAGINATION_META } from '../utils/pagination';
+import { SALE_FIELDS } from '../sale/sale.sdl';
 
 export type UpdateAssuredLineData = {
   updateAssuredLine: StockMovement;
@@ -79,6 +80,19 @@ export const CANCEL_SALE_LINES = gql`
           }
         }
         batches { id currentStock }
+      }
+    }
+`;
+
+export type AddSaleLinesData = {
+  addSaleLines: Sale
+}
+
+export const ADD_SALE_LINES = gql`
+    mutation AddSaleLines($input: AddSaleLineInput!) {
+      addSaleLines(input: $input) {
+        ${SALE_FIELDS}
+        ${STOCK_MVT_DTO}
       }
     }
 `;

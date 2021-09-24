@@ -29,7 +29,7 @@
             <GroupSale />
           </q-tab-panel>
 
-          <q-tab-panel :style="heightStyle" class="q-pa-xs" name="alarms">
+          <q-tab-panel :style="heightStyle" class="q-pa-none" name="alarms">
             <SaleStory />
           </q-tab-panel>
 

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class BatchService {
   constructor(@InjectRepository(Batch) private repository: Repository<Batch>) {}
+
   async save(batch: Batch): Promise<Batch> {
     return this.repository.save(batch);
   }
@@ -17,17 +18,20 @@ export class BatchService {
   async findOne(id: number): Promise<Batch> {
     return this.repository.findOne(id);
   }
+
   async findByIds(ids: number[]): Promise<Batch[]> {
     return this.repository.findByIds(ids, {
       relations: ['medicine'],
     });
   }
+
   async findByMedicine(medicineId: number): Promise<Batch[]> {
     return this.repository
       .createQueryBuilder('b')
       .where('b.medicineId = :medicineId', { medicineId })
       .getMany();
   }
+
   async findExisting(
     medicineId: number,
     expirationDate: string,
@@ -43,10 +47,12 @@ export class BatchService {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
+
   async softRemove(id: number): Promise<boolean> {
     const query = await this.repository.softDelete(id);
     return query.affected > 0;
   }
+
   async recover(id: number): Promise<boolean> {
     const query = await this.repository.restore(id);
     return query.affected > 0;

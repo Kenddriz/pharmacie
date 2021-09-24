@@ -95,6 +95,7 @@
             label="Annuler"
             outline
             @click="cancel"
+            v-close-popup
           >
             <q-tooltip
               class="bg-brown text-body2"

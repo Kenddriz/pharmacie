@@ -16,16 +16,22 @@
           <q-btn dense flat icon="crop_square" @click="maximized = true" :disable="maximized" />
           <q-btn dense flat icon="close" v-close-popup />
         </q-bar>
-        <TableSale />
+        <TableSale
+          :existing-ids="existingIds"
+          @sell="done = false; add($event)"
+          :done="done"
+        />
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 import TableSale from '../sale/TableSale.vue';
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
+import { useAddSaleLines } from '../../graphql/stock-movement/stock-mvt.service';
+import { SaleLineInput } from '../../graphql/types';
 
 export default defineComponent({
   name: 'AddSaleLine',
@@ -34,13 +40,30 @@ export default defineComponent({
     saleId: {
       type: Number,
       required: true
-    }
+    },
+    existingIds: Array as PropType<number[]>
   },
-  setup() {
-    const { dialogRef } = useDialogPluginComponent();
+  setup(props) {
+    const { notify, loading } = useQuasar();
+    const done = ref<boolean>(false);
+    const { dialogRef, onDialogHide } = useDialogPluginComponent();
+    const { onDone, addSaleLines } = useAddSaleLines();
+    onDone(() => {
+      loading.hide();
+      notify({
+        message: 'Enregistrement avec succès',
+        position: 'right'
+      });
+      done.value = true;
+      setTimeout(() => onDialogHide(), 1000);
+    });
     return {
       dialogRef,
-      maximized: ref<boolean>(false)
+      done,
+      maximized: ref<boolean>(false),
+      add: (saleLines: SaleLineInput[]) => {
+        addSaleLines({ saleLines, saleId: props.saleId })
+      }
     }
   }
 });

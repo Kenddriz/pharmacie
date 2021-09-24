@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <th>N°</th>
+    <th>N°Lot</th>
     <th>Médicament</th>
     <th>Prix unitaire</th>
     <th>TVA(%)</th>

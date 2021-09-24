@@ -310,7 +310,7 @@ type Mutation {
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
   updateSaleLine(input: UpdateSaleLineInput!): StockMovement!
   cancelSaleLines(input: CancelSaleLinesInput!): CancelSaleLineOutput!
-  addSaleLine(input: AddSaleLine!): Sale!
+  addSaleLines(input: AddSaleLineInput!): Sale!
   createInvoice(input: CreateInvoiceInput!): Command!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
   removeInvoice(id: Int!): Invoice!
@@ -467,12 +467,17 @@ input CancelSaleLinesInput {
   saleLineIds: [Int!]!
 }
 
-input AddSaleLine {
+input AddSaleLineInput {
+  saleId: Int!
+  saleLines: [SaleLineInput!]!
+}
+
+input SaleLineInput {
   quantity: Int!
   price: Float!
   vat: Float!
   discount: Float!
-  saleId: Int!
+  batchId: Int!
 }
 
 input CreateInvoiceInput {
@@ -547,14 +552,6 @@ input CreatePatientInput {
   id: Int
   name: String!
   phone: String!
-}
-
-input SaleLineInput {
-  quantity: Int!
-  price: Float!
-  vat: Float!
-  discount: Float!
-  batchId: Int!
 }
 
 input CreatePrescriptionInput {
