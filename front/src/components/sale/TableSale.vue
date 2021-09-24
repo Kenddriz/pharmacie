@@ -20,7 +20,7 @@
             outline
             dense
             text-color="primary"
-            :label="`${searchTool ? 'Fermer' : 'Ouvrir' } l'outil de recherche ${searchTool}`"
+            :label="`${searchTool ? 'Fermer' : 'Ouvrir' } l'outil de recherche`"
             size="md"
             :icon-right="searchTool ? 'close' : 'search'"
             class="full-width"
@@ -89,7 +89,7 @@
             rounded
             no-caps
             icon="save"
-            label="Enregistrer la vente"
+            label="Enregistrer"
             class="full-width"
             outline
             color="primary"
@@ -112,40 +112,39 @@
       </tr>
     </tbody>
   </q-markup-table>
-  <q-page-sticky position="bottom-right" :offset="fabPos">
-    <q-avatar
-      size="xs"
-      class="q-btn q-btn--round cursor-pointer shadow-10"
-      text-color="white"
-      color="primary"
-      v-touch-pan.prevent.mouse="moveFab"
-      v-ripple
+  <q-avatar
+    size="xs"
+    class="q-btn q-btn--round cursor-pointer shadow-10"
+    text-color="white"
+    color="primary"
+    v-touch-pan.prevent.mouse="moveFab"
+    v-ripple
+    :style="`position:absolute;bottom:${fabPos[0]}px;right:${fabPos[1]}px;`"
+  >
+    <q-icon
+      size="md"
+      class="q-ml-xs"
+      color="white"
+      style="margin-top: 15px"
+      name="search"
+    />
+    <q-menu
+      max-height="85vh"
+      v-model="searchTool"
+      anchor="bottom left"
+      self="bottom right"
     >
-      <q-icon
-        size="md"
-        class="q-ml-xs"
-        color="white"
-        style="margin-top: 15px"
-        name="search"
+      <SearchTool
+        @add-shop="addShop"
+        @individual-sale="handleIndividualSale"
       />
-      <q-menu
-        max-height="86vh"
-        v-model="searchTool"
-        anchor="bottom left"
-        self="bottom right"
-      >
-        <SearchTool
-          @add-shop="addShop"
-          @individual-sale="handleIndividualSale"
-        />
-      </q-menu>
-    </q-avatar>
-  </q-page-sticky>
+    </q-menu>
+  </q-avatar>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue';
-import SearchTool from './create/SearchTool.vue';
+import SearchTool from './SearchTool.vue';
 import DiscountCalculator from './create/DiscountCalculator.vue';
 import CommonSaleHeader from './CommonSaleHeader.vue';
 import SubdivideList from '../packaging/SubdivideList.vue';
@@ -228,7 +227,7 @@ export default defineComponent({
       const batch = shop.value.find(s => s.id === b.id);
       if(batch)Object.assign(batch, b);
     }
-    const fabPos = ref([ 12, 10 ]);
+    const fabPos = ref([ 8, 10 ]);
     const searchTool = ref<boolean>(true);
     return {
       saleLines,

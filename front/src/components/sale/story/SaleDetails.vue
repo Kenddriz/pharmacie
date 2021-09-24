@@ -66,6 +66,7 @@
         outline
         color="primary"
         label="Nouvelles lignes de vente"
+        @click="addSaleLine"
       />
       <q-btn
         no-caps
@@ -107,6 +108,7 @@ import { getMedicineName, saleLineCost } from '../../../graphql/utils/utils';
 import { useQuasar } from 'quasar';
 import UpdateSaleLine from '../../stock-movement/UpdateSaleLine.vue';
 import { useCancelSaleLines } from '../../../graphql/stock-movement/stock-mvt.service';
+import AddSaleLine from '../../stock-movement/AddSaleLine.vue';
 
 export default defineComponent({
   name: 'SaleDetails',
@@ -132,10 +134,16 @@ export default defineComponent({
       updateSaleLine: (stm: StockMovement) => {
         dialog({
           component: UpdateSaleLine,
-          componentProps: { stm, saleLineId: props.sale.id }
+          componentProps: { stm, saleId: props.sale.id }
         })
       },
-      cancel
+      cancel,
+      addSaleLine: () => {
+        dialog({
+          component: AddSaleLine,
+          componentProps: { saleId: props.sale.id }
+        })
+      }
     }
   }
 });

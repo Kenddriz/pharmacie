@@ -130,7 +130,7 @@ export default defineComponent({
       type: Object as PropType<StockMovement>,
       required: true
     },
-    saleLineId: {
+    saleId: {
       type: Number,
       required: true
     }
@@ -140,7 +140,7 @@ export default defineComponent({
     const pos = ref([0, 0]);
     const { cancelSaleLine } = useCancelSaleLines();
     function cancel() {
-      cancelSaleLine({ saleId: props.saleLineId, saleLineIds: [props.stm.id] });
+      cancelSaleLine({ saleId: props.saleId, saleLineIds: [props.stm.id] });
     }
     return {
       dialogRef,

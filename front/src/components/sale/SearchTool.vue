@@ -45,9 +45,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ArticleMedicinesBatches from './ArticleMedicinesBatches.vue';
-import ScrollArea from '../../shared/ScrollArea.vue';
-import { useFindOneArticle } from '../../../graphql/article/article.service';
+import ArticleMedicinesBatches from './create/ArticleMedicinesBatches.vue';
+import ScrollArea from '../shared/ScrollArea.vue';
+import { useFindOneArticle } from '../../graphql/article/article.service';
 
 export default defineComponent({
   name: 'SearchTool',
