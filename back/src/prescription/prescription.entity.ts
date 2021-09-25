@@ -6,17 +6,17 @@ import {
   JoinColumn,
   ManyToOne,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   RelationId,
 } from 'typeorm';
 import { Patient } from '../patient/patient.entity';
 import { Sale } from '../sale/sale.entity';
 
 @ObjectType()
-@Entity({ name: 'prescriptions' })
+@Entity({ name: 'prescription' })
 export class Prescription {
   @Field()
-  @PrimaryGeneratedColumn('rowid')
+  @PrimaryColumn()
   id: number;
 
   @Field()

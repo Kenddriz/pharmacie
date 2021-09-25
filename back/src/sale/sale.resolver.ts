@@ -20,6 +20,7 @@ import { MedicineService } from '../medicine/medicine.service';
 import { PaginationInput } from '../shared/shared.input';
 import { StockMovementService } from '../stock-movement/stock-movement.service';
 import { PatientService } from '../patient/patient.service';
+import { uniqId } from '../shared/id-builder.service';
 
 @Resolver(() => Sale)
 export class SaleResolver {
@@ -35,15 +36,20 @@ export class SaleResolver {
   @Mutation(() => Sale)
   async createSale(@Args('input') input: CreateSaleInput) {
     const sale = new Sale();
+    sale.id = await uniqId('Sale');
     if (input?.prescription) {
       const { patient, ...prescriptionInput } = input.prescription;
-      const pt =
-        patient.id > 0
-          ? await this.patientService.findOneById(patient.id)
-          : new Patient();
+      let pt: Patient;
+      if (patient.id > 0)
+        pt = await this.patientService.findOneById(patient.id);
+      else {
+        pt = new Patient();
+        pt.id = await uniqId('Patient');
+      }
       Object.assign(pt, patient);
 
       const prescription = new Prescription();
+      prescription.id = await uniqId('Prescription');
       prescription.patient = pt;
       Object.assign(prescription, prescriptionInput);
       sale.prescription = prescription;
@@ -74,9 +80,9 @@ export class SaleResolver {
     return await this.saleService.paginate(input);
   }
 
-  @Mutation(() => Sale)
-  removeSale(@Args('id', { type: () => Int }) id: number) {
-    return this.saleService.findOneById(id);
+  @Mutation(() => Boolean)
+  async softRemoveSale(@Args('id', { type: () => Int }) id: number) {
+    return this.saleService.softRemove(id);
   }
   @ResolveField(() => Prescription, { nullable: true })
   async prescription(@Root() sale: Sale): Promise<Prescription> {

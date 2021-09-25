@@ -32,7 +32,7 @@ export class SaleService {
   }
   async findOneWithChildren(id: number): Promise<Sale> {
     return this.repository.findOne(id, {
-      relations: ['stockMovements', 'prescriptions'],
+      relations: ['stockMovements', 'prescription'],
     });
   }
   async remove(sale: Sale) {

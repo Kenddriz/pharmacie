@@ -91,14 +91,14 @@
           <q-btn
             icon="cancel"
             no-caps
-            color="brown"
+            color="amber-10"
             label="Annuler"
             outline
             @click="cancel"
             v-close-popup
           >
             <q-tooltip
-              class="bg-brown text-body2"
+              class="bg-amber-10 text-body2"
               :offset="[5, 5]"
               transition-show="scale"
               transition-hide="scale"

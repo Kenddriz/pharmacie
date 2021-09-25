@@ -322,7 +322,7 @@ type Mutation {
   updateBatch(input: UpdateBatchInput!): Batch!
   softRemove(id: Int!): Batch!
   createSale(input: CreateSaleInput!): Sale!
-  removeSale(id: Int!): Sale!
+  softRemoveSale(id: Int!): Boolean!
   createPrescription(input: CreatePrescriptionInput!): Sale!
   updatePrescription(input: UpdatePrescriptionInput!): Prescription!
   deletePrescription(input: DeletePrescriptionInput!): Sale!

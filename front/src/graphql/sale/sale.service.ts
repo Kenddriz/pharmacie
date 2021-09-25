@@ -1,14 +1,22 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
-import { CREATE_SALE, CreateSaleData, PAGINATE_SALE, PaginateSalesData } from './sale.sdl';
 import {
-  MutationCreateSaleArgs,
+  CREATE_SALE,
+  CreateSaleData,
+  PAGINATE_SALE,
+  PaginateSalesData,
+  SOFT_REMOVE_SALE,
+  SoftRemoveSaleData,
+} from './sale.sdl';
+import {
+  Meta,
+  MutationCreateSaleArgs, MutationSoftRemoveSaleArgs,
   PaginationInput, PrescriptionInput,
   QueryPaginateCommandsArgs,
   Sale, SaleLineInput,
 } from '../types';
 import { Loading } from 'quasar';
 import { reactive, ref } from 'vue';
-import { cloneDeep } from '../utils/utils';
+import { cloneDeep, removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
 import { InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
@@ -21,7 +29,25 @@ export const useCreateSale = () => {
   const { onDone, mutate } = useMutation<
     CreateSaleData,
     MutationCreateSaleArgs
-    >(CREATE_SALE);
+    >(CREATE_SALE, {
+      update(cache, { data }) {
+        if(data?.createSale) {
+          cache.modify({
+            fields: {
+              paginateSales(existingRef: any, {toReference}){
+                const meta: Meta = cloneDeep(existingRef.meta);
+                meta.totalItems += 1; meta.itemCount += 1;
+                return {
+                  ...existingRef,
+                  meta: toReference(meta),
+                  items: [toReference(data.createSale), ...existingRef.items]
+                }
+              }
+            }
+          })
+        }
+      }
+  });
   const prescription = reactive<PrescriptionInput>(cloneDeep(defaultPrescription));
   const saleType = ref<string>('free');
 
@@ -86,4 +112,33 @@ export const usePaginateSales = () => {
     selectSale,
     paginationInput
   }
+}
+
+export const useSoftRemoveSale = () => {
+  const { mutate, loading: srsLoading } = useMutation<
+    SoftRemoveSaleData,
+    MutationSoftRemoveSaleArgs
+    >(SOFT_REMOVE_SALE);
+  function softRemoveSale(id: number) {
+    removeDialog(() => void mutate({id}, {
+      update(cache, { data }) {
+        if(data?.softRemoveSale) {
+          cache.modify({
+            fields: {
+              paginateSales(existingRef: any, {readField, toReference}){
+                const meta: Meta = cloneDeep(existingRef.meta);
+                meta.totalItems -= 1; meta.itemCount -= 1;
+                return {
+                  ...existingRef,
+                  meta: toReference(meta),
+                  items: existingRef.items.filter((eRef: any) => readField('id', eRef) !== id)
+                }
+              }
+            }
+          })
+        }
+      }
+    }))
+  }
+  return { softRemoveSale, srsLoading }
 }

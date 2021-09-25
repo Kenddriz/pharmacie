@@ -5,7 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
 
@@ -13,7 +13,7 @@ import { Prescription } from '../prescription/prescription.entity';
 @Entity({ name: 'patients' })
 export class Patient {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @Field()

@@ -5,7 +5,7 @@ import {
   Entity,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { Prescription } from '../prescription/prescription.entity';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
@@ -14,7 +14,7 @@ import { StockMovement } from '../stock-movement/stock-movement.entity';
 @Entity({ name: 'sales' })
 export class Sale {
   @Field()
-  @PrimaryGeneratedColumn('rowid')
+  @PrimaryColumn()
   id: number;
 
   @Field()

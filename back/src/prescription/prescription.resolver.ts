@@ -10,6 +10,7 @@ import {
 } from './dto/prescription.input';
 import { SaleService } from '../sale/sale.service';
 import { Sale } from '../sale/sale.entity';
+import { uniqId } from '../shared/id-builder.service';
 
 @Resolver(() => Prescription)
 export class PrescriptionResolver {
@@ -27,13 +28,16 @@ export class PrescriptionResolver {
     const { saleId, patient, ...presInput } = input;
     const sale = await this.saleService.findOneById(saleId);
 
-    const pt =
-      patient.id > 0
-        ? await this.patientService.findOneById(patient.id)
-        : new Patient();
+    let pt: Patient;
+    if (patient.id > 0) pt = await this.patientService.findOneById(patient.id);
+    else {
+      pt = new Patient();
+      pt.id = await uniqId('Patient');
+    }
     Object.assign(pt, patient);
-
+    this.patientService.save(pt);
     const prescription = new Prescription();
+    prescription.id = await uniqId('Prescription');
     prescription.sale = sale;
     Object.assign(prescription, presInput);
     prescription.patient = pt;

@@ -8,7 +8,6 @@ import {
 } from './article.sdl';
 import {
   Article,
-  ArticlePagination,
   MutationSaveArticleArgs, Packaging,
   PaginationInput, QueryFindOneArticleArgs,
   QueryPaginateArticlesArgs,
@@ -66,11 +65,10 @@ export const useSaveArticle = () => {
         if(data) {
           cache.modify({
             fields: {
-              paginateArticles(existing: ArticlePagination, {toReference}) {
+              paginateArticles(existing: any, {toReference}) {
                 return {
-                  meta: existing.meta,
-                  items: [...existing.items, toReference(data.saveArticle)],
-                  __typename: existing.__typename
+                  ...existing,
+                  items: [...existing.items, toReference(data.saveArticle)]
                 }
               }
             }

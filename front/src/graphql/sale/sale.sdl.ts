@@ -35,3 +35,12 @@ export const PAGINATE_SALE = gql`
       }
     }
 `;
+
+export type SoftRemoveSaleData = {
+  softRemoveSale: boolean;
+}
+export const SOFT_REMOVE_SALE = gql`
+    mutation SoftRemoveSale($id: Int!) {
+      softRemoveSale(id: $id)
+    }
+`;

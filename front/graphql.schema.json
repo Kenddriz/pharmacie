@@ -4040,7 +4040,7 @@
             "deprecationReason": null
           },
           {
-            "name": "removeSale",
+            "name": "softRemoveSale",
             "description": null,
             "args": [
               {
@@ -4064,8 +4064,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Sale",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },

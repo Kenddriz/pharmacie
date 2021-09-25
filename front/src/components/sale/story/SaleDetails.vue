@@ -1,103 +1,103 @@
 <template>
-  <q-card class="q-pa-none" bordered flat square>
-    <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 120}px;`">
-      <UpdatePrescription :sale-id="sale.id" :prescription="sale.prescription" />
-      <q-card-section class="q-pa-none">
-        <q-markup-table
-          bordered
-          separator="vertical"
-          flat
-          square
-          class="text-blue-grey-14 q-mt-sm"
+  <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 112}px;`">
+    <UpdatePrescription :sale-id="sale.id" :prescription="sale.prescription" />
+    <q-card-section class="q-pa-none">
+      <q-markup-table
+        bordered
+        separator="vertical"
+        flat
+        square
+        class="text-blue-grey-14 q-mt-sm"
+      >
+        <thead>
+        <tr>
+          <th style="border-bottom: 1px solid gainsboro" colspan="8">
+            Liste de médicaments achetés
+          </th>
+        </tr>
+        <CommonSaleHeader>
+          <q-icon name="more_vert" size="sm" color="positive" />
+        </CommonSaleHeader>
+        </thead>
+        <tbody>
+        <tr
+          v-for="(stm, index) in sale.stockMovements"
+          :key="index"
+          class="q-tr--no-hover"
         >
-          <thead>
-          <tr>
-            <th style="border-bottom: 1px solid gainsboro" colspan="8">
-              Liste de médicaments achetés
-            </th>
-          </tr>
-          <CommonSaleHeader>
-            <q-icon name="more_vert" size="sm" color="positive" />
-          </CommonSaleHeader>
-          </thead>
-          <tbody>
-          <tr
-            v-for="(stm, index) in sale.stockMovements"
-            :key="index"
-            class="q-tr--no-hover"
-          >
-            <td>{{stm.batch.id}}</td>
-            <td>{{getMedicineName(stm.batch.medicine)}}</td>
-            <td>
-              <UnitConverter
-                :value="stm.price"
-                :units="stm.batch.medicine.packaging.units"
-                :is-q="false"
-              />
-            </td>
-            <td>{{stm.vat}}</td>
-            <td>{{stm.discount}}</td>
-            <td>
-              <UnitConverter
-                :units="stm.batch.medicine.packaging.units"
-                :value="stm.quantity"
-                :is-q="true"
-              />
-            </td>
-            <td>{{saleLineCost(stm)}}</td>
-            <td width="50">
-              <q-btn
-                round
-                flat
-                dense
-                size="sm"
-                icon="more_vert"
-                color="positive"
-                @click="updateSaleLine(stm)"
-              />
-            </td>
-          </tr>
-          </tbody>
-        </q-markup-table>
-      </q-card-section>
-      <q-card-actions align="around">
-        <q-btn
-          no-caps
-          icon="add"
-          outline
-          color="primary"
-          label="Nouvelles lignes de vente"
-          @click="addSaleLine"
-        />
-        <q-btn
-          no-caps
-          icon="delete"
-          outline
-          color="red"
-          label="Supprimer cette vente"
-        />
-        <q-btn
-          :disable="!sale.stockMovements.length"
-          no-caps
-          icon-right="close"
-          outline
-          color="brown"
-          label="Annuler cette vente"
-          @click="cancel"
+          <td>{{stm.batch.id}}</td>
+          <td>{{getMedicineName(stm.batch.medicine)}}</td>
+          <td>
+            <UnitConverter
+              :value="stm.price"
+              :units="stm.batch.medicine.packaging.units"
+              :is-q="false"
+            />
+          </td>
+          <td>{{stm.vat}}</td>
+          <td>{{stm.discount}}</td>
+          <td>
+            <UnitConverter
+              :units="stm.batch.medicine.packaging.units"
+              :value="stm.quantity"
+              :is-q="true"
+            />
+          </td>
+          <td>{{saleLineCost(stm)}}</td>
+          <td width="50">
+            <q-btn
+              round
+              flat
+              dense
+              size="sm"
+              icon="more_vert"
+              color="positive"
+              @click="updateSaleLine(stm)"
+            />
+          </td>
+        </tr>
+        </tbody>
+      </q-markup-table>
+    </q-card-section>
+    <q-card-actions align="around">
+      <q-btn
+        no-caps
+        icon="add"
+        outline
+        color="primary"
+        label="Nouvelles lignes de vente"
+        @click="addSaleLine"
+      />
+      <q-btn
+        :disable="!sale.stockMovements.length"
+        no-caps
+        icon-right="close"
+        outline
+        color="amber-10"
+        label="Annuler toutes lignes"
+        @click="cancel"
+      >
+        <q-tooltip
+          class="bg-amber-10 text-body2"
+          :offset="[5, 5]"
+          transition-show="scale"
+          transition-hide="scale"
         >
-          <q-tooltip
-            class="bg-brown text-body2"
-            :offset="[5, 5]"
-            transition-show="scale"
-            transition-hide="scale"
-          >
-            <q-icon size="xs" class="q-mr-smd" name="info" />
-            {{$t('sale.cancelAll')}}
-          </q-tooltip>
-        </q-btn>
-      </q-card-actions>
-    </ScrollArea>
-  </q-card>
+          <q-icon size="xs" class="q-mr-smd" name="info" />
+          {{$t('sale.cancelAll')}}
+        </q-tooltip>
+      </q-btn>
+      <q-btn
+        no-caps
+        icon="delete"
+        outline
+        color="red"
+        label="Supprimer cette vente"
+        @click="softRemoveSale(sale.id)"
+        :loading="srsLoading"
+      />
+    </q-card-actions>
+  </ScrollArea>
 </template>
 
 <script lang="ts">
@@ -112,6 +112,7 @@ import UpdateSaleLine from '../../stock-movement/UpdateSaleLine.vue';
 import { useCancelSaleLines } from '../../../graphql/stock-movement/stock-mvt.service';
 import AddSaleLine from '../../stock-movement/AddSaleLine.vue';
 import ScrollArea from '../../shared/ScrollArea.vue';
+import { useSoftRemoveSale } from '../../../graphql/sale/sale.service';
 
 export default defineComponent({
   name: 'SaleDetails',
@@ -149,7 +150,8 @@ export default defineComponent({
             existingIds: props.sale.stockMovements.map(s => s.batch.id)
           }
         })
-      }
+      },
+      ...useSoftRemoveSale()
     }
   }
 });

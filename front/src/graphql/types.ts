@@ -328,7 +328,7 @@ export type Mutation = {
   updateBatch: Batch;
   softRemove: Batch;
   createSale: Sale;
-  removeSale: Sale;
+  softRemoveSale: Scalars['Boolean'];
   createPrescription: Sale;
   updatePrescription: Prescription;
   deletePrescription: Sale;
@@ -528,7 +528,7 @@ export type MutationCreateSaleArgs = {
 };
 
 
-export type MutationRemoveSaleArgs = {
+export type MutationSoftRemoveSaleArgs = {
   id: Scalars['Int'];
 };
 
