@@ -14,11 +14,12 @@
       :pagination="{page: 1, rowsPerPage: paginateInput.limit}"
       row-key="id"
       flat
-      class="col"
+      class="col sticky-header-table"
       card-container-class="fa-border items-start"
       no-data-label="Aucune page trouvé..."
       hide-pagination
       :loading="ppLoading"
+      :style="`height:${$q.screen.height - 118}px`"
     >
       <template v-slot:top>
         <div class="column full-width q-gutter-xs">
@@ -211,53 +212,70 @@ import { Command, Provider } from '../../graphql/types';
 import UpdateCommand from '../../components/command/UpdateCommand.vue';
 import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue';
 
-  export default defineComponent({
-    name: 'Provider',
-    components: {
-      ProviderForm,
-      CardItem,
-      ProviderCommands,
-      AddCommand,
-      UpdateCommand,
-      CommandLineDetails
-    },
-    setup() {
-      const addCmdDialog = reactive<{show: boolean; provider: Provider|null}>({
-        show: false,
-        provider: null
-      });
-      function openAddCmdDialog(provider: Provider) {
-        addCmdDialog.provider = provider;
-        addCmdDialog.show = true;
-      }
-
-      const moreCmdDialog = reactive<{show: boolean; command: Command|null}>({
-        show: false,
-        command: null
-      });
-      function openMoreCmdDialog(command: Command) {
-        moreCmdDialog.command = command;
-        moreCmdDialog.show = true;
-      }
-
-      return {
-        isGrid: ref<boolean>(false),
-        openAddCmdDialog,
-        addCmdDialog,
-        moreCmdDialog,
-        openMoreCmdDialog,
-        viewModeOptions: [
-          { value: false, slot: 'false' },
-          { value: true, slot: 'true' }
-        ],
-        columns,
-        ...usePaginateProviders(),
-        ...useSaveProvider()
-      }
+export default defineComponent({
+  name: 'Provider',
+  components: {
+    ProviderForm,
+    CardItem,
+    ProviderCommands,
+    AddCommand,
+    UpdateCommand,
+    CommandLineDetails
+  },
+  setup() {
+    const addCmdDialog = reactive<{show: boolean; provider: Provider|null}>({
+      show: false,
+      provider: null
+    });
+    function openAddCmdDialog(provider: Provider) {
+      addCmdDialog.provider = provider;
+      addCmdDialog.show = true;
     }
-  })
+
+    const moreCmdDialog = reactive<{show: boolean; command: Command|null}>({
+      show: false,
+      command: null
+    });
+    function openMoreCmdDialog(command: Command) {
+      moreCmdDialog.command = command;
+      moreCmdDialog.show = true;
+    }
+
+    return {
+      isGrid: ref<boolean>(false),
+      openAddCmdDialog,
+      addCmdDialog,
+      moreCmdDialog,
+      openMoreCmdDialog,
+      viewModeOptions: [
+        { value: false, slot: 'false' },
+        { value: true, slot: 'true' }
+      ],
+      columns,
+      ...usePaginateProviders(),
+      ...useSaveProvider()
+    }
+  }
+})
 </script>
 
-<style scoped>
+<style lang="sass">
+.sticky-header-table
+  /* height or max-height is important */
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th
+    /* bg color is important for th; just specify one */
+    background-color: #c1f4cd
 
+  thead tr th
+    position: sticky
+    z-index: 1
+  thead tr:first-child th
+    top: 0
+
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
 </style>
