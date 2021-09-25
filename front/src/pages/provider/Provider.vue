@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row justify-center items-start q-pa-md">
+  <q-page class="row justify-center items-start q-pa-sm q-gutter-x-xs">
     <ProviderForm
       square
       flat class="col-12 col-md-3"

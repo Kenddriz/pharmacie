@@ -10,9 +10,11 @@
     <q-btn
       @click="$emit('remove')"
       size="md"
-      icon="delete"
-      text-color="teal-5"
-    />
+      outline
+      color="grey"
+    >
+      <q-icon name="close" color="deep-orange" />
+    </q-btn>
   </div>
 </template>
 

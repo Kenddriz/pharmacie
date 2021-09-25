@@ -129,9 +129,7 @@ export default defineComponent({
       loadChart({ year: pcInput.year, providerId: props.provider.id })
     }
     watch<boolean>(() => props.expand, (expanded) => {
-      if(expanded && providerCommands.value.items.length === 0) {
-        refresh();
-      }
+      if(expanded)refresh();
     });
     function openMoreDialog(cmd: UnwrapRef<Command> ) {
       Object.assign(selectedCmd.value[0], {...cmd, provider: props.provider });

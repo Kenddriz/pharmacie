@@ -7,45 +7,42 @@
         <q-tooltip>Fermer</q-tooltip>
       </q-btn>
     </q-card-section>
-
     <q-separator inset />
-
-    <q-card-section class="q-gutter-sm">
-      <div class="text-h6">Détails</div>
-      <q-input
-        :model-value="input.name"
-        v-model="input.name"
-        outlined
-        dense
-        label="Nom"
-      />
-      <q-input
-        :model-value="input.address"
-        v-model="input.address"
-        outlined
-        dense
-        label="Adresse"
-      />
-    </q-card-section>
-
-    <q-separator inset />
-
-    <q-card-section>
-      <div class="text-h6 q-mb-sm">Contacts</div>
-      <q-list
-        bordered
-        v-for="(contact, index) in $tm('contacts')"
-        :key="index"
-        dense
-        class="full-width q-mb-sm"
-      >
-        <q-expansion-item
-          expand-separator
-          icon="perm_identity"
-          :label="contact"
+    <ScrollArea :style="`height:${$q.screen.height - 237}px`">
+      <q-card-section class="q-gutter-sm">
+        <div class="text-h6">Détails</div>
+        <q-input
+          :model-value="input.name"
+          v-model="input.name"
+          outlined
+          dense
+          label="Nom"
+        />
+        <q-input
+          :model-value="input.address"
+          v-model="input.address"
+          outlined
+          dense
+          label="Adresse"
+        />
+      </q-card-section>
+      <q-separator inset />
+      <q-card-section>
+        <div class="text-h6 q-mb-sm">Contacts</div>
+        <q-list
+          bordered
+          v-for="(contact, index) in $tm('contacts')"
+          :key="index"
+          dense
+          class="full-width q-mb-sm"
         >
-          <div class="q-ma-sm">
-            <ContactInput
+          <q-expansion-item
+            expand-separator
+            icon="perm_identity"
+            :label="contact"
+          >
+            <div class="q-ma-sm">
+              <ContactInput
                 v-for="i in input.contacts[index].list.length"
                 :key="i"
                 :label="`${contact} ${i}`"
@@ -53,21 +50,20 @@
                 class="q-mb-sm"
                 @remove="removeContact(index, i-1)"
               />
-            <q-btn
-               round
-               color="teal-4"
-               class="q-mb-sm"
-               size="sm"
-               icon="add"
-               @click="addContact(index)"
-             />
-          </div>
-        </q-expansion-item>
-      </q-list>
-    </q-card-section>
-
+              <q-btn
+                round
+                color="teal-4"
+                class="q-mb-sm"
+                size="sm"
+                icon="add"
+                @click="addContact(index)"
+              />
+            </div>
+          </q-expansion-item>
+        </q-list>
+      </q-card-section>
+    </ScrollArea>
     <q-separator inset />
-
     <q-card-actions align="right">
       <q-btn
         @click="$emit('submit', input)"
@@ -85,10 +81,11 @@
   import { SaveProviderInput } from '../../graphql/types';
   import { useI18n } from 'vue-i18n';
   import { defaultProviderInput } from '../../graphql/provider/provider.service';
+  import ScrollArea from '../shared/ScrollArea.vue';
 
   export default defineComponent({
     name: 'ProviderForm',
-    components: { ContactInput },
+    components: { ContactInput, ScrollArea },
     emits: ['submit'],
     props: {
       modelValue: Object as PropType<SaveProviderInput>,
