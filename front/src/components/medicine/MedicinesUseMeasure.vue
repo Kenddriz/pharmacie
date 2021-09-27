@@ -35,7 +35,7 @@
           </q-item>
         </q-list>
         <q-inner-loading class="text-h6" :showing="!loading && !size">
-          L'élément n'est pas utilisé.
+          L'élément n'est pas utilisé
           <div class="row q-gutter-md q-mt-md">
             <q-btn
               icon="cancel"
