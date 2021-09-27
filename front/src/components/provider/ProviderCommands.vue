@@ -14,7 +14,7 @@
           @keydown.enter="refresh"
         >
           <template v-slot:prepend>
-            <span class="text-dark text-body2 text-weight-bold">Année : </span>
+            <span class="text-body2 text-weight-bold">Année : </span>
           </template>
           <template v-slot:append>
             <q-icon

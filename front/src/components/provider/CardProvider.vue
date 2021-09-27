@@ -1,5 +1,5 @@
 <template>
-  <q-card class="text-blue-grey-14" :flat="flat" bordered style="width: 400px">
+  <q-card :flat="flat" bordered style="width: 400px">
     <q-card-section  class="text-center">
       <p class="text-h5">{{provider.name}}</p>
       <p>{{provider.address}}</p>

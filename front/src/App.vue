@@ -21,6 +21,7 @@ body {
   font-family: Lato, sans-serif;
   overflow: hidden;
   font-size: 12px;
+  color: #455a64;
 }
 .sticky-header-table {
   .q-table__top, .q-table__bottom, thead tr:first-child th {
