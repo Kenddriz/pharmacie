@@ -21,9 +21,9 @@ export class PackagingService {
     return this.packagingRepository.findByIds(ids);
   }
 
-  /**Only price wich doesn't have any child can be removed*/
-  async remove(price: Packaging): Promise<Packaging> {
-    return await this.packagingRepository.remove(price);
+  async remove(id: number): Promise<boolean> {
+    const query = await this.packagingRepository.delete(id);
+    return query.affected > 0;
   }
 
   async findAll(): Promise<Packaging[]> {

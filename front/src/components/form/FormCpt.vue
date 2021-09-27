@@ -1,5 +1,5 @@
 <template>
-  <ScrollArea style="height: calc(100vh - 195px);">
+  <ScrollArea style="height: calc(100vh - 172px);">
     <div class="row wrap q-gutter-md q-pa-md">
       <q-btn icon-right="add" fab-mini text-color="primary">
         <FormForm />
@@ -12,7 +12,11 @@
             <q-btn text-color="positive" icon="edit">
               <FormForm :fm="fm" />
             </q-btn>
-            <q-btn text-color="orange" icon="delete_forever" />
+            <q-btn
+              text-color="orange"
+              icon="delete_forever"
+              @click="$emit('remove', [fm.id, 'formId'])"
+            />
           </q-btn-group>
         </q-card-actions>
       </q-card>
@@ -29,6 +33,7 @@ import FormForm from './FormForm.vue';
 export default defineComponent({
   name: 'FormCpt',
   components: { ScrollArea, FormForm },
+  emits: ['remove'],
   setup() {
     return {
       ...useForms()

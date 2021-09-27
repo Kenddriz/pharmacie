@@ -1,6 +1,21 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
-import { CREATE_FORM, CreateFormData, FORMS, FormsData, UPDATE_FORM, UpdateFormData } from './form.sdl';
-import { CreateFormInput, Form, MutationCreateFormArgs, MutationUpdateFormArgs, UpdateFormInput } from '../types';
+import {
+  CREATE_FORM,
+  CreateFormData,
+  DELETE_FORM,
+  DeleteFormData,
+  FORMS,
+  FormsData,
+  UPDATE_FORM,
+  UpdateFormData,
+} from './form.sdl';
+import {
+  CreateFormInput,
+  Form,
+  MutationCreateFormArgs, MutationDeleteFormArgs,
+  MutationUpdateFormArgs,
+  UpdateFormInput,
+} from '../types';
 import { reactive } from 'vue';
 import { cloneDeep } from '../utils/utils';
 import { notify } from '../../shared/notification';
@@ -67,5 +82,31 @@ export const useUpdateForm = () => {
       })
       void mutate({ input });
     }
+  }
+};
+export const useDeleteForm = () => {
+  const { mutate, onDone } = useMutation<DeleteFormData, MutationDeleteFormArgs>(DELETE_FORM);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès');
+  })
+  function deleteForm(id: number) {
+    Loading.show({ message: 'Suppression ...'});
+    void mutate({ id }, {
+      update(cache, { data }) {
+        if(data?.deleteForm) {
+          cache.modify({
+            fields: {
+              forms(existingRef: any, { readField }) {
+                return existingRef.filter((eRef: any) => readField('id', eRef) !== id)
+              }
+            }
+          })
+        }
+      }
+    });
+  }
+  return {
+    deleteForm
   }
 }

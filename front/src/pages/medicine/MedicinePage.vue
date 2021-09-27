@@ -1,8 +1,8 @@
 <template>
-  <q-page class="q-pa-sm">
+  <q-page class="q-pa-xs">
     <q-splitter
       v-model="splitterModel"
-      style="height: 83vh"
+      style="height: 86vh"
     >
       <template v-slot:before>
         <Article
@@ -74,7 +74,7 @@ export default {
   components: {Article, ArticleForm, Medicine},
   setup () {
     return {
-      splitterModel: ref(25), // start at 50%
+      splitterModel: ref(26), // start at 26%
       ...usePaginateArticle(),
       ...useSaveArticle()
     }

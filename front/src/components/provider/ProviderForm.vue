@@ -8,7 +8,7 @@
       </q-btn>
     </q-card-section>
     <q-separator inset />
-    <ScrollArea :style="`height:${$q.screen.height - 237}px`">
+    <ScrollArea :style="`height:${$q.screen.height - 210}px`">
       <q-card-section class="q-gutter-sm">
         <div class="text-h6">Détails</div>
         <q-input

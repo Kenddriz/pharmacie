@@ -1,5 +1,5 @@
 <template>
-  <ScrollArea style="height: calc(100vh - 195px);">
+  <ScrollArea style="height: calc(100vh - 172px);">
     <q-stepper
       v-if="dosages.length"
       v-model="step"
@@ -41,7 +41,11 @@
                     @before-show="dosageInput.label = u.label"
                   />
                 </q-btn>
-                <q-btn text-color="deep-orange" icon="delete_forever" />
+                <q-btn
+                  text-color="deep-orange"
+                  icon="delete_forever"
+                  @click="$emit('remove', [u.id, 'dosageId'])"
+                />
                 <q-btn
                   :text-color="indexToMove === i ? 'positive' : 'dark'"
                   icon="drive_file_move"
@@ -75,6 +79,7 @@ import ScrollArea from '../shared/ScrollArea.vue';
 export default defineComponent({
   name: 'DosageCpt',
   components: { DosageForm, ScrollArea },
+  emits: ['remove'],
   setup(){
     const { listLoading, dosages } = useDosages();
     return {

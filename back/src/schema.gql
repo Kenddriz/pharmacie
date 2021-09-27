@@ -159,7 +159,7 @@ type Medicine {
   currentVat: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type CommandLine {
@@ -203,6 +203,11 @@ type ProviderCommandsChart {
   invoice: Float!
 }
 
+type MedicinePaginationOutput {
+  items: [Medicine!]!
+  meta: Meta!
+}
+
 type ArticlePagination {
   items: [Article!]!
   meta: Meta!
@@ -239,7 +244,7 @@ type Query {
   providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
-  medicines: [Medicine!]!
+  findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
   forms: [Form!]!
   dosages: [Dosage!]!
   packaging: [Packaging!]!
@@ -272,6 +277,14 @@ input ProviderCommandsChartInput {
   providerId: Int!
 }
 
+input FindByMeasureInput {
+  keyword: String
+  page: Float!
+  limit: Float!
+  measureId: Int!
+  foreignKey: String!
+}
+
 input PaginateStockMovementInput {
   medicineId: Float!
   page: Float!
@@ -293,18 +306,19 @@ type Mutation {
   addCommandLine(input: AddCommandLineInput!): Command!
   updateCommandLine(input: UpdateCommandLineInput!): CommandLine!
   removeCommandLine(input: DeleteCommandLineInput!): Command!
-  createMedicine(input: MedicineInputForm!): Article!
+  createMedicine(input: CreateMedicineInput!): Article!
   updateMedicine(input: UpdateMedicineInput!): Medicine!
   softRemoveMedicine(input: DeleteMedicineInput!): Article!
   deleteMedicine(input: DeleteMedicineInput!): Article!
   recoverMedicine(input: DeleteMedicineInput!): Article!
   createForm(input: CreateFormInput!): Form
   updateForm(input: UpdateFormInput!): Form
-  removeForm(id: Int!): Form!
+  deleteForm(id: Int!): Boolean!
   saveDosage(input: SaveDosageInput!): Dosage!
-  removeDosage(id: Int!): Dosage!
+  deleteDosage(id: Int!): Boolean!
   createPackaging(input: [CreatePackagingInput!]!): Packaging!
   updatePackaging(input: UpdatePackagingInput!): Packaging!
+  deletePackaging(id: Int!): Boolean!
   saveArticle(input: SaveArticleInput!): Article!
   removeArticle(id: Int!): Article!
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
@@ -383,8 +397,12 @@ input DeleteCommandLineInput {
   commandId: Int!
 }
 
-input MedicineInputForm {
+input CreateMedicineInput {
   articleId: Int!
+  form: MedicineFormInput!
+}
+
+input MedicineFormInput {
   formId: Int!
   dosageId: Int!
   packagingId: Int!
@@ -394,7 +412,7 @@ input MedicineInputForm {
 
 input UpdateMedicineInput {
   id: Int!
-  form: MedicineInputForm!
+  form: MedicineFormInput!
 }
 
 input DeleteMedicineInput {

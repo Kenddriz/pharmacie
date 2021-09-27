@@ -40,3 +40,11 @@ export const UPDATE_PACKAGING = gql`
     }
   }
 `;
+export type DeletePackagingData = {
+  deletePackaging: boolean;
+}
+export const DELETE_PACKAGING = gql`
+  mutation DeletePackaging($id: Int!) {
+    deletePackaging(id:$id)
+  }
+`;

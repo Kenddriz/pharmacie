@@ -32,5 +32,12 @@ export default {
   sale: {
     cancelLine: 'La quantité vendue se remettra en stock',
     cancelAll: 'Toutes quantités vendues se remettrons en stock'
+  },
+  measure: {
+    delete: {
+      formId: 'de la forme',
+      dosageId: 'du dosage',
+      packagingId: 'de l\'unité de vente'
+    }
   }
 };

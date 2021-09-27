@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
-import { DOSAGES_DATA, DosagesData, SAVE_DOSAGE, SaveDosageData } from './dosage.sdl';
+import { DELETE_DOSAGE, DeleteDosageData, DOSAGES_DATA, DosagesData, SAVE_DOSAGE, SaveDosageData } from './dosage.sdl';
 import {reactive} from 'vue';
-import { Dosage, MutationSaveDosageArgs, SaveDosageInput } from '../types';
+import { Dosage, MutationDeleteDosageArgs, MutationSaveDosageArgs, SaveDosageInput } from '../types';
+import { Loading } from 'quasar';
+import { notify } from '../../shared/notification';
 
 export type DosageItem = Dosage & {children: Dosage[]};
 export const useDosages = () => {
@@ -71,4 +73,31 @@ export const useSaveDosage = () => {
     resetInput();
   }
   return { dosageInput,saveDosage, dosageLoading, setDosage, addUnit, resetInput }
+}
+
+export const useDeleteDosage = () => {
+  const { mutate, onDone } = useMutation<DeleteDosageData, MutationDeleteDosageArgs>(DELETE_DOSAGE);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès');
+  })
+  function deleteDosage(id: number) {
+    Loading.show({ message: 'Suppression ...'});
+    void mutate({ id }, {
+      update(cache, { data }) {
+        if(data?.deleteDosage) {
+          cache.modify({
+            fields: {
+              dosages(existingRef: any, { readField }) {
+                return existingRef.filter((eRef: any) => readField('id', eRef) !== id)
+              }
+            }
+          })
+        }
+      }
+    });
+  }
+  return {
+    deleteDosage
+  }
 }

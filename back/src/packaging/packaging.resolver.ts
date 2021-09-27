@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PackagingService } from './packaging.service';
 import { Packaging } from './packaging.entity';
 import { uniqId } from '../shared/id-builder.service';
@@ -36,5 +36,10 @@ export class PackagingResolver {
     const packaging = await this.packagingService.findOneById(input.id);
     packaging.units = input.units;
     return await this.packagingService.save(packaging);
+  }
+
+  @Mutation(() => Boolean)
+  async deletePackaging(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.packagingService.remove(id);
   }
 }

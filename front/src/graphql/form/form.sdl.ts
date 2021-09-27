@@ -37,3 +37,12 @@ export const UPDATE_FORM = gql`
       }
     }
 `;
+
+export type DeleteFormData = {
+  deleteForm: boolean;
+}
+export const DELETE_FORM = gql`
+  mutation DeleteForm($id: Int!) {
+    deleteForm(id:$id)
+  }
+`;

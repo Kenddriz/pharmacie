@@ -27,3 +27,12 @@ export const SAVE_DOSAGE = gql`
     }
   }
 `;
+
+export type DeleteDosageData = {
+  deleteDosage: boolean;
+}
+export const DELETE_DOSAGE = gql`
+    mutation DeleteDosage($id: Int!) {
+      deleteDosage(id:$id)
+    }
+`;

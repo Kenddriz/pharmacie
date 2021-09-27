@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row justify-center items-start q-pa-sm q-gutter-x-xs">
+  <q-page class="row justify-center items-start q-pa-xs q-gutter-x-xs">
     <ProviderForm
       square
       flat class="col-12 col-md-3"
@@ -15,11 +15,14 @@
       row-key="id"
       flat
       class="col sticky-header-table"
-      card-container-class="fa-border items-start"
+      card-container-class="fa-border items-center q-card--bordered"
+      card-container-style="overflow: scroll;"
       no-data-label="Aucune page trouvé..."
       hide-pagination
       :loading="ppLoading"
-      :style="`height:${$q.screen.height - 118}px`"
+      :style="`height:${$q.screen.height - 90}px;`"
+      loading-label="Chargement des données"
+      table-style="overflow-x:hidden"
     >
       <template v-slot:top>
         <div class="column full-width q-gutter-xs">
@@ -111,7 +114,7 @@
             {{ col.value }}
           </q-td>
           <q-td auto-width>
-            <q-btn icon="delete" size="sm" round color="warning" />
+            <q-btn flat icon="delete" size="sm" round color="deep-orange" />
           </q-td>
         </q-tr>
         <q-tr no-hover v-show="props.expand" :props="props">

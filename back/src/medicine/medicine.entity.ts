@@ -95,7 +95,7 @@ export class Medicine {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

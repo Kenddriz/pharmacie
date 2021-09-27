@@ -8,7 +8,7 @@
       padding="xs"
     >
       <q-fab-action @click="dialog = true" padding="5px" color="positive" icon="add"  />
-      <q-fab-action padding="5px" color="red" icon="delete" />
+      <slot></slot>
     </q-fab>
     <q-slide-item
       class="slide no-wrap"

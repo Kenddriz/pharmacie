@@ -1,38 +1,38 @@
 import {
-  MedicineInputForm,
   MutationDeleteMedicineArgs,
   MutationRecoverMedicineArgs,
   MutationCreateMedicineArgs,
   MutationSoftRemoveMedicineArgs,
   MutationUpdateMedicineArgs,
+  MedicineFormInput,
+  QueryFindMedicinesByMeasureArgs,
+  FindByMeasureInput, MedicinePaginationOutput,
 } from '../types';
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
   CREATE_MEDICINE,
   CreateMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
   DeleteMedicineData,
-  DELETE_MEDICINE, RecoverMedicineData, UPDATE_MEDICINE, UpdateMedicineData,
+  DELETE_MEDICINE,
+  RecoverMedicineData,
+  UPDATE_MEDICINE,
+  UpdateMedicineData,
+  FindMedicinesByMeasureData,
+  FIND_MEDICINES_BY_MEASURE,
 } from './medicine.sdl';
 import { removeDialog } from '../utils/utils';
-import { ref } from 'vue';
+import { reactive } from 'vue';
+import { InitialPagination } from '../utils/pagination';
 
-/*export const useMedicines = () => {
-  const medicines = ref<Medicine[]>([]);
-  const { loading: medLoading, onResult } = useQuery<MedicinesData>(MEDICINES);
-  onResult(({ data }) => {
-    if(data.medicines) medicines.value = data.medicines;
-  })
-  return { medicines, medLoading }
-}*/
 export const useCreateMedicine = () => {
   const { mutate, loading: cmLoading } = useMutation<
     CreateMedicineData,
     MutationCreateMedicineArgs
     >(CREATE_MEDICINE);
-  function createMedicine(input: MedicineInputForm) {
-    void mutate({ input });
+  function createMedicine(articleId: number, form: MedicineFormInput) {
+    void mutate({ input: { articleId, form } });
   }
   return { createMedicine, cmLoading }
 }
@@ -42,10 +42,15 @@ export const useUpdateMedicine = () => {
     UpdateMedicineData,
     MutationUpdateMedicineArgs
     >(UPDATE_MEDICINE);
-  const updateDialog = ref<boolean>(false);
-  function updateMedicine(id: number, form: MedicineInputForm) {
-    void mutate({ input: {id, form} });
-    updateDialog.value = false;
+  const updateDialog = reactive({
+    id: 0,
+    show: false,
+    price: 0,
+    vat: 0
+  });
+  function updateMedicine(form: MedicineFormInput) {
+    void mutate({ input: {id: updateDialog.id, form} });
+    updateDialog.show = false;
   }
   return { updateMedicine, umLoading, updateDialog }
 }
@@ -83,4 +88,23 @@ export const useRecoverMedicine = () => {
     recoverMedicine: (articleId: number, medicineId: number) => mutate({ input: { articleId, medicineId }  }),
     recoverMedicineLoading
   }
+}
+
+export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string) => {
+  const input = reactive<FindByMeasureInput>({
+    measureId,
+    foreignKey,
+    page: 1,
+    limit: 5
+  });
+  const { loading, result } = useQuery<
+    FindMedicinesByMeasureData,
+    QueryFindMedicinesByMeasureArgs
+    >(FIND_MEDICINES_BY_MEASURE, { input }, { fetchPolicy: 'no-cache' });
+  const medicines = useResult<
+    FindMedicinesByMeasureData|undefined,
+    MedicinePaginationOutput,
+    MedicinePaginationOutput
+    >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
+  return { medicines, loading, input }
 }

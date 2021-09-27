@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medicine } from './medicine.entity';
 import { Repository } from 'typeorm';
+import { FindByMeasureInput } from './types/medicine.input';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class MedicineService {
@@ -45,5 +47,14 @@ export class MedicineService {
     return this.repository.findOne(id, {
       relations: ['batches', 'commandLines'],
     });
+  };
+  async findByMeasure(input: FindByMeasureInput): Promise<Pagination<Medicine>> {
+    const { measureId, foreignKey, page, limit } = input;
+    const queryBuilder = this.repository
+      .createQueryBuilder('m')
+      .withDeleted()
+      .where(`m.${foreignKey} = :measureId`, { measureId })
+      .orderBy('m.createdAt', 'DESC');
+    return await paginate<Medicine>(queryBuilder, { page, limit });
   }
 }

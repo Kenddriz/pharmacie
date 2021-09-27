@@ -1,5 +1,9 @@
 <template>
-  <q-splitter :model-value="insideModel" v-model="insideModel">
+  <q-splitter
+    :model-value="insideModel"
+    v-model="insideModel"
+    style="height: 81vh"
+  >
     <template v-slot:before>
       <div class="q-pa-md">
         <q-linear-progress
@@ -25,14 +29,14 @@
                 :selectedDosage="selectedDosage"
                 :packaging="packagingList"
                 :selectedPk="selectedPk"
-                :articleId="article.id"
-                @submit="createMedicine"
+                @submit="createMedicine(article.id, $event)"
               >
+                Nouveau médicament
               </MedicineForm>
             </q-menu>
           </q-btn>
         </div>
-        <div class="flex flex-center wrap q-gutter-md">
+        <div class="flex justify-between wrap q-gutter-md">
           <q-card
             flat
             bordered
@@ -121,6 +125,26 @@
         :medicine="selected[0]"
       />
     </template>
+    <!--update dialog --->
+    <q-dialog v-model="updateDialog.show">
+      <q-card>
+        <q-card-section class="q-pa-none">
+          <MedicineForm
+            :forms="forms"
+            :selectedForm="selectedForm"
+            :dosages="dosages"
+            :selectedDosage="selectedDosage"
+            :packaging="packagingList"
+            :selectedPk="selectedPk"
+            :price="updateDialog.price"
+            :vat="updateDialog.vat"
+            @submit="updateMedicine($event)"
+          >
+            Mise à jour
+          </MedicineForm>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-splitter>
 </template>
 
@@ -146,7 +170,6 @@ export default defineComponent({
       default: () => ({}),
     }
   },
-  emits: ['edit', 'update:selected'],
   setup(props) {
     const selected = ref<Medicine[]>([]);
     watch(() => props.article, (article) => {
@@ -179,31 +202,15 @@ export default defineComponent({
       Object.assign(this.selectedForm, med.form);
       Object.assign(this.selectedPk, med.packaging);
       Object.assign(this.selectedDosage, med.dosage);
-      //this.selected = [med];
-      this.updateDialog = true;
+      this.updateDialog.show = true;
+      this.updateDialog.id = med.id;
+      this.updateDialog.price = med.currentSalePrice;
+      this.updateDialog.vat = med.currentVat;
     }
   }
 });
 </script>
 
 <style lang="sass">
-.sticky-header-table
-  /* height or max-height is important */
-  max-height: 100%
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th
-    /* bg color is important for th; just specify one */
-    background-color: #c1f4cd
 
-  thead tr th
-    position: sticky
-    z-index: 1
-  thead tr:first-child th
-    top: 0
-
-  /* this is when the loading indicator appears */
-  &.q-table--loading thead tr:last-child th
-    /* height of all previous header rows */
-    top: 48px
 </style>

@@ -1,8 +1,16 @@
 <template>
   <q-layout view="lhh lpR fff">
     <q-header elevated>
-      <q-toolbar>
-        <q-tabs v-model="tab" no-caps dense shrink>
+      <div class="row justify-between items-center q-pa-xs">
+        <q-tabs
+          v-model="tab"
+          no-caps
+          dense
+          shrink
+          inline-label
+          class="col-8"
+          content-class="justify-between"
+        >
           <q-route-tab
             v-for="(item, index) in pItems"
             :key="index"
@@ -52,19 +60,12 @@
               </div>
           </q-menu>
         </q-btn>
-      </q-toolbar>
+      </div>
     </q-header>
 
 
     <q-page-container>
-      <q-scroll-area
-        visible
-        :thumb-style="thumbStyle"
-        :bar-style="barStyle"
-        style="height: 85vh;"
-      >
-        <router-view />
-      </q-scroll-area>
+      <router-view />
     </q-page-container>
 
     <q-footer elevated>

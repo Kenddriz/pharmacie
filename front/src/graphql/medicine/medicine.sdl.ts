@@ -1,8 +1,9 @@
 import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
 import { DOSAGE_PARAMS } from '../dosage/dosage.sdl';
 import { FORM_PARAMS } from '../form/form.sdl';
-import { Article, Medicine } from '../types';
+import { Article, Medicine, MedicinePaginationOutput } from '../types';
 import { gql } from '@apollo/client/core';
+import { PAGINATION_META } from '../utils/pagination';
 
 export const MEDICINE_FIELDS = `
   id
@@ -21,7 +22,7 @@ export type CreateMedicineData = {
 }
 
 export const CREATE_MEDICINE = gql`
-    mutation CreateMedicine($input:MedicineInputForm!) {
+    mutation CreateMedicine($input: CreateMedicineInput!) {
       createMedicine(input: $input) {
         id
         medicines{${MEDICINE_PARAMS}}
@@ -78,3 +79,18 @@ export const RECOVER_MEDICINE = gql`
   }
 `;
 
+export type FindMedicinesByMeasureData = {
+  findMedicinesByMeasure: MedicinePaginationOutput;
+}
+export const FIND_MEDICINES_BY_MEASURE = gql`
+  query FindMedicinesByMeasure($input: FindByMeasureInput!) {
+    findMedicinesByMeasure(input: $input) {
+      items {
+        ${MEDICINE_PARAMS}
+        article {id commercialName }
+        archivedAt
+      }
+      ${PAGINATION_META}
+    }
+  }
+`;

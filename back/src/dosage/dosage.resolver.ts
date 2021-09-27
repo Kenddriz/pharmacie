@@ -21,8 +21,9 @@ export class DosageResolver {
     Object.assign(dosage, res);
     return await this.service.save(dosage);
   }
-  @Mutation(() => Dosage)
-  removeDosage(@Args('id', { type: () => Int }) id: number) {
+
+  @Mutation(() => Boolean)
+  async deleteDosage(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.service.remove(id);
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <q-card
-    class="q-ma-sm column col-xs-11 col-sm-6 col-md-4 col-lg-3"
+    class="q-ma-sm column col-sm-6 col-md-3 col-lg-2"
   >
     <q-img height="150px" src="register.jpg">
       <div class="absolute-center text-center cursor-pointer">

@@ -19,10 +19,20 @@
       </q-item>
     </q-card-section>
     <q-separator />
-    <ScrollArea style="height: calc(100vh - 192px);">
+    <ScrollArea style="height: calc(100vh - 170px);">
       <q-card-section class="q-pb-none">
-        <ScrollArea v-for="(pk, index) in packagingList" :key="index" style="height: 70px; max-width: 100%;">
-          <UpdatePackaging :packaging="pk" />
+        <ScrollArea
+          v-for="(pk, index) in packagingList"
+          :key="index" style="height: 70px; max-width: 100%;"
+        >
+          <UpdatePackaging :packaging="pk">
+            <q-fab-action
+              padding="5px"
+              color="red"
+              icon="delete"
+              @click="$emit('remove', [pk.id, 'packagingId'])"
+            />
+          </UpdatePackaging>
           <q-separator class="q-mt-sm" inset/>
         </ScrollArea>
       </q-card-section>
@@ -41,6 +51,7 @@ import UpdatePackaging from './UpdatePackaging.vue';
 export default {
   name: 'ConditioningComponent',
   components: { ScrollArea, AddPackagingLine, UpdatePackaging },
+  emits: ['remove'],
   setup() {
     return {
       ...useListPackaging()

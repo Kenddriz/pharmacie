@@ -1,7 +1,7 @@
 <template>
   <q-page class="row">
     <div class="col-12 col-md-6 q-pa-sm">
-      <ConditioningComponent />
+      <PackagingCpt @remove="medicinesUser" />
     </div>
     <div class="col-12 col-md-6 q-pa-sm">
       <q-card
@@ -21,10 +21,10 @@
         <q-separator />
         <q-tab-panels keep-alive v-model="tab" animated>
           <q-tab-panel name="forms" class="q-pa-none">
-            <FormCpt />
+            <FormCpt @remove="medicinesUser"  />
           </q-tab-panel>
           <q-tab-panel name="dosages" class="q-pa-none">
-            <DosageCpt />
+            <DosageCpt @remove="medicinesUser" />
           </q-tab-panel>
         </q-tab-panels>
       </q-card>
@@ -75,17 +75,26 @@
 
 <script lang="ts">
 
-import ConditioningComponent from '../components/packaging/PackagingCpt.vue';
+import PackagingCpt from '../components/packaging/PackagingCpt.vue';
 import DosageCpt from '../components/dosage/DosageCpt.vue';
 import { defineComponent, ref } from 'vue';
 import FormCpt from '../components/form/FormCpt.vue';
+import { useQuasar } from 'quasar';
+import MedicinesUseMeasure from '../components/medicine/MedicinesUseMeasure.vue';
 
 export default defineComponent({
   name: 'Units',
-  components: { ConditioningComponent, DosageCpt, FormCpt },
+  components: { PackagingCpt, DosageCpt, FormCpt },
   setup() {
+    const { dialog } = useQuasar();
     return {
       tab: ref<string>('forms'),
+      medicinesUser: (event: unknown[]) => {
+        dialog({
+          component: MedicinesUseMeasure,
+          componentProps: {measureId: event[0], foreignKey: event[1]}
+        })
+      }
     }
   }
 })

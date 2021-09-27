@@ -1,5 +1,5 @@
 <template>
-  <div class="text-blue-grey-11 q-pa-md">
+  <div class="text-blue-grey-11 q-pa-sm">
     text
   </div>
 </template>

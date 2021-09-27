@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
   CREATE_PACKAGING,
-  CreatePackagingData,
+  CreatePackagingData, DELETE_PACKAGING, DeletePackagingData,
   PACKAGING,
   PackagingData,
   UPDATE_PACKAGING,
-  UpdatePackagingData
+  UpdatePackagingData,
 } from './packaging.sdl';
 import {
   CreatePackagingInput,
-  MutationCreatePackagingArgs,
+  MutationCreatePackagingArgs, MutationDeletePackagingArgs,
   MutationUpdatePackagingArgs,
   Packaging,
   UpdatePackagingInput,
@@ -17,6 +17,7 @@ import {
 import {reactive, ref} from 'vue';
 import {cloneDeep} from '../utils/utils';
 import { notify } from '../../shared/notification';
+import { Loading } from 'quasar';
 
 export const useListPackaging = () => {
   const { result,  loading: loadList } = useQuery<PackagingData>(PACKAGING);
@@ -68,5 +69,32 @@ export const useCreatePackaging = () => {
     creationInput,
     unit,
     submitCreation: () => void mutate({ input: creationInput.value })
+  }
+}
+
+export const useDeletePackaging = () => {
+  const { mutate, onDone } = useMutation<DeletePackagingData, MutationDeletePackagingArgs>(DELETE_PACKAGING);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès');
+  })
+  function deletePackaging(id: number) {
+    Loading.show({ message: 'Suppression ...'});
+    void mutate({ id }, {
+      update(cache, { data }) {
+        if(data?.deletePackaging) {
+          cache.modify({
+            fields: {
+              packaging(existingRef: any, { readField }) {
+                return existingRef.filter((eRef: any) => readField('id', eRef) !== id)
+              }
+            }
+          })
+        }
+      }
+    });
+  }
+  return {
+    deletePackaging
   }
 }

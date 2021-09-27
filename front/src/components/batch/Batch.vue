@@ -38,7 +38,7 @@
               <q-item>
                 <q-item-section>
                   <q-item-label>Jours restants</q-item-label>
-                  <q-item-label caption>60</q-item-label>
+                  <q-item-label caption>{{leftDays(batch.expirationDate)}}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -106,6 +106,7 @@ import { defineComponent, PropType } from 'vue';
 import { Medicine } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
 import UnitConverter from '../packaging/UnitConverter.vue';
+import { leftDays } from '../../graphql/utils/utils';
 
 export default defineComponent({
   name: 'Batch',
@@ -118,7 +119,8 @@ export default defineComponent({
   },
   setup() {
     return {
-      formatDate
+      formatDate,
+      leftDays
     }
   }
 });

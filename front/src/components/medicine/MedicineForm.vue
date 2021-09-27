@@ -1,4 +1,9 @@
 <template>
+  <q-card-section class="q-pb-sm text-weight-bold row">
+    <slot></slot> <q-space />
+    <q-btn size="xs" v-close-popup unelevated dense color="red" icon="close" />
+  </q-card-section>
+  <q-separator />
   <q-list class="q-gutter-sm" dense padding style="min-width: 250px">
     <FormList
       :forms="forms"
@@ -40,17 +45,18 @@
       />
     </q-item>
   </q-list>
-
-  <q-btn
-    class="q-ml-sm q-mb-sm q-pl-sm q-pr-sm"
-    color="primary"
-    no-caps
-    rounded
-    outline
-    dense
-    label="Enregistrer"
-    @click="$emit('submit', formInput())"
-  />
+  <q-card-actions>
+    <q-btn
+      class="full-width"
+      color="primary"
+      no-caps
+      rounded
+      outline
+      dense
+      label="Enregistrer"
+      @click="$emit('submit', formInput())"
+    />
+  </q-card-actions>
 </template>
 
 <script lang="ts">
@@ -58,7 +64,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import FormList from '../form/FormList.vue';
 import DosageList from '../dosage/DosageList.vue';
 import PackagingList from '../packaging/PackagingList.vue';
-import { Form, MedicineInputForm, Packaging } from '../../graphql/types';
+import { Form, MedicineFormInput, Packaging } from '../../graphql/types';
 import { DosageItem } from '../../graphql/dosage/dosage.service';
 import PackagingInput from '../packaging/PackagingInput.vue';
 
@@ -90,15 +96,10 @@ export default defineComponent({
       type: Object as PropType<Packaging>,
       required: true
     },
-    articleId: {
-      type: Number,
-      required: true
-    },
     price: {
       type: Number,
       default: 0
     },
-
     vat: {
       type: Number,
       default: 0
@@ -111,9 +112,8 @@ export default defineComponent({
     return {
       mPrice,
       mVat,
-      formInput: function(): MedicineInputForm {
+      formInput: function(): MedicineFormInput {
         return {
-          articleId: props.articleId,
           formId: props.selectedForm.id,
           dosageId: props.selectedDosage.id,
           packagingId: props.selectedPk.id,

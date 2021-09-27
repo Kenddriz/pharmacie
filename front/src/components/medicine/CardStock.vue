@@ -48,23 +48,38 @@
             <template v-if="invoice = stm.invoice">
               <td>{{formatDate(invoice.createdAt, 'DATE_TIME')}}</td>
               <td>{{invoice.command.provider.name}}</td>
-              <td>{{stm.quantity}}</td>
+              <td>
+                <SubdivideList
+                  :units="medicine.packaging.units"
+                  :current-stock="stm.quantity"
+                />
+              </td>
               <td></td>
             </template>
             <template v-else>
               <td>{{formatDate(stm.sale.createdAt, 'DATE_TIME')}}</td>
               <td>
                 <template v-if="model.patient = invoice.sale.prescription.patient">
-                  {{patient.lastName}}  {{patient.firstName}} -  {{patient.phone}}
+                  {{patient.name}} -  {{patient.phone}}
                 </template>
                 <template v-else>
                   Divers
                 </template>
               </td>
               <td></td>
-              <td>{{stm.quantity}}</td>
+              <td>
+                <SubdivideList
+                  :units="medicine.packaging.units"
+                  :current-stock="stm.quantity"
+                />
+              </td>
             </template>
-            <td>{{stm.stock}}</td>
+            <td>
+              <SubdivideList
+                :units="medicine.packaging.units"
+                :current-stock="stm.stock"
+              />
+            </td>
             <td>{{formatDate(stm.batch.expirationDate, 'DATE_ONLY')}}</td>
           </tr>
           </tbody>
@@ -105,9 +120,11 @@ import { usePaginateStockMovement } from '../../graphql/stock-movement/stock-mvt
 import { Medicine } from '../../graphql/types';
 import { useDialogPluginComponent } from 'quasar';
 import { formatDate } from '../../shared/date';
+import SubdivideList from '../packaging/SubdivideList.vue';
 
 export default defineComponent({
   name: 'stockMovement',
+  components: { SubdivideList },
   props: {
     medicine: {
       type: Object as PropType<Medicine>,

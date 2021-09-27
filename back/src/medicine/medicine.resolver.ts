@@ -9,9 +9,11 @@ import {
 import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
 import {
+  CreateMedicineInput,
   DeleteMedicineInput,
-  MedicineInputForm,
   UpdateMedicineInput,
+  MedicineFormInput,
+  FindByMeasureInput,
 } from './types/medicine.input';
 import { uniqId } from '../shared/id-builder.service';
 import { Form } from '../form/form.entity';
@@ -24,6 +26,8 @@ import { ArticleService } from '../article/article.service';
 import { Article } from '../article/article.entity';
 import { BatchService } from '../batch/batch.service';
 import { Batch } from '../batch/batch.entity';
+import { MedicinePaginationOutput } from './types/medicine.output';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Resolver(() => Medicine)
 export class MedicineResolver {
@@ -38,24 +42,30 @@ export class MedicineResolver {
 
   @Mutation(() => Article)
   async createMedicine(
-    @Args('input') input: MedicineInputForm,
+    @Args('input') input: CreateMedicineInput,
   ): Promise<Article> {
     const medicine = new Medicine();
     medicine.id = await uniqId('Medicine');
-    await this.save(medicine, input);
+    const { articleId, form } = input;
+    medicine.article = await this.articleService.findOneById(articleId);
+    await this.save(medicine, form);
     return medicine.article;
   }
   @Mutation(() => Medicine)
   async updateMedicine(
     @Args('input') input: UpdateMedicineInput,
   ): Promise<Medicine> {
-    const medicine = await this.medicineService.findOne(input.id);
-    await this.save(medicine, input.form);
+    const { id, form } = input;
+    const medicine = await this.medicineService.findOne(id);
+    await this.save(medicine, form);
     return medicine;
   }
-  @Query(() => [Medicine])
-  async medicines() {
-    return this.medicineService.findAll();
+
+  @Query(() => MedicinePaginationOutput)
+  async findMedicinesByMeasure(
+    @Args('input') input: FindByMeasureInput,
+  ): Promise<Pagination<Medicine>> {
+    return this.medicineService.findByMeasure(input);
   }
 
   @Mutation(() => Article)
@@ -96,9 +106,8 @@ export class MedicineResolver {
   }
   private async save(
     medicine: Medicine,
-    form: MedicineInputForm,
+    form: MedicineFormInput,
   ): Promise<void> {
-    medicine.article = await this.articleService.findOneById(form.articleId);
     medicine.form = await this.formService.findOne(form.formId);
     medicine.dosage = await this.dosageService.findOneById(form.dosageId);
     medicine.packaging = await this.packagingService.findOneById(form.formId);

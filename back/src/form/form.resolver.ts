@@ -31,8 +31,8 @@ export class FormResolver {
     return await this.formService.findAll();
   }
 
-  @Mutation(() => Form)
-  removeForm(@Args('id', { type: () => Int }) id: number) {
+  @Mutation(() => Boolean)
+  async deleteForm(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.formService.remove(id);
   }
 }

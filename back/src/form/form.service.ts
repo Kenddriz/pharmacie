@@ -24,7 +24,8 @@ export class FormService {
     return this.repository.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} form`;
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

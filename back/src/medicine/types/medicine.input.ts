@@ -1,10 +1,8 @@
 import { InputType, Field, Int, Float } from '@nestjs/graphql';
+import { PaginationInput } from '../../shared/shared.input';
 
 @InputType()
-export class MedicineInputForm {
-  @Field(() => Int)
-  articleId: number;
-
+export class MedicineFormInput {
   @Field(() => Int)
   formId: number;
 
@@ -20,12 +18,20 @@ export class MedicineInputForm {
   @Field(() => Float)
   currentVat: number;
 }
+
+@InputType()
+export class CreateMedicineInput {
+  @Field(() => Int)
+  articleId: number;
+  @Field(() => MedicineFormInput)
+  form: MedicineFormInput;
+}
 @InputType()
 export class UpdateMedicineInput {
   @Field(() => Int)
   id: number;
-  @Field(() => MedicineInputForm)
-  form: MedicineInputForm;
+  @Field(() => MedicineFormInput)
+  form: MedicineFormInput;
 }
 @InputType()
 export class DeleteMedicineInput {
@@ -34,4 +40,11 @@ export class DeleteMedicineInput {
 
   @Field(() => Int)
   articleId: number;
+}
+@InputType()
+export class FindByMeasureInput extends PaginationInput{
+  @Field(() => Int)
+  measureId: number;
+  @Field(() => String)
+  foreignKey: 'formId' | 'dosageId' | 'packagingId';
 }

@@ -160,7 +160,7 @@ export default defineComponent({
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      heightStyle: `height:${screen.height - 250}px`
+      heightStyle: `height:${screen.height - 300}px`
     }
   }
 });
