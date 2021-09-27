@@ -1,5 +1,5 @@
 <template>
-  <q-card square flat>
+  <q-card class="text-blue-grey-14" square flat>
     <q-card-section :horizontal="$q.screen.gt.sm">
       <q-card-section :class="`justify-between items-center ${$q.screen.gt.sm ? 'column' : 'row'}`">
         <q-input

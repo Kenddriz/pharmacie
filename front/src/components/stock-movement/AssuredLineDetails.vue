@@ -10,6 +10,8 @@
     :columns="assuredLineColumns"
     row-key="id"
     separator="vertical"
+    table-class="text-blue-grey-14"
+    title-class="text-blue-grey-14"
   >
     <template v-slot:body="props">
       <q-tr :props="props">

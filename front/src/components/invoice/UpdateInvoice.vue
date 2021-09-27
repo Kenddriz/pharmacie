@@ -1,6 +1,6 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
-    <q-menu>
+    <q-menu class="text-blue-grey-14">
       <q-form @submit.prevent="updateInvoice(updateInput)" class="q-pa-md">
         <p class="text-center text-subtitle1">
           Modification de la facture {{invoice.reference}}

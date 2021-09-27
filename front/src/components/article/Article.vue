@@ -7,7 +7,7 @@
       row-key="id"
       separator="none"
       hide-bottom
-      class="sticky-header-table"
+      class="sticky-header-table text-blue-grey-14"
       selection="single"
       :selected="selected"
       @update:selected="$emit('update:selected', $event)"

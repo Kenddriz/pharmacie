@@ -7,7 +7,7 @@
     no-caps
     text-color="text-blue-grey-14"
   >
-    <q-menu auto-close>
+    <q-menu ref="uc">
       <q-list dense padding>
         <q-item
           v-for="(u, index) in units"
@@ -15,8 +15,7 @@
           clickable
           :active="index === suIndex"
           active-class="text-positive"
-          @click="selectUnit(index)"
-          v-close-popup
+          @click="selectUnit(index); $refs['uc'].hide()"
         >
           <q-item-section>{{u.label}}</q-item-section>
         </q-item>

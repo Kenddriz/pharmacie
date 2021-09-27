@@ -34,7 +34,7 @@
           <q-spinner-oval size="8rem" color="positive" />
         </div>
         <template v-else-if="selected.length">
-          <div class="text-h6 text-center">
+          <div class="text-h6 text-center text-blue-grey-14">
             Détails d'article «{{selected[0].commercialName}}»
           </div>
           <Medicine :article="selected[0]" />
@@ -74,7 +74,7 @@ export default {
   components: {Article, ArticleForm, Medicine},
   setup () {
     return {
-      splitterModel: ref(26), // start at 26%
+      splitterModel: ref(35), // start at 26%
       ...usePaginateArticle(),
       ...useSaveArticle()
     }

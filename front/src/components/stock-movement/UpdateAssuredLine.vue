@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card class="text-blue-grey-14">
     <q-bar class="bg-teal-14 q-pa-md">
       <div class="text-bold text-white">Modification de la ligne assurée</div>
       <q-space />

@@ -20,5 +20,23 @@ export default defineComponent({
 body {
   font-family: Lato, sans-serif;
   overflow: hidden;
+  font-size: 12px;
+}
+.sticky-header-table {
+  .q-table__top, .q-table__bottom, thead tr:first-child th {
+    background-color: #c1f4cd;
+  }
+  thead tr th {
+    position: sticky;
+    z-index: 1
+  }
+  thead tr:first-child th {
+    top: 0
+  }
+  &.q-table--loading thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 48px
+  }
 }
 </style>
+

@@ -1,6 +1,6 @@
 <template>
   <q-form
-    class="q-gutter-md"
+    class="q-gutter-md text-blue-grey-14"
     @submit="$emit('save', { medicineId: medicine.value, quantity })"
   >
     <div class="text-subtitle1 row justify-between">

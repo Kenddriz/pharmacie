@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card class="text-blue-grey-14">
     <q-toolbar class="bg-teal-5">
       <slot></slot>
       <q-space />

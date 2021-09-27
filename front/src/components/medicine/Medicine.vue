@@ -3,6 +3,7 @@
     :model-value="insideModel"
     v-model="insideModel"
     style="height: 81vh"
+    class="text-blue-grey-14"
   >
     <template v-slot:before>
       <div class="q-pa-md">
@@ -46,21 +47,11 @@
           >
             <q-list dense>
               <q-item class="q-mt-sm">
-                <q-item-section avatar>
-                  <q-avatar size="sm" color="primary" text-color="white">
-                    M
-                  </q-avatar>
-                </q-item-section>
                 <q-item-section>
                   {{med.form.label}} {{med.dosage.label}}
                 </q-item-section>
               </q-item>
               <q-item>
-                <q-item-section avatar>
-                  <q-avatar size="sm" color="primary" text-color="white">
-                    P
-                  </q-avatar>
-                </q-item-section>
                 <q-item-section>
                   <q-item-label>Prix de vente</q-item-label>
                   <UnitConverter
@@ -73,11 +64,6 @@
                 </q-item-section>
               </q-item>
               <q-item>
-                <q-item-section avatar>
-                  <q-avatar size="sm" color="primary" text-color="white">
-                    T
-                  </q-avatar>
-                </q-item-section>
                 <q-item-section>
                   <q-item-label>TVA</q-item-label>
                   <q-item-label caption>{{med.currentVat}}%</q-item-label>

@@ -1,7 +1,5 @@
 <template>
-  <q-card
-    class="q-ma-sm column col-sm-6 col-md-3 col-lg-2"
-  >
+  <q-card class="q-ma-sm column col-sm-6 col-md-3 col-lg-2 text-blue-grey-14">
     <q-img height="150px" src="register.jpg">
       <div class="absolute-center text-center cursor-pointer">
         <q-icon name="camera" size="md" />

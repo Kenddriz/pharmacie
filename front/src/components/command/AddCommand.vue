@@ -4,6 +4,7 @@
     flat
     bordered
     separator="cell"
+    class="text-blue-grey-14"
   >
     <thead >
     <tr>

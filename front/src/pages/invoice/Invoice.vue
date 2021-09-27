@@ -1,7 +1,7 @@
 <template>
-  <q-page class="row q-pa-sm">
+  <q-page class="row q-pa-sm text-blue-grey-14">
     <q-card bordered flat square class="col-12 col-md-9 q-ma-none">
-      <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 130}px;`">
+      <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 100}px;`">
         <PaymentMode />
         <q-separator />
         <AssuredLineDetails

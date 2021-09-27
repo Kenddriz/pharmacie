@@ -1,5 +1,5 @@
 <template>
-   <q-card flat>
+   <q-card flat class="text-blue-grey-14">
      <q-card-section class="text-h6 q-pb-sm">Détails de la facture</q-card-section>
      <q-card-section horizontal class="q-mb-sm">
        <q-list>
@@ -54,7 +54,7 @@
          </q-item>
        </q-list>
        <div class="col">
-         <div class="text-subtitle1 text-dark text-center">
+         <div class="text-subtitle1 text-center">
            Payment <PaymentForm
            :invoice-id="invoice.id"
            :payment="invoice.payment"

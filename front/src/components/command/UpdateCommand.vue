@@ -10,11 +10,12 @@
     bordered
     :loading="aclLoading||rclLoading||uclLoading"
     v-model:pagination="pagination"
-    table-class="overflow-hidden"
+    table-class="overflow-hidden text-blue-grey-14"
     no-data-label="Aucune ligne pour cette commande"
     :selected-rows-label="selectedLabel"
     selection="multiple"
     v-model:selected="selectedCls"
+    title-class="text-blue-grey-14"
   >
     <template v-slot:top-right>
       <q-btn

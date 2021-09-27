@@ -1,5 +1,5 @@
 <template>
-  <q-page class="row items-start q-pa-sm">
+  <q-page class="row items-start q-pa-sm text-blue-grey-14">
     <q-card bordered flat square class="col-12 col-md-9">
       <q-tab-panels v-model="deliveryPan" animated>
         <q-tab-panel name="command" class="q-pa-none">

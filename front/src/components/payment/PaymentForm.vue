@@ -1,7 +1,7 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
     <q-menu anchor="center middle" self="center middle">
-      <q-form @submit.prevent="submit()" @reset="reset">
+      <q-form class="text-blue-grey-14" @submit.prevent="submit()" @reset="reset">
         <q-card flat class="q-pa-md">
           <div class="text-h6 q-mb-md">
             <q-icon name="info" size="md" />

@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered>
+  <q-card class="text-blue-grey-14" bordered>
     <q-card-section class="q-pa-md" horizontal align="center">
       <div class="text-h6 text-weight-bold">{{$tm('provider.' + mode)}}</div>
       <q-space />

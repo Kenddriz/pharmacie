@@ -45,7 +45,7 @@
       />
     </q-item>
   </q-list>
-  <q-card-actions>
+  <q-card-actions class="q-pb-md q-mx-sm">
     <q-btn
       class="full-width"
       color="primary"
