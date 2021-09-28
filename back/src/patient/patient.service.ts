@@ -3,6 +3,8 @@ import { UpdatePatientInput } from './dto/update-patient.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './patient.entity';
 import { ILike, Like, Repository } from 'typeorm';
+import { Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
 export class PatientService {
@@ -29,7 +31,15 @@ export class PatientService {
       take: 4,
     });
   }
-
+  async paginate(input: PaginationInput): Promise<Pagination<Patient>> {
+    const keyword = `%${input.keyword}%`;
+    const query = this.repository
+      .createQueryBuilder('p')
+      .where(`p.name ILIKE :keyword`, { keyword })
+      .orWhere(`p.phone ILIKE :keyword`, { keyword })
+      .orderBy('p.name', 'ASC');
+    return paginate<Patient>(query, { page: input.page, limit: input.limit });
+  }
   update(id: number, updatePatientInput: UpdatePatientInput) {
     return `This action updates a #${id} patient`;
   }
