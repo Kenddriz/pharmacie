@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UpdatePatientInput } from './dto/update-patient.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './patient.entity';
 import { ILike, Like, Repository } from 'typeorm';
@@ -39,9 +38,6 @@ export class PatientService {
       .orWhere(`p.phone ILIKE :keyword`, { keyword })
       .orderBy('p.name', 'ASC');
     return paginate<Patient>(query, { page: input.page, limit: input.limit });
-  }
-  update(id: number, updatePatientInput: UpdatePatientInput) {
-    return `This action updates a #${id} patient`;
   }
 
   remove(id: number) {

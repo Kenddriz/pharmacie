@@ -8,7 +8,9 @@ export class PatientResolver {
   constructor(private readonly patientService: PatientService) {}
 
   @Query(() => [Patient])
-  async findSuggestedPatients(@Args('keyword') keyword: string): Promise<Patient[]> {
+  async findSuggestedPatients(
+    @Args('keyword') keyword: string,
+  ): Promise<Patient[]> {
     return this.patientService.findSuggestions(keyword);
   }
 

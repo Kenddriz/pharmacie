@@ -112,35 +112,34 @@
       </tr>
     </tbody>
   </q-markup-table>
-  <q-page-sticky position="bottom-right" :offset="fabPos">
-    <q-avatar
-      size="xs"
-      class="q-btn q-btn--round cursor-pointer shadow-10"
-      text-color="white"
-      color="primary"
-      v-touch-pan.prevent.mouse="moveFab"
-      v-ripple
+  <q-avatar
+    size="xs"
+    class="q-btn q-btn--round cursor-pointer shadow-10"
+    text-color="white"
+    color="primary"
+    v-touch-pan.prevent.mouse="moveFab"
+    v-ripple
+    :style="`position: absolute; bottom: 8px; right: 8px;transform:translate(${fabPos[0]}px,${fabPos[1]}px)`"
+  >
+    <q-icon
+      size="md"
+      class="q-ml-xs"
+      color="white"
+      style="margin-top: 15px"
+      name="search"
+    />
+    <q-menu
+      max-height="85vh"
+      v-model="searchTool"
+      anchor="bottom left"
+      self="bottom right"
     >
-      <q-icon
-        size="md"
-        class="q-ml-xs"
-        color="white"
-        style="margin-top: 15px"
-        name="search"
+      <SearchTool
+        @add-shop="addShop"
+        @individual-sale="handleIndividualSale"
       />
-      <q-menu
-        max-height="85vh"
-        v-model="searchTool"
-        anchor="bottom left"
-        self="bottom right"
-      >
-        <SearchTool
-          @add-shop="addShop"
-          @individual-sale="handleIndividualSale"
-        />
-      </q-menu>
-    </q-avatar>
-  </q-page-sticky>
+    </q-menu>
+  </q-avatar>
 </template>
 
 <script lang="ts">
@@ -234,7 +233,7 @@ export default defineComponent({
       const batch = shop.value.find(s => s.id === b.id);
       if(batch)Object.assign(batch, b);
     }
-    const fabPos = ref([ 8, 8 ]);
+    const fabPos = ref([0, 0]);
     const searchTool = ref<boolean>(true);
     return {
       saleLines,
@@ -252,8 +251,8 @@ export default defineComponent({
         if(ev.isFirst !== true && !ev.isFinal && searchTool.value)
           searchTool.value = false;
         fabPos.value = [
-          fabPos.value[0] - ev.delta.x,
-          fabPos.value[1] - ev.delta.y
+          fabPos.value[0] + ev.delta.x,
+          fabPos.value[1] + ev.delta.y
         ]
       }
     }
