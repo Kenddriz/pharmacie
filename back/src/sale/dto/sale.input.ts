@@ -28,3 +28,13 @@ export class AddSaleLineInput {
   @Field(() => [SaleLineInput])
   saleLines: SaleLineInput[];
 }
+
+@InputType()
+export class PaginatePatientSalesInput {
+  @Field(() => Int)
+  patientId: number;
+  @Field(() => Int)
+  page: number;
+  @Field(() => Int)
+  limit: number;
+}

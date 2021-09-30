@@ -36,6 +36,6 @@ export class Patient {
   archivedAt: Date;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp'})
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

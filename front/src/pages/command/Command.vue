@@ -28,8 +28,12 @@
               <div v-if="pcLoading" :style="heightStyle" class="row items-center justify-center">
                 <q-spinner-ios size="8em" color="secondary" />
               </div>
-              <ScrollArea v-else-if="selectedCmd.length" class="q-pa-md" :style="heightStyle">
-                <q-list dense>
+              <ScrollArea
+                v-else-if="selectedCmd.length"
+                class="q-pa-sm"
+                :style="heightStyle"
+              >
+                <q-list dense class="q-mb-md">
                   <q-expansion-item
                     expand-separator
                     icon="info"

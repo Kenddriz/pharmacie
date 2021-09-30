@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
 import { CreatePatientInput } from '../../patient/dto/patient.input';
 
 @InputType()
@@ -24,7 +24,7 @@ export class UpdatePrescriptionInput extends PrescriptionInput {
 }
 
 @InputType()
-export class DeletePrescriptionInput{
+export class DeletePrescriptionInput {
   @Field()
   id: number;
   @Field()

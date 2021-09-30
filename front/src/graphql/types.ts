@@ -573,7 +573,7 @@ export type MutationDeletePrescriptionArgs = {
 
 
 export type MutationUpdatePatientArgs = {
-  input: UpdatePatientInput;
+  input: CreatePatientInput;
 };
 
 
@@ -591,6 +591,24 @@ export type Packaging = {
   id: Scalars['Float'];
   units: Array<Unit>;
   archivedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type PaginatePatientOutput = {
+  __typename?: 'PaginatePatientOutput';
+  items: Array<Patient>;
+  meta: Meta;
+};
+
+export type PaginatePatientSalesInput = {
+  patientId: Scalars['Int'];
+  page: Scalars['Int'];
+  limit: Scalars['Int'];
+};
+
+export type PaginatePatientSalesOutput = {
+  __typename?: 'PaginatePatientSalesOutput';
+  items: Array<Sale>;
+  meta: Meta;
 };
 
 export type PaginateStockMovementInput = {
@@ -707,6 +725,8 @@ export type Query = {
   findExistingBatch?: Maybe<Batch>;
   paginateSales: SalePagination;
   findSuggestedPatients: Array<Patient>;
+  paginatePatients: PaginatePatientOutput;
+  paginatePatientSales: PaginatePatientSalesOutput;
   whoAmI: User;
 };
 
@@ -773,6 +793,16 @@ export type QueryPaginateSalesArgs = {
 
 export type QueryFindSuggestedPatientsArgs = {
   keyword: Scalars['String'];
+};
+
+
+export type QueryPaginatePatientsArgs = {
+  input: PaginationInput;
+};
+
+
+export type QueryPaginatePatientSalesArgs = {
+  input: PaginatePatientSalesInput;
 };
 
 export type Sale = {
@@ -894,20 +924,16 @@ export type UpdatePackagingInput = {
   units: Array<CreatePackagingInput>;
 };
 
-export type UpdatePatientInput = {
-  id: Scalars['Int'];
-};
-
 export type UpdatePaymentInput = {
   id: Scalars['Float'];
   form: PaymentFormInput;
 };
 
 export type UpdatePrescriptionInput = {
-  reference?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  patient?: Maybe<CreatePatientInput>;
-  id: Scalars['Int'];
+  reference: Scalars['String'];
+  description: Scalars['String'];
+  patient: CreatePatientInput;
+  id: Scalars['Float'];
 };
 
 export type UpdateSaleLineInput = {

@@ -1,6 +1,11 @@
-import { PATIENT_FIELDS } from '../patient/patient.sdl';
 import { Prescription, Sale } from '../types';
 import { gql } from '@apollo/client/core';
+
+export const PATIENT_FIELDS = `
+  id
+  name
+  phone
+`;
 
 export const PRESCRIPTION_FIELDS = `
   id
@@ -27,7 +32,7 @@ export type UpdatePrescriptionData = {
 }
 
 export const UPDATE_PRESCRIPTION = gql`
-  mutation CreatePrescription($input: UpdatePrescriptionInput!){
+  mutation UpdatePrescription($input: UpdatePrescriptionInput!){
     updatePrescription(input: $input) {
       ${PRESCRIPTION_FIELDS}
     }
@@ -45,3 +50,4 @@ export const DELETE_PRESCRIPTION = gql`
    }
  }
 `;
+

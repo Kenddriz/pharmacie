@@ -1,12 +1,18 @@
-import { Resolver, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Args,
+  ResolveField,
+  Root,
+} from '@nestjs/graphql';
 import { PrescriptionService } from './prescription.service';
 import { Prescription } from './prescription.entity';
-import { UpdatePrescriptionInput } from './dto/update-prescription.input';
 import { PatientService } from '../patient/patient.service';
 import { Patient } from '../patient/patient.entity';
 import {
   CreatePrescriptionInput,
   DeletePrescriptionInput,
+  UpdatePrescriptionInput,
 } from './dto/prescription.input';
 import { SaleService } from '../sale/sale.service';
 import { Sale } from '../sale/sale.entity';
@@ -66,5 +72,9 @@ export class PrescriptionResolver {
   @ResolveField(() => Patient)
   async patient(@Root() prescription: Prescription): Promise<Patient> {
     return this.patientService.findOneById(prescription.patientId);
+  }
+  @ResolveField(() => Sale)
+  async sale(@Root() prescription: Prescription): Promise<Sale> {
+    return this.saleService.findOneById(prescription.saleId);
   }
 }

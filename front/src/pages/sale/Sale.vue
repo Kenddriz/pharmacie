@@ -11,7 +11,7 @@
         >
           <q-tab icon="shopping_cart" name="create" label="Vente" />
           <q-tab icon="shop_two" name="story" label="Historique" />
-          <q-tab icon="personal_injury" name="movies" label="Patients" />
+          <q-tab icon="personal_injury" name="patient" label="Patients" />
         </q-tabs>
       </template>
       <template v-slot:after>
@@ -31,9 +31,8 @@
             <SaleStory @add="tab = 'create'" />
           </q-tab-panel>
 
-          <q-tab-panel name="movies">
-            <div class="text-h6">Movies</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <q-tab-panel :style="heightStyle" class="q-pa-none" name="patient">
+            <PatientCpt />
           </q-tab-panel>
         </q-tab-panels>
       </template>
@@ -46,10 +45,11 @@ import { computed, defineComponent, ref } from 'vue';
 import GroupSale from '../../components/sale/create/GroupSale.vue';
 import SaleStory from '../../components/sale/story/SaleStory.vue'
 import { useQuasar } from 'quasar';
+import PatientCpt from '../../components/Patient/PatientCpt.vue';
 
 export default defineComponent({
   name: 'Sale',
-  components: { GroupSale, SaleStory },
+  components: { GroupSale, SaleStory, PatientCpt },
   setup() {
     const { screen } = useQuasar();
     const heightStyle = computed(() => `height:${screen.height - 90}px`);

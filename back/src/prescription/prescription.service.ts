@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UpdatePrescriptionInput } from './dto/update-prescription.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Prescription } from './prescription.entity';
 import { Repository } from 'typeorm';
+import { Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class PrescriptionService {

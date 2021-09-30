@@ -20,6 +20,7 @@ import { cloneDeep, removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
 import { InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
+import { updateSaleCache } from './updateSaleCache';
 
 export const initialCreateSaleInput = {
   saleLines: [],
@@ -126,13 +127,10 @@ export const useSoftRemoveSale = () => {
           cache.modify({
             fields: {
               paginateSales(existingRef: any, {readField, toReference}){
-                const meta: Meta = cloneDeep(existingRef.meta);
-                meta.totalItems -= 1; meta.itemCount -= 1;
-                return {
-                  ...existingRef,
-                  meta: toReference(meta),
-                  items: existingRef.items.filter((eRef: any) => readField('id', eRef) !== id)
-                }
+                return updateSaleCache(id, existingRef, readField, toReference);
+              },
+              paginatePatientSales(existingRef: any, {readField, toReference}) {
+                return updateSaleCache(id, existingRef, readField, toReference);
               }
             }
           })

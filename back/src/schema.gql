@@ -233,6 +233,16 @@ type SalePagination {
   meta: Meta!
 }
 
+type PaginatePatientSalesOutput {
+  items: [Sale!]!
+  meta: Meta!
+}
+
+type PaginatePatientOutput {
+  items: [Patient!]!
+  meta: Meta!
+}
+
 type LoginDto {
   token: String!
 }
@@ -256,6 +266,8 @@ type Query {
   findExistingBatch(input: FindExistingBatchInput!): Batch
   paginateSales(paginationInput: PaginationInput!): SalePagination!
   findSuggestedPatients(keyword: String!): [Patient!]!
+  paginatePatients(input: PaginationInput!): PaginatePatientOutput!
+  paginatePatientSales(input: PaginatePatientSalesInput!): PaginatePatientSalesOutput!
   whoAmI: User!
 }
 
@@ -294,6 +306,12 @@ input PaginateStockMovementInput {
 input FindExistingBatchInput {
   medicineId: Float!
   expirationDate: String!
+}
+
+input PaginatePatientSalesInput {
+  patientId: Int!
+  page: Int!
+  limit: Int!
 }
 
 type Mutation {
@@ -340,7 +358,7 @@ type Mutation {
   createPrescription(input: CreatePrescriptionInput!): Sale!
   updatePrescription(input: UpdatePrescriptionInput!): Prescription!
   deletePrescription(input: DeletePrescriptionInput!): Sale!
-  updatePatient(input: UpdatePatientInput!): Patient!
+  updatePatient(input: CreatePatientInput!): Patient!
   removePatient(id: Int!): Patient!
   login(input: AuthInput!): LoginDto!
 }
@@ -580,19 +598,15 @@ input CreatePrescriptionInput {
 }
 
 input UpdatePrescriptionInput {
-  reference: String
-  description: String
-  patient: CreatePatientInput
-  id: Int!
+  reference: String!
+  description: String!
+  patient: CreatePatientInput!
+  id: Float!
 }
 
 input DeletePrescriptionInput {
   id: Float!
   saleId: Float!
-}
-
-input UpdatePatientInput {
-  id: Int!
 }
 
 input AuthInput {

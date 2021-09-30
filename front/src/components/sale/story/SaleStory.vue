@@ -2,7 +2,10 @@
   <q-card flat bordered style="border-left: unset" square class="full-height text-blue-grey-14">
     <q-card-section horizontal>
       <template  v-if="selectedSale.length">
-        <SaleDetails class="col-12 col-md-8" :sale="selectedSale[0]" />
+        <ScrollArea class="col-12 col-md-8 q-pa-sm" :style="`height:${$q.screen.height - 112}px;`">
+          <UpdatePrescription :sale-id="selectedSale[0].id" :prescription="selectedSale[0].prescription" />
+          <TableUpdateSale :sale="selectedSale[0]" />
+        </ScrollArea>
         <q-separator vertical />
       </template>
       <q-card-section class="col">
@@ -75,11 +78,12 @@ import { defineComponent } from 'vue';
 import { usePaginateSales } from '../../../graphql/sale/sale.service';
 import { formatDate } from '../../../shared/date';
 import ScrollArea from '../../shared/ScrollArea.vue';
-import SaleDetails from './SaleDetails.vue';
+import UpdatePrescription from '../../prescription/UpdatePrescription.vue';
+import TableUpdateSale from './TableUpdateSale.vue'
 
 export default defineComponent({
   name: 'SaleStory',
-  components: { ScrollArea, SaleDetails },
+  components: { ScrollArea, UpdatePrescription, TableUpdateSale },
   emits: ['add'],
   setup() {
     return {

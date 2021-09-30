@@ -1,10 +1,10 @@
 import { CancelSaleLineOutput, Sale, StockMovement, StockMovementPagination } from '../types';
 import { gql } from '@apollo/client/core';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
-import { PATIENT_FIELDS } from '../patient/patient.sdl';
 import { PROVIDER_FIELDS, STOCK_MVT_DTO, STOCK_MVT_FIELDS } from '../invoice/incoice.sdl';
 import { PAGINATION_META } from '../utils/pagination';
 import { SALE_FIELDS } from '../sale/sale.sdl';
+import { PATIENT_FIELDS } from '../prescription/prescription.sdl';
 
 export type UpdateAssuredLineData = {
   updateAssuredLine: StockMovement;

@@ -2,13 +2,16 @@ import { defaultPatientInput } from '../patient/patient.service';
 import { useMutation } from '@vue/apollo-composable';
 import {
   CREATE_PRESCRIPTION,
-  CreatePrescriptionData, DELETE_PRESCRIPTION, DeletePrescriptionData,
+  CreatePrescriptionData,
+  DELETE_PRESCRIPTION,
+  DeletePrescriptionData,
   UPDATE_PRESCRIPTION,
   UpdatePrescriptionData,
 } from './prescription.sdl';
 import {
   CreatePrescriptionInput,
-  MutationCreatePrescriptionArgs, MutationDeletePrescriptionArgs,
+  MutationCreatePrescriptionArgs,
+  MutationDeletePrescriptionArgs,
   MutationUpdatePrescriptionArgs,
   UpdatePrescriptionInput,
 } from '../types';

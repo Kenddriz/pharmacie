@@ -4,6 +4,7 @@ import { Sale } from './sale.entity';
 import { Repository } from 'typeorm';
 import { PaginationInput } from '../shared/shared.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PaginatePatientSalesInput } from './dto/sale.input';
 
 @Injectable()
 export class SaleService {
@@ -43,5 +44,16 @@ export class SaleService {
       .createQueryBuilder('s')
       .orderBy('s.createdAt', 'DESC');
     return await paginate<Sale>(queryBuilder, { ...input });
+  }
+  async paginateByPatient(
+    input: PaginatePatientSalesInput,
+  ): Promise<Pagination<Sale>> {
+    const { patientId, ...res } = input;
+    const queryBuilder = this.repository
+      .createQueryBuilder('s')
+      .leftJoin('prescription', 'pres', 'pres.saleId = s.id')
+      .where(`pres.patientId = :patientId`, { patientId })
+      .orderBy('s.createdAt', 'DESC');
+    return await paginate<Sale>(queryBuilder, { ...res });
   }
 }

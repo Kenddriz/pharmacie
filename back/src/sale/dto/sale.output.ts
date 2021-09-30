@@ -10,3 +10,10 @@ export class SalePagination {
   @Field(() => Meta)
   meta: Meta;
 }
+@ObjectType()
+export class PaginatePatientSalesOutput {
+  @Field(() => [Sale])
+  items: Sale[];
+  @Field(() => Meta)
+  meta: Meta;
+}
