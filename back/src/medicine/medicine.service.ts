@@ -47,8 +47,10 @@ export class MedicineService {
     return this.repository.findOne(id, {
       relations: ['batches', 'commandLines'],
     });
-  };
-  async findByMeasure(input: FindByMeasureInput): Promise<Pagination<Medicine>> {
+  }
+  async findByMeasure(
+    input: FindByMeasureInput,
+  ): Promise<Pagination<Medicine>> {
     const { measureId, foreignKey, page, limit } = input;
     const queryBuilder = this.repository
       .createQueryBuilder('m')
@@ -56,5 +58,8 @@ export class MedicineService {
       .where(`m.${foreignKey} = :measureId`, { measureId })
       .orderBy('m.createdAt', 'DESC');
     return await paginate<Medicine>(queryBuilder, { page, limit });
+  }
+  async count(): Promise<number> {
+    return this.repository.count();
   }
 }

@@ -35,4 +35,8 @@ export class FormResolver {
   async deleteForm(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.formService.remove(id);
   }
+  @Query(() => Int)
+  async countForms() {
+    return this.formService.count();
+  }
 }

@@ -20,6 +20,8 @@
     "apexcharts": "^3.28.1",
     "apollo-upload-client": "^16.0.0",
     "core-js": "^3.6.5",
+    "jspdf": "^2.4.0",
+    "jspdf-autotable": "^3.5.14",
     "moment": "^2.29.1",
     "quasar": "^2.0.0",
     "react": "^17.0.2",

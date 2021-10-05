@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useResult } from '@vue/apollo-composable';
 import {
+  COMMANDS_MONTHLY,
+  CommandsMonthlyData,
   CREATE_COMMAND,
   CreateCommandData,
   DELETE_COMMAND,
@@ -11,7 +13,7 @@ import {
   Command,
   CommandLineInput, Meta,
   MutationCreateCommandArgs, MutationDeleteCommandArgs,
-  PaginationInput,
+  PaginationInput, QueryCommandsMonthlyArgs,
   QueryPaginateCommandsArgs,
 } from '../types';
 import { reactive, ref } from 'vue';
@@ -50,7 +52,6 @@ export const usePaginateCommands = () => {
   function setSelectedCmd(index: number) {
     Object.assign(selectedCmd.value[0], commands.value.items[index]);
   }
-
   return {
     commands,
     pcLoading,
@@ -134,5 +135,46 @@ export const useDeleteCommand = () => {
   return {
     dcLoading,
     deleteCommand
+  }
+}
+export const useCommandsMonthly = () => {
+  const year = ref<number>(new Date().getFullYear());
+  const { loading, refetch, result } = useQuery<
+    CommandsMonthlyData,
+    QueryCommandsMonthlyArgs
+    >(COMMANDS_MONTHLY, { year: year.value });
+  function updateSeries() {
+    void refetch({ year: year.value })
+  }
+  const chartSeries = useResult<
+    CommandsMonthlyData|undefined,
+    Serie[],
+    Serie[]
+    >(result, [], pick => {
+    const series: Serie[] = [
+      {
+        name: 'Commandes ',
+        type: 'column',
+        data: []
+      },
+      {
+        name: 'Livraisons ',
+        type: 'line',
+        data: []
+      }
+    ];
+    if(pick?.commandsMonthly) {
+      for (let i = 1; i <= 12; i++) {
+        const pcChart = pick.commandsMonthly.find(p => p.month === i);
+        series[0].data.push(pcChart?.command||0);
+        series[1].data.push(pcChart?.invoice||0);
+      }
+    }
+    return series;
+  });
+  return {
+    loading,
+    updateSeries,
+    chartSeries
   }
 }

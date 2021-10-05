@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
-import { Command, CommandPagination } from '../types';
+import { Command, CommandPagination, CommandsMonthly } from '../types';
 import { COMMAND_FIELDS, INVOICE_FIELDS, PROVIDER_FIELDS } from '../invoice/incoice.sdl';
 
 export type PaginateCommandsData = {
@@ -38,5 +38,18 @@ export type DeleteCommandData = {
 export const DELETE_COMMAND = gql`
     mutation DeleteCommand($id: Int!) {
       deleteCommand(id: $id)
+    }
+`;
+
+export type CommandsMonthlyData = {
+  commandsMonthly: CommandsMonthly[];
+}
+export const COMMANDS_MONTHLY = gql`
+    query CommandsMonthly($year: Int!) {
+      commandsMonthly(year: $year) {
+        month
+        command
+        invoice
+      }
     }
 `;

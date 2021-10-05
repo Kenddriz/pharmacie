@@ -9,8 +9,9 @@
     flat
     bordered
     :pagination="{page: 1, rowPerPage: command.commandLines?.length}"
-    table-class="overflow-hidden"
+    table-class="overflow-hidden text-blue-grey-14"
     no-data-label="Aucune ligne pour cette commande"
+    title-class="text-blue-grey-14"
   >
     <template v-slot:top-right>
       <q-btn
@@ -21,7 +22,7 @@
       />
     </template>
     <template v-slot:body="props">
-      <q-tr :props="props">
+      <q-tr no-hover :props="props">
         <q-td key="id" auto-width>
           {{props.row.medicine.id}}
         </q-td>
@@ -49,12 +50,13 @@
       </div>
       <q-dialog
         v-model="assuredLineDialog"
-        :maximized="true"
+        full-height
+        full-width
         transition-show="slide-up"
         transition-hide="slide-down"
       >
-        <q-card>
-          <q-bar class="text-white bg-primary">
+        <q-card square>
+          <q-bar class="text-white bg-teal-14" style="font-size: 14px;">
             N°Commande : {{command.id}} - Fournisseur : {{command.provider.name}}
             <q-space />
             <q-btn dense size="md" flat icon="close" v-close-popup>

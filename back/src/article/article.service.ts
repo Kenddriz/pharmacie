@@ -53,4 +53,7 @@ export class ArticleService {
   remove(id: number) {
     return `This action removes a #${id} article`;
   }
+  async count(): Promise<number> {
+    return this.repository.count();
+  }
 }

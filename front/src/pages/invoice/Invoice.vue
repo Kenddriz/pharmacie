@@ -52,7 +52,7 @@
           @click="setSelectedInvoice(i)"
         >
           <q-item-section avatar>
-            <q-avatar color="primary" text-color="white">
+            <q-avatar size="sm" color="primary" text-color="white">
               {{invoice.command.provider.name.charAt(0)}}
             </q-avatar>
           </q-item-section>

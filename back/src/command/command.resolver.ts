@@ -11,7 +11,7 @@ import { CommandService } from './command.service';
 import { Command } from './command.entity';
 import { uniqId } from '../shared/id-builder.service';
 import { CreateCommandInput, UpdateCommandInput } from './dto/command.input';
-import { CommandPagination } from './dto/command.dto';
+import { CommandPagination, CommandsMonthly } from './dto/command.dto';
 import { PaginationInput } from '../shared/shared.input';
 import { CommandLine } from '../command-line/command-line.entity';
 import { Provider } from '../provider/provider.entity';
@@ -89,5 +89,15 @@ export class CommandResolver {
   @ResolveField(() => Invoice)
   async invoice(@Root() command: Command): Promise<Invoice> {
     return await this.invoiceService.findByCommandId(command.id);
+  }
+  @Query(() => Int)
+  async countUndeliveredCommands() {
+    return this.commandService.countUndeliveredCommands();
+  }
+  @Query(() => [CommandsMonthly])
+  async commandsMonthly(
+    @Args({ name: 'year', type: () => Int }) year: number,
+  ): Promise<CommandsMonthly[]> {
+    return this.commandService.commandsMonthly(year);
   }
 }

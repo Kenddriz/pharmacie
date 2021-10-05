@@ -36,4 +36,10 @@ export class InvoiceService {
   remove(id: number) {
     return `This action removes a #${id} delivery`;
   }
+  async countUnpaid(): Promise<number> {
+    return this.repository
+      .createQueryBuilder('i')
+      .where('i.paymentId IS NULL')
+      .getCount();
+  }
 }

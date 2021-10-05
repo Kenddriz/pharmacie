@@ -26,3 +26,13 @@ export class ProviderCommandsChart {
   @Field()
   invoice: number;
 }
+
+@ObjectType()
+export class CommandsMonthly {
+  @Field()
+  month: number;
+  @Field()
+  command: number;
+  @Field()
+  invoice: number;
+}

@@ -14,10 +14,7 @@ export class PaymentService {
     return this.repository.save(payment);
   }
 
-  findOneById(id: number) {
+  async findOneById(id: number): Promise<Payment> {
     return this.repository.findOne(id);
-  }
-  async findOneByPaymentModeId(paymentModeId: number) {
-    return this.repository.findOne({ where: { paymentModeId } });
   }
 }

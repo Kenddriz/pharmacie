@@ -34,7 +34,6 @@ export class ProviderService {
       order: { id: 'ASC' },
     });
   }
-
   async paginate(input: PaginationInput): Promise<Pagination<Provider>> {
     const queryBuilder = this.repository
       .createQueryBuilder('pro')
@@ -46,5 +45,12 @@ export class ProviderService {
       limit: input.limit,
     };
     return await paginate<Provider>(queryBuilder, options);
+  }
+  async count(): Promise<number> {
+    return this.repository.count();
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

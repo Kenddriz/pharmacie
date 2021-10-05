@@ -2,7 +2,7 @@
   <q-dialog maximized ref="dialogRef">
     <q-card>
       <q-card-section class="q-pb-none">
-        <q-markup-table separator="cell" flat bordered>
+        <q-markup-table class="text-blue-grey-14" separator="cell" flat bordered>
           <thead>
             <tr>
               <th colspan="2">
@@ -45,43 +45,43 @@
           </thead>
           <tbody>
             <tr class="q-tr--no-hover" v-for="stm in stockMovements.items" :key="stm.id">
-            <template v-if="invoice = stm.invoice">
-              <td>{{formatDate(invoice.createdAt, 'DATE_TIME')}}</td>
-              <td>{{invoice.command.provider.name}}</td>
+              <template v-if="stm.invoice">
+                <td>{{formatDate(stm.invoice?.createdAt, 'DATE_TIME')}}</td>
+                <td>{{stm.invoice.command.provider.name}}</td>
+                <td>
+                  <SubdivideList
+                    :units="medicine.packaging.units"
+                    :current-stock="stm.quantity"
+                  />
+                </td>
+                <td></td>
+              </template>
+              <template v-else>
+                <td>{{formatDate(stm.sale?.createdAt, 'DATE_TIME')}}</td>
+                <td>
+                  <template v-if="patient = stm.sale?.prescription?.patient">
+                    {{patient.name}} - {{patient.phone}}
+                  </template>
+                  <template v-else>
+                    Divers
+                  </template>
+                </td>
+                <td></td>
+                <td>
+                  <SubdivideList
+                    :units="medicine.packaging.units"
+                    :current-stock="stm.quantity"
+                  />
+                </td>
+              </template>
               <td>
                 <SubdivideList
                   :units="medicine.packaging.units"
-                  :current-stock="stm.quantity"
+                  :current-stock="stm.stock"
                 />
               </td>
-              <td></td>
-            </template>
-            <template v-else>
-              <td>{{formatDate(stm.sale.createdAt, 'DATE_TIME')}}</td>
-              <td>
-                <template v-if="model.patient = invoice.sale.prescription.patient">
-                  {{patient.name}} -  {{patient.phone}}
-                </template>
-                <template v-else>
-                  Divers
-                </template>
-              </td>
-              <td></td>
-              <td>
-                <SubdivideList
-                  :units="medicine.packaging.units"
-                  :current-stock="stm.quantity"
-                />
-              </td>
-            </template>
-            <td>
-              <SubdivideList
-                :units="medicine.packaging.units"
-                :current-stock="stm.stock"
-              />
-            </td>
-            <td>{{formatDate(stm.batch.expirationDate, 'DATE_ONLY')}}</td>
-          </tr>
+              <td>{{formatDate(stm.batch.expirationDate, 'DATE_ONLY')}}</td>
+            </tr>
           </tbody>
         </q-markup-table>
       </q-card-section>

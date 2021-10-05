@@ -114,6 +114,13 @@ export type CommandPagination = {
   meta: Meta;
 };
 
+export type CommandsMonthly = {
+  __typename?: 'CommandsMonthly';
+  month: Scalars['Float'];
+  command: Scalars['Float'];
+  invoice: Scalars['Float'];
+};
+
 export type Contact = {
   __typename?: 'Contact';
   type: Scalars['Float'];
@@ -123,6 +130,18 @@ export type Contact = {
 export type ContactInput = {
   type: Scalars['Float'];
   list: Array<Scalars['String']>;
+};
+
+export type Count2LatestWeekSales = {
+  __typename?: 'Count2LatestWeekSales';
+  last: Array<CountSaleDaily>;
+  current: Array<CountSaleDaily>;
+};
+
+export type CountSaleDaily = {
+  __typename?: 'CountSaleDaily';
+  day: Scalars['String'];
+  count: Scalars['Int'];
 };
 
 export type CreateCommandInput = {
@@ -304,6 +323,12 @@ export type Method = {
 export type MethodInput = {
   id?: Maybe<Scalars['Float']>;
   label: Scalars['String'];
+};
+
+export type MostConsumedMedicineOutput = {
+  __typename?: 'MostConsumedMedicineOutput';
+  medicine: Medicine;
+  count: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -711,19 +736,30 @@ export type Query = {
   providers: Array<Provider>;
   providerCommands: CommandPagination;
   providerCommandsChart: Array<ProviderCommandsChart>;
+  countProviders: Scalars['Int'];
+  removeProvider: Scalars['Boolean'];
   paginateCommands: CommandPagination;
   findCommandById: Command;
+  countUndeliveredCommands: Scalars['Int'];
+  commandsMonthly: Array<CommandsMonthly>;
   findMedicinesByMeasure: MedicinePaginationOutput;
+  countMedicines: Scalars['Int'];
+  mostConsumedMedicines: Array<MostConsumedMedicineOutput>;
   forms: Array<Form>;
+  countForms: Scalars['Int'];
   dosages: Array<Dosage>;
+  countDosages: Scalars['Int'];
   packaging: Array<Packaging>;
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
+  countArticles: Scalars['Int'];
   paginateStockMovement: StockMovementPagination;
   paginateInvoices: InvoicePagination;
+  countUnpaidInvoices: Scalars['Int'];
   methods: Array<Method>;
   findExistingBatch?: Maybe<Batch>;
   paginateSales: SalePagination;
+  count2LatestWeekSales: Count2LatestWeekSales;
   findSuggestedPatients: Array<Patient>;
   paginatePatients: PaginatePatientOutput;
   paginatePatientSales: PaginatePatientSalesOutput;
@@ -746,6 +782,11 @@ export type QueryProviderCommandsChartArgs = {
 };
 
 
+export type QueryRemoveProviderArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QueryPaginateCommandsArgs = {
   paginationInput: PaginationInput;
 };
@@ -756,8 +797,18 @@ export type QueryFindCommandByIdArgs = {
 };
 
 
+export type QueryCommandsMonthlyArgs = {
+  year: Scalars['Int'];
+};
+
+
 export type QueryFindMedicinesByMeasureArgs = {
   input: FindByMeasureInput;
+};
+
+
+export type QueryMostConsumedMedicinesArgs = {
+  year: Scalars['Int'];
 };
 
 
@@ -858,6 +909,7 @@ export type StockMovement = {
   stock: Scalars['Float'];
   discount: Scalars['Float'];
   vat: Scalars['Float'];
+  purchasePrice: Scalars['Float'];
 };
 
 export type StockMovementFormInput = {

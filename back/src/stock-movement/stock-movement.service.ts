@@ -80,4 +80,16 @@ export class StockMovementService {
     const { page, limit } = input;
     return await paginate<StockMovement>(queryBuilder, { page, limit });
   }
+  async purchasePrice(id: number, batchId: number): Promise<number> {
+    /**purchase price will previous enter price**/
+    const query = await this.repository
+      .createQueryBuilder('s')
+      .select('s.price')
+      .where('s.invoiceId IS NOT NULL')
+      .andWhere(`s.batchId = :batchId`, { batchId })
+      .andWhere(`s.id < :id`, { id })
+      .orderBy('s.id', 'DESC')
+      .getRawOne();
+    return query.price || 0;
+  }
 }

@@ -17,7 +17,7 @@
             src="register.jpg"
           />
           <div class="q-ml-md">
-            <div class="text-h4">{{provider.name}}</div>
+            <div class="text-h6">{{provider.name}}</div>
             <span>{{getOneContact(provider.contacts)}}</span>
           </div>
           <q-space />

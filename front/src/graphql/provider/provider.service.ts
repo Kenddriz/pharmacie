@@ -60,8 +60,11 @@ export const useSaveProvider = () => {
         if(data?.saveProvider) {
           cache.modify({
             fields: {
-              providers(existing: Provider[], {toReference}) {
-                return [toReference(data.saveProvider), ...existing]
+              paginateProviders(existing: any, {toReference}) {
+                return {
+                  ...existing,
+                  items: [...existing.items, toReference(data.saveProvider)]
+                }
               }
             }
           })
@@ -82,12 +85,11 @@ export const useSaveProvider = () => {
     loadSave,
   }
 }
-
-export const usePaginateProviders = () => {
+export const usePaginateProviders = (limit = 5) => {
   const paginateInput = reactive<PaginationInput>({
     keyword: '',
     page: 1,
-    limit: 5
+    limit
   });
   const { loading: ppLoading, result, refetch } = useQuery<
     PaginateProvidersData,
@@ -113,11 +115,10 @@ export const usePaginateProviders = () => {
     paginateInput
   }
 }
-
-export const useProviderCommands = () => {
+export const useProviderCommands = (limit = 1) => {
   const selectedCmd = ref<Command[]>([]);
   const pcInput = reactive<Omit<ProviderCommandsInput, 'providerId'>>({
-    limit: 1,
+    limit,
     year: new Date().getFullYear(),
     page: 1
   });
@@ -152,7 +153,6 @@ export const useProviderCommands = () => {
     selectedCmd
   }
 }
-
 export const useProviderCommandsChart = () => {
   const { loading: pccLoading, load, result } = useLazyQuery<
     ProviderCommandsChartData,

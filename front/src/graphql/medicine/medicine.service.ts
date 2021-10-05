@@ -6,7 +6,7 @@ import {
   MutationUpdateMedicineArgs,
   MedicineFormInput,
   QueryFindMedicinesByMeasureArgs,
-  FindByMeasureInput, MedicinePaginationOutput,
+  FindByMeasureInput, MedicinePaginationOutput, QueryMostConsumedMedicinesArgs,
 } from '../types';
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
@@ -20,10 +20,10 @@ import {
   UPDATE_MEDICINE,
   UpdateMedicineData,
   FindMedicinesByMeasureData,
-  FIND_MEDICINES_BY_MEASURE,
+  FIND_MEDICINES_BY_MEASURE, MOST_CONSUMED_MEDICINES, MostConsumedMedicinesData,
 } from './medicine.sdl';
 import { removeDialog } from '../utils/utils';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { InitialPagination } from '../utils/pagination';
 
 export const useCreateMedicine = () => {
@@ -107,4 +107,18 @@ export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string)
     MedicinePaginationOutput
     >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
   return { medicines, loading, input }
+}
+
+export const useMostConsumedMedicines = () => {
+  const year = ref<number>(new Date().getFullYear());
+  const { loading, result } = useQuery<
+    MostConsumedMedicinesData,
+    QueryMostConsumedMedicinesArgs
+    >(MOST_CONSUMED_MEDICINES, { year: year.value }, { fetchPolicy: 'no-cache' });
+  const consumed = useResult(result, [], pick => pick?.mostConsumedMedicines);
+  return {
+    loading,
+    consumed,
+    year
+  }
 }

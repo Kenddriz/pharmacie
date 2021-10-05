@@ -11,6 +11,8 @@
     aria-controls="overlay_panel"
     :label="modelValue"
     input-class="text-blue-grey-14"
+    spellcheck="false"
+    autocomplete="off"
   >
     <OverlayPanel
       ref="op"

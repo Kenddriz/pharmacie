@@ -106,9 +106,9 @@ export class InvoiceResolver {
   removeInvoice(@Args('id', { type: () => Int }) id: number) {
     return this.invoiceService.remove(id);
   }
-  @ResolveField(() => Payment)
+  @ResolveField(() => Payment, { nullable: true })
   async payment(@Root() invoice: Invoice): Promise<Payment> {
-    return await this.paymentService.findOneById(invoice.paymentId);
+    return await this.paymentService.findOneById(invoice.paymentId || 0);
   }
   @ResolveField(() => Command)
   async command(@Root() invoice: Invoice): Promise<Command> {
@@ -118,5 +118,9 @@ export class InvoiceResolver {
   @ResolveField(() => [StockMovement])
   async stockMovements(@Root() invoice: Invoice): Promise<StockMovement[]> {
     return this.stmS.findByInvoice(invoice.id);
+  }
+  @Query(() => Int)
+  async countUnpaidInvoices() {
+    return this.invoiceService.countUnpaid();
   }
 }

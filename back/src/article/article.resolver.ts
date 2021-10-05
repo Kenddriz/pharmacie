@@ -53,6 +53,10 @@ export class ArticleResolver {
   ): Promise<Article> {
     return this.articleService.findOne(keyword);
   }
+  @Query(() => Int)
+  async countArticles() {
+    return this.articleService.count();
+  }
   @ResolveField(() => [Medicine])
   async medicines(@Root() article: Article): Promise<Medicine[]> {
     return await this.medicineService.findOneByArticle(article.id);

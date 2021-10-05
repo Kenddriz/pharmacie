@@ -80,7 +80,7 @@ export const usePaginateStockMovement = (medicineId: number) => {
   const { loading, result } = useQuery<
     PaginateStockMovementData,
     QueryPaginateStockMovementArgs
-    >(PAGINATE_STOCK_MOVEMENT, { input: stmInput});
+    >(PAGINATE_STOCK_MOVEMENT, { input: stmInput}, { fetchPolicy: 'no-cache' });
   const stockMovements = useResult(result, InitialPagination, pick => pick?.paginateStockMovement||InitialPagination);
   return {
     loading,

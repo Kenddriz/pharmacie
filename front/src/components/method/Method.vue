@@ -1,7 +1,12 @@
 <template>
-  <div class="text-h6 q-ma-md">
-    <q-icon name="shopping_bag" size="md" /> Les modes de payement
-  </div>
+  <q-item>
+    <q-item-section side>
+      <q-icon name="shopping_bag" size="sm" />
+    </q-item-section>
+    <q-item-section class="text-subtitle1">
+      Les modes de payement
+    </q-item-section>
+  </q-item>
   <div class="row q-gutter-md justify-center">
     <q-card
       style="height: 100px!important;"

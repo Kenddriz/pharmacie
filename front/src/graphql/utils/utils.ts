@@ -1,7 +1,9 @@
 import { Dialog } from 'quasar';
 import { i18n } from '../../boot/i18n';
-import { Contact, Medicine, SaleLineInput, StockMovement, Unit } from '../types';
+import { Command, Contact, Medicine, SaleLineInput, StockMovement, Unit } from '../types';
 import moment from 'moment';
+import { jsPDF }  from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -67,9 +69,39 @@ export const subdivideToUnits = (val: number, units: Unit[]): number[] => {
   });
   return subdivided;
 }
-
 export const saleLineCost = (input: SaleLineInput|StockMovement): number => {
   let c = input.price * input.quantity;
   c += (c * (input.vat / 100)) - (c * (input.discount/100));
   return c;
+}
+
+export const downloadPdf = (command: Command) => {
+  const columns: string[]  = ['N°', 'Médicament', 'Quantité']
+  const rows:string[][] = [];
+  command.commandLines?.forEach((line, iLine) => {
+    const row:string[] = [];
+    row.push(String(iLine + 1));
+    row.push(getMedicineName(line.medicine));
+    const units = line.medicine.packaging.units;
+    const values = subdivideToUnits(line.quantity, units);
+    const quantities: string[] = []
+    units.forEach((u, index) => {
+      if(values[index] > 0)quantities.push(values[index] + ' ' + u.label);
+    });
+    row.push(quantities.join(' - '));
+    rows.push(row);
+  });
+  const doc = new jsPDF('p', 'pt');
+  doc.text('Commande', 45, 30);
+  autoTable(doc, {
+    head: [columns],
+    body: rows,
+    theme: 'grid',//'striped', 'grid' or 'plain',
+    didParseCell: function (table: any) {
+      if (table.section === 'head')
+        table.cell.styles.fillColor = '#044973';
+      table.cell.styles.halign = 'center';
+    }
+  });
+  doc.save(command.provider.name + '.pdf');
 }

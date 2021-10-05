@@ -7,6 +7,7 @@
     :mask="$tm('local.dateMask')"
     lazy-rules
     :rules="[ val => validateDate(val) || 'Entrer une date valide']"
+    input-class="text-blue-grey-14"
   >
     <template v-slot:append>
       <slot></slot>
@@ -43,5 +44,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+ * {
+   color: #455a64;
+ }
 </style>

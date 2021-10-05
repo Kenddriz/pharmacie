@@ -43,6 +43,7 @@
         icon-right="archive"
         label="version pdf"
         no-caps
+        @click="downloadPdf(command)"
       />
     </template>
     <template v-slot:body="props">
@@ -51,9 +52,7 @@
           <q-checkbox color="secondary" v-model="props.selected" :model-value="props.selected" />
         </q-td>
         <q-td key="medicine" :props="props">
-          {{ props.row.medicine.article.commercialName }}
-          {{ props.row.medicine.dosage.label }}
-          , {{ props.row.medicine.form.label }}
+          {{ getMedicineName(props.row.medicine) }}
         </q-td>
 
         <q-td key="quantity" :props="props">
@@ -156,7 +155,7 @@
       @submit="createInvoice"
       :command-id="command.id"
     >
-      <div class="text-white text-weight-bold">
+      <div class="text-white" style="font-size: 14px;">
         N°Commande : CM{{command.id}} - Fournisseur : {{command.provider.name}}
         - Date et Heure : {{formatDate(command.createdAt, 'DATE_TIME')}}
         - Rapport de ligne assurée : {{selectedCls.length}} / {{command.commandLines?.length}}
@@ -179,6 +178,8 @@ import UnitConverter from '../packaging/UnitConverter.vue';
 import CreateInvoice from '../invoice/CreateInvoice.vue';
 import { useCreateInvoice } from '../../graphql/invoice/invoice.service';
 import { useDeleteCommand } from '../../graphql/command/command.service';
+import { getMedicineName } from '../../graphql/utils/utils';
+import { downloadPdf } from '../../graphql/utils/utils';
 
 export default defineComponent({
   name: 'UpdateCommand',
@@ -214,7 +215,9 @@ export default defineComponent({
       selectedLabel: function(nbr: number) {
         const plural =  nbr > 1 ? 's' : '';
         return `${nbr}/${props.command.commandLines?.length} commande${plural} assurée${plural}`;
-      }
+      },
+      getMedicineName,
+      downloadPdf
     }
   }
 });

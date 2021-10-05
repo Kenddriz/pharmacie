@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
 import { ProviderService } from './provider.service';
 import { Provider } from './provider.entity';
 import { SaveProviderInput } from './types/provider.input';
@@ -57,5 +57,13 @@ export class ProviderResolver {
     @Args('input') input: ProviderCommandsChartInput,
   ): Promise<ProviderCommandsChart[]> {
     return this.commandService.providerCommandsChart(input);
+  }
+  @Query(() => Int)
+  async countProviders() {
+    return this.providerService.count();
+  }
+  @Query(() => Boolean)
+  async removeProvider(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.providerService.remove(id);
   }
 }

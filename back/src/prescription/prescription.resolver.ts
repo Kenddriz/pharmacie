@@ -1,10 +1,4 @@
-import {
-  Resolver,
-  Mutation,
-  Args,
-  ResolveField,
-  Root,
-} from '@nestjs/graphql';
+import { Resolver, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
 import { PrescriptionService } from './prescription.service';
 import { Prescription } from './prescription.entity';
 import { PatientService } from '../patient/patient.service';

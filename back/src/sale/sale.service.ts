@@ -56,4 +56,26 @@ export class SaleService {
       .orderBy('s.createdAt', 'DESC');
     return await paginate<Sale>(queryBuilder, { ...res });
   }
+  /**sales during two latest weeks*/
+  async currentWeek() {
+    return await this.repository
+      .createQueryBuilder()
+      .select(['COUNT(id) AS count', `created_at AS day`])
+      .where(`date_trunc('week',created_at) = date_trunc('week',current_date)`)
+      .groupBy('day')
+      .orderBy(`day`, 'ASC')
+      .getRawMany();
+  }
+  async lastWeek() {
+    return await this.repository
+      .createQueryBuilder()
+      .select(['COUNT(id) AS count', `created_at AS day`])
+      .where(
+        `created_at >= date_trunc('week', current_date - interval '1 week')`,
+      )
+      .andWhere(`created_at < date_trunc('week', current_date)`)
+      .groupBy('day')
+      .orderBy(`day`, 'ASC')
+      .getRawMany();
+  }
 }

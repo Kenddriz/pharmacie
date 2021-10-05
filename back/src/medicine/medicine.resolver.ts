@@ -5,6 +5,7 @@ import {
   Args,
   ResolveField,
   Root,
+  Int,
 } from '@nestjs/graphql';
 import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
@@ -26,7 +27,10 @@ import { ArticleService } from '../article/article.service';
 import { Article } from '../article/article.entity';
 import { BatchService } from '../batch/batch.service';
 import { Batch } from '../batch/batch.entity';
-import { MedicinePaginationOutput } from './types/medicine.output';
+import {
+  MedicinePaginationOutput,
+  MostConsumedMedicineOutput,
+} from './types/medicine.output';
 import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Resolver(() => Medicine)
@@ -114,5 +118,27 @@ export class MedicineResolver {
     medicine.currentSalePrice = form.currentSalePrice;
     medicine.currentVat = form.currentVat;
     await this.medicineService.save(medicine);
+  }
+  @Query(() => Int)
+  async countMedicines() {
+    return this.medicineService.count();
+  }
+  @ResolveField(() => Number)
+  async stockTotal(@Root() medicine: Medicine) {
+    return this.batchService.stockTotal(medicine.id);
+  }
+  @Query(() => [MostConsumedMedicineOutput])
+  async mostConsumedMedicines(
+    @Args({ name: 'year', type: () => Int }) year: number,
+  ): Promise<MostConsumedMedicineOutput[]> {
+    const batches: Array<{ medicine_id: number; count: number }> =
+      await this.batchService.mostConsumed(year);
+    const medicines = await this.medicineService.findByIds(
+      batches.map((b) => b.medicine_id),
+    );
+    return medicines.map((medicine) => ({
+      medicine,
+      count: batches.find((b) => b.medicine_id === medicine.id).count,
+    }));
   }
 }

@@ -1,11 +1,13 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
-    <q-menu anchor="center middle" self="center middle">
+    <q-menu persistent anchor="bottom middle" self="top middle">
       <q-form class="text-blue-grey-14" @submit.prevent="submit()" @reset="reset">
         <q-card flat class="q-pa-md">
-          <div class="text-h6 q-mb-md">
+          <div class="text-h6 q-mb-md row">
             <q-icon name="info" size="md" />
             {{payment ? 'Informations du payment' : 'Payement de la facture'}}
+            <q-space />
+            <q-btn dense v-close-popup flat round icon="close" color="red" />
           </div>
           <q-card-section horizontal>
             <div class="q-gutter-md q-mr-md">
@@ -41,8 +43,6 @@
                 label="Mettre une note"
                 outlined
                 type="textarea"
-                lazy-rules
-                :rules="[ val => val.length < 255 || 'Nombre de caractère requis : <= 255']"
               />
               <q-btn
                 v-close-popup
@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive } from 'vue';
+import { defineComponent, PropType, reactive, watch } from 'vue';
 import CustomSelect from '../shared/CustomSelect.vue';
 import { Method, Payment, PaymentFormInput } from '../../graphql/types';
 import DateInput from '../shared/DateInput.vue';
@@ -100,6 +100,9 @@ export default defineComponent({
         note: props?.payment?.note
       })
     }
+    watch(() => props.invoiceId, () => {
+      reset();
+    })
     const { createPayment, cpLoading } = useCreatePayment();
     const { updatePayment, upLoading } = useUpdatePayment();
     function submit() {

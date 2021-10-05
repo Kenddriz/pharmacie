@@ -1,5 +1,5 @@
 <template>
-  <q-card class="text-blue-grey-14">
+  <q-card square class="text-blue-grey-14">
     <q-toolbar class="bg-teal-5">
       <slot></slot>
       <q-space />
@@ -13,7 +13,7 @@
       class="q-ma-sm"
       @submit.prevent="$emit('submit', invoiceInput)"
     >
-      <q-card-section class="text-h5 text-center">
+      <q-card-section class="text-subtitle1 q-pt-none q-pb-sm text-center">
         Mise en stock des médicaments commandés
       </q-card-section>
       <q-card
@@ -22,6 +22,7 @@
         class="row justify-around q-pa-sm q-mb-md"
       >
         <q-input
+          dense
           hide-bottom-space
           label="Référence de la facture"
           stack-label
@@ -32,18 +33,21 @@
           :rules="[ val => val && val.length > 0 || 'La référence est requise']"
         />
         <DateInput
+          dense
           label="Date d'échéance"
           stack-label
           outlined
           v-model="invoiceInput.invoice.dueDate"
         />
         <DateInput
+          dense
           label="Date de livraison"
           stack-label
           outlined
           v-model="invoiceInput.invoice.deliveryDate"
         />
         <q-input
+          dense
           hide-bottom-space
           type="number"
           min="0"
@@ -68,28 +72,30 @@
           separator="cell"
           hide-pagination
           :pagination="{page: 1, rowsPerPage: invoiceInput.assuredLines.length}"
+          table-class="text-blue-grey-14"
         >
           <template v-slot:header-cell="props">
             <q-th :props="props">
               {{ props.col.label }}
-              <q-icon v-if="props.col.name !== 'medicineId'" name="border_color" size="xs" />
+              <q-icon
+                v-if="props.col.name !== 'medicineId' && props.col.name !== 'ht'"
+                name="border_color"
+                size="xs"
+              />
             </q-th>
           </template>
 
           <template v-slot:top>
-            <div class="q-table__title q-ml-md">Liste de produits livrés</div>
-            <div class="q-ml-md">
-              [ <q-icon name="border_color" size="xs" />
-              Adapter les valeurs conformement à tout ce que le fournisseur a livré.]
+            <div class="q-ml-md text-blue-grey-14">
+              <q-icon name="warning" color="deep-orange" size="xs" />
+              Adapter les valeurs conformement à ce que le fournisseur a livré
             </div>
           </template>
 
           <template v-slot:body="props">
             <q-tr :props="props">
               <q-td key="medicineId" no-hover :props="props">
-                {{ commandLines[props.pageIndex].medicine.article.commercialName }}
-                {{ commandLines[props.pageIndex].medicine.dosage.label }}
-                , {{ commandLines[props.pageIndex].medicine.form.label }}
+                {{getMedicineName(commandLines[props.pageIndex].medicine)}}
               </q-td>
               <q-td key="quantity" no-hover>
                 <PackagingInput
@@ -165,7 +171,7 @@
             </q-tr>
           </template>
           <template v-slot:bottom>
-            <div class="row text-body2 full-width items-center">
+            <div class="row text-body2 text-blue-grey-14 full-width items-center">
               [ TTC : HT + TVA = {{cost.ht + cost.tva}},
               Net à payer : TTC - Remise = {{cost.discount}},
               Coût d'achat : Net à payer + Dépense = {{cost.total}} ]
@@ -178,8 +184,8 @@
             color="teal-14"
             no-caps
             rounded
-            class="q-mt-lg col-md-3"
-            label=" Mettre les produits au stock"
+            class="col-md-3"
+            label=" Mettre les produits en stock"
             icon-right="drive_file_move"
             type="submit"
           />
@@ -189,7 +195,7 @@
             color="red"
             no-caps
             rounded
-            class="q-mt-lg col-md-3"
+            class="col-md-3"
             label="Supprimer cette commande"
             icon="delete_forever"
             @click="$emit('delete')"
@@ -206,6 +212,7 @@ import { columns } from './data';
 import { CommandLine, CreateInvoiceInput } from '../../graphql/types';
 import PackagingInput from '../packaging/PackagingInput.vue';
 import DateInput from '../shared/DateInput.vue';
+import { getMedicineName } from '../../graphql/utils/utils';
 
 export default defineComponent({
   name: 'CreateInvoice',
@@ -259,12 +266,9 @@ export default defineComponent({
     return {
       cost,
       columns,
-      invoiceInput
+      invoiceInput,
+      getMedicineName
     }
   }
 });
 </script>
-
-<style scoped>
-
-</style>

@@ -10,7 +10,7 @@ import {
 import { SaleService } from './sale.service';
 import { Sale } from './sale.entity';
 import { CreateSaleInput } from './dto/sale.input';
-import { SalePagination } from './dto/sale.output';
+import { Count2LatestWeekSales, SalePagination } from './dto/sale.output';
 import { PrescriptionService } from '../prescription/prescription.service';
 import { Prescription } from '../prescription/prescription.entity';
 import { BatchService } from '../batch/batch.service';
@@ -84,11 +84,17 @@ export class SaleResolver {
   async softRemoveSale(@Args('id', { type: () => Int }) id: number) {
     return this.saleService.softRemove(id);
   }
+  @Query(() => Count2LatestWeekSales)
+  async count2LatestWeekSales(): Promise<Count2LatestWeekSales> {
+    const current = await this.saleService.currentWeek();
+    const last = await this.saleService.lastWeek();
+    return { current, last };
+  }
+  /**fields resolver*/
   @ResolveField(() => Prescription, { nullable: true })
   async prescription(@Root() sale: Sale): Promise<Prescription> {
     return this.prescriptionService.findBySale(sale.id);
   }
-  /**field resolver*/
   @ResolveField(() => [StockMovement])
   async stockMovements(@Root() sale: Sale): Promise<StockMovement[]> {
     return this.stmS.findBySale(sale.id);

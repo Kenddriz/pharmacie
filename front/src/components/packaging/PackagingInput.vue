@@ -13,7 +13,7 @@
     input-class="text-blue-grey-14"
   >
     <template v-slot:prepend>
-      <q-btn color="positive" icon="info" dense flat>
+      <q-btn color="grey-6" size="12px" icon="info" dense flat>
         <q-menu style="width: fit-content" fit auto-close anchor="center middle" self="center middle">
           <q-item v-close-popup>
             <q-item-section v-for="(u, index) in units" :key="index">

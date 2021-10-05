@@ -66,4 +66,24 @@ export class CommandService {
       .orderBy('month', 'ASC')
       .getRawMany();
   }
+  async countUndeliveredCommands(): Promise<number> {
+    const payed = await this.repository
+      .createQueryBuilder('c')
+      .innerJoinAndSelect('invoices', 'invoice', 'invoice.commandId = c.id')
+      .getCount();
+    const all = await this.repository.count();
+    return all - payed;
+  }
+  async commandsMonthly(year: number) {
+    return this.repository
+      .createQueryBuilder('cmd')
+      .leftJoin('invoices', 'inv', 'cmd.id = inv.commandId')
+      .select('EXTRACT(MONTH FROM cmd.createdAt)', 'month')
+      .addSelect('COUNT(cmd.id)', 'command')
+      .addSelect('COUNT(inv.id)', 'invoice')
+      .where('EXTRACT(YEAR FROM cmd.createdAt) = :year', { year })
+      .groupBy('month')
+      .orderBy('month', 'ASC')
+      .getRawMany();
+  }
 }

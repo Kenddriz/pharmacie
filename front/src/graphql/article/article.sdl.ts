@@ -15,14 +15,14 @@ export const ARTICLE_PARAMS = `
   commercialName
 `;
 
-export const PAGINATE_ARTICLE = gql`
+export const PAGINATE_ARTICLE = (withBatches: boolean) => gql`
   query PaginateArticles($input:PaginationInput!){
       paginateArticles(input:$input){
          items {
             ${ARTICLE_PARAMS}
             medicines{
               ${MEDICINE_PARAMS}
-              batches{${BATCH_FIELDS}}
+              ${withBatches ? `batches{${BATCH_FIELDS}}` : ''}
             }
          }
          ${PAGINATION_META}

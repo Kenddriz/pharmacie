@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh lpR fff">
     <q-header>
-      <div class="row justify-between items-center q-pa-xs">
+      <div class="row justify-between items-center">
         <q-tabs
           v-model="tab"
           no-caps
@@ -10,6 +10,7 @@
           inline-label
           class="col-8"
           content-class="justify-between"
+          indicator-color="warning"
         >
           <q-route-tab
             v-for="(item, index) in pItems"
@@ -62,15 +63,10 @@
         </q-btn>
       </div>
     </q-header>
-
-
     <q-page-container>
       <router-view />
     </q-page-container>
-
-    <q-footer elevated>
-      <Footer />
-    </q-footer>
+    <Footer />
   </q-layout>
 </template>
 

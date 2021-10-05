@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
+  Count2LatestWeekSalesData,
+  COUNT_2LATEST_WEEK_SALES,
   CREATE_SALE,
   CreateSaleData,
   PAGINATE_SALE,
@@ -15,12 +17,13 @@ import {
   Sale, SaleLineInput,
 } from '../types';
 import { Loading } from 'quasar';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
 import { InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
 import { updateSaleCache } from './updateSaleCache';
+import moment from 'moment';
 
 export const initialCreateSaleInput = {
   saleLines: [],
@@ -139,4 +142,45 @@ export const useSoftRemoveSale = () => {
     }))
   }
   return { softRemoveSale, srsLoading }
+}
+
+export const initialSeries = [
+  {
+    name: 'Semaine actuelle',
+    data: []
+  },
+  {
+    name: 'Semaine dernière',
+    data: []
+  }
+]
+
+export const useCount2LatestWeekSales = (defaultLineOptions: any) => {
+  const { loading, result } = useQuery<Count2LatestWeekSalesData>(COUNT_2LATEST_WEEK_SALES);
+  const currentChoice = ref<number>(0);
+
+  const salesData = computed(() => {
+
+    const salesOptions: any = cloneDeep(defaultLineOptions);
+    const salesSeries: any[] =  [cloneDeep(initialSeries[currentChoice.value])]
+    const res = result.value?.count2LatestWeekSales;
+    if(res) {
+      if(currentChoice.value === 0) {
+        res.current.forEach(cur => {
+          salesOptions.xaxis.categories.push(moment(cur.day).format('DD'));
+          salesSeries[0].data.push(cur.count);
+          salesOptions.title = moment(cur.day).format('MM YYYY');
+        })
+      }
+      else {
+        res.last.forEach(ls => {
+          salesOptions.xaxis.categories.push(moment(ls.day).format('DD'));
+          salesSeries[0].data.push(ls.count);
+          salesOptions.title = moment(ls.day).format('MM YYYY');
+        })
+      }
+    }
+    return { salesOptions, salesSeries }
+  })
+  return { loading, salesData, currentChoice }
 }

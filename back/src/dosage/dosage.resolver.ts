@@ -26,4 +26,8 @@ export class DosageResolver {
   async deleteDosage(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.service.remove(id);
   }
+  @Query(() => Int)
+  async countDosages() {
+    return this.service.count();
+  }
 }

@@ -11,7 +11,10 @@ import {
   QueryPaginatePatientsArgs,
   PaginationInput,
   PaginatePatientSalesOutput,
-  PaginatePatientSalesInput, QueryPaginatePatientSalesArgs, MutationUpdatePatientArgs, CreatePatientInput,
+  PaginatePatientSalesInput,
+  QueryPaginatePatientSalesArgs,
+  MutationUpdatePatientArgs,
+  CreatePatientInput, Sale,
 } from '../types';
 import { reactive, ref } from 'vue';
 import { InitialPagination } from '../utils/pagination';
@@ -86,7 +89,11 @@ export const usePaginatePatientSales = () => {
     patientId: 0,
     limit: Math.ceil((screen.height - 150)/50),
     page: 1
-  })
+  });
+  const sSale = reactive<{ show: boolean, sale: Sale[]}>({
+    show: false,
+    sale: []
+  });
   const { loading: psLoading, result, load } = useLazyQuery<
     PaginatePatientSalesData,
     QueryPaginatePatientSalesArgs
@@ -98,12 +105,27 @@ export const usePaginatePatientSales = () => {
     PaginatePatientSalesData|undefined,
     PaginatePatientSalesOutput,
     PaginatePatientSalesOutput
-    >(result, InitialPagination, res => res?.paginatePatientSales||InitialPagination);
+    >(result, InitialPagination, res => {
+      if(res?.paginatePatientSales) {
+        const id = sSale.sale[0]?.id;
+        sSale.sale.length = 0;
+        const find = res.paginatePatientSales.items.find(item => item.id === id)||res.paginatePatientSales.items[0];
+        if(find)sSale.sale = [cloneDeep(find)];
+        return res?.paginatePatientSales;
+      }
+      return InitialPagination;
+  });
+  function setSelectedSale(index: number) {
+    sSale.show = true;
+    Object.assign(sSale.sale[0], sale.value.items[index]);
+  }
   return {
     psInput,
     loadSales,
     psLoading,
-    sale
+    sale,
+    setSelectedSale,
+    sSale
   }
 }
 

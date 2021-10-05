@@ -28,4 +28,7 @@ export class FormService {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
+  async count(): Promise<number> {
+    return this.repository.count();
+  }
 }

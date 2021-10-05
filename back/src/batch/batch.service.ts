@@ -18,20 +18,17 @@ export class BatchService {
   async findOne(id: number): Promise<Batch> {
     return this.repository.findOne(id);
   }
-
   async findByIds(ids: number[]): Promise<Batch[]> {
     return this.repository.findByIds(ids, {
       relations: ['medicine'],
     });
   }
-
   async findByMedicine(medicineId: number): Promise<Batch[]> {
     return this.repository
       .createQueryBuilder('b')
       .where('b.medicineId = :medicineId', { medicineId })
       .getMany();
   }
-
   async findExisting(
     medicineId: number,
     expirationDate: string,
@@ -42,19 +39,36 @@ export class BatchService {
       .andWhere('b.expirationDate = :expirationDate', { expirationDate })
       .getOne();
   }
-
   async delete(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
-
   async softRemove(id: number): Promise<boolean> {
     const query = await this.repository.softDelete(id);
     return query.affected > 0;
   }
-
   async recover(id: number): Promise<boolean> {
     const query = await this.repository.restore(id);
     return query.affected > 0;
+  }
+  async stockTotal(medicineId: number): Promise<number> {
+    const { total } = await this.repository
+      .createQueryBuilder('b')
+      .select('SUM(b.currentStock) AS total')
+      .where('b.medicineId = :medicineId', { medicineId })
+      .getRawOne();
+    return total;
+  }
+  async mostConsumed(year: number) {
+    return this.repository
+      .createQueryBuilder('batch')
+      .select(['COUNT(stm.id) as count', 'batch.medicineId as medicine_id'])
+      .innerJoin('stockMovements', 'stm', 'stm.batchId = batch.id')
+      .innerJoin('sales', 'sale', 'sale.id = stm.saleId')
+      .where('EXTRACT(YEAR FROM sale.created_at) = :year', { year })
+      .groupBy('medicine_id')
+      .orderBy('count')
+      .limit(5)
+      .getRawMany();
   }
 }

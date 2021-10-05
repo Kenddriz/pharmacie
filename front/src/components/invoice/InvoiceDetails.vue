@@ -1,6 +1,5 @@
 <template>
    <q-card flat class="text-blue-grey-14">
-     <q-card-section class="text-h6 q-pb-sm">Détails de la facture</q-card-section>
      <q-card-section horizontal class="q-mb-sm">
        <q-list>
          <q-item-label header>

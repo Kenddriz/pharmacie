@@ -18,7 +18,7 @@ export class Sale {
   id: number;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
   @Field(() => Prescription, { nullable: true })

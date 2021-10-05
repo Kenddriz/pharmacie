@@ -145,16 +145,18 @@ export class StockMovementResolver {
   ): Promise<StockMovementPagination> {
     return this.stmService.paginate(input);
   }
-  @ResolveField(() => Invoice)
+  @ResolveField(() => Invoice, { nullable: true })
   async invoice(@Root() stockMovement: StockMovement): Promise<Invoice> {
+    if (!stockMovement.invoiceId) return null;
     return this.invoiceService.findOneById(stockMovement.invoiceId);
   }
   @ResolveField(() => Batch)
   async batch(@Root() stockMovement: StockMovement): Promise<Batch> {
     return this.batchService.findOne(stockMovement.batchId);
   }
-  @ResolveField(() => Sale)
+  @ResolveField(() => Sale, { nullable: true })
   async sale(@Root() stockMovement: StockMovement): Promise<Sale> {
+    if (!stockMovement.saleId) return null;
     return this.saleService.findOneById(stockMovement.saleId);
   }
 }

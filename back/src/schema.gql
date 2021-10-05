@@ -133,6 +133,7 @@ type StockMovement {
   stock: Float!
   discount: Float!
   vat: Float!
+  purchasePrice: Float!
 }
 
 type Batch {
@@ -203,9 +204,20 @@ type ProviderCommandsChart {
   invoice: Float!
 }
 
+type CommandsMonthly {
+  month: Float!
+  command: Float!
+  invoice: Float!
+}
+
 type MedicinePaginationOutput {
   items: [Medicine!]!
   meta: Meta!
+}
+
+type MostConsumedMedicineOutput {
+  medicine: Medicine!
+  count: Int!
 }
 
 type ArticlePagination {
@@ -238,6 +250,16 @@ type PaginatePatientSalesOutput {
   meta: Meta!
 }
 
+type CountSaleDaily {
+  day: String!
+  count: Int!
+}
+
+type Count2LatestWeekSales {
+  last: [CountSaleDaily!]!
+  current: [CountSaleDaily!]!
+}
+
 type PaginatePatientOutput {
   items: [Patient!]!
   meta: Meta!
@@ -252,19 +274,30 @@ type Query {
   providers: [Provider!]!
   providerCommands(input: ProviderCommandsInput!): CommandPagination!
   providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
+  countProviders: Int!
+  removeProvider(id: Int!): Boolean!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
+  countUndeliveredCommands: Int!
+  commandsMonthly(year: Int!): [CommandsMonthly!]!
   findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
+  countMedicines: Int!
+  mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
   forms: [Form!]!
+  countForms: Int!
   dosages: [Dosage!]!
+  countDosages: Int!
   packaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
+  countArticles: Int!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
+  countUnpaidInvoices: Int!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
   paginateSales(paginationInput: PaginationInput!): SalePagination!
+  count2LatestWeekSales: Count2LatestWeekSales!
   findSuggestedPatients(keyword: String!): [Patient!]!
   paginatePatients(input: PaginationInput!): PaginatePatientOutput!
   paginatePatientSales(input: PaginatePatientSalesInput!): PaginatePatientSalesOutput!

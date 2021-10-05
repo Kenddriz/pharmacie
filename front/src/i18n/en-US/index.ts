@@ -20,7 +20,8 @@ export default {
   },
   local: {
     dateMask: '##/##/####',
-    monthsShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sept', 'Oct', 'Nov', 'Dec']
+    monthsShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sept', 'Oct', 'Nov', 'Dec'],
+    daysShort: ['L', 'M', 'M', 'J', 'V', 'S', 'D']
   },
   meta: {
     itemCount: 'Nombre d\'éléments',
@@ -39,5 +40,5 @@ export default {
       dosageId: 'du dosage',
       packagingId: 'de l\'unité de vente'
     }
-  }
+  },
 };

@@ -42,6 +42,8 @@
         stack-label
         label="TVA"
         suffix="%"
+        input-class="text-blue-grey-14"
+        class="full-width"
       />
     </q-item>
   </q-list>

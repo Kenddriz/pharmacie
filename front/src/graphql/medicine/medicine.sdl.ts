@@ -1,7 +1,7 @@
 import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
 import { DOSAGE_PARAMS } from '../dosage/dosage.sdl';
 import { FORM_PARAMS } from '../form/form.sdl';
-import { Article, Medicine, MedicinePaginationOutput } from '../types';
+import { Article, Medicine, MedicinePaginationOutput, MostConsumedMedicineOutput } from '../types';
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
 
@@ -93,4 +93,20 @@ export const FIND_MEDICINES_BY_MEASURE = gql`
       ${PAGINATION_META}
     }
   }
+`;
+
+export type MostConsumedMedicinesData = {
+  mostConsumedMedicines: MostConsumedMedicineOutput;
+}
+
+export const MOST_CONSUMED_MEDICINES = gql`
+    query MostConsumedMedicines($year: Int!) {
+      mostConsumedMedicines(year: $year) {
+        medicine {
+          ${MEDICINE_PARAMS}
+          article {id commercialName }
+        }
+        count
+      }
+    }
 `;

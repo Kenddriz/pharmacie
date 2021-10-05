@@ -1,8 +1,9 @@
 <template>
-  <q-card class="alert q-ma-sm">
+  <q-card class="text-blue-grey-14" bordered flat>
     <q-card-section>
-      <div class="text-positive text-bold">{{ label }}</div>
-      <div class="row no-wrap items-center justify-between text-positive">
+      <div class="text-bold">{{ label }}</div>
+      <q-separator class="q-my-sm" />
+      <div class="row no-wrap items-center justify-between">
         <q-icon size="25px" name="visibility" />
         <div>
           {{ value }}
@@ -23,7 +24,4 @@
 </script>
 
 <style lang="scss" scoped>
-  .alert {
-    width: 300px;
-  }
 </style>

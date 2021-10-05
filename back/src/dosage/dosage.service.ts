@@ -24,9 +24,11 @@ export class DosageService {
   async findOneByLabel(label: string): Promise<Dosage> {
     return this.repository.findOne({ label });
   }
-
   async remove(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;
+  }
+  async count(): Promise<number> {
+    return this.repository.count();
   }
 }

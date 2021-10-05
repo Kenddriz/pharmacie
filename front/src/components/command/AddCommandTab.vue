@@ -106,7 +106,7 @@ export default defineComponent({
     return {
       selectedProvider: ref<Provider[]>([]),
       step,
-      ...usePaginateProviders(),
+      ...usePaginateProviders(2),
       filter: ref<string>(''),
       cmdProviderCol,
       selectedRowLabel: (count: number) => {

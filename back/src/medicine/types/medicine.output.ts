@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Medicine } from '../medicine.entity';
 import { Meta } from '../../shared/shared.dto';
 
@@ -8,4 +8,12 @@ export class MedicinePaginationOutput {
   items: Medicine[];
   @Field(() => Meta)
   meta: Meta;
+}
+
+@ObjectType()
+export class MostConsumedMedicineOutput {
+  @Field(() => Medicine)
+  medicine: Medicine;
+  @Field(() => Int)
+  count: number;
 }

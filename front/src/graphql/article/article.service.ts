@@ -17,7 +17,9 @@ import { InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
 import { cloneDeep } from '../utils/utils';
 
-export const usePaginateArticle = (limit = 20) => {
+const lim = Math.ceil((screen.height - 150)/50);
+
+export const usePaginateArticle = (limit = lim, withBatches = true) => {
   const searchInput = reactive<PaginationInput>({
     limit,
     keyword: '',
@@ -26,7 +28,7 @@ export const usePaginateArticle = (limit = 20) => {
   const {result, loading: listLoading, refetch, onResult } = useQuery<
     ArticlePaginationData,
     QueryPaginateArticlesArgs
-    >(PAGINATE_ARTICLE, { input: cloneDeep(searchInput) });
+    >(PAGINATE_ARTICLE(withBatches), { input: cloneDeep(searchInput) });
   const selected = ref<Article[]>([]);
   const articles = useResult(result, InitialPagination, res => {
     const data = res?.paginateArticles||InitialPagination;
@@ -34,18 +36,18 @@ export const usePaginateArticle = (limit = 20) => {
     return data;
   });
   onResult(() => listLoading.value = false);
+  function submitSearch() {
+    listLoading.value = true;
+    void refetch({ input: searchInput });
+  }
   return {
     listLoading,
     searchInput,
     articles,
     selected,
-    submitSearch: function() {
-      listLoading.value = true;
-      void refetch({ input: searchInput });
-    }
+    submitSearch
   }
 }
-
 export const useSaveArticle = () => {
   const { mutate, loading: saveLoading} = useMutation<SaveArticleData, MutationSaveArticleArgs>(SAVE_ARTICLE);
   const saveInput = reactive<SaveArticleInput>({
@@ -139,7 +141,6 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
     model
   }
 }
-
 export const useFindOneArticle = () => {
   const keyword = ref<string>('');
   const { loading: faLoading, result, load } = useLazyQuery<

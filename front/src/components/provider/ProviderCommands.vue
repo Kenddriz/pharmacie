@@ -1,7 +1,10 @@
 <template>
   <q-card class="text-blue-grey-14" square flat>
     <q-card-section :horizontal="$q.screen.gt.sm">
-      <q-card-section :class="`justify-between items-center ${$q.screen.gt.sm ? 'column' : 'row'}`">
+      <q-card-section
+        :class="`justify-between items-center ${$q.screen.gt.sm ? 'column' : 'row'}`"
+        style="width: 300px;"
+      >
         <q-input
           :model-value="pcInput.year"
           input-class="text-center"
@@ -59,7 +62,7 @@
               />
             </q-item>
           </template>
-          <q-item v-else>
+          <q-item v-else-if="!pcLoading">
             <q-item-section class="text-red text-center">
               Aucune commande
             </q-item-section>

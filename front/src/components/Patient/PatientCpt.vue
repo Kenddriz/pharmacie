@@ -32,7 +32,7 @@
           v-for="(p, index) in patients.items"
           :key="index"
           :active="p.id === selected[0].id"
-          active-class="bg-brown-1 text-dark"
+          active-class="bg-brown-1 text-blue-grey-14"
         >
           <q-item-section side>
             {{index + 1}}
@@ -105,11 +105,17 @@
           clickable
           v-for="(item, index) in sale.items"
           :key="item.id"
-          @click="saleDetails(item)"
+          :active="item.id === sSale.sale[0].id"
+          active-class="bg-brown-1 text-blue-grey-14"
+          @click="setSelectedSale(index)"
         >
           <q-item-section side>{{ index + 1}}</q-item-section>
-          <q-item-section class="text-center">{{item.prescription.reference}}</q-item-section>
-          <q-item-section side>{{ formatDate(item.createdAt, 'DATE_TIME') }}</q-item-section>
+          <q-item-section class="text-center">
+            {{item.prescription.reference}}
+          </q-item-section>
+          <q-item-section side>
+            {{ formatDate(item.createdAt, 'DATE_TIME') }}
+          </q-item-section>
         </q-item>
       </q-list>
       <div
@@ -134,6 +140,20 @@
           :boundary-numbers="false"
         />
       </div>
+      <!--sale details-->
+      <q-dialog v-model="sSale.show" full-width full-height ref="dialogRef">
+        <q-card>
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-subtitle1">
+              Détails d'achat - N°{{sSale.sale[0].id}} du
+              {{formatDate(sSale.sale[0].createdAt, 'DATE_TIME')}}
+            </div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+          <TableUpdateSale :sale="sSale.sale[0]" />
+        </q-card>
+      </q-dialog>
     </template>
   </q-splitter>
 </template>
@@ -141,15 +161,15 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { usePaginatePatients, usePaginatePatientSales } from '../../graphql/patient/patient.service';
-import { Patient, Sale } from '../../graphql/types';
+import { Patient } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
 import { useQuasar } from 'quasar';
 import UpdatePatient from './UpdatePatient.vue';
-import PatientSaleDetails from './PatientSaleDetails.vue';
+import TableUpdateSale from '../sale/story/TableUpdateSale.vue';
 
 export default defineComponent({
   name: 'PatientCpt',
-  components:{  },
+  components:{ TableUpdateSale },
   setup () {
     const { dialog } = useQuasar();
     return {
@@ -163,12 +183,6 @@ export default defineComponent({
           componentProps: { patient }
         })
       },
-      saleDetails: (sale: Sale) => {
-        dialog({
-          component: PatientSaleDetails,
-          componentProps: { sale }
-        })
-      }
     }
   },
   watch: {

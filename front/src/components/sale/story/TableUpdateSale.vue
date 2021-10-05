@@ -9,7 +9,7 @@
     <thead>
     <tr>
       <th style="border-bottom: 1px solid gainsboro" colspan="8">
-        Liste de médicaments achetés
+        Liste de médicaments achetés ({{ sale.stockMovements.length }})
       </th>
     </tr>
     <CommonSaleHeader>
@@ -91,6 +91,7 @@
       label="Supprimer cette vente"
       @click="softRemoveSale(sale.id)"
       :loading="srsLoading"
+      v-close-popup
     />
   </q-card-actions>
 </template>

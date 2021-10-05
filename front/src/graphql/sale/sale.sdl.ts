@@ -1,4 +1,4 @@
-import { Sale, SalePagination } from '../types';
+import { Sale, SalePagination, Count2LatestWeekSales } from '../types';
 import { STOCK_MVT_DTO } from '../invoice/incoice.sdl';
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
@@ -42,5 +42,17 @@ export type SoftRemoveSaleData = {
 export const SOFT_REMOVE_SALE = gql`
     mutation SoftRemoveSale($id: Int!) {
       softRemoveSale(id: $id)
+    }
+`;
+export type Count2LatestWeekSalesData = {
+  count2LatestWeekSales: Count2LatestWeekSales
+}
+
+export const COUNT_2LATEST_WEEK_SALES = gql`
+    query Count2LatestWeekSales {
+      count2LatestWeekSales {
+        current { day count }
+        last { day count }
+      }
     }
 `;
