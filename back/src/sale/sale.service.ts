@@ -60,7 +60,7 @@ export class SaleService {
   async currentWeek() {
     return await this.repository
       .createQueryBuilder()
-      .select(['COUNT(id) AS count', `created_at AS day`])
+      .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
       .where(`date_trunc('week',created_at) = date_trunc('week',current_date)`)
       .groupBy('day')
       .orderBy(`day`, 'ASC')
@@ -69,7 +69,7 @@ export class SaleService {
   async lastWeek() {
     return await this.repository
       .createQueryBuilder()
-      .select(['COUNT(id) AS count', `created_at AS day`])
+      .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
       .where(
         `created_at >= date_trunc('week', current_date - interval '1 week')`,
       )
