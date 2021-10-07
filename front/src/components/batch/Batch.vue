@@ -9,8 +9,8 @@
         />
       </q-btn>
     </div>
-    <q-list>
-      <q-expansion-item v-for="(batch, index) in medicine.batches" :key="index">
+    <template  v-for="(batch, index) in medicine.batches" :key="index">
+      <q-expansion-item v-if="(expiration = leftDays(batch.expirationDate)) !== undefined">
         <template v-slot:header>
           <q-item-section avatar>
             <q-avatar size="sm" color="primary" text-color="white">
@@ -23,7 +23,7 @@
           </q-item-section>
 
           <q-item-section side>
-            <q-icon name="star" color="red" size="24px" />
+            <q-icon name="star" :color="expiration > 7 ? 'positive' : 'red'" size="24px" />
           </q-item-section>
         </template>
         <q-card flat bordered>
@@ -38,7 +38,7 @@
               <q-item>
                 <q-item-section>
                   <q-item-label>Jours restants</q-item-label>
-                  <q-item-label caption>{{leftDays(batch.expirationDate)}}</q-item-label>
+                  <q-item-label caption>{{expiration}}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -56,7 +56,6 @@
             <q-separator vertical />
             <q-card-actions vertical class="justify-around q-px-md">
               <q-btn
-                to="/main/card-stock"
                 align="left"
                 color="primary"
                 flat
@@ -65,6 +64,7 @@
                 outline
                 icon="inventory_2"
                 label="Fiche de stock"
+                @click="$emit('stock', batch)"
               />
               <q-btn
                 align="left"
@@ -96,7 +96,7 @@
           </q-card-section>
         </q-card>
       </q-expansion-item>
-    </q-list>
+    </template>
   </div>
 </template>
 
@@ -117,6 +117,7 @@ export default defineComponent({
       required: true
     }
   },
+  emits: ['stock'],
   setup() {
     return {
       formatDate,

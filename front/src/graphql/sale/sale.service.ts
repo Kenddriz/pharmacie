@@ -20,9 +20,8 @@ import { Loading } from 'quasar';
 import { computed, reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
-import { InitialPagination } from '../utils/pagination';
+import { deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
-import { updateSaleCache } from './updateSaleCache';
 import moment from 'moment';
 
 export const initialCreateSaleInput = {
@@ -130,10 +129,10 @@ export const useSoftRemoveSale = () => {
           cache.modify({
             fields: {
               paginateSales(existingRef: any, {readField, toReference}){
-                return updateSaleCache(id, existingRef, readField, toReference);
+                return deletePaginationCache(id, existingRef, readField, toReference);
               },
               paginatePatientSales(existingRef: any, {readField, toReference}) {
-                return updateSaleCache(id, existingRef, readField, toReference);
+                return deletePaginationCache(id, existingRef, readField, toReference);
               }
             }
           })
@@ -155,13 +154,63 @@ export const initialSeries = [
   }
 ]
 
-export const useCount2LatestWeekSales = (defaultLineOptions: any) => {
-  const { loading, result } = useQuery<Count2LatestWeekSalesData>(COUNT_2LATEST_WEEK_SALES);
+export const useCount2LatestWeekSales = () => {
+  const { loading, result } = useQuery<Count2LatestWeekSalesData>(COUNT_2LATEST_WEEK_SALES, {}, { fetchPolicy: 'no-cache'});
   const currentChoice = ref<number>(0);
 
   const salesData = computed(() => {
-
-    const salesOptions: any = cloneDeep(defaultLineOptions);
+    const salesOptions: any = {
+      colors: ['#FCCF31', '#17ead9', '#f02fc2'],
+      animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 1000
+      },
+      chart: {
+        type: 'line',
+        toolbar: { show: false}
+      },
+      grid: {
+        show: true,
+        strokeDashArray: 0,
+        xaxis: {
+          lines: {
+            show: true
+          }
+        }
+      },
+      stroke: {
+        curve: 'smooth'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      title: {
+        text: 'Vente de la semaine',
+        align: 'left',
+        style: {
+          color: '#455a64'
+        }
+      },
+      xaxis: {
+        categories: [],
+        labels: {
+          style: {
+            colors: '#455a64'
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val: number) {
+            return val.toFixed(0);
+          },
+          style: {
+            colors: '#455a64'
+          }
+        }
+      }
+    };
     const salesSeries: any[] =  [cloneDeep(initialSeries[currentChoice.value])]
     const res = result.value?.count2LatestWeekSales;
     if(res) {
@@ -169,14 +218,12 @@ export const useCount2LatestWeekSales = (defaultLineOptions: any) => {
         res.current.forEach(cur => {
           salesOptions.xaxis.categories.push(moment(cur.day).format('DD'));
           salesSeries[0].data.push(cur.count);
-          salesOptions.title = moment(cur.day).format('MM YYYY');
         })
       }
       else {
         res.last.forEach(ls => {
           salesOptions.xaxis.categories.push(moment(ls.day).format('DD'));
           salesSeries[0].data.push(ls.count);
-          salesOptions.title = moment(ls.day).format('MM YYYY');
         })
       }
     }

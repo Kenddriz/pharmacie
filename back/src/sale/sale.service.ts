@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { PaginationInput } from '../shared/shared.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { PaginatePatientSalesInput } from './dto/sale.input';
+import { CountSaleDaily } from './dto/sale.output';
 
 @Injectable()
 export class SaleService {
@@ -57,8 +58,8 @@ export class SaleService {
     return await paginate<Sale>(queryBuilder, { ...res });
   }
   /**sales during two latest weeks*/
-  async currentWeek() {
-    return await this.repository
+  async currentWeek(): Promise<CountSaleDaily[]> {
+    return this.repository
       .createQueryBuilder()
       .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
       .where(`date_trunc('week',created_at) = date_trunc('week',current_date)`)
@@ -66,8 +67,8 @@ export class SaleService {
       .orderBy(`day`, 'ASC')
       .getRawMany();
   }
-  async lastWeek() {
-    return await this.repository
+  async lastWeek(): Promise<CountSaleDaily[]> {
+    return this.repository
       .createQueryBuilder()
       .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
       .where(

@@ -24,7 +24,12 @@
               </th>
             </tr>
             <tr>
-              <th colspan="3">Article : {{medicine.article.commercialName}}</th>
+              <th colspan="3">
+                Article : <span class="text-capitalize">{{medicine.article.commercialName}}</span>
+                <template v-if="batch">
+                  - Lot N°{{batch.id}}, Exp.{{formatDate(batch.expirationDate, 'DATE_ONLY')}}
+                </template>
+              </th>
               <th colspan="3">Dosage/Forme : {{medicine.dosage.label}}, {{medicine.form.label}}</th>
             </tr>
             <tr>
@@ -110,6 +115,9 @@
           <span class="q-mt-sm">{{stockMovements.meta[key]}}</span>
         </q-card>
       </q-card-section>
+      <q-inner-loading :showing="loading">
+        <q-spinner-orbit color="warning" size="80px" />
+      </q-inner-loading>
     </q-card>
   </q-dialog>
 </template>
@@ -117,7 +125,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { usePaginateStockMovement } from '../../graphql/stock-movement/stock-mvt.service';
-import { Medicine } from '../../graphql/types';
+import { Batch, Medicine } from '../../graphql/types';
 import { useDialogPluginComponent } from 'quasar';
 import { formatDate } from '../../shared/date';
 import SubdivideList from '../packaging/SubdivideList.vue';
@@ -129,12 +137,13 @@ export default defineComponent({
     medicine: {
       type: Object as PropType<Medicine>,
       required: true
-    }
+    },
+    batch: Object as PropType<Batch>
   },
   setup (props) {
     const { dialogRef } = useDialogPluginComponent();
     return {
-      ...usePaginateStockMovement(props.medicine.id),
+      ...usePaginateStockMovement(props.medicine.id, props?.batch?.id||-1),
       dialogRef,
       formatDate
     }

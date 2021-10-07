@@ -49,6 +49,7 @@
   </q-list>
   <q-card-actions class="q-pb-md q-mx-sm">
     <q-btn
+      v-close-popup
       class="full-width"
       color="primary"
       no-caps

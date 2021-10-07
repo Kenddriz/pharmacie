@@ -7,149 +7,42 @@
   >
     <template v-slot:before>
       <div class="q-pa-md">
-        <q-linear-progress
-          v-if="srmLoading||cmLoading||umLoading||listLoading"
-          indeterminate
-          color="warning"
-          class="q-mb-md"
-        />
         <div class="q-table__title q-mb-md">
           Formes et dosages
-          <q-btn
-            class="q-ml-lg"
-            round
-            color="positive"
-            size="xs"
-            icon="add"
-          >
-            <q-menu>
-              <MedicineForm
-                :forms="forms"
-                :selectedForm="selectedForm"
-                :dosages="dosages"
-                :selectedDosage="selectedDosage"
-                :packaging="packagingList"
-                :selectedPk="selectedPk"
-                @submit="createMedicine(article.id, $event)"
-              >
-                Nouveau médicament
-              </MedicineForm>
-            </q-menu>
-          </q-btn>
+          <AddMedicine :article-id="article.id" />
         </div>
-        <div class="flex justify-between wrap q-gutter-md">
-          <q-card
-            flat
-            bordered
-            v-for="med in article.medicines||[]"
-            :key="med.id"
-            :class="selected[0].id === med.id ? 'bg-brown-1' : ''"
-          >
-            <q-list dense>
-              <q-item class="q-mt-sm">
-                <q-item-section>
-                  {{med.form.label}} {{med.dosage.label}}
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label>Prix de vente</q-item-label>
-                  <UnitConverter
-                    class="text-dark text-caption text-brown"
-                    align="left"
-                    :units="med.packaging.units"
-                    :value="med.currentSalePrice"
-                    :is-q="false"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label>TVA</q-item-label>
-                  <q-item-label caption>{{med.currentVat}}%</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-            <q-separator />
-            <q-card-actions align="around">
-              <q-btn
-                icon="read_more"
-                :color="selected[0].id === med.id ? 'positive': 'secondary'"
-                flat
-                @click="selected = [med]"
-              />
-              <q-btn
-                @click="softRemoveMedicine(article.id, med.id)"
-                icon="delete_sweep"
-                color="deep-orange"
-                flat
-              />
-              <q-btn
-                icon="edit"
-                @click="setSelected(med)"
-                color="primary"
-                flat
-              />
-              <q-btn
-                color="brown"
-                flat
-                @click="movementStock(med)"
-              >
-                <q-icon size="xs" name="inventory_2" />
-              </q-btn>
-            </q-card-actions>
-          </q-card>
-        </div>
+        <MedicineList
+          :article="article"
+          v-model="selectedMedicine"
+        />
       </div>
     </template>
     <template v-slot:separator>
       <q-avatar color="amber" text-color="white" size="lg" icon="drag_indicator" />
     </template>
     <template v-slot:after>
-      <Batch
-        v-if="selected.length"
-        :medicine="selected[0]"
+      <BatchCpt
+        v-if="selectedMedicine"
+        :medicine="selectedMedicine"
+        @stock="movementStock"
       />
     </template>
-    <!--update dialog --->
-    <q-dialog v-model="updateDialog.show">
-      <q-card>
-        <q-card-section class="q-pa-none">
-          <MedicineForm
-            :forms="forms"
-            :selectedForm="selectedForm"
-            :dosages="dosages"
-            :selectedDosage="selectedDosage"
-            :packaging="packagingList"
-            :selectedPk="selectedPk"
-            :price="updateDialog.price"
-            :vat="updateDialog.vat"
-            @submit="updateMedicine($event)"
-          >
-            Mise à jour
-          </MedicineForm>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-splitter>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
-import { Article, Medicine } from '../../graphql/types';
-import { useForms } from '../../graphql/form/form.service';
-import { useDosages } from '../../graphql/dosage/dosage.service';
-import { useListPackaging } from '../../graphql/packaging/packaging.service';
-import { useCreateMedicine, useUpdateMedicine, useSoftRemoveMedicine } from '../../graphql/medicine/medicine.service';
-import MedicineForm from './MedicineForm.vue';
-import UnitConverter from '../packaging/UnitConverter.vue';
-import Batch from '../batch/Batch.vue';
+import { defineComponent, PropType, ref } from 'vue';
+import { Article, Batch, Medicine } from '../../graphql/types';
+import BatchCpt from '../batch/Batch.vue';
+import MedicineList from './MedicineList.vue';
+import AddMedicine from './AddMedicine.vue';
+import { cloneDeep } from '../../graphql/utils/utils';
 import CardStock from './CardStock.vue';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'Medicine',
-  components: { MedicineForm, UnitConverter, Batch },
+  components: { AddMedicine, MedicineList, BatchCpt },
   props: {
     article: {
       type: Object as PropType<Article>,
@@ -157,41 +50,19 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const selected = ref<Medicine[]>([]);
-    watch(() => props.article, (article) => {
-      if(article?.medicines && article?.medicines?.length) {
-        const med = article.medicines.find(m => m.id === selected.value[0]?.id) || article.medicines[0];
-        selected.value = med ? [med] : [];
-      }
-      else selected.value.length = 0;
-    }, { immediate: true });
-    const {dialog} = useQuasar();
+    const { dialog } = useQuasar();
+    const selectedMedicine = ref<any>(null);
     return {
-      ...useForms(),
-      ...useDosages(),
-      ...useListPackaging(),
-      ...useCreateMedicine(),
-      ...useUpdateMedicine(),
-      ...useSoftRemoveMedicine(),
-      selected,
       insideModel: ref(50),
-      movementStock: (medicine: Medicine) => {
+      selectedMedicine,
+      movementStock: (batch: Batch) => {
+        const { medicines, ...article } = cloneDeep(props.article);
+        const medicine = medicines.find((m: Medicine) => m.id === selectedMedicine.value?.id);
         dialog({
           component: CardStock,
-          componentProps: { medicine: { ...medicine, article: props.article } }
+          componentProps: { medicine: { ...medicine, article }, batch }
         });
-      }
-    }
-  },
-  methods: {
-    setSelected(med: Medicine) {
-      Object.assign(this.selectedForm, med.form);
-      Object.assign(this.selectedPk, med.packaging);
-      Object.assign(this.selectedDosage, med.dosage);
-      this.updateDialog.show = true;
-      this.updateDialog.id = med.id;
-      this.updateDialog.price = med.currentSalePrice;
-      this.updateDialog.vat = med.currentVat;
+      },
     }
   }
 });

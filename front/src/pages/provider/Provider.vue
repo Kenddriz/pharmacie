@@ -86,10 +86,9 @@
           </q-th>
           <q-th
             auto-width
-            align="left"
             style="font-weight: bold"
           >
-            Actions
+            Suppression
           </q-th>
         </q-tr>
       </template>
@@ -114,8 +113,15 @@
           >
             {{ col.value }}
           </q-td>
-          <q-td auto-width>
-            <q-btn flat icon="delete" size="sm" round color="deep-orange" />
+          <q-td align="center" auto-width>
+            <q-btn
+              flat
+              icon="delete"
+              size="md"
+              round
+              color="deep-orange"
+              @click="deleteCommand(props.row)"
+            />
           </q-td>
         </q-tr>
         <q-tr no-hover v-show="props.expand" :props="props">
@@ -124,7 +130,7 @@
               :expand="props.expand"
               :provider="props.row"
               @add="openAddCmdDialog(props.row)"
-              @more="openMoreCmdDialog($event)"
+              @more="openCommandDetails($event)"
             />
           </q-td>
         </q-tr>
@@ -157,100 +163,53 @@
         @submit="updateProvider($event)"
       />
     </q-dialog>
-    <!---add command--->
-    <q-dialog
-      full-width
-      full-height
-      v-model="addCmdDialog.show"
-    >
-      <q-card>
-        <q-card-section>
-          <AddCommand :provider="addCmdDialog.provider">
-            <template v-slot:end>
-              <q-btn unelevated icon="close" text-color="red" @click="addCmdDialog.show = false" />
-            </template>
-          </AddCommand>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-    <!--command details-->
-    <q-dialog
-      full-width
-      full-height
-      v-model="moreCmdDialog.show"
-      v-if="moreCmdDialog.command"
-    >
-      <q-card>
-        <q-bar class="bg-primary text-white">
-          <q-icon size="md" name="person" />
-          <div class="text-h6">
-            {{moreCmdDialog.command?.provider.name}} - {{moreCmdDialog.command?.provider.address}}
-          </div>
-          <q-space />
-          <q-btn v-close-popup color="red" flat round icon="close" />
-        </q-bar>
-        <q-card-section>
-          <CommandLineDetails
-            v-if="moreCmdDialog.command?.invoice"
-            :command="moreCmdDialog.command"
-          />
-          <UpdateCommand
-            v-else
-            :command="moreCmdDialog.command"
-          />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import ProviderForm from '../../components/provider/ProviderForm.vue';
 import CardItem from '../../components/provider/CardItem.vue';
 import ProviderCommands from '../../components/provider/ProviderCommands.vue';
 import { columns } from '../../components/provider/columns';
 import { usePaginateProviders, useSaveProvider } from '../../graphql/provider/provider.service';
-import AddCommand from '../../components/command/AddCommand.vue';
+import AddProviderCommand from '../../components/provider/AddProviderCommand.vue';
+import ProviderCommandDetails from '../../components/provider/ProviderCommandDetails.vue';
 import { Command, Provider } from '../../graphql/types';
-import UpdateCommand from '../../components/command/UpdateCommand.vue';
-import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue';
+import { useQuasar } from 'quasar';
+import DeleteProvider from '../../components/provider/DeleteProvider.vue';
 
 export default defineComponent({
   name: 'Provider',
   components: {
     ProviderForm,
     CardItem,
-    ProviderCommands,
-    AddCommand,
-    UpdateCommand,
-    CommandLineDetails
+    ProviderCommands
   },
   setup() {
-    const addCmdDialog = reactive<{show: boolean; provider: Provider|null}>({
-      show: false,
-      provider: null
-    });
-    function openAddCmdDialog(provider: Provider) {
-      addCmdDialog.provider = provider;
-      addCmdDialog.show = true;
-    }
 
-    const moreCmdDialog = reactive<{show: boolean; command: Command|null}>({
-      show: false,
-      command: null
-    });
-    function openMoreCmdDialog(command: Command) {
-      moreCmdDialog.command = command;
-      moreCmdDialog.show = true;
+    const { dialog } = useQuasar();
+    function openCommandDetails(command: Command) {
+      dialog({
+        component: ProviderCommandDetails,
+        componentProps: { command }
+      })
     }
-
     return {
       isGrid: ref<boolean>(false),
-      openAddCmdDialog,
-      addCmdDialog,
-      moreCmdDialog,
-      openMoreCmdDialog,
+      openAddCmdDialog: (provider: Provider) => {
+        dialog({
+          component: AddProviderCommand,
+          componentProps: { provider }
+        })
+      },
+      openCommandDetails,
+      deleteCommand: (provider: Provider) => {
+        dialog({
+          component: DeleteProvider,
+          componentProps: { provider }
+        }).onOk((command: Command) => openCommandDetails(command));
+      },
       viewModeOptions: [
         { value: false, slot: 'false' },
         { value: true, slot: 'true' }

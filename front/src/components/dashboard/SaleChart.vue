@@ -9,7 +9,7 @@
       <apexchart
         type="line"
         height="200px"
-        :options="defaultLineOptions"
+        :options="salesData.salesOptions"
         :series="salesData.salesSeries"
       />
     </q-card-section>
@@ -43,61 +43,8 @@
   export default defineComponent({
     name: 'SaleChart',
     setup() {
-      const defaultLineOptions = {
-        colors: ['#FCCF31', '#17ead9', '#f02fc2'],
-        animations: {
-          enabled: true,
-            easing: 'easeinout',
-            speed: 1000
-        },
-        chart: {
-          type: 'line',
-          toolbar: { show: false}
-        },
-        grid: {
-          show: true,
-            strokeDashArray: 0,
-            xaxis: {
-            lines: {
-              show: true
-            }
-          }
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        dataLabels: {
-          enabled: false
-        },
-        title: {
-          text: 'Vente de la semaine',
-            align: 'left',
-            style: {
-            color: '#455a64'
-          }
-        },
-        xaxis: {
-          categories: [],
-            labels: {
-            style: {
-              colors: '#455a64'
-            }
-          }
-        },
-        yaxis: {
-          labels: {
-            formatter: function(val: number) {
-              return val.toFixed(0);
-            },
-            style: {
-              colors: '#455a64'
-            }
-          }
-        }
-      }
       return {
-        defaultLineOptions,
-        ...useCount2LatestWeekSales(defaultLineOptions)
+        ...useCount2LatestWeekSales()
       }
     }
   })

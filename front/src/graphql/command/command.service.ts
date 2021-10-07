@@ -18,9 +18,8 @@ import {
 } from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
-import { InitialPagination } from '../utils/pagination';
+import { deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { notify } from '../../shared/notification';
-import { deleteCommandCache } from './update.cache';
 
 export type Serie = {
   name: string,
@@ -117,11 +116,11 @@ export const useDeleteCommand = () => {
             if(data?.deleteCommand) {
               cache.modify({
                 fields: {
-                  paginateCommands(existingRef: any, { readField }) {
-                    return deleteCommandCache(existingRef, readField, id);
+                  paginateCommands(existingRef: any, { readField, toReference }) {
+                    return deletePaginationCache(id, existingRef, readField, toReference);
                   },
-                  providerCommands(existingRef: any, { readField }) {
-                    return deleteCommandCache(existingRef, readField, id);
+                  providerCommands(existingRef: any, { readField, toReference }) {
+                    return deletePaginationCache(id, existingRef, readField, toReference);
                   }
                 }
               })

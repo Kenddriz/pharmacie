@@ -7,7 +7,7 @@ import {
   ProviderCommandsData,
   PROVIDER_COMMANDS,
   ProviderCommandsChartData,
-  PROVIDER_COMMANDS_CHART,
+  PROVIDER_COMMANDS_CHART, RemoveProviderData, REMOVE_PROVIDER,
 } from './provider.sdl';
 import {
   SaveProviderInput,
@@ -21,12 +21,14 @@ import {
   CommandPagination,
   QueryProviderCommandsChartArgs,
   ProviderCommandsChartInput,
-  Command,
+  Command, MutationRemoveProviderArgs,
 } from '../types';
 import { reactive, ref } from 'vue';
-import { cloneDeep } from '../utils/utils';
-import { InitialPagination } from '../utils/pagination';
+import { cloneDeep, removeDialog } from '../utils/utils';
+import { deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { Serie } from '../command/command.service';
+import { Loading } from 'quasar';
+import { notify } from '../../shared/notification';
 
 export const defaultProviderInput: SaveProviderInput = {
   id: 0,
@@ -192,4 +194,33 @@ export const useProviderCommandsChart = () => {
     loadChart,
     chartSeries
   }
+}
+export const useRemoveProviders = () => {
+  const { onDone, mutate} = useMutation<
+    RemoveProviderData,
+    MutationRemoveProviderArgs
+    >(REMOVE_PROVIDER);
+  onDone(() => {
+    Loading.hide();
+    notify('suppression avec succès !');
+  });
+  function removeProvider(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Exécution de l\'opération ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.removeProvider) {
+            cache.modify({
+              fields: {
+                paginateProviders(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                }
+              }
+            })
+          }
+        }
+      })
+    }, 'removeForever')
+  }
+  return { removeProvider }
 }

@@ -10,7 +10,7 @@
     </q-header>
 
     <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered>
-      <!-- drawer content -->
+      <Account />
     </q-drawer>
 
     <q-page-container>
@@ -25,10 +25,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import Footer from './Footer.vue';
+import Account from '../components/account/Account.vue';
 
 export default defineComponent({
   name: 'Dashboard',
-  components: { Footer },
+  components: { Footer, Account },
   setup () {
     const rightDrawerOpen = ref(false)
 

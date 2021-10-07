@@ -25,34 +25,41 @@ import {
 import { removeDialog } from '../utils/utils';
 import { reactive, ref } from 'vue';
 import { InitialPagination } from '../utils/pagination';
+import { Loading } from 'quasar';
+import { notify } from '../../shared/notification';
 
 export const useCreateMedicine = () => {
-  const { mutate, loading: cmLoading } = useMutation<
+  const { mutate, onDone } = useMutation<
     CreateMedicineData,
     MutationCreateMedicineArgs
     >(CREATE_MEDICINE);
+  onDone(() => {
+    Loading.hide();
+    notify('Création avec succès !');
+  })
   function createMedicine(articleId: number, form: MedicineFormInput) {
+    Loading.show({
+      message: 'Exécution de l\opération ...'
+    });
     void mutate({ input: { articleId, form } });
   }
-  return { createMedicine, cmLoading }
+  return { createMedicine }
 }
 
 export const useUpdateMedicine = () => {
-  const { mutate, loading: umLoading } = useMutation<
+  const { mutate, onDone } = useMutation<
     UpdateMedicineData,
     MutationUpdateMedicineArgs
     >(UPDATE_MEDICINE);
-  const updateDialog = reactive({
-    id: 0,
-    show: false,
-    price: 0,
-    vat: 0
-  });
-  function updateMedicine(form: MedicineFormInput) {
-    void mutate({ input: {id: updateDialog.id, form} });
-    updateDialog.show = false;
+  onDone(() => {
+    Loading.hide();
+    notify('Mise à jour avec succès !');
+  })
+  function updateMedicine(id: number, form: MedicineFormInput) {
+    Loading.show({ message: 'Exécution de l\'opération ...'});
+    void mutate({ input: {id, form} });
   }
-  return { updateMedicine, umLoading, updateDialog }
+  return { updateMedicine }
 }
 
 export const useSoftRemoveMedicine = () => {

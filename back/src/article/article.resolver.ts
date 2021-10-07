@@ -43,9 +43,9 @@ export class ArticleResolver {
     return await this.articleService.paginate(input);
   }
 
-  @Mutation(() => Article)
-  removeArticle(@Args('id', { type: () => Int }) id: number) {
-    return this.articleService.remove(id);
+  @Mutation(() => Boolean)
+  deleteForeverArticle(@Args('id', { type: () => Int }) id: number) {
+    return this.articleService.deleteForever(id);
   }
   @Query(() => Article, { nullable: true })
   findOneArticle(

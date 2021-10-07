@@ -21,7 +21,7 @@ export const columns = [
     align: 'left',
     label: 'Addresse',
     sortable: true,
-    field: 'address'
+    field: (row: Provider) => row.address.substring(0, 25)
   },
   {
     name: 'createdAt',

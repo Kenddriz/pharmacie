@@ -57,7 +57,7 @@ export class BatchService {
       .select('SUM(b.currentStock) AS total')
       .where('b.medicineId = :medicineId', { medicineId })
       .getRawOne();
-    return total;
+    return total || 0;
   }
   async mostConsumed(year: number) {
     return this.repository

@@ -1,5 +1,4 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
-import { SaleLineInput } from '../../sale/dto/sale.input';
 
 @InputType()
 export class StockMovementFormInput {
@@ -16,6 +15,8 @@ export class StockMovementFormInput {
 export class PaginateStockMovementInput {
   @Field()
   medicineId: number;
+  @Field({ nullable: true })
+  batchId?: number;
   @Field()
   page: number;
   @Field()

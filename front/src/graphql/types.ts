@@ -336,6 +336,7 @@ export type Mutation = {
   createUser: User;
   updateUser: User;
   saveProvider: Provider;
+  removeProvider: Scalars['Boolean'];
   createCommand: Command;
   updateCommand: Command;
   deleteCommand: Scalars['Boolean'];
@@ -356,7 +357,7 @@ export type Mutation = {
   updatePackaging: Packaging;
   deletePackaging: Scalars['Boolean'];
   saveArticle: Article;
-  removeArticle: Article;
+  deleteForeverArticle: Scalars['Boolean'];
   updateAssuredLine: StockMovement;
   updateSaleLine: StockMovement;
   cancelSaleLines: CancelSaleLineOutput;
@@ -394,6 +395,11 @@ export type MutationUpdateUserArgs = {
 
 export type MutationSaveProviderArgs = {
   input: SaveProviderInput;
+};
+
+
+export type MutationRemoveProviderArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -497,7 +503,7 @@ export type MutationSaveArticleArgs = {
 };
 
 
-export type MutationRemoveArticleArgs = {
+export type MutationDeleteForeverArticleArgs = {
   id: Scalars['Int'];
 };
 
@@ -638,6 +644,7 @@ export type PaginatePatientSalesOutput = {
 
 export type PaginateStockMovementInput = {
   medicineId: Scalars['Float'];
+  batchId?: Maybe<Scalars['Float']>;
   page: Scalars['Float'];
   limit: Scalars['Float'];
 };
@@ -737,7 +744,6 @@ export type Query = {
   providerCommands: CommandPagination;
   providerCommandsChart: Array<ProviderCommandsChart>;
   countProviders: Scalars['Int'];
-  removeProvider: Scalars['Boolean'];
   paginateCommands: CommandPagination;
   findCommandById: Command;
   countUndeliveredCommands: Scalars['Int'];
@@ -779,11 +785,6 @@ export type QueryProviderCommandsArgs = {
 
 export type QueryProviderCommandsChartArgs = {
   input: ProviderCommandsChartInput;
-};
-
-
-export type QueryRemoveProviderArgs = {
-  id: Scalars['Int'];
 };
 
 

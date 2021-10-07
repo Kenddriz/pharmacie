@@ -75,8 +75,12 @@ export class StockMovementService {
     const queryBuilder = this.repository
       .createQueryBuilder('stm')
       .leftJoin('batches', 'btc', 'btc.id = stm.batchId')
-      .where('btc.medicineId =:medicineId', { medicineId: input.medicineId })
-      .orderBy('stm.id', 'DESC');
+      .where('btc.medicineId =:medicineId', { medicineId: input.medicineId });
+    if (input.batchId)
+      queryBuilder.where('btc.id =:batchId', {
+        batchId: input.batchId,
+      });
+    queryBuilder.orderBy('stm.id', 'DESC');
     const { page, limit } = input;
     return await paginate<StockMovement>(queryBuilder, { page, limit });
   }

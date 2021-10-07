@@ -35,6 +35,13 @@
             color="primary"
             @click="$emit('edit', scope.row)"
           />
+          <q-fab-action
+            square
+            label="Supprimer"
+            padding="xs"
+            color="red"
+            @click="deleteForeverArticle(scope.row)"
+          />
         </q-fab>
       </template>
       <template v-slot:top>
@@ -76,6 +83,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { Article, ArticlePagination } from '../../graphql/types';
+import { useQuasar } from 'quasar';
+import DeleteForeverArticle from './DeleteForeverArticle.vue';
 
 export default defineComponent({
   name: 'Article',
@@ -91,6 +100,7 @@ export default defineComponent({
   },
   emits: ['edit', 'update:selected', 'update:keyword', 'update:page', 'search'],
   setup() {
+    const { dialog } = useQuasar();
     return {
       columns: [
         {
@@ -107,7 +117,13 @@ export default defineComponent({
           field: 'commercialName',
           sortable: true
         }
-      ]
+      ],
+      deleteForeverArticle: (article: Article) => {
+        dialog({
+          component: DeleteForeverArticle,
+          componentProps: { article }
+        })
+      }
     }
   }
 });

@@ -65,3 +65,11 @@ export const PROVIDER_COMMANDS_CHART = gql`
     }
   }
 `;
+export type RemoveProviderData = {
+  removeProvider: boolean;
+}
+export const REMOVE_PROVIDER = gql`
+  mutation RemoveProvider($id: Int!) {
+    removeProvider(id: $id)
+  }
+`;

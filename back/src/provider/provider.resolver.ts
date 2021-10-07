@@ -62,7 +62,7 @@ export class ProviderResolver {
   async countProviders() {
     return this.providerService.count();
   }
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   async removeProvider(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.providerService.remove(id);
   }

@@ -275,7 +275,6 @@ type Query {
   providerCommands(input: ProviderCommandsInput!): CommandPagination!
   providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
   countProviders: Int!
-  removeProvider(id: Int!): Boolean!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
   countUndeliveredCommands: Int!
@@ -332,6 +331,7 @@ input FindByMeasureInput {
 
 input PaginateStockMovementInput {
   medicineId: Float!
+  batchId: Float
   page: Float!
   limit: Float!
 }
@@ -351,6 +351,7 @@ type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
   saveProvider(input: SaveProviderInput!): Provider!
+  removeProvider(id: Int!): Boolean!
   createCommand(input: CreateCommandInput!): Command!
   updateCommand(input: UpdateCommandInput!): Command!
   deleteCommand(id: Int!): Boolean!
@@ -371,7 +372,7 @@ type Mutation {
   updatePackaging(input: UpdatePackagingInput!): Packaging!
   deletePackaging(id: Int!): Boolean!
   saveArticle(input: SaveArticleInput!): Article!
-  removeArticle(id: Int!): Article!
+  deleteForeverArticle(id: Int!): Boolean!
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
   updateSaleLine(input: UpdateSaleLineInput!): StockMovement!
   cancelSaleLines(input: CancelSaleLinesInput!): CancelSaleLineOutput!

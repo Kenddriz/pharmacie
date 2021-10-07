@@ -71,12 +71,13 @@ export const useUpdateAssuredLine = (stm: StockMovement) => {
   }
 }
 
-export const usePaginateStockMovement = (medicineId: number) => {
+export const usePaginateStockMovement = (medicineId: number, batchId: number) => {
   const stmInput = reactive<PaginateStockMovementInput>({
     medicineId,
     limit: 10,
     page: 1
   });
+  if(batchId > -1)Object.assign(stmInput, { batchId });
   const { loading, result } = useQuery<
     PaginateStockMovementData,
     QueryPaginateStockMovementArgs

@@ -66,3 +66,12 @@ export const FIND_ARTICLE_SALE = gql`
     }
   }
 `;
+
+export type DeleteForeverArticleData = {
+  deleteForeverArticle: boolean;
+}
+export const DELETE_FOREVER_ARTICLE = gql`
+  mutation DeleteForeverArticle($id: Int!) {
+    deleteForeverArticle(id: $id)
+  }
+`;

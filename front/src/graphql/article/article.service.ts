@@ -1,21 +1,23 @@
 import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
-  ArticlePaginationData, FIND_ARTICLE_SALE,
+  ArticlePaginationData, DELETE_FOREVER_ARTICLE, DeleteForeverArticleData, FIND_ARTICLE_SALE,
   FIND_ONE_ARTICLE, FindOneArticleData,
   PAGINATE_ARTICLE,
   SAVE_ARTICLE,
   SaveArticleData,
 } from './article.sdl';
 import {
-  Article,
+  Article, MutationDeleteForeverArticleArgs,
   MutationSaveArticleArgs, Packaging,
   PaginationInput, QueryFindOneArticleArgs,
   QueryPaginateArticlesArgs,
   SaveArticleInput,
 } from '../types';
-import { InitialPagination } from '../utils/pagination';
+import { deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
-import { cloneDeep } from '../utils/utils';
+import { cloneDeep, removeDialog } from '../utils/utils';
+import { Loading } from 'quasar';
+import { notify } from '../../shared/notification';
 
 const lim = Math.ceil((screen.height - 150)/50);
 
@@ -31,9 +33,14 @@ export const usePaginateArticle = (limit = lim, withBatches = true) => {
     >(PAGINATE_ARTICLE(withBatches), { input: cloneDeep(searchInput) });
   const selected = ref<Article[]>([]);
   const articles = useResult(result, InitialPagination, res => {
-    const data = res?.paginateArticles||InitialPagination;
-    selected.value = data.items.slice(0, 1);
-    return data;
+    if(res?.paginateArticles) {
+      const id = selected.value[0]?.id;
+      selected.value.length = 0;
+      const find = res.paginateArticles.items.find(item => item.id === id)||res.paginateArticles.items[0];
+      if(find)selected.value = [cloneDeep(find)];
+      return res.paginateArticles;
+    }
+    return InitialPagination
   });
   onResult(() => listLoading.value = false);
   function submitSearch() {
@@ -158,3 +165,32 @@ export const useFindOneArticle = () => {
     keyword
   }
 }
+ export const useDeleteForeverArticle = () => {
+  const { mutate, onDone } = useMutation<
+    DeleteForeverArticleData,
+    MutationDeleteForeverArticleArgs
+    >(DELETE_FOREVER_ARTICLE);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  });
+  function deleteForeverArticle(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Suppression ...' });
+      void mutate({ id }, {
+        update(cache, { data }){
+          if(data?.deleteForeverArticle) {
+            cache.modify({
+              fields: {
+                paginateArticles(existing: any, {readField, toReference}){
+                  return deletePaginationCache(id, existing, readField, toReference);
+                }
+              }
+            })
+          }
+        }
+      })
+    }, 'removeForever')
+  }
+  return { deleteForeverArticle }
+ }

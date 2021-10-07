@@ -46,12 +46,9 @@ export class ArticleService {
     };
     return await paginate<Article>(queryBuilder, options);
   }
-  update(id: number, updateArticleInput: ArticleDto) {
-    return `This action updates a #${id} article`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  async deleteForever(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
   async count(): Promise<number> {
     return this.repository.count();
