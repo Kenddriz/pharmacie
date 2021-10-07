@@ -21,7 +21,7 @@ export default {
   local: {
     dateMask: '##/##/####',
     monthsShort: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Jui', 'Jui', 'Aoû', 'Sept', 'Oct', 'Nov', 'Dec'],
-    daysShort: ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+    daysShort: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
   },
   meta: {
     itemCount: 'Nombre d\'éléments',

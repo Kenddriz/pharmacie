@@ -61,8 +61,10 @@ export class SaleService {
   async currentWeek(): Promise<CountSaleDaily[]> {
     return this.repository
       .createQueryBuilder()
-      .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
-      .where(`date_trunc('week',created_at) = date_trunc('week',current_date)`)
+      .select(
+        `COUNT(id) AS count, TO_CHAR("createdAt"::DATE, 'yyyy-mm-dd') AS day`,
+      )
+      .where(`date_trunc('week',"createdAt") = date_trunc('week',current_date)`)
       .groupBy('day')
       .orderBy(`day`, 'ASC')
       .getRawMany();
@@ -70,11 +72,13 @@ export class SaleService {
   async lastWeek(): Promise<CountSaleDaily[]> {
     return this.repository
       .createQueryBuilder()
-      .select(['COUNT(id) AS count', `date_trunc('day',created_at) AS day`])
-      .where(
-        `created_at >= date_trunc('week', current_date - interval '1 week')`,
+      .select(
+        `COUNT(id) AS count, TO_CHAR("createdAt"::DATE, 'yyyy-mm-dd') AS day`,
       )
-      .andWhere(`created_at < date_trunc('week', current_date)`)
+      .where(
+        `"createdAt" >= date_trunc('week', current_date - interval '1 week')`,
+      )
+      .andWhere(`"createdAt" < date_trunc('week', current_date)`)
       .groupBy('day')
       .orderBy(`day`, 'ASC')
       .getRawMany();

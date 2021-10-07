@@ -23,6 +23,7 @@ import { notify } from '../../shared/notification';
 import { deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
 import moment from 'moment';
+import { useI18n } from 'vue-i18n';
 
 export const initialCreateSaleInput = {
   saleLines: [],
@@ -157,7 +158,13 @@ export const initialSeries = [
 export const useCount2LatestWeekSales = () => {
   const { loading, result } = useQuery<Count2LatestWeekSalesData>(COUNT_2LATEST_WEEK_SALES, {}, { fetchPolicy: 'no-cache'});
   const currentChoice = ref<number>(0);
-
+  const { tm } = useI18n();
+  const months: string[] = tm('local.monthsShort') as string[];
+  const days: string[] = tm('local.daysShort') as string[];
+  function title(date: string) {
+    return '(' + months[moment(date).month()]
+      + ' ' + moment(date).year() + ')';
+  }
   const salesData = computed(() => {
     const salesOptions: any = {
       colors: ['#FCCF31', '#17ead9', '#f02fc2'],
@@ -186,7 +193,7 @@ export const useCount2LatestWeekSales = () => {
         enabled: false
       },
       title: {
-        text: 'Vente de la semaine',
+        text: 'Volume de vente',
         align: 'left',
         style: {
           color: '#455a64'
@@ -215,15 +222,17 @@ export const useCount2LatestWeekSales = () => {
     const res = result.value?.count2LatestWeekSales;
     if(res) {
       if(currentChoice.value === 0) {
-        res.current.forEach(cur => {
-          salesOptions.xaxis.categories.push(moment(cur.day).format('DD'));
+        res.current.forEach((cur, index) => {
+          salesOptions.xaxis.categories.push(days[moment(cur.day).weekday()]);
           salesSeries[0].data.push(cur.count);
+          if(index === 0) salesOptions.title.text += title(cur.day);
         })
       }
       else {
-        res.last.forEach(ls => {
-          salesOptions.xaxis.categories.push(moment(ls.day).format('DD'));
+        res.last.forEach((ls, index) => {
+          salesOptions.xaxis.categories.push(days[moment(ls.day).weekday()]);
           salesSeries[0].data.push(ls.count);
+          if(index === 0) salesOptions.title.text += title(ls.day);
         })
       }
     }

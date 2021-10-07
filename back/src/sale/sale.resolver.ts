@@ -88,7 +88,6 @@ export class SaleResolver {
   async count2LatestWeekSales(): Promise<Count2LatestWeekSales> {
     const current = await this.saleService.currentWeek();
     const last = await this.saleService.lastWeek();
-    console.log(last);
     return { current, last };
   }
   /**fields resolver*/

@@ -65,7 +65,7 @@ export class BatchService {
       .select(['COUNT(stm.id) as count', 'batch.medicineId as medicine_id'])
       .innerJoin('stockMovements', 'stm', 'stm.batchId = batch.id')
       .innerJoin('sales', 'sale', 'sale.id = stm.saleId')
-      .where('EXTRACT(YEAR FROM sale.created_at) = :year', { year })
+      .where('EXTRACT(YEAR FROM sale.createdAt) = :year', { year })
       .groupBy('medicine_id')
       .orderBy('count')
       .limit(5)
