@@ -27,6 +27,7 @@ export class BatchService {
     return this.repository
       .createQueryBuilder('b')
       .where('b.medicineId = :medicineId', { medicineId })
+      .andWhere('b.expirationDate >= CURRENT_DATE')
       .getMany();
   }
   async findExisting(
@@ -37,6 +38,7 @@ export class BatchService {
       .createQueryBuilder('b')
       .where('b.medicineId = :medicineId', { medicineId })
       .andWhere('b.expirationDate = :expirationDate', { expirationDate })
+      .withDeleted()
       .getOne();
   }
   async delete(id: number): Promise<boolean> {

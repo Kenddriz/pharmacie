@@ -4,7 +4,7 @@
       <div class="text-bold">{{ label }}</div>
       <q-separator class="q-my-sm" />
       <div class="row no-wrap items-center justify-between">
-        <q-icon size="25px" name="visibility" />
+        <q-icon size="25px" :name="icon" />
         <div>
           {{ value }}
         </div>
@@ -18,6 +18,7 @@
     name: 'Alert',
     props: {
       label: String,
+      icon: String,
       value: Number
     }
   };

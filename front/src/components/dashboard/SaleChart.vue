@@ -1,5 +1,5 @@
 <template>
-  <q-card class="fit" style="height: 300px" flat bordered>
+  <q-card class="fit q-pt-sm" style="height: 300px" flat bordered>
     <apexchart
       type="line"
       height="200px"

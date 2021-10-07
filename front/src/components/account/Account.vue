@@ -8,7 +8,7 @@
             color="warning"
             round
             size="sm"
-            icon="camera"
+            icon="photo_camera"
             style="margin-right: 5px"
           />
         </div>

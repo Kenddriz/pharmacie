@@ -3,30 +3,37 @@
     <Alert
       label="Articles"
       :value="counts.countArticles"
+      icon="pages"
     />
     <Alert
       label="Formes"
       :value="counts.countForms"
+      icon="merge_type"
     />
     <Alert
       label="Dosages"
       :value="counts.countDosages"
+      icon="straighten"
     />
     <Alert
       label="Médicaments"
       :value="counts.countMedicines"
+      icon="healing"
     />
     <Alert
       label="Fournisseurs"
       :value="counts.countProviders"
+      icon="group"
     />
     <Alert
       label="Commandes non livrées"
       :value="counts.countUndeliveredCommands"
+      icon="touch_app"
     />
     <Alert
       label="Factures impayées"
       :value="counts.countUnpaidInvoices"
+      icon="receipt"
     />
   </div>
 </template>

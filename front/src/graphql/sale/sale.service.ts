@@ -194,7 +194,7 @@ export const useCount2LatestWeekSales = () => {
       },
       title: {
         text: 'Volume de vente',
-        align: 'left',
+        align: 'center',
         style: {
           color: '#455a64'
         }

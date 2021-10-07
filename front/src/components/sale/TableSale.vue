@@ -28,7 +28,7 @@
         </th>
       </tr>
       <CommonSaleHeader :max-unit-size="uSize">
-        <q-icon name="delete" size="sm" color="deep-orange" />
+        <q-icon name="remove_shopping_cart" size="sm" color="deep-orange" />
       </CommonSaleHeader>
     </thead>
     <tbody>
