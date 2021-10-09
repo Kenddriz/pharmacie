@@ -11,6 +11,8 @@ export type Scalars = {
   Float: number;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type AddCommandLineInput = {
@@ -335,8 +337,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
   updateUser: User;
+  updatePassword?: Maybe<User>;
+  updateUserAvatar: User;
   saveProvider: Provider;
   removeProvider: Scalars['Boolean'];
+  updateProviderAvatar: Provider;
   createCommand: Command;
   updateCommand: Command;
   deleteCommand: Scalars['Boolean'];
@@ -393,6 +398,16 @@ export type MutationUpdateUserArgs = {
 };
 
 
+export type MutationUpdatePasswordArgs = {
+  input: UpdatePasswordInput;
+};
+
+
+export type MutationUpdateUserAvatarArgs = {
+  avatar: Scalars['Upload'];
+};
+
+
 export type MutationSaveProviderArgs = {
   input: SaveProviderInput;
 };
@@ -400,6 +415,12 @@ export type MutationSaveProviderArgs = {
 
 export type MutationRemoveProviderArgs = {
   id: Scalars['Int'];
+};
+
+
+export type MutationUpdateProviderAvatarArgs = {
+  id: Scalars['Int'];
+  avatar: Scalars['Upload'];
 };
 
 
@@ -705,7 +726,7 @@ export type Provider = {
   name: Scalars['String'];
   contacts: Array<Contact>;
   address: Scalars['String'];
-  logo: Scalars['String'];
+  avatar: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   commands: Array<Command>;
@@ -977,6 +998,11 @@ export type UpdatePackagingInput = {
   units: Array<CreatePackagingInput>;
 };
 
+export type UpdatePasswordInput = {
+  currentPassword: Scalars['String'];
+  newPassword: Scalars['String'];
+};
+
 export type UpdatePaymentInput = {
   id: Scalars['Float'];
   form: PaymentFormInput;
@@ -999,16 +1025,16 @@ export type UpdateSaleLineInput = {
 };
 
 export type UpdateUserInput = {
-  id: Scalars['Float'];
   username: Scalars['String'];
 };
+
 
 export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
   username: Scalars['String'];
-  password: Scalars['String'];
   avatar: Scalars['String'];
+  password: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };

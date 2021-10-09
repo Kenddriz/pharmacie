@@ -5,15 +5,16 @@
       style="transform: translateY(50px); z-index: 1"
       color="teal"
     >
-      <img src="register.jpg">
+      <img src="avatar.svg">
     </q-avatar>
     <q-card
+      flat
       class="login q-pa-lg bg-teal"
       style="transform: translateY(-30px);"
     >
       <q-card-section class="text-white" align="center">
         <h1 class="text-h4 q-mb-sm">AUTHENTIFICATION</h1>
-        <div class="text-h6">Pharmanager</div>
+        <div class="text-h6">Fary</div>
       </q-card-section>
       <q-card-section>
         <q-form @submit.prevent="submitLogin" class="q-gutter-lg">
@@ -33,14 +34,16 @@
             outlined
             label="Mot de passe"
             v-model="input.password"
+            :type="isPwd ? 'password' : 'text'"
           >
             <template v-slot:prepend>
-              <q-icon name="person" />
+              <q-icon class="cursor-pointer" @click="isPwd =!isPwd" name="person" />
             </template>
           </q-input>
 
           <q-card-actions align="center">
             <q-btn
+              :loading="loading"
               no-caps
               rounded
               icon-right="login"
@@ -56,12 +59,13 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import {useLogin} from '../../graphql/user/login/login.service';
   export default defineComponent({
     name: 'Login',
     setup() {
       return {
+        isPwd: ref<boolean>(true),
         ...useLogin()
       }
     }
@@ -77,12 +81,8 @@
    flex-direction: column;
    align-items: center;
    justify-content: flex-start;
-   background-image: url("../../../public/register.svg");
-   background-size: contain;
-   background-repeat: no-repeat;
  }
  .login {
-   min-height: 500px;
    padding-top: 60px;
    border-radius: 20px;
    box-shadow: 13px 13px 20px #cbced1;

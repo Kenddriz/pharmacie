@@ -143,28 +143,14 @@ export const useSoftRemoveSale = () => {
   }
   return { softRemoveSale, srsLoading }
 }
-
-export const initialSeries = [
-  {
-    name: 'Semaine actuelle',
-    data: []
-  },
-  {
-    name: 'Semaine dernière',
-    data: []
-  }
-]
-
+type Serie = {
+  data: number[];
+  name: string;
+}
 export const useCount2LatestWeekSales = () => {
   const { loading, result } = useQuery<Count2LatestWeekSalesData>(COUNT_2LATEST_WEEK_SALES, {}, { fetchPolicy: 'no-cache'});
-  const currentChoice = ref<number>(0);
   const { tm } = useI18n();
-  const months: string[] = tm('local.monthsShort') as string[];
   const days: string[] = tm('local.daysShort') as string[];
-  function title(date: string) {
-    return '(' + months[moment(date).month()]
-      + ' ' + moment(date).year() + ')';
-  }
   const salesData = computed(() => {
     const salesOptions: any = {
       colors: ['#FCCF31', '#17ead9', '#f02fc2'],
@@ -200,7 +186,7 @@ export const useCount2LatestWeekSales = () => {
         }
       },
       xaxis: {
-        categories: [],
+        categories: days,
         labels: {
           style: {
             colors: '#455a64'
@@ -218,25 +204,26 @@ export const useCount2LatestWeekSales = () => {
         }
       }
     };
-    const salesSeries: any[] =  [cloneDeep(initialSeries[currentChoice.value])]
+    const salesSeries: Serie[] = [
+      {
+        name: 'Semaine dernière',
+        data: []
+      },
+      {
+        name: 'Semaine actuelle',
+        data: []
+      }
+    ]
     const res = result.value?.count2LatestWeekSales;
     if(res) {
-      if(currentChoice.value === 0) {
-        res.current.forEach((cur, index) => {
-          salesOptions.xaxis.categories.push(days[moment(cur.day).weekday()]);
-          salesSeries[0].data.push(cur.count);
-          if(index === 0) salesOptions.title.text += title(cur.day);
-        })
-      }
-      else {
-        res.last.forEach((ls, index) => {
-          salesOptions.xaxis.categories.push(days[moment(ls.day).weekday()]);
-          salesSeries[0].data.push(ls.count);
-          if(index === 0) salesOptions.title.text += title(ls.day);
-        })
-      }
+      days.forEach((day, index) => {
+        const last = res.last.find(ls => moment(ls.day).day() === index);
+        salesSeries[0].data.push(last?.count||0);
+        const cur = res.current.find(cu => moment(cu.day).day() === index);
+        salesSeries[1].data.push(cur?.count||0);
+      });
     }
     return { salesOptions, salesSeries }
   })
-  return { loading, salesData, currentChoice }
+  return { loading, salesData }
 }

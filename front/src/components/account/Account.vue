@@ -1,67 +1,104 @@
 <template>
-  <div class="row justify-center q-pa-sm q-gutter-y-md">
-    <q-avatar color="grey" size="200px">
-      <q-img src="register.svg">
-        <div class="absolute-bottom-right transparent">
-          <q-btn
-            outline
-            color="warning"
-            round
-            size="sm"
-            icon="photo_camera"
-            style="margin-right: 5px"
-          />
-        </div>
-      </q-img>
-    </q-avatar>
+  <div class="row justify-around q-pa-sm q-gutter-y-md">
+    <UpdateUserAvatar :avatar="Iam?.avatar" />
     <q-list>
       <q-item>
         <q-item-section>
           <q-item-label>Nom d'utilisateur</q-item-label>
-          <q-item-label caption>RAKOTOTO</q-item-label>
+          <q-item-label caption>{{Iam?.username}}</q-item-label>
         </q-item-section>
-        <q-item-section top side>
-          <q-btn icon="edit" round dense flat />
-        </q-item-section>
+        <UpdateUsername :username="Iam?.username" />
       </q-item>
       <q-item>
         <q-item-section>
           <q-item-label>Mot de passe</q-item-label>
-          <q-item-label caption>RAKOTOTO</q-item-label>
+          <q-item-label caption>**************</q-item-label>
         </q-item-section>
-        <q-item-section top side>
-          <q-btn icon="edit" round dense flat />
-        </q-item-section>
+        <UpdatePassword />
       </q-item>
-      <q-separator class="q-my-md" />
-      <q-item
-        to="/dashboard"
-        active-class="text-white bg-teal-8"
-        exact
-      >
-        <q-item-section avatar>
-          <q-icon name="dashboard" />
+      <q-item>
+        <q-item-section>
+          <q-item-label>Date de création</q-item-label>
+          <q-item-label v-if="Iam" caption>
+            {{formatDate(Iam.createdAt, 'DATE_TIME')}}
+          </q-item-label>
         </q-item-section>
-        <q-item-section>Tableau de board</q-item-section>
-      </q-item>
-      <q-item
-        to="/main"
-        active-class="text-white bg-teal-8"
-      >
-        <q-item-section avatar>
-          <q-icon name="person" />
-        </q-item-section>
-        <q-item-section>Espace de travail</q-item-section>
       </q-item>
     </q-list>
+    <q-separator class="q-my-md" />
+    <MainMenu reverse class="col-12">
+      <q-item clickable @click="logout">
+        <q-item-section avatar>
+          <q-icon name="logout" />
+        </q-item-section>
+        <q-item-section>Se déconnecter</q-item-section>
+      </q-item>
+    </MainMenu>
+    <q-inner-loading :showing="loading">
+      <q-spinner-oval size="60px" color="warning" />
+    </q-inner-loading>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useWHoAmI } from '../../graphql/user/whoAmI/whoAmi.service';
+import { formatDate } from '../../shared/date';
+import UpdateUsername from './UpdateUsername.vue';
+import UpdatePassword from './UpdatePassword.vue';
+import UpdateUserAvatar from './UpdateUserAvatar.vue';
+import MainMenu from '../../layouts/MainMenu.vue';
+import { useQuasar } from 'quasar';
+import { useSession } from '../../graphql/user/login/session';
 
 export default defineComponent({
   name: 'Account',
+  components: { MainMenu, UpdateUsername, UpdatePassword, UpdateUserAvatar },
+  setup() {
+    const { notify } = useQuasar();
+    const { logout } = useSession();
+    return {
+      ...useWHoAmI(),
+      formatDate,
+      logout () {
+        const notification = notify({
+          color: 'teal-14',
+          group: false,
+          timeout: 0,
+          spinner: true,
+          message: 'Fermeture de session dans',
+          caption: '4s',
+          position: 'center'
+        });
+        let percentage = 0
+        const interval = setInterval(() => {
+          percentage += 1;
+          notification({
+            caption: `${percentage}s`,
+            actions: [
+              {
+                label: 'Annuler',
+                color: 'white',
+                noCaps: true,
+                handler: () => clearInterval(interval)
+              }
+            ]
+          })
+          if (percentage === 4) {
+            notification({
+              icon: 'done', // we add an icon
+              spinner: false, // we reset the spinner setting so the icon can be displayed
+              message: 'Déconnecté(e)',
+              timeout: 10,
+              caption: '',
+              onDismiss: () => logout()
+            })
+            clearInterval(interval);
+          }
+        }, 1000)
+      }
+    }
+  }
 });
 </script>
 

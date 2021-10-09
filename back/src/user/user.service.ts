@@ -9,15 +9,15 @@ export class UserService {
     @InjectRepository(User)
     private userService: Repository<User>,
   ) {}
-  save(user: User): Promise<User> {
+  async save(user: User): Promise<User> {
     return this.userService.save(user);
   }
 
-  findOneByUsername(username: string): Promise<User> {
+  async findOneByUsername(username: string): Promise<User> {
     return this.userService.findOne({ username });
   }
 
-  findOneById(id: number): Promise<User> {
+  async findOneById(id: number): Promise<User> {
     return this.userService.findOne({ id });
   }
 }

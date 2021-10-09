@@ -137,7 +137,10 @@
       </template>
       <!-- Card body for Grid view mod -->
       <template v-slot:item="props">
-        <CardItem @edit="setUpdateInput($event)" :provider="props.row"/>
+        <CardItem
+          @edit="updateProvider($event)"
+          :provider="props.row"
+        />
       </template>
       <!-- //pagination -->
       <template v-if="providers.meta.totalPages > 1" v-slot:bottom>
@@ -154,15 +157,6 @@
         </div>
       </template>
     </q-table>
-    <!---update provider --->
-    <q-dialog v-model="show">
-      <ProviderForm
-        mode="update"
-        style="min-width: 400px"
-        :model-value="updateInput"
-        @submit="updateProvider($event)"
-      />
-    </q-dialog>
   </q-page>
 </template>
 
@@ -178,6 +172,7 @@ import ProviderCommandDetails from '../../components/provider/ProviderCommandDet
 import { Command, Provider } from '../../graphql/types';
 import { useQuasar } from 'quasar';
 import DeleteProvider from '../../components/provider/DeleteProvider.vue';
+import UpdateProvider from '../../components/provider/UpdateProvider.vue';
 
 export default defineComponent({
   name: 'Provider',
@@ -195,6 +190,7 @@ export default defineComponent({
         componentProps: { command }
       })
     }
+    const { createProvider } = useSaveProvider();
     return {
       isGrid: ref<boolean>(false),
       openAddCmdDialog: (provider: Provider) => {
@@ -216,7 +212,13 @@ export default defineComponent({
       ],
       columns,
       ...usePaginateProviders(),
-      ...useSaveProvider()
+      createProvider,
+      updateProvider: (provider: Provider) => {
+        dialog({
+          component: UpdateProvider,
+          componentProps: { provider }
+        })
+      }
     }
   }
 })

@@ -3,7 +3,7 @@ import { ProviderService } from './provider.service';
 import { Provider } from './provider.entity';
 import { SaveProviderInput } from './types/provider.input';
 import { uniqId } from '../shared/id-builder.service';
-import { PaginationInput } from '../shared/shared.input';
+import { PaginationInput, Upload } from '../shared/shared.input';
 import { ProviderPagination } from './types/provider.dto';
 import { CommandService } from '../command/command.service';
 import {
@@ -14,6 +14,11 @@ import {
   ProviderCommandsChartInput,
   ProviderCommandsInput,
 } from '../command/dto/command.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/jwt-auth.guard';
+import { GraphQLUpload } from 'graphql-upload';
+import { removeFile } from '../shared/remove-file.service';
+import { upload } from '../shared/uploader.service';
 
 @Resolver(() => Provider)
 export class ProviderResolver {
@@ -65,5 +70,17 @@ export class ProviderResolver {
   @Mutation(() => Boolean)
   async removeProvider(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.providerService.remove(id);
+  }
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Provider)
+  async updateProviderAvatar(
+    @Args({ name: 'avatar', type: () => GraphQLUpload }) file: Upload,
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ) {
+    const provider = await this.providerService.findOneById(id);
+    removeFile('avatars/providers/' + provider.avatar);
+    const { filename } = await upload(file, 'avatars/providers', provider.id);
+    provider.avatar = filename;
+    return this.providerService.save(provider);
   }
 }

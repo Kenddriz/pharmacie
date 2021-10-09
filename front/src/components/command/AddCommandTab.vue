@@ -96,7 +96,6 @@ import ContactList from '../contact/ContactList.vue';
 import AddCommand from './AddCommand.vue';
 import { usePaginateProviders } from '../../graphql/provider/provider.service';
 import { getOneContact } from '../../graphql/utils/utils';
-import { Provider } from '../../graphql/types';
 
 export default defineComponent({
   name: 'AddCommandTab',
@@ -104,7 +103,6 @@ export default defineComponent({
   setup() {
     const step = ref<number>(1);
     return {
-      selectedProvider: ref<Provider[]>([]),
       step,
       ...usePaginateProviders(2),
       filter: ref<string>(''),

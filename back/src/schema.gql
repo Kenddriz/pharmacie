@@ -5,8 +5,8 @@
 type User {
   id: Int!
   username: String!
-  password: String!
   avatar: String!
+  password: String!
   createdAt: String!
   updatedAt: String!
 }
@@ -186,7 +186,7 @@ type Provider {
   name: String!
   contacts: [Contact!]!
   address: String!
-  logo: String!
+  avatar: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   commands: [Command!]!
@@ -350,8 +350,11 @@ input PaginatePatientSalesInput {
 type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
+  updatePassword(input: UpdatePasswordInput!): User
+  updateUserAvatar(avatar: Upload!): User!
   saveProvider(input: SaveProviderInput!): Provider!
   removeProvider(id: Int!): Boolean!
+  updateProviderAvatar(id: Int!, avatar: Upload!): Provider!
   createCommand(input: CreateCommandInput!): Command!
   updateCommand(input: UpdateCommandInput!): Command!
   deleteCommand(id: Int!): Boolean!
@@ -403,9 +406,16 @@ input CreateUserInput {
 }
 
 input UpdateUserInput {
-  id: Float!
   username: String!
 }
+
+input UpdatePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input SaveProviderInput {
   id: Float!

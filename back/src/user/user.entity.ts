@@ -19,12 +19,12 @@ export class User {
   username: string;
 
   @Field()
-  @Column({ length: 60 })
-  password: string;
+  @Column({ length: 26, default: '' })
+  avatar: string;
 
   @Field()
-  @Column({ default: '' })
-  avatar: string;
+  @Column({ length: 60 })
+  password: string;
 
   @Field()
   @CreateDateColumn({ type: 'date' })

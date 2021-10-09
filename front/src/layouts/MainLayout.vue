@@ -25,40 +25,7 @@
         <q-space />
         <q-btn round icon="more_vert" unelevated size="sm">
           <q-menu class="row no-wrap q-pa-md">
-
-              <q-list separator>
-                <q-item-label header>PHARMANAGER</q-item-label>
-                <q-item
-                  v-for="(item, index) in sItems"
-                  :key="index"
-                  :to="`/main/${item.to}`"
-                  exact-active-class="text-primary"
-                >
-                  <q-item-section avatar>
-                    <q-icon :name="item.icon" size="xs" class="q-ml-md" color="teal" />
-                  </q-item-section>
-                  <q-item-section>{{ item.label }}</q-item-section>
-                </q-item>
-              </q-list>
-
-              <q-separator vertical inset class="q-mx-lg" />
-
-              <div class="column items-center">
-                <q-avatar size="72px">
-                  <img src="register.jpg">
-                </q-avatar>
-
-                <div class="text-subtitle1 q-mt-xs q-mb-xs">John Doe</div>
-
-                <q-btn
-                  no-caps
-                  color="primary"
-                  label="Déconnexion"
-                  push
-                  size="sm"
-                  v-close-popup
-                />
-              </div>
+            <Account />
           </q-menu>
         </q-btn>
       </div>
@@ -74,10 +41,11 @@
   import { defineComponent, ref } from 'vue';
   import Footer from './Footer.vue';
   import { pItems, sItems } from './menu' ;
+  import Account from '../components/account/Account.vue';
 
   export default defineComponent({
     name: 'MainLayout',
-    components: { Footer },
+    components: { Footer, Account },
     setup() {
       return {
         tab: ref<number>(0),

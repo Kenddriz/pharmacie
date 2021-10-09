@@ -1,10 +1,10 @@
 <template>
   <q-card class="q-ma-sm column col-sm-6 col-md-3 col-lg-2">
-    <q-img height="150px" src="register.jpg">
-      <div class="absolute-center text-center cursor-pointer">
-        <q-icon name="camera" size="md" />
-      </div>
-    </q-img>
+    <UpdateProviderAvatar
+      :avatar="provider.avatar"
+      :provider-id="provider.id"
+      height="150px"
+    />
     <q-card-section>
       <q-btn
         @click="$emit('edit', provider)"
@@ -52,19 +52,21 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType } from 'vue';
-  import {Provider} from '../../graphql/types';
+import { defineComponent, PropType } from 'vue';
+import {Provider} from '../../graphql/types';
+import UpdateProviderAvatar from './UpdateProviderAvatar.vue';
 
-  export default defineComponent({
-    name: 'CardItem',
-    emits: ['edit'],
-    props: {
-      provider: {
-        type: Object as PropType<Provider>,
-        required: true,
-      }
-    },
-  })
+export default defineComponent({
+  name: 'CardItem',
+  components: { UpdateProviderAvatar },
+  emits: ['edit'],
+  props: {
+    provider: {
+      type: Object as PropType<Provider>,
+      required: true,
+    }
+  },
+})
 </script>
 
 <style scoped>

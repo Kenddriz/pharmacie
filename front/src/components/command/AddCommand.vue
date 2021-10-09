@@ -10,15 +10,27 @@
     <tr>
       <th colspan="3">
         <div class="row no-wrap items-center">
-          <q-img
+          <UpdateProviderAvatar
+            :dense="true"
             style="width: 70px"
             :ratio="1"
             class="rounded-borders"
-            src="register.jpg"
+            :avatar="provider.avatar"
+            :provider-id="provider.id"
           />
           <div class="q-ml-md">
-            <div class="text-h6">{{provider.name}}</div>
-            <span>{{getOneContact(provider.contacts)}}</span>
+            <div class="text-h6 row">
+              {{provider.name}}
+              <q-btn
+                class="q-ml-md"
+                dense
+                flat
+                color="primary"
+                icon="edit"
+                @click="updateProvider"
+              />
+            </div>
+            <div class="text-left">{{getOneContact(provider.contacts)}}</div>
           </div>
           <q-space />
           <slot name="end"></slot>
@@ -88,10 +100,13 @@ import PackagingInput from '../packaging/PackagingInput.vue';
 import { useCreateCommand } from '../../graphql/command/command.service';
 import { getOneContact } from '../../graphql/utils/utils';
 import { cmData } from '../command-line/cmData';
+import UpdateProviderAvatar from '../provider/UpdateProviderAvatar.vue';
+import { useQuasar } from 'quasar';
+import UpdateProvider from '../provider/UpdateProvider.vue';
 
 export default defineComponent({
   name: 'AddCommand',
-  components: { ArticleSelect, PackagingInput },
+  components: { ArticleSelect, PackagingInput, UpdateProviderAvatar },
   props: {
     provider: {
       type: Object as PropType<Provider>,
@@ -125,6 +140,7 @@ export default defineComponent({
         commandLineInput.value.length = 0;
       }
     }
+    const { dialog } = useQuasar();
     return {
       commandLineInput,
       addLine,
@@ -134,6 +150,12 @@ export default defineComponent({
       ccLoading,
       getOneContact,
       cmData,
+      updateProvider: () => {
+        dialog({
+          component: UpdateProvider,
+          componentProps: { provider: props.provider }
+        })
+      }
     }
   },
 });

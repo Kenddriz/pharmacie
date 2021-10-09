@@ -66,7 +66,8 @@
     <q-separator inset />
     <q-card-actions align="right">
       <q-btn
-        @click="$emit('submit', input)"
+        v-close-popup
+        @click="filterInput"
         color="secondary"
         no-caps
         label="Enregistrer"
@@ -94,14 +95,20 @@
         default: 'add'
       }
     },
-    setup (props) {
+    setup (props, { emit }) {
       const { tm } =  useI18n();
       const input = reactive<SaveProviderInput>({
         ...defaultProviderInput,
         contacts: (tm('contacts') as string[]).map((type, index) => ({ type: index, list: [] })),
       });
       if(props.modelValue)Object.assign(input, props.modelValue);
-
+      function filterInput() {
+        input.contacts = input.contacts.map(c => ({
+          type: c.type,
+          list: c.list.filter(l => l.trim() !== '')
+        }));
+        emit('submit', input);
+      }
       return {
         expanded: ref(false),
         input,
@@ -110,7 +117,8 @@
         },
         removeContact: (cIndex: number, lIndex: number) => {
           input.contacts[cIndex].list.splice(lIndex, 1);
-        }
+        },
+        filterInput
       }
     }
   })

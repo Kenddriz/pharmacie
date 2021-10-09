@@ -1,8 +1,17 @@
 <template>
-  <q-card :flat="flat" bordered style="width: 400px">
+  <q-card bordered style="width: 400px">
     <q-card-section  class="text-center">
-      <p class="text-h5">{{provider.name}}</p>
-      <p>{{provider.address}}</p>
+      <div class="text-h5 row justify-around q-mb-md">
+        {{provider.name}}
+        <q-btn
+          dense
+          flat
+          color="primary"
+          icon="edit"
+          @click="updateProvider"
+        />
+      </div>
+      <span>{{provider.address}}</span>
     </q-card-section>
     <q-separator inset />
     <q-card-section>
@@ -15,13 +24,28 @@
 import { defineComponent, PropType } from 'vue';
 import { Provider } from '../../graphql/types';
 import ContactList from '../contact/ContactList.vue';
+import { useQuasar } from 'quasar';
+import UpdateProvider from './UpdateProvider.vue';
 
 export default defineComponent({
   name: 'CardProvider',
   components: {ContactList},
   props: {
-    provider: Object as PropType<Provider>,
-    flat: Boolean
+    provider: {
+      type: Object as PropType<Provider>,
+      required: true
+    }
+  },
+  setup(props) {
+    const { dialog } = useQuasar();
+    return {
+      updateProvider: () => {
+        dialog({
+          component: UpdateProvider,
+          componentProps: { provider: props.provider }
+        })
+      }
+    }
   }
 });
 </script>

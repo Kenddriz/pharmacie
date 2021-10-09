@@ -3,9 +3,15 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { invoke } from '@tauri-apps/api/tauri';
 
 export default defineComponent({
-  name: 'App'
+  name: 'App',
+  beforeCreate() {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => void invoke('close_splashscreen'), 3000);
+    });
+  }
 })
 </script>
 <style lang="scss">

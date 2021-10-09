@@ -3,18 +3,6 @@ import { CommandPagination, Provider, ProviderCommandsChart, ProviderPagination 
 import { PAGINATION_META } from '../utils/pagination';
 import { COMMAND_FIELDS, INVOICE_FIELDS, PROVIDER_FIELDS } from '../invoice/incoice.sdl';
 
-
-export type ProvidersData = {
-  providers: Provider[]
-}
-
-export const PROVIDERS = gql`
-  query Providers {
-    providers {
-       ${PROVIDER_FIELDS}
-    }
-  }
-`;
 export type SaveProviderData = {
   saveProvider: Provider
 }
@@ -71,5 +59,17 @@ export type RemoveProviderData = {
 export const REMOVE_PROVIDER = gql`
   mutation RemoveProvider($id: Int!) {
     removeProvider(id: $id)
+  }
+`;
+export type UpdateProviderAvatarData = {
+  updateProviderAvatar: Provider;
+}
+export const UPDATE_PROVIDER_AVATAR = gql`
+  mutation UpdateProviderAvatar($avatar: Upload!, $id: Int!) {
+    updateProviderAvatar(avatar: $avatar, id: $id){
+      id
+      updatedAt
+      avatar
+    }
   }
 `;

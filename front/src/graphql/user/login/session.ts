@@ -4,13 +4,12 @@ export const useSession = () => {
 
   const route = useRouter();
 
-  const login = async (token: string) => {
+  const login = (token: string) => {
     localStorage.setItem('token', token);
-    await route.push('/main');
+    void route.push('/dashboard');
   }
-  const logout = async () => {
-    localStorage.clear();
-    await route.push('/');
+  const logout = () => {
+    void route.push('/');
   }
   return { login, logout };
 }

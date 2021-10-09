@@ -13,13 +13,10 @@ import { createUploadLink } from 'apollo-upload-client';
 import {DefaultApolloClient} from '@vue/apollo-composable';
 
 const authLink = setContext((_, { headers, ...context }) => {
-  let token = '';
-  token = localStorage.getItem('token') as string; // survive a refresh
-
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: `Bearer ${localStorage.getItem('token') as string}`,
     },
     ...context,
   };

@@ -12,10 +12,13 @@ export class CreateUserInput {
 
 @InputType()
 export class UpdateUserInput {
-
-  @Field()
-  id: number;
-
   @Field()
   username: string;
+}
+@InputType()
+export class UpdatePasswordInput {
+  @Field()
+  currentPassword: string;
+  @Field()
+  newPassword: string;
 }

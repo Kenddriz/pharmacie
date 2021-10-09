@@ -30,8 +30,9 @@ export class Provider {
   @Column()
   address: string;
 
-  @Field({ defaultValue: '' })
-  logo: string;
+  @Field()
+  @Column({ length: 25, default: '' })
+  avatar: string;
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })

@@ -7,7 +7,7 @@ import {
   ProviderCommandsData,
   PROVIDER_COMMANDS,
   ProviderCommandsChartData,
-  PROVIDER_COMMANDS_CHART, RemoveProviderData, REMOVE_PROVIDER,
+  PROVIDER_COMMANDS_CHART, RemoveProviderData, REMOVE_PROVIDER, UpdateProviderAvatarData, UPDATE_PROVIDER_AVATAR,
 } from './provider.sdl';
 import {
   SaveProviderInput,
@@ -22,6 +22,7 @@ import {
   QueryProviderCommandsChartArgs,
   ProviderCommandsChartInput,
   Command, MutationRemoveProviderArgs,
+  MutationUpdateProviderAvatarArgs
 } from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
@@ -38,26 +39,22 @@ export const defaultProviderInput: SaveProviderInput = {
 }
 
 export const useSaveProvider = () => {
-  const { mutate, loading: loadSave } = useMutation<
+  const { mutate, onDone } = useMutation<
     SaveProviderData,
     MutationSaveProviderArgs
     >(CREATE_PROVIDER);
-  const show = ref<boolean>(false);
+  onDone(() => {
+    Loading.hide();
+    notify('Enregistrement avec succès !');
+  })
   const updateInput = reactive<SaveProviderInput>(defaultProviderInput);
   function setUpdateInput(provider: Provider) {
     const { id, name, address, contacts } = cloneDeep(provider);
     Object.assign(updateInput, { id, name, address, contacts });
-    show.value = true;
-  }
-  function filterInput(input: SaveProviderInput) {
-    input.contacts = input.contacts.map(c => ({
-      type: c.type,
-      list: c.list.filter(l => l.trim() !== '')
-    }));
-    return input;
   }
   function createProvider(input: SaveProviderInput){
-    void mutate({ input: filterInput(input) }, {
+    Loading.show({ message: 'Enregistrement du nouveau fournisseur ...' });
+    void mutate({ input }, {
       update: (cache, { data }) => {
         if(data?.saveProvider) {
           cache.modify({
@@ -75,16 +72,15 @@ export const useSaveProvider = () => {
     })
   }
   function updateProvider(input: SaveProviderInput) {
-    if(input.id > 0) void mutate({ input: filterInput(input) })
+    Loading.show({ message: 'Enregistrement de vos modifications ...' });
+    if(input.id > 0) void mutate({ input })
   }
 
   return {
     createProvider,
     updateProvider,
     setUpdateInput,
-    show,
     updateInput,
-    loadSave,
   }
 }
 export const usePaginateProviders = (limit = 5) => {
@@ -97,6 +93,7 @@ export const usePaginateProviders = (limit = 5) => {
     PaginateProvidersData,
     QueryPaginateProvidersArgs
     >(PAGINATE_PROVIDERS, { input: cloneDeep(paginateInput) });
+  const selectedProvider = ref<Provider[]>([]);
   function searchProvider() {
     void refetch({ input: paginateInput });
   }
@@ -105,16 +102,21 @@ export const usePaginateProviders = (limit = 5) => {
     ProviderPagination,
     ProviderPagination
     >(result, InitialPagination, res => {
-      if(res?.paginateProviders) {
-        return res.paginateProviders;
-      }
-      return InitialPagination;
+    if(res?.paginateProviders) {
+      const id = selectedProvider.value[0]?.id;
+      selectedProvider.value.length = 0;
+      const find = res.paginateProviders.items.find(item => item.id === id)||res.paginateProviders.items[0];
+      if(find)selectedProvider.value = [cloneDeep(find)];
+      return res.paginateProviders;
+    }
+    return InitialPagination
   })
   return {
     searchProvider,
     ppLoading,
     providers,
-    paginateInput
+    paginateInput,
+    selectedProvider
   }
 }
 export const useProviderCommands = (limit = 1) => {
@@ -223,4 +225,19 @@ export const useRemoveProviders = () => {
     }, 'removeForever')
   }
   return { removeProvider }
+}
+export const useUpdateProviderAvatar = () => {
+  const { mutate, onDone } = useMutation<
+    UpdateProviderAvatarData,
+    MutationUpdateProviderAvatarArgs
+    >(UPDATE_PROVIDER_AVATAR, { context: {hasUpload: true}});
+  onDone(() => {
+    Loading.hide();
+    notify('Mise à jour avec succès !');
+  })
+  function updateAvatar(file: File, id: number) {
+    Loading.show({ message: 'Téléchargement ...'});
+    void mutate({ avatar: file, id });
+  }
+  return { updateAvatar }
 }

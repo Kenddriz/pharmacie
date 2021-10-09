@@ -1,13 +1,15 @@
 import { join } from 'path';
-import * as fs from 'fs';
+import { access, constants, unlinkSync } from 'fs';
 
 export const removeFile = (filename: string): boolean => {
-  const path = join(__dirname, '../../../public/', filename);
+  const path = join(__dirname, '../../public/', filename);
   let removed = false;
-  fs.access(path, fs.constants.F_OK, (err) => {
+  access(path, constants.F_OK, (err) => {
     if (!err) {
-      fs.unlinkSync(path);
-      removed = true;
+      try {
+        unlinkSync(path);
+        removed = true;
+      } catch {}
     }
   });
   return removed;

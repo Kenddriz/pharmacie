@@ -42,26 +42,19 @@
                   >
                     <div class="row items-stretch q-pb-sm q-mt-sm justify-around">
                       <CardProvider flat :provider="selectedCmd[0].provider" />
-                      <q-timeline class="col-md-4 q-mt-none">
-                        <div class="text-h6">A propos de la commande</div>
-                        <q-timeline-entry
-                          title="Date de création"
-                          icon="event"
-                          :body="formatDate(selectedCmd[0].createdAt, 'DATE_TIME')"
-                        >
-                          <template v-slot:title>
-                            <div class="text-subtitle2">Date de création</div>
-                          </template>
-                        </q-timeline-entry>
-                        <q-timeline-entry
-                          icon="event"
-                          :body="selectedCmd[0].commandLines.length + ''"
-                        >
-                          <template v-slot:title>
-                            <div class="text-subtitle2">Nombre de ligne de commandes</div>
-                          </template>
-                        </q-timeline-entry>
-                      </q-timeline>
+                      <div class="col-sm-12 col-md-4">
+                        <UpdateProviderAvatar
+                          :avatar="selectedCmd[0].provider.avatar"
+                          :provider-id="selectedCmd[0].provider.id"
+                          height="190px"
+                        />
+                        <q-item-section class="q-mt-sm">
+                          <q-item-label>Date de commande</q-item-label>
+                          <q-item-label caption>
+                            {{ formatDate(selectedCmd[0].createdAt, 'DATE_TIME') }}
+                          </q-item-label>
+                        </q-item-section>
+                      </div>
                     </div>
                   </q-expansion-item>
                   <q-expansion-item
@@ -154,10 +147,18 @@ import AddCommandTab from '../../components/command/AddCommandTab.vue';
 import UpdateCommand from '../../components/command/UpdateCommand.vue';
 import CardProvider from '../../components/provider/CardProvider.vue';
 import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue'
+import UpdateProviderAvatar from '../../components/provider/UpdateProviderAvatar.vue';
 
 export default defineComponent({
   name: 'Command',
-  components: { ScrollArea, CardProvider,  AddCommandTab, UpdateCommand, CommandLineDetails },
+  components: {
+    ScrollArea,
+    CardProvider,
+    AddCommandTab,
+    UpdateCommand,
+    CommandLineDetails,
+    UpdateProviderAvatar
+  },
   setup() {
     return {
       deliveryPan: ref<string>('command'),

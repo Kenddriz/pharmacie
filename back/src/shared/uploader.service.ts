@@ -18,7 +18,7 @@ export const upload = async (
     filename.lastIndexOf('.') > 20 ? filename.substr(20) : filename;
   m_filename = id + '-' + m_filename;
 
-  const path = __dirname + `/../../../public/${dossier}`;
+  const path = __dirname + `/../../public/${dossier}`;
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
 
   const uploaded = await new Promise((resolve, reject) =>

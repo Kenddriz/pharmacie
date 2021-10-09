@@ -25,7 +25,7 @@ export const PROVIDER_FIELDS = `
   id
   name
   address
-  logo
+  avatar
   contacts {
     type
     list
