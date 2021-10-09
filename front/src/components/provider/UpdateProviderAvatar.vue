@@ -1,5 +1,5 @@
 <template>
-  <q-img :src="model.url[0]||curAvatar||'register.jpg'">
+  <q-img :src="model.url[0]||curAvatar||'avatar.svg'">
     <div class="absolute-bottom-left transparent">
       <template v-if="model.avatar.length">
         <div v-if="dense" class="row no-wrap">

@@ -14,9 +14,12 @@ export const useLogin = () => {
   const { mutate, loading, onDone } = useMutation<LoginData, MutationLoginArgs>(LOGIN);
   onDone(  res => {
     if(res?.data?.login) void login(res.data.login.token);
-  })
+  });
+  function submitLogin() {
+    void mutate({ input });
+  }
   return {
-    submitLogin: () => void mutate({ input }),
+    submitLogin,
     input,
     loading
   };
