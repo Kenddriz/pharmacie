@@ -99,4 +99,10 @@ export class SaleResolver {
   async stockMovements(@Root() sale: Sale): Promise<StockMovement[]> {
     return this.stmS.findBySale(sale.id);
   }
+  @Query(() => SalePagination)
+  async paginateDeletedProvider(
+    @Args('input') input: PaginationInput,
+  ): Promise<SalePagination> {
+    return this.saleService.paginateDeleted(input);
+  }
 }

@@ -46,11 +46,6 @@ export class ProviderResolver {
   ): Promise<ProviderPagination> {
     return await this.providerService.paginate(input);
   }
-
-  @Query(() => [Provider])
-  async providers(): Promise<Provider[]> {
-    return await this.providerService.providers();
-  }
   @Query(() => CommandPagination)
   async providerCommands(
     @Args('input') input: ProviderCommandsInput,
@@ -82,5 +77,11 @@ export class ProviderResolver {
     const { filename } = await upload(file, 'avatars/providers', provider.id);
     provider.avatar = filename;
     return this.providerService.save(provider);
+  }
+  @Query(() => ProviderPagination)
+  async paginateDeletedProvider(
+    @Args('input') input: PaginationInput,
+  ): Promise<ProviderPagination> {
+    return this.providerService.paginateDeleted(input);
   }
 }

@@ -51,7 +51,7 @@ export class BatchResolver {
     if (batch && batch.id !== input.id) return null;
     else if (!batch) batch = await this.batchService.findOne(input.id);
     Object.assign(batch, input.form);
-    return await this.batchService.save(batch);
+    return this.batchService.save(batch);
   }
 
   @Query(() => Batch, { nullable: true })
@@ -63,9 +63,15 @@ export class BatchResolver {
       input.expirationDate,
     );
   }
-  @Mutation(() => Batch)
-  async softRemove(@Args('id', { type: () => Int }) id: number) {
-    return this.batchService.softRemove(id);
+  @Mutation(() => Medicine)
+  async softRemoveBatch(@Args('id', { type: () => Int }) id: number) {
+    const batch = await this.batchService.findOne(id);
+    await this.batchService.softRemove(batch);
+    return this.mdS.findOne(batch.medicineId);
+  }
+  @Query(() => Number)
+  async countStockMovements(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.stmS.countByBatch(id);
   }
   /**field resolver*/
   @ResolveField(() => Medicine)

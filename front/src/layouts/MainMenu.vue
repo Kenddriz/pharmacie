@@ -1,8 +1,8 @@
 <template>
   <q-list>
     <q-item
-      to="/dashboard"
-      active-class="text-white bg-teal-8"
+      to="/other/dashboard"
+      :active-class="activeClass"
       exact
       class="col text-center"
     >
@@ -13,23 +13,25 @@
     </q-item>
     <q-item
       to="/main"
-      active-class="text-white bg-teal-8"
+      :active-class="activeClass"
       class="col text-center"
     >
-      <template v-if="reverse">
-        <q-item-section avatar>
-          <q-icon name="person" />
-        </q-item-section>
-        <q-item-section>Espace de travail</q-item-section>
-      </template>
-      <template v-else>
-        <q-item-section>Espace de travail</q-item-section>
-        <q-item-section avatar>
-          <q-icon name="person" />
-        </q-item-section>
-      </template>
+      <q-item-section avatar>
+        <q-icon name="person" />
+      </q-item-section>
+      <q-item-section>Espace de travail</q-item-section>
     </q-item>
     <slot v-if="$slots.default"></slot>
+    <q-item
+      to="/other/trash"
+      :active-class="activeClass"
+      class="col text-center"
+    >
+      <q-item-section avatar>
+        <q-icon name="delete" />
+      </q-item-section>
+      <q-item-section>Corbeille</q-item-section>
+    </q-item>
   </q-list>
 </template>
 
@@ -37,7 +39,10 @@
 export default {
   name: 'MainMenu',
   props: {
-    reverse: Boolean
+    activeClass: {
+      type: String,
+      default: 'text-white bg-teal-8'
+    }
   }
 };
 </script>

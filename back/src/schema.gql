@@ -210,6 +210,11 @@ type CommandsMonthly {
   invoice: Float!
 }
 
+type CommandLinePaginationOutput {
+  items: [CommandLine!]!
+  meta: Meta!
+}
+
 type MedicinePaginationOutput {
   items: [Medicine!]!
   meta: Meta!
@@ -271,17 +276,20 @@ type LoginDto {
 
 type Query {
   paginateProviders(input: PaginationInput!): ProviderPagination!
-  providers: [Provider!]!
   providerCommands(input: ProviderCommandsInput!): CommandPagination!
   providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
   countProviders: Int!
+  paginateDeletedProvider(input: PaginationInput!): SalePagination!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
   countUndeliveredCommands: Int!
   commandsMonthly(year: Int!): [CommandsMonthly!]!
+  paginateDeletedCommands(input: PaginationInput!): CommandPagination!
+  paginateDeletedCommandLines(input: PaginationInput!): CommandLinePaginationOutput!
   findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
   countMedicines: Int!
   mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
+  paginateDeletedMedicines(input: PaginationInput!): [MedicinePaginationOutput!]!
   forms: [Form!]!
   countForms: Int!
   dosages: [Dosage!]!
@@ -291,10 +299,12 @@ type Query {
   findOneArticle(keyword: String!): Article
   countArticles: Int!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
+  paginateDeletedStockMovements(input: PaginationInput!): StockMovementPagination!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   countUnpaidInvoices: Int!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
+  countStockMovements(id: Int!): Float!
   paginateSales(paginationInput: PaginationInput!): SalePagination!
   count2LatestWeekSales: Count2LatestWeekSales!
   findSuggestedPatients(keyword: String!): [Patient!]!
@@ -389,7 +399,7 @@ type Mutation {
   updateMethod(input: MethodInput!): Method!
   createBatch(input: BatchFormInput!): Medicine
   updateBatch(input: UpdateBatchInput!): Batch!
-  softRemove(id: Int!): Batch!
+  softRemoveBatch(id: Int!): Medicine!
   createSale(input: CreateSaleInput!): Sale!
   softRemoveSale(id: Int!): Boolean!
   createPrescription(input: CreatePrescriptionInput!): Sale!

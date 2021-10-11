@@ -64,7 +64,7 @@
                 outline
                 icon="inventory_2"
                 label="Fiche de stock"
-                @click="$emit('stock', batch)"
+                @click="movementStock(index)"
               />
               <q-btn
                 align="left"
@@ -82,16 +82,7 @@
                   :batch="batch"
                 />
               </q-btn>
-              <q-btn
-                align="left"
-                color="orange"
-                flat
-                dense
-                no-caps
-                outline
-                icon="drive_file_move"
-                label="Archiver"
-              />
+              <RemoveBatch @stock="movementStock(index)" :id="batch.id" />
             </q-card-actions>
           </q-card-section>
         </q-card>
@@ -103,25 +94,43 @@
 <script lang="ts">
 import BatchForm from './BatchForm.vue';
 import { defineComponent, PropType } from 'vue';
-import { Medicine } from '../../graphql/types';
+import { Article, Medicine } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
 import UnitConverter from '../packaging/UnitConverter.vue';
-import { leftDays } from '../../graphql/utils/utils';
+import { cloneDeep, leftDays } from '../../graphql/utils/utils';
+import RemoveBatch from './RemoveBatch.vue';
+import { useQuasar } from 'quasar';
+import CardStock from '../medicine/CardStock.vue';
 
 export default defineComponent({
   name: 'Batch',
-  components: { BatchForm, UnitConverter },
+  components: { BatchForm, UnitConverter, RemoveBatch },
   props: {
     medicine: {
       type: Object as PropType<Medicine>,
       required: true
+    },
+    article: {
+      type: Object as PropType<Article>,
+      required: true
     }
   },
   emits: ['stock'],
-  setup() {
+  setup(props) {
+    const { dialog } = useQuasar();
     return {
       formatDate,
-      leftDays
+      leftDays,
+      movementStock: (iB: number) => {
+        const { batches, ...medicine } = cloneDeep(props.medicine);
+        dialog({
+          component: CardStock,
+          componentProps: { medicine: {
+              ...medicine,
+              article: props.article
+            }, batch: batches[iB] }
+        });
+      },
     }
   }
 });

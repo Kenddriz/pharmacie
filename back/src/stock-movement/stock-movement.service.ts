@@ -4,6 +4,8 @@ import { StockMovement } from './stock-movement.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { PaginateStockMovementInput } from './dto/stock-movement.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PaginationInput } from '../shared/shared.input';
+import { Medicine } from '../medicine/medicine.entity';
 
 @Injectable()
 export class StockMovementService {
@@ -14,11 +16,6 @@ export class StockMovementService {
   async save(stockMovement: StockMovement): Promise<StockMovement> {
     return this.repository.save(stockMovement);
   }
-
-  findAll() {
-    return `This action returns all assuredLine`;
-  }
-
   async findOne(id: number): Promise<StockMovement> {
     return this.repository.findOne(id);
   }
@@ -84,16 +81,32 @@ export class StockMovementService {
     const { page, limit } = input;
     return await paginate<StockMovement>(queryBuilder, { page, limit });
   }
-  async purchasePrice(id: number, batchId: number): Promise<number> {
+  async countByBatch(batchId: number): Promise<number> {
+    return this.repository
+      .createQueryBuilder('m')
+      .where(`m.batchId = :batchId`, { batchId })
+      .getCount();
+  }
+  /**Marge**/
+  async marge(id: number, batchId: number, t0: number) {
     /**purchase price will previous enter price**/
-    const query = await this.repository
+    return this.repository
       .createQueryBuilder('s')
-      .select('s.price')
-      .where('s.invoiceId IS NOT NULL')
+      .select(['SUM(s.q) as total'])
+      .where('s.saleId IS NOT NULL')
       .andWhere(`s.batchId = :batchId`, { batchId })
-      .andWhere(`s.id < :id`, { id })
-      .orderBy('s.id', 'DESC')
-      .getRawOne();
-    return query.price || 0;
+      .andWhere(`s.id > :id`, { id })
+      .having('total <= :t0', { t0 })
+      .orderBy('s.id', 'ASC')
+      .getRawMany();
+  }
+  async paginateDeleted(
+    input: PaginationInput,
+  ): Promise<Pagination<StockMovement>> {
+    const query = this.repository
+      .createQueryBuilder('stm')
+      .where('stm.archivedAt IS NOT NULL')
+      .orderBy('stm.archivedAt', 'DESC');
+    return paginate<StockMovement>(query, { ...input });
   }
 }

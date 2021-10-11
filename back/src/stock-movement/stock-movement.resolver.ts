@@ -25,6 +25,7 @@ import {
 import { Sale } from '../sale/sale.entity';
 import { SaleService } from '../sale/sale.service';
 import { AddSaleLineInput, UpdateSaleLineInput } from '../sale/dto/sale.input';
+import { PaginationInput } from '../shared/shared.input';
 
 @Resolver(() => StockMovement)
 export class StockMovementResolver {
@@ -158,5 +159,11 @@ export class StockMovementResolver {
   async sale(@Root() stockMovement: StockMovement): Promise<Sale> {
     if (!stockMovement.saleId) return null;
     return this.saleService.findOneById(stockMovement.saleId);
+  }
+  @Query(() => StockMovementPagination)
+  async paginateDeletedStockMovements(
+    @Args('input') input: PaginationInput,
+  ): Promise<StockMovementPagination> {
+    return this.stmService.paginateDeleted(input);
   }
 }

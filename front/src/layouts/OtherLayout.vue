@@ -3,7 +3,7 @@
 
     <q-header  class="bg-primary text-white">
       <div style="height: 35px; font-size: 15px" class="row q-px-md justify-between items-center">
-        Résultats statistiques
+          {{$tm('otherLayout.' + title($route.path))}}
         <q-space />
         <q-btn dense flat round icon="menu" @click="toggleRightDrawer" />
       </div>
@@ -28,15 +28,18 @@ import Footer from './Footer.vue';
 import Account from '../components/account/Account.vue';
 
 export default defineComponent({
-  name: 'Dashboard',
+  name: 'OtherLayout',
   components: { Footer, Account },
   setup () {
-    const rightDrawerOpen = ref(false)
-
+    const rightDrawerOpen = ref(false);
     return {
       rightDrawerOpen,
       toggleRightDrawer () {
         rightDrawerOpen.value = !rightDrawerOpen.value
+      },
+      title: (path: string)=> {
+        path = path.substring(path.lastIndexOf('/') + 1);
+        return path === 'trash' ? 'trash' : 'dashboard';
       }
     }
   }

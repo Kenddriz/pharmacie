@@ -13,16 +13,8 @@ export class SaleService {
     @InjectRepository(Sale)
     private repository: Repository<Sale>,
   ) {}
-  async save(sale: Sale) {
+  async save(sale: Sale): Promise<Sale> {
     return this.repository.save(sale);
-  }
-
-  findAll() {
-    return `This action returns all sale`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} sale`;
   }
   async findOneById(id: number): Promise<Sale> {
     return this.repository.findOne(id);
@@ -82,5 +74,12 @@ export class SaleService {
       .groupBy('day')
       .orderBy(`day`, 'ASC')
       .getRawMany();
+  }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Sale>> {
+    const query = this.repository
+      .createQueryBuilder('sale')
+      .where('sale.archivedAt IS NOT NULL')
+      .orderBy('sale.archivedAt', 'DESC');
+    return paginate<Sale>(query, { ...input });
   }
 }

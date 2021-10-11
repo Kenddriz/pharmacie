@@ -2,7 +2,7 @@
   <q-item>
     <q-item-section>
       <q-item-label>Unités de vente</q-item-label>
-      <q-item-label caption>{{selected.units.map(u => u.label).join(' -')}}</q-item-label>
+      <q-item-label caption>{{selected.units.map(u => u.label).join(' - ')}}</q-item-label>
     </q-item-section>
     <q-item-section side>
       <q-btn class="q-pa-xs" size="sm" flat icon="navigate_next">
@@ -16,7 +16,7 @@
               active-class="text-warning"
               @click="$emit('selected', pk); $refs['pk-menu'].hide()"
             >
-              <q-item-section>{{pk.units.map(u => u.label).join(' -')}}</q-item-section>
+              <q-item-section>{{pk.units.map(u => u.label).join(' - ')}}</q-item-section>
             </q-item>
           </q-list>
         </q-menu>

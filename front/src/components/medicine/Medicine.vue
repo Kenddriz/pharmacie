@@ -24,7 +24,7 @@
       <BatchCpt
         v-if="selectedMedicine"
         :medicine="selectedMedicine"
-        @stock="movementStock"
+        :article="getArticle()"
       />
     </template>
   </q-splitter>
@@ -32,13 +32,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import { Article, Batch, Medicine } from '../../graphql/types';
+import { Article } from '../../graphql/types';
 import BatchCpt from '../batch/Batch.vue';
 import MedicineList from './MedicineList.vue';
 import AddMedicine from './AddMedicine.vue';
-import { cloneDeep } from '../../graphql/utils/utils';
-import CardStock from './CardStock.vue';
-import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'Medicine',
@@ -50,19 +47,16 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { dialog } = useQuasar();
     const selectedMedicine = ref<any>(null);
     return {
       insideModel: ref(50),
       selectedMedicine,
-      movementStock: (batch: Batch) => {
-        const { medicines, ...article } = cloneDeep(props.article);
-        const medicine = medicines.find((m: Medicine) => m.id === selectedMedicine.value?.id);
-        dialog({
-          component: CardStock,
-          componentProps: { medicine: { ...medicine, article }, batch }
-        });
-      },
+      getArticle: () => {
+        return {
+          id: props.article.id,
+          commercialName: props.article.commercialName
+        }
+      }
     }
   }
 });

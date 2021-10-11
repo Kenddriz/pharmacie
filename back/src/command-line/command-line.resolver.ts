@@ -1,4 +1,11 @@
-import { Resolver, Mutation, Args, ResolveField, Root } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Args,
+  ResolveField,
+  Root,
+  Query,
+} from '@nestjs/graphql';
 import { CommandLine } from './command-line.entity';
 import { CommandService } from '../command/command.service';
 import { CommandLineService } from './command-line.service';
@@ -10,6 +17,8 @@ import {
 } from './dto/command-line.input';
 import { Medicine } from '../medicine/medicine.entity';
 import { MedicineService } from '../medicine/medicine.service';
+import { PaginationInput } from '../shared/shared.input';
+import { CommandLinePaginationOutput } from './dto/command-line.output';
 
 @Resolver(() => CommandLine)
 export class CommandLineResolver {
@@ -56,5 +65,11 @@ export class CommandLineResolver {
   @ResolveField(() => Medicine)
   async medicine(@Root() command: CommandLine): Promise<Medicine> {
     return await this.medicineService.findOne(command.medicineId);
+  }
+  @Query(() => CommandLinePaginationOutput)
+  async paginateDeletedCommandLines(
+    @Args('input') input: PaginationInput,
+  ): Promise<CommandLinePaginationOutput> {
+    return this.commandLineService.paginateDeleted(input);
   }
 }

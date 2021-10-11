@@ -32,6 +32,7 @@ import {
   MostConsumedMedicineOutput,
 } from './types/medicine.output';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { PaginationInput } from '../shared/shared.input';
 
 @Resolver(() => Medicine)
 export class MedicineResolver {
@@ -140,5 +141,9 @@ export class MedicineResolver {
       medicine,
       count: batches.find((b) => b.medicine_id === medicine.id).count,
     }));
+  }
+  @Query(() => [MedicinePaginationOutput])
+  async paginateDeletedMedicines(@Args('input') input: PaginationInput) {
+    return this.medicineService.paginateDeleted(input);
   }
 }

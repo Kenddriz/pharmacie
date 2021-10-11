@@ -41,4 +41,8 @@ export default {
       packagingId: 'de l\'unité de vente'
     }
   },
+  otherLayout: {
+    dashboard: 'Résultats statistiques',
+    trash: 'Eléments supprimés'
+  }
 };

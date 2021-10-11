@@ -26,8 +26,16 @@
       </q-item>
     </q-list>
     <q-separator class="q-my-md" />
-    <MainMenu reverse class="col-12">
-      <q-item clickable @click="logout">
+    <MainMenu
+      class="col-12"
+      active-class="text-primary"
+    >
+      <q-item
+        v-close-popup
+        class="col text-center"
+        clickable
+        @click="logout"
+      >
         <q-item-section avatar>
           <q-icon name="logout" />
         </q-item-section>

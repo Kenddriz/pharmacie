@@ -8,6 +8,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
+import { Batch } from '../batch/batch.entity';
 
 @Injectable()
 export class ProviderService {
@@ -52,5 +53,12 @@ export class ProviderService {
   async remove(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;
+  }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Provider>> {
+    const query = this.repository
+      .createQueryBuilder('pro')
+      .where('pro.archivedAt IS NOT NULL')
+      .orderBy('pro.archivedAt', 'DESC');
+    return paginate<Provider>(query, { ...input });
   }
 }

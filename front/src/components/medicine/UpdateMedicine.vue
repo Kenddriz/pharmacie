@@ -49,10 +49,12 @@ export default defineComponent({
       ...useListPackaging()
     }
   },
-  beforeCreate() {
-    Object.assign(this.selectedForm, this.medicine.form);
-    Object.assign(this.selectedPk, this.medicine.packaging);
-    Object.assign(this.selectedDosage, this.medicine.dosage);
+  mounted() {
+    setTimeout(() => {
+      Object.assign(this.selectedForm, this.medicine.form);
+      Object.assign(this.selectedPk, this.medicine.packaging);
+      Object.assign(this.selectedDosage, this.medicine.dosage);
+    }, 0);
   }
 });
 </script>

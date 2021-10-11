@@ -6,7 +6,7 @@ export const useSession = () => {
 
   const login = (token: string) => {
     localStorage.setItem('token', token);
-    void route.push('/dashboard');
+    void route.push('/other');
   }
   const logout = () => {
     void route.push('/');

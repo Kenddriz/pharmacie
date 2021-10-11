@@ -100,4 +100,10 @@ export class CommandResolver {
   ): Promise<CommandsMonthly[]> {
     return this.commandService.commandsMonthly(year);
   }
+  @Query(() => CommandPagination)
+  async paginateDeletedCommands(
+    @Args('input') input: PaginationInput,
+  ): Promise<CommandPagination> {
+    return this.commandService.paginateDeleted(input);
+  }
 }

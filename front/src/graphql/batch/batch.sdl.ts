@@ -40,3 +40,23 @@ export const FIND_EXISTING_BATCH = gql`
     }
   }
 `;
+export type CountStockMovementsData = {
+  countStockMovements: number;
+}
+export const COUNT_STOCK_MOVEMENTS = gql`
+    query CountStockMovements($id: Int!) {
+      countStockMovements(id: $id)
+    }
+`;
+
+export type SoftRemoveData = {
+  softRemoveBatch: Medicine;
+}
+export const SOFT_REMOVE_BATCH = gql`
+    mutation SoftRemoveBatch($id: Int!) {
+      softRemoveBatch(id: $id) {
+        id
+        batches{${BATCH_FIELDS}}
+      }
+    }
+`;

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Batch } from './batch.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginationInput } from '../shared/shared.input';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class BatchService {
@@ -10,11 +12,6 @@ export class BatchService {
   async save(batch: Batch): Promise<Batch> {
     return this.repository.save(batch);
   }
-
-  findAll() {
-    return `This action returns all parcelle`;
-  }
-
   async findOne(id: number): Promise<Batch> {
     return this.repository.findOne(id);
   }
@@ -45,9 +42,8 @@ export class BatchService {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
-  async softRemove(id: number): Promise<boolean> {
-    const query = await this.repository.softDelete(id);
-    return query.affected > 0;
+  async softRemove(batch: Batch): Promise<Batch> {
+    return this.repository.softRemove(batch);
   }
   async recover(id: number): Promise<boolean> {
     const query = await this.repository.restore(id);
@@ -72,5 +68,12 @@ export class BatchService {
       .orderBy('count')
       .limit(5)
       .getRawMany();
+  }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Batch>> {
+    const query = this.repository
+      .createQueryBuilder('batch')
+      .where('batch.archivedAt IS NOT NULL')
+      .orderBy('batch.archivedAt', 'DESC');
+    return paginate<Batch>(query, { ...input });
   }
 }

@@ -4,6 +4,7 @@ import { Medicine } from './medicine.entity';
 import { Repository } from 'typeorm';
 import { FindByMeasureInput } from './types/medicine.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PaginationInput } from '../shared/shared.input';
 
 @Injectable()
 export class MedicineService {
@@ -35,8 +36,9 @@ export class MedicineService {
     return query.affected > 0;
   }
   async softRemove(id: number): Promise<boolean> {
-    const medicine = await this.findOneWithChildren(id);
-    await this.repository.softRemove(medicine);
+    const medicine = await this.repository.softRemove(
+      await this.findOneWithChildren(id),
+    );
     return !!medicine;
   }
   async recover(id: number): Promise<boolean> {
@@ -45,7 +47,7 @@ export class MedicineService {
   }
   async findOneWithChildren(id: number): Promise<Medicine> {
     return this.repository.findOne(id, {
-      relations: ['batches', 'commandLines'],
+      relations: ['commandLines'],
     });
   }
   async findByMeasure(
@@ -61,5 +63,12 @@ export class MedicineService {
   }
   async count(): Promise<number> {
     return this.repository.count();
+  }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Medicine>> {
+    const query = this.repository
+      .createQueryBuilder('med')
+      .where('med.archivedAt IS NOT NULL')
+      .orderBy('med.archivedAt', 'DESC');
+    return paginate(query, { ...input });
   }
 }

@@ -76,7 +76,10 @@ export default defineComponent({
     const { createBatch } = useCreateBatch();
     function submitForm() {
       if(props.batch)updateBatch({ id: props.batch.id, form: model });
-      else createBatch(model);
+      else {
+        alert(45);
+        createBatch(model);
+      }
     }
     return {
       model,

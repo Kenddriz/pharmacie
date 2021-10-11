@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between wrap q-gutter-md">
+  <div class="flex justify-center wrap q-gutter-md">
     <q-card
       flat
       bordered
@@ -37,12 +37,12 @@
         <q-btn
           v-if="modelValue !== undefined"
           icon="read_more"
-          :color="modelValue?.id === med.id ? 'positive': 'secondary'"
+          :color="selected?.id === med.id ? 'positive': 'secondary'"
           flat
           @click="$emit('update:modelValue', med)"
         />
         <q-btn
-          @click="softRemoveMedicine(article.id, med.id)"
+          @click="selected = med; removeMedicine = true"
           icon="delete_sweep"
           color="deep-orange"
           flat
@@ -62,22 +62,30 @@
         </q-btn>
       </q-card-actions>
     </q-card>
+    <q-dialog v-model="removeMedicine" full-height>
+      <SoftRemoveMedicine
+        v-if="selected"
+        :medicine="selected"
+        :article="getArticle()"
+      />
+    </q-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, UnwrapRef, watch } from 'vue';
+import { defineComponent, PropType, ref, UnwrapRef, watch } from 'vue';
 import UnitConverter from '../packaging/UnitConverter.vue';
 import { Article, Medicine } from '../../graphql/types';
-import { useSoftRemoveMedicine } from '../../graphql/medicine/medicine.service';
 import CardStock from './CardStock.vue';
 import { useQuasar } from 'quasar';
 import { cloneDeep } from '../../graphql/utils/utils';
 import UpdateMedicine from './UpdateMedicine.vue';
+import SoftRemoveMedicine from './SoftRemoveMedicine.vue';
 
 export default defineComponent ({
   name: 'MedicineList',
   components: {
+    SoftRemoveMedicine,
     UnitConverter
   },
   props: {
@@ -85,24 +93,23 @@ export default defineComponent ({
       type: Object as PropType<Article>,
       required: true
     },
-    modelValue: Object as PropType<Medicine>
+    modelValue:  Object as PropType<Medicine>
   },
   emits: ['update:modelValue'],
-  setup(props, { emit}) {
+  setup(props, { emit }) {
+    const selected = ref<any>(null);
     watch(() => props.article, (article) => {
-      if(props?.modelValue !== undefined) {
-        let selected = null;
-        if(article.medicines && article.medicines?.length) {
-          selected = article.medicines.find(m => m.id === props?.modelValue?.id) || article.medicines[0];
-        }
-        emit('update:modelValue', selected);
+      if(article.medicines && article.medicines?.length) {
+        selected.value = article.medicines.find(m => m.id === selected.value?.id) || article.medicines[0];
+        if(props?.modelValue !== undefined)emit('update:modelValue', selected.value);
       }
     }, { immediate: true });
     const {dialog} = useQuasar();
+    const removeMedicine = ref<boolean>(false);
     return {
-      ...useSoftRemoveMedicine(),
       movementStock: (iMed: number) => {
         const { medicines, ...article } = cloneDeep(props.article);
+        delete medicines[iMed].batches;
         dialog({
           component: CardStock,
           componentProps: { medicine: { ...medicines[iMed], article } }
@@ -111,9 +118,15 @@ export default defineComponent ({
       updateMedicine: (medicine: UnwrapRef<Medicine|null>) => {
         dialog({
           component: UpdateMedicine,
-          componentProps: { medicine }
+          componentProps: { medicine: medicine }
         })
-      }
+      },
+      getArticle: () => ({
+          id: props.article.id,
+          commercialName: props.article.commercialName
+      }),
+      removeMedicine,
+      selected
     }
   }
 });

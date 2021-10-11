@@ -43,14 +43,6 @@
           <q-item-section side>
             <q-btn dense round flat color="primary" icon="more_vert">
               <q-menu>
-                <q-item clickable v-close-popup>
-                  <q-item-section side>
-                    <q-icon color="deep-orange" name="delete" />
-                  </q-item-section>
-                  <q-item-section>
-                    Supprimer
-                  </q-item-section>
-                </q-item>
                 <q-item @click="updatePatient(p)" clickable v-close-popup>
                   <q-item-section side>
                     <q-icon color="primary" name="edit" />

@@ -86,4 +86,11 @@ export class CommandService {
       .orderBy('month', 'ASC')
       .getRawMany();
   }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Command>> {
+    const query = this.repository
+      .createQueryBuilder('cmd')
+      .where('cmd.archivedAt IS NOT NULL')
+      .orderBy('cmd.archivedAt', 'DESC');
+    return paginate<Command>(query, { ...input });
+  }
 }

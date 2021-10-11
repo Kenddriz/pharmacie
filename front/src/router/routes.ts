@@ -6,12 +6,17 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/account/Login.vue')
   },
   {
-    path: '/dashboard',
-    component: () => import('layouts/Dashboard.vue'),
+    path: '/other',
+    component: () => import('src/layouts/OtherLayout.vue'),
     children: [
       {
         path: '',
+        alias: 'dashboard',
         component: () => import('pages/dashboard/Index.vue')
+      },
+      {
+        path: 'trash',
+        component: () => import('pages/trash/Trash.vue')
       }
     ]
   },

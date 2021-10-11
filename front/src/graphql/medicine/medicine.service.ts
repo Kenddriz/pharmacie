@@ -63,14 +63,20 @@ export const useUpdateMedicine = () => {
 }
 
 export const useSoftRemoveMedicine = () => {
-  const { mutate, loading: srmLoading } = useMutation<
+  const { mutate, onDone } = useMutation<
     SoftRemoveMedicineData,
     MutationSoftRemoveMedicineArgs
     >(SOFT_REMOVE_MEDICINE);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  })
   return {
-    srmLoading,
     softRemoveMedicine: (articleId: number, medicineId: number) => {
-      removeDialog(() => void mutate({ input: { articleId, medicineId } }))
+      removeDialog(() => {
+        Loading.show({ message: 'Suppression ...'});
+        void mutate({ input: { articleId, medicineId } });
+      })
     }
   }
 }

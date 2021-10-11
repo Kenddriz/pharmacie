@@ -40,7 +40,7 @@
             label="Supprimer"
             padding="xs"
             color="red"
-            @click="deleteForeverArticle(scope.row)"
+            @click="scope.selected = true;dialogRemove = true"
           />
         </q-fab>
       </template>
@@ -78,20 +78,31 @@
         </div>
       </template>
     </q-table>
+    <q-dialog
+      full-height
+      v-model="dialogRemove"
+    >
+      <DeleteForeverArticle
+        v-if="selected.length"
+        :article="selected[0]"
+      />
+    </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 import { Article, ArticlePagination } from '../../graphql/types';
-import { useQuasar } from 'quasar';
 import DeleteForeverArticle from './DeleteForeverArticle.vue';
 
 export default defineComponent({
   name: 'Article',
-  components: { },
+  components: { DeleteForeverArticle },
   props: {
     articlePagination: Object as PropType<ArticlePagination>,
-    selected: Array as PropType<Article[]>,
+    selected: {
+      type: Array as PropType<Article[]>,
+      required: true
+    },
     loading: Boolean,
     keyword: String,
     page: Number,
@@ -100,7 +111,7 @@ export default defineComponent({
   },
   emits: ['edit', 'update:selected', 'update:keyword', 'update:page', 'search'],
   setup() {
-    const { dialog } = useQuasar();
+    const dialogRemove = ref<boolean>(false);
     return {
       columns: [
         {
@@ -118,12 +129,7 @@ export default defineComponent({
           sortable: true
         }
       ],
-      deleteForeverArticle: (article: Article) => {
-        dialog({
-          component: DeleteForeverArticle,
-          componentProps: { article }
-        })
-      }
+      dialogRemove
     }
   }
 });

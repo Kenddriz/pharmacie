@@ -1,9 +1,10 @@
-import { useLazyQuery, useMutation, useResult } from '@vue/apollo-composable';
+import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
+  COUNT_STOCK_MOVEMENTS, CountStockMovementsData,
   CREATE_BATCH,
   CreateBatchData,
   FIND_EXISTING_BATCH,
-  FindExistingBatchData,
+  FindExistingBatchData, SOFT_REMOVE_BATCH, SoftRemoveData,
   UPDATE_BATCH,
   UpdateBatchData,
 } from './batch.sdl';
@@ -11,11 +12,14 @@ import {
   BatchFormInput,
   MutationCreateBatchArgs,
   MutationUpdateBatchArgs,
+  QueryCountStockMovementsArgs,
   QueryFindExistingBatchArgs,
   UpdateBatchInput,
+  MutationSoftRemoveBatchArgs
 } from '../types';
 import { Loading } from 'quasar';
 import { notify } from '../../shared/notification';
+import { removeDialog } from '../utils/utils';
 
 export const useCreateBatch = () => {
   const { mutate, onDone, onError } = useMutation<
@@ -40,7 +44,7 @@ export const useCreateBatch = () => {
 }
 
 export const useUpdateBatch = () => {
-  const { mutate, onDone, onError } = useMutation<
+  const { mutate, onDone } = useMutation<
     UpdateBatchData,
     MutationUpdateBatchArgs
     >(UPDATE_BATCH);
@@ -52,9 +56,6 @@ export const useUpdateBatch = () => {
       'Un autre lot ayant la même date d\'expiration existe déjà!'
     );
   });
-  onError(() => {
-    Loading.hide();
-  })
   return {
     updateBatch: (input: UpdateBatchInput) => {
       Loading.show({ message: 'Exécution de mise à jour ...' })
@@ -74,4 +75,36 @@ export const useFindExistingBatch = (medicineId: number) => {
     findExistingBatch,
     existingBatch
   }
+}
+
+export const useCountStockMovements = (id: number) => {
+  const { result, refetch } = useQuery<
+    CountStockMovementsData,
+    QueryCountStockMovementsArgs
+    >(COUNT_STOCK_MOVEMENTS, { id }, { fetchPolicy: 'no-cache' });
+  function getCount(id: number) {
+    void refetch({ id });
+  }
+  return {
+    count: useResult(result, 0, res => res?.countStockMovements),
+    getCount
+  }
+}
+
+export const useSoftRemoveBatch = () => {
+  const { mutate, onDone } = useMutation<
+    SoftRemoveData,
+    MutationSoftRemoveBatchArgs
+    >(SOFT_REMOVE_BATCH);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  })
+  function softRemove(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Suppression ...' });
+      void mutate({ id });
+    })
+  }
+  return { softRemove }
 }
