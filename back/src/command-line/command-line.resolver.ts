@@ -4,7 +4,6 @@ import {
   Args,
   ResolveField,
   Root,
-  Query,
 } from '@nestjs/graphql';
 import { CommandLine } from './command-line.entity';
 import { CommandService } from '../command/command.service';
@@ -16,11 +15,6 @@ import {
 } from './dto/command-line.input';
 import { Medicine } from '../medicine/medicine.entity';
 import { MedicineService } from '../medicine/medicine.service';
-import { PaginationInput } from '../shared/shared.input';
-import {
-  CommandLinePaginationOutput,
-  SoftRemoveCommandLineOutput,
-} from './dto/command-line.output';
 
 @Resolver(() => CommandLine)
 export class CommandLineResolver {
@@ -60,36 +54,12 @@ export class CommandLineResolver {
   async medicine(@Root() command: CommandLine): Promise<Medicine> {
     return await this.medicineService.findOne(command.medicineId);
   }
-  @Query(() => CommandLinePaginationOutput)
-  async paginateDeletedCommandLines(
-    @Args('input') input: PaginationInput,
-  ): Promise<CommandLinePaginationOutput> {
-    return this.commandLineService.paginateDeleted(input);
-  }
-  @Mutation(() => SoftRemoveCommandLineOutput)
-  async softRemoveCommandLine(
-    @Args({ name: 'id', type: () => String }) id: string,
-  ): Promise<SoftRemoveCommandLineOutput> {
-    const cl = await this.commandLineService.findOne(id);
-    const commandLine = await this.commandLineService.softRemove(cl);
-    return {
-      command: await this.commandService.findOneById(cl.commandId),
-      commandLine,
-    };
-  }
-  @Mutation(() => Command, { nullable: true })
-  async restoreCommandLine(
-    @Args({ name: 'id', type: () => String }) id: string,
-  ): Promise<Command> {
-    const rem = await this.commandLineService.restore(id);
-    if (!rem) return null;
-    const { commandId } = await this.commandLineService.findOne(id);
-    return this.commandService.findOneById(commandId);
-  }
-  @Mutation(() => Boolean)
+  @Mutation(() => Command)
   async removeCommandLine(
     @Args({ name: 'id', type: () => String }) id: string,
   ) {
-    return this.commandLineService.remove(id);
+    const { commandId } = await this.commandLineService.findOne(id);
+    await this.commandLineService.remove(id);
+    return this.commandService.findOneById(commandId);
   }
 }

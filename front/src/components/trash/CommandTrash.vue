@@ -14,11 +14,10 @@
       </q-bar>
       <q-card-section style="height: calc(100% - 90px)" class="overflow-auto">
         <q-list v-if="command.meta.totalPages">
-          <q-item v-for="(item, index) in command.items" :key="index">
-            <q-item-section avatar>
-              <q-avatar color="primary" text-color="white">
-                {{index + 1}}
-              </q-avatar>
+          <q-item v-for="item in command.items" :key="item.id">
+            <q-item-section>
+              <q-item-label>N°Commande</q-item-label>
+              <q-item-label caption>{{item.id}}</q-item-label>
             </q-item-section>
             <q-item-section>
               <q-item-label>{{item.provider.name}}</q-item-label>

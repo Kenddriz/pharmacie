@@ -1,12 +1,12 @@
 <template>
   <TrashCardBase
     @click="show = true"
-    label="Lignes des ventes"
+    label="Articles"
   />
   <q-dialog full-width full-height v-model="show">
     <q-card square>
       <q-bar class="bg-teal-14 text-white">
-        <span style="font-size: 12px">Lignes des ventes supprimés</span>
+        <span style="font-size: 12px">Les articles supprimés</span>
         <q-space />
         <q-btn v-close-popup flat dense icon="close" />
       </q-bar>
@@ -20,7 +20,7 @@ import { defineComponent, ref } from 'vue';
 import TrashCardBase from './TrashCardBase.vue';
 
 export default defineComponent({
-  name: 'SaleLineTrash',
+  name: 'ArticleTrash',
   components: { TrashCardBase },
   setup() {
     return {

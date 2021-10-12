@@ -87,11 +87,6 @@ export class CommandService {
       .getRawMany();
   }
 
-  async findWithRelations(id: number): Promise<Command> {
-    return this.repository.findOne(id, {
-      relations: ['commandLines'],
-    });
-  }
   async remove(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;

@@ -40,7 +40,7 @@ export class CommandLine {
   @RelationId((commandLine: CommandLine) => commandLine.command)
   commandId: number;
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

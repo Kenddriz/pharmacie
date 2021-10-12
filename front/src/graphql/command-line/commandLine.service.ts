@@ -3,7 +3,8 @@ import {
   ADD_COMMAND_LINE,
   AddCommandLineData,
   REMOVE_COMMAND_LINE,
-  RemoveCommandLineData, UPDATE_COMMAND_LINE,
+  RemoveCommandLineData,
+  UPDATE_COMMAND_LINE,
   UpdateCommandLineData,
 } from './commandLine.sdl';
 import {
@@ -14,6 +15,7 @@ import {
 } from '../types';
 import { notify } from '../../shared/notification';
 import { removeDialog } from '../utils/utils';
+import { Loading } from 'quasar';
 
 export const useAddCommandLine = () => {
   const { loading: aclLoading, mutate, onDone } = useMutation<
@@ -41,16 +43,22 @@ export const useUpdateCommandLine = () => {
   return { uclLoading, updateCommandLine }
 }
 export const useRemoveCommandLine = () => {
-  const { loading: rclLoading, mutate, onDone } = useMutation<
+  const { mutate, onDone } = useMutation<
     RemoveCommandLineData,
     MutationRemoveCommandLineArgs
     >(REMOVE_COMMAND_LINE);
-  onDone(() => notify('Ligne de commande supprimée'));
-  function removeCommandLine(id: string) {
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  });
+  function removeCommandLine (id: string) {
     removeDialog(
-      () => { void mutate({ id })},
+      () => {
+        Loading.show({ message: 'Suppression ...'});
+        void mutate({ id })
+      },
       'removeForever'
     );
   }
-  return { rclLoading, removeCommandLine }
+  return { removeCommandLine }
 }

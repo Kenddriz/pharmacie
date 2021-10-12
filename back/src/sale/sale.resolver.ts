@@ -82,7 +82,8 @@ export class SaleResolver {
 
   @Mutation(() => Boolean)
   async softRemoveSale(@Args('id', { type: () => Int }) id: number) {
-    return this.saleService.softRemove(id);
+    const sale = await this.saleService.findWithRelation(id);
+    return this.saleService.softRemove(sale);
   }
   @Query(() => Count2LatestWeekSales)
   async count2LatestWeekSales(): Promise<Count2LatestWeekSales> {

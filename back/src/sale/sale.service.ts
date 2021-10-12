@@ -19,19 +19,6 @@ export class SaleService {
   async findOneById(id: number): Promise<Sale> {
     return this.repository.findOne(id);
   }
-  async softRemove(id: number): Promise<boolean> {
-    const sale = await this.findOneWithChildren(id);
-    const removed = await this.repository.softRemove(sale);
-    return !!removed;
-  }
-  async findOneWithChildren(id: number): Promise<Sale> {
-    return this.repository.findOne(id, {
-      relations: ['stockMovements', 'prescription'],
-    });
-  }
-  async remove(sale: Sale) {
-    return this.repository.remove(sale);
-  }
   async paginate(input: PaginationInput): Promise<Pagination<Sale>> {
     const queryBuilder = this.repository
       .createQueryBuilder('s')
@@ -75,11 +62,29 @@ export class SaleService {
       .orderBy(`day`, 'ASC')
       .getRawMany();
   }
+
   async paginateDeleted(input: PaginationInput): Promise<Pagination<Sale>> {
     const query = this.repository
       .createQueryBuilder('sale')
       .where('sale.archivedAt IS NOT NULL')
+      .withDeleted()
       .orderBy('sale.archivedAt', 'DESC');
     return paginate<Sale>(query, { ...input });
+  }
+  async findWithRelation(id: number): Promise<Sale> {
+    return this.repository.findOne(id, {
+      relations: ['stockMovements', 'prescription'],
+    });
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
+  }
+  async softRemove(sale: Sale): Promise<Sale> {
+    return this.repository.softRemove(sale);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
   }
 }

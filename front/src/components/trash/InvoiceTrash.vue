@@ -1,54 +1,58 @@
 <template>
   <TrashCardBase
     @click="show = true"
-    label="Médicaments"
-    :total="medicines.meta.totalItems"
-    :loading="pmLoading"
+    label="Factures"
+    :loading="loading"
+    :total="command.meta.totalItems"
   />
   <q-dialog full-width full-height v-model="show">
     <q-card square>
       <q-bar class="bg-teal-14 text-white">
-        <span style="font-size: 12px">Médicaments supprimés ({{medicines.meta.totalItems}})</span>
+        <span style="font-size: 12px">Commandes supprimées({{command.meta.totalItems}})</span>
         <q-space />
         <q-btn v-close-popup flat dense icon="close" />
       </q-bar>
       <q-card-section style="height: calc(100% - 90px)" class="overflow-auto">
-        <q-list v-if="medicines.meta.totalPages">
-          <q-item v-for="(med, index) in medicines.items" :key="index">
+        <q-list v-if="command.meta.totalPages">
+          <q-item v-for="item in command.items" :key="item.id">
             <q-item-section>
-              <q-avatar text-color="white" size="sm" color="primary">
-                {{ index + 1 }}
-              </q-avatar>
+              <q-item-label>N°Commande</q-item-label>
+              <q-item-label caption>{{item.id}}</q-item-label>
             </q-item-section>
             <q-item-section>
-              {{getMedicineName(med)}}
+              <q-item-label>{{item.provider.name}}</q-item-label>
+              <q-item-label caption>{{item.provider.address}}</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Date de création</q-item-label>
+              <q-item-label caption>{{formatDate(item.createdAt, 'DATE_TIME')}}</q-item-label>
             </q-item-section>
             <q-item-section>
               <q-item-label>Date de suppression</q-item-label>
-              <q-item-label caption>{{formatDate(med.archivedAt, 'DATE_TIME')}}</q-item-label>
+              <q-item-label caption>{{formatDate(item.archivedAt, 'DATE_TIME')}}</q-item-label>
             </q-item-section>
             <TrashOperations
-              @restore="restore(med.id)"
-              @remove="remove(med.id)"
+              @restore="restore(item.id)"
+              @remove="remove(item.id)"
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!medicines.meta.itemCount && !pmLoading">
+        <q-inner-loading :showing="!command.meta.totalPages && !loading">
           <q-icon name="person" size="80px" />
         </q-inner-loading>
-        <q-inner-loading :showing="pmLoading">
+        <q-inner-loading :showing="loading">
           <q-icon name="person" size="80px" />
         </q-inner-loading>
       </q-card-section>
       <q-separator />
       <q-card-actions align="center">
         <q-pagination
-          :disable="medicines.meta.totalPages < 1"
           :model-value="input.page"
           v-model="input.page"
-          :max="medicines.meta.totalPages"
+          :max="command.meta.totalPages"
           input
           input-class="text-orange-10"
+          :disable="command.meta.totalPages <= 1"
         />
       </q-card-actions>
     </q-card>
@@ -58,26 +62,20 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import TrashCardBase from './TrashCardBase.vue';
-import TrashOperations from './TrashOperations.vue';
-import {
-  usePaginateDeletedMedicines,
-  useRemoveMedicine,
-  useRestoreMedicine,
-} from '../../graphql/medicine/medicine.service';
+import { usePaginateDeletedCommands, useRemoveCommand, useRestoreCommand } from '../../graphql/command/command.service';
 import { formatDate } from '../../shared/date';
-import { getMedicineName } from '../../graphql/utils/utils';
+import TrashOperations from './TrashOperations.vue';
 
 export default defineComponent({
-  name: 'MedicineTrash',
+  name: 'InvoiceTrash',
   components: { TrashCardBase, TrashOperations },
   setup() {
     return {
       show: ref<boolean>(false),
-      ...usePaginateDeletedMedicines(),
-      ...useRestoreMedicine(),
-      ...useRemoveMedicine(),
-      formatDate,
-      getMedicineName
+      ...usePaginateDeletedCommands(),
+      ...useRestoreCommand(),
+      ...useRemoveCommand(),
+      formatDate
     }
   }
 });

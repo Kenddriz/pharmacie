@@ -48,12 +48,20 @@
                           :provider-id="selectedCmd[0].provider.id"
                           height="190px"
                         />
-                        <q-item-section class="q-mt-sm">
-                          <q-item-label>Date de commande</q-item-label>
-                          <q-item-label caption>
-                            {{ formatDate(selectedCmd[0].createdAt, 'DATE_TIME') }}
-                          </q-item-label>
-                        </q-item-section>
+                        <q-item class="q-mt-sm">
+                          <q-item-section>
+                            <q-item-label>Date de commande</q-item-label>
+                            <q-item-label caption>
+                              {{ formatDate(selectedCmd[0].createdAt, 'DATE_TIME') }}
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section>
+                            <q-item-label>N°Commande</q-item-label>
+                            <q-item-label caption>
+                              {{selectedCmd[0].id}}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
                       </div>
                     </div>
                   </q-expansion-item>

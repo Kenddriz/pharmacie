@@ -8,7 +8,7 @@
     hide-pagination
     flat
     bordered
-    :loading="aclLoading||rclLoading||uclLoading"
+    :loading="aclLoading||uclLoading"
     v-model:pagination="pagination"
     table-class="overflow-hidden text-blue-grey-14"
     no-data-label="Aucune ligne pour cette commande"
@@ -69,7 +69,7 @@
             color="orange"
             size="md"
             flat
-            @click="removeCommandLine(props.row.id)"
+            @click="remove(props.row.id)"
           />
           <q-btn
             round

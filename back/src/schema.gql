@@ -169,7 +169,7 @@ type CommandLine {
   medicine: Medicine!
   command: Command!
   commandId: Float!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type Command {
@@ -208,16 +208,6 @@ type CommandsMonthly {
   month: Float!
   command: Float!
   invoice: Float!
-}
-
-type CommandLinePaginationOutput {
-  items: [CommandLine!]!
-  meta: Meta!
-}
-
-type SoftRemoveCommandLineOutput {
-  command: Command!
-  commandLine: CommandLine!
 }
 
 type MedicinePaginationOutput {
@@ -305,7 +295,6 @@ type Query {
   countUndeliveredCommands: Int!
   commandsMonthly(year: Int!): [CommandsMonthly!]!
   paginateDeletedCommands(input: PaginationInput!): CommandPagination!
-  paginateDeletedCommandLines(input: PaginationInput!): CommandLinePaginationOutput!
   findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
   countMedicines: Int!
   mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
@@ -397,9 +386,7 @@ type Mutation {
   restoreCommand(id: Int!): Command
   addCommandLine(input: AddCommandLineInput!): Command!
   updateCommandLine(input: UpdateCommandLineInput!): CommandLine!
-  softRemoveCommandLine(id: String!): SoftRemoveCommandLineOutput!
-  restoreCommandLine(id: String!): Command
-  removeCommandLine(id: String!): Boolean!
+  removeCommandLine(id: String!): Command!
   createMedicine(input: CreateMedicineInput!): Article!
   updateMedicine(input: UpdateMedicineInput!): Medicine!
   softRemoveMedicine(id: Int!): SoftRemoveMedicineOutput!

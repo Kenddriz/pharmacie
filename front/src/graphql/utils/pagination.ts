@@ -18,7 +18,7 @@ export const PAGINATION_META = `
     ${Object.keys(InitialPagination.meta).join(' ')}
   }
 `;
-export const deletePaginationCache = (id: number, existingRef: any, readField: any, toReference: any) => {
+export const deletePaginationCache = (id: number|string, existingRef: any, readField: any, toReference: any) => {
   const meta: Meta = cloneDeep(existingRef.meta);
   meta.totalItems -= 1; meta.itemCount -= 1;
   return {

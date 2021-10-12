@@ -108,18 +108,12 @@ export type CommandLine = {
   medicine: Medicine;
   command: Command;
   commandId: Scalars['Float'];
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type CommandLineInput = {
   medicineId: Scalars['Float'];
   quantity: Scalars['Float'];
-};
-
-export type CommandLinePaginationOutput = {
-  __typename?: 'CommandLinePaginationOutput';
-  items: Array<CommandLine>;
-  meta: Meta;
 };
 
 export type CommandPagination = {
@@ -353,9 +347,7 @@ export type Mutation = {
   restoreCommand?: Maybe<Command>;
   addCommandLine: Command;
   updateCommandLine: CommandLine;
-  softRemoveCommandLine: SoftRemoveCommandLineOutput;
-  restoreCommandLine?: Maybe<Command>;
-  removeCommandLine: Scalars['Boolean'];
+  removeCommandLine: Command;
   createMedicine: Article;
   updateMedicine: Medicine;
   softRemoveMedicine: SoftRemoveMedicineOutput;
@@ -478,16 +470,6 @@ export type MutationAddCommandLineArgs = {
 
 export type MutationUpdateCommandLineArgs = {
   input: UpdateCommandLineInput;
-};
-
-
-export type MutationSoftRemoveCommandLineArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationRestoreCommandLineArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -832,7 +814,6 @@ export type Query = {
   countUndeliveredCommands: Scalars['Int'];
   commandsMonthly: Array<CommandsMonthly>;
   paginateDeletedCommands: CommandPagination;
-  paginateDeletedCommandLines: CommandLinePaginationOutput;
   findMedicinesByMeasure: MedicinePaginationOutput;
   countMedicines: Scalars['Int'];
   mostConsumedMedicines: Array<MostConsumedMedicineOutput>;
@@ -900,11 +881,6 @@ export type QueryCommandsMonthlyArgs = {
 
 
 export type QueryPaginateDeletedCommandsArgs = {
-  input: PaginationInput;
-};
-
-
-export type QueryPaginateDeletedCommandLinesArgs = {
   input: PaginationInput;
 };
 
@@ -1034,12 +1010,6 @@ export type SoftRemoveBatchOutput = {
   __typename?: 'SoftRemoveBatchOutput';
   batch: Batch;
   medicine: Medicine;
-};
-
-export type SoftRemoveCommandLineOutput = {
-  __typename?: 'SoftRemoveCommandLineOutput';
-  command: Command;
-  commandLine: CommandLine;
 };
 
 export type SoftRemoveMedicineOutput = {
