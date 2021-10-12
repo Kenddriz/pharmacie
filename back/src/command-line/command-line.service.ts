@@ -22,14 +22,8 @@ export class CommandLineService {
       .orderBy('cl.medicineId', 'ASC')
       .getMany();
   }
-
   async findOne(id: string): Promise<CommandLine> {
     return await this.repository.findOne(id);
-  }
-
-  async remove(id: string): Promise<number> {
-    const query = await this.repository.delete(id);
-    return query.affected;
   }
   async paginateDeleted(
     input: PaginationInput,
@@ -37,7 +31,19 @@ export class CommandLineService {
     const query = this.repository
       .createQueryBuilder('cl')
       .where('cl.archivedAt IS NOT NULL')
+      .withDeleted()
       .orderBy('cl.archivedAt', 'DESC');
     return paginate<CommandLine>(query, { ...input });
+  }
+  async softRemove(cl: CommandLine): Promise<CommandLine> {
+    return this.repository.softRemove(cl);
+  }
+  async restore(id: string): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
+  async remove(id: string): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

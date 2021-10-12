@@ -12,13 +12,15 @@ import { CommandLineService } from './command-line.service';
 import { Command } from '../command/command.entity';
 import {
   AddCommandLineInput,
-  DeleteCommandLineInput,
   UpdateCommandLineInput,
 } from './dto/command-line.input';
 import { Medicine } from '../medicine/medicine.entity';
 import { MedicineService } from '../medicine/medicine.service';
 import { PaginationInput } from '../shared/shared.input';
-import { CommandLinePaginationOutput } from './dto/command-line.output';
+import {
+  CommandLinePaginationOutput,
+  SoftRemoveCommandLineOutput,
+} from './dto/command-line.output';
 
 @Resolver(() => CommandLine)
 export class CommandLineResolver {
@@ -54,14 +56,6 @@ export class CommandLineResolver {
     commandLine.quantity = input.commandLine.quantity;
     return await this.commandLineService.save(commandLine);
   }
-
-  @Mutation(() => Command)
-  async removeCommandLine(
-    @Args('input') input: DeleteCommandLineInput,
-  ): Promise<Command> {
-    await this.commandLineService.remove(input.commandLineId);
-    return await this.commandService.findOneById(input.commandId);
-  }
   @ResolveField(() => Medicine)
   async medicine(@Root() command: CommandLine): Promise<Medicine> {
     return await this.medicineService.findOne(command.medicineId);
@@ -71,5 +65,31 @@ export class CommandLineResolver {
     @Args('input') input: PaginationInput,
   ): Promise<CommandLinePaginationOutput> {
     return this.commandLineService.paginateDeleted(input);
+  }
+  @Mutation(() => SoftRemoveCommandLineOutput)
+  async softRemoveCommandLine(
+    @Args({ name: 'id', type: () => String }) id: string,
+  ): Promise<SoftRemoveCommandLineOutput> {
+    const cl = await this.commandLineService.findOne(id);
+    const commandLine = await this.commandLineService.softRemove(cl);
+    return {
+      command: await this.commandService.findOneById(cl.commandId),
+      commandLine,
+    };
+  }
+  @Mutation(() => Command, { nullable: true })
+  async restoreCommandLine(
+    @Args({ name: 'id', type: () => String }) id: string,
+  ): Promise<Command> {
+    const rem = await this.commandLineService.restore(id);
+    if (!rem) return null;
+    const { commandId } = await this.commandLineService.findOne(id);
+    return this.commandService.findOneById(commandId);
+  }
+  @Mutation(() => Boolean)
+  async removeCommandLine(
+    @Args({ name: 'id', type: () => String }) id: string,
+  ) {
+    return this.commandLineService.remove(id);
   }
 }

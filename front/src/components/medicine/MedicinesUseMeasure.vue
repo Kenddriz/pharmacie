@@ -94,7 +94,7 @@ import { useFindMedicinesByMeasure } from '../../graphql/medicine/medicine.servi
 import { getMedicineName } from '../../graphql/utils/utils';
 import { useDialogPluginComponent } from 'quasar';
 import { useDeleteForm } from '../../graphql/form/form.service';
-import { useDeletePackaging } from '../../graphql/packaging/packaging.service';
+import { useSoftRemovePackaging } from '../../graphql/packaging/packaging.service';
 import { useDeleteDosage } from '../../graphql/dosage/dosage.service';
 
 export default defineComponent({
@@ -112,13 +112,13 @@ export default defineComponent({
   setup(props) {
     const { dialogRef } = useDialogPluginComponent();
     const { medicines, loading, input } = useFindMedicinesByMeasure(props.measureId, props.foreignKey);
-    const { deletePackaging } = useDeletePackaging();
+    const { softRemovePackaging } = useSoftRemovePackaging();
     const { deleteForm } = useDeleteForm();
     const { deleteDosage } = useDeleteDosage();
     function submitDelete() {
       switch (props.foreignKey) {
         case 'packagingId':
-          deletePackaging(props.measureId);
+          softRemovePackaging(props.measureId);
           break;
         case 'formId':
           deleteForm(props.measureId);

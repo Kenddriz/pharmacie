@@ -49,7 +49,7 @@ export class Provider {
   })
   commands: Command[];
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

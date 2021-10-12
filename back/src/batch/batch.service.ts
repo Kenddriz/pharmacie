@@ -38,14 +38,14 @@ export class BatchService {
       .withDeleted()
       .getOne();
   }
-  async delete(id: number): Promise<boolean> {
+  async remove(id: number): Promise<boolean> {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
   async softRemove(batch: Batch): Promise<Batch> {
     return this.repository.softRemove(batch);
   }
-  async recover(id: number): Promise<boolean> {
+  async restore(id: number): Promise<boolean> {
     const query = await this.repository.restore(id);
     return query.affected > 0;
   }
@@ -73,6 +73,7 @@ export class BatchService {
     const query = this.repository
       .createQueryBuilder('batch')
       .where('batch.archivedAt IS NOT NULL')
+      .withDeleted()
       .orderBy('batch.archivedAt', 'DESC');
     return paginate<Batch>(query, { ...input });
   }

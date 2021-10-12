@@ -11,14 +11,9 @@ export class MedicineService {
   constructor(
     @InjectRepository(Medicine) private repository: Repository<Medicine>,
   ) {}
-  async save(medicine: Medicine) {
+  async save(medicine: Medicine): Promise<Medicine> {
     return this.repository.save(medicine);
   }
-
-  findAll() {
-    return `This action returns all medicine`;
-  }
-
   async findOne(id: number): Promise<Medicine> {
     return this.repository.findOne(id);
   }
@@ -30,25 +25,6 @@ export class MedicineService {
       .createQueryBuilder('m')
       .where('m.articleId = :articleId', { articleId })
       .getMany();
-  }
-  async delete(id: number): Promise<boolean> {
-    const query = await this.repository.delete(id);
-    return query.affected > 0;
-  }
-  async softRemove(id: number): Promise<boolean> {
-    const medicine = await this.repository.softRemove(
-      await this.findOneWithChildren(id),
-    );
-    return !!medicine;
-  }
-  async recover(id: number): Promise<boolean> {
-    const query = await this.repository.restore(id);
-    return query.affected > 0;
-  }
-  async findOneWithChildren(id: number): Promise<Medicine> {
-    return this.repository.findOne(id, {
-      relations: ['commandLines'],
-    });
   }
   async findByMeasure(
     input: FindByMeasureInput,
@@ -68,7 +44,24 @@ export class MedicineService {
     const query = this.repository
       .createQueryBuilder('med')
       .where('med.archivedAt IS NOT NULL')
+      .withDeleted()
       .orderBy('med.archivedAt', 'DESC');
     return paginate(query, { ...input });
+  }
+  async findOneWithChildren(id: number): Promise<Medicine> {
+    return this.repository.findOne(id, {
+      relations: ['commandLines'],
+    });
+  }
+  async softRemove(pro: Medicine): Promise<Medicine> {
+    return this.repository.softRemove(pro);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

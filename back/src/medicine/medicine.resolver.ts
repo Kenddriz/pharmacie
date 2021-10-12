@@ -11,7 +11,6 @@ import { MedicineService } from './medicine.service';
 import { Medicine } from './medicine.entity';
 import {
   CreateMedicineInput,
-  DeleteMedicineInput,
   UpdateMedicineInput,
   MedicineFormInput,
   FindByMeasureInput,
@@ -30,6 +29,7 @@ import { Batch } from '../batch/batch.entity';
 import {
   MedicinePaginationOutput,
   MostConsumedMedicineOutput,
+  SoftRemoveMedicineOutput,
 } from './types/medicine.output';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
@@ -71,22 +71,6 @@ export class MedicineResolver {
     @Args('input') input: FindByMeasureInput,
   ): Promise<Pagination<Medicine>> {
     return this.medicineService.findByMeasure(input);
-  }
-
-  @Mutation(() => Article)
-  async softRemoveMedicine(@Args('input') input: DeleteMedicineInput) {
-    await this.medicineService.softRemove(input.medicineId);
-    return this.articleService.findOneById(input.articleId);
-  }
-  @Mutation(() => Article)
-  async deleteMedicine(@Args('input') input: DeleteMedicineInput) {
-    await this.medicineService.delete(input.medicineId);
-    return this.articleService.findOneById(input.articleId);
-  }
-  @Mutation(() => Article)
-  async recoverMedicine(@Args('input') input: DeleteMedicineInput) {
-    await this.medicineService.recover(input.medicineId);
-    return this.articleService.findOneById(input.articleId);
   }
   /**Field resolvers*/
   @ResolveField(() => Form)
@@ -142,8 +126,32 @@ export class MedicineResolver {
       count: batches.find((b) => b.medicine_id === medicine.id).count,
     }));
   }
-  @Query(() => [MedicinePaginationOutput])
+  @Query(() => MedicinePaginationOutput)
   async paginateDeletedMedicines(@Args('input') input: PaginationInput) {
     return this.medicineService.paginateDeleted(input);
+  }
+  @Mutation(() => SoftRemoveMedicineOutput)
+  async softRemoveMedicine(
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<SoftRemoveMedicineOutput> {
+    const med = await this.medicineService.findOneWithChildren(id);
+    const medicine = await this.medicineService.softRemove(med);
+    return {
+      article: await this.articleService.findOneById(med.articleId),
+      medicine,
+    };
+  }
+  @Mutation(() => Boolean)
+  async removeMedicine(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.medicineService.remove(id);
+  }
+  @Mutation(() => Article, { nullable: true })
+  async restoreMedicine(
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<Article> {
+    const rem = await this.medicineService.restore(id);
+    if (!rem) return null;
+    const { articleId } = await this.medicineService.findOne(id);
+    return this.articleService.findOneById(articleId);
   }
 }

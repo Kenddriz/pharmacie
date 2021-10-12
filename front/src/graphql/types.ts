@@ -65,13 +65,19 @@ export type Batch = {
   currentStock: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type BatchFormInput = {
   medicineId: Scalars['Int'];
   expirationDate: Scalars['String'];
   currentStock?: Maybe<Scalars['Int']>;
+};
+
+export type BatchPaginationOutput = {
+  __typename?: 'BatchPaginationOutput';
+  items: Array<Batch>;
+  meta: Meta;
 };
 
 export type CancelSaleLineOutput = {
@@ -92,7 +98,7 @@ export type Command = {
   commandLines?: Maybe<Array<CommandLine>>;
   provider: Provider;
   createdAt: Scalars['DateTime'];
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type CommandLine = {
@@ -204,16 +210,6 @@ export type CreateUserInput = {
   password: Scalars['String'];
 };
 
-
-export type DeleteCommandLineInput = {
-  commandLineId: Scalars['String'];
-  commandId: Scalars['Int'];
-};
-
-export type DeleteMedicineInput = {
-  medicineId: Scalars['Int'];
-  articleId: Scalars['Int'];
-};
 
 export type DeletePrescriptionInput = {
   id: Scalars['Float'];
@@ -346,19 +342,25 @@ export type Mutation = {
   updatePassword?: Maybe<User>;
   updateUserAvatar: User;
   saveProvider: Provider;
+  softRemoveProvider: Provider;
   removeProvider: Scalars['Boolean'];
+  restoreProvider?: Maybe<Provider>;
   updateProviderAvatar: Provider;
   createCommand: Command;
   updateCommand: Command;
-  deleteCommand: Scalars['Boolean'];
+  softRemoveCommand: Command;
+  removeCommand: Scalars['Boolean'];
+  restoreCommand?: Maybe<Command>;
   addCommandLine: Command;
   updateCommandLine: CommandLine;
-  removeCommandLine: Command;
+  softRemoveCommandLine: SoftRemoveCommandLineOutput;
+  restoreCommandLine?: Maybe<Command>;
+  removeCommandLine: Scalars['Boolean'];
   createMedicine: Article;
   updateMedicine: Medicine;
-  softRemoveMedicine: Article;
-  deleteMedicine: Article;
-  recoverMedicine: Article;
+  softRemoveMedicine: SoftRemoveMedicineOutput;
+  removeMedicine: Scalars['Boolean'];
+  restoreMedicine?: Maybe<Article>;
   createForm?: Maybe<Form>;
   updateForm?: Maybe<Form>;
   deleteForm: Scalars['Boolean'];
@@ -366,7 +368,9 @@ export type Mutation = {
   deleteDosage: Scalars['Boolean'];
   createPackaging: Packaging;
   updatePackaging: Packaging;
-  deletePackaging: Scalars['Boolean'];
+  softRemovePackaging: Packaging;
+  removePackaging: Scalars['Boolean'];
+  restorePackaging: Packaging;
   saveArticle: Article;
   deleteForeverArticle: Scalars['Boolean'];
   updateAssuredLine: StockMovement;
@@ -382,7 +386,9 @@ export type Mutation = {
   updateMethod: Method;
   createBatch?: Maybe<Medicine>;
   updateBatch: Batch;
-  softRemoveBatch: Medicine;
+  softRemoveBatch: SoftRemoveBatchOutput;
+  removeBatch: Scalars['Boolean'];
+  restoreBatch?: Maybe<Medicine>;
   createSale: Sale;
   softRemoveSale: Scalars['Boolean'];
   createPrescription: Sale;
@@ -419,7 +425,17 @@ export type MutationSaveProviderArgs = {
 };
 
 
+export type MutationSoftRemoveProviderArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveProviderArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreProviderArgs = {
   id: Scalars['Int'];
 };
 
@@ -440,7 +456,17 @@ export type MutationUpdateCommandArgs = {
 };
 
 
-export type MutationDeleteCommandArgs = {
+export type MutationSoftRemoveCommandArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveCommandArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreCommandArgs = {
   id: Scalars['Int'];
 };
 
@@ -455,8 +481,18 @@ export type MutationUpdateCommandLineArgs = {
 };
 
 
+export type MutationSoftRemoveCommandLineArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRestoreCommandLineArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationRemoveCommandLineArgs = {
-  input: DeleteCommandLineInput;
+  id: Scalars['String'];
 };
 
 
@@ -471,17 +507,17 @@ export type MutationUpdateMedicineArgs = {
 
 
 export type MutationSoftRemoveMedicineArgs = {
-  input: DeleteMedicineInput;
+  id: Scalars['Int'];
 };
 
 
-export type MutationDeleteMedicineArgs = {
-  input: DeleteMedicineInput;
+export type MutationRemoveMedicineArgs = {
+  id: Scalars['Int'];
 };
 
 
-export type MutationRecoverMedicineArgs = {
-  input: DeleteMedicineInput;
+export type MutationRestoreMedicineArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -520,7 +556,17 @@ export type MutationUpdatePackagingArgs = {
 };
 
 
-export type MutationDeletePackagingArgs = {
+export type MutationSoftRemovePackagingArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemovePackagingArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestorePackagingArgs = {
   id: Scalars['Int'];
 };
 
@@ -601,6 +647,16 @@ export type MutationUpdateBatchArgs = {
 
 
 export type MutationSoftRemoveBatchArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveBatchArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreBatchArgs = {
   id: Scalars['Int'];
 };
 
@@ -736,7 +792,7 @@ export type Provider = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   commands: Array<Command>;
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type ProviderCommandsChart = {
@@ -770,7 +826,7 @@ export type Query = {
   providerCommands: CommandPagination;
   providerCommandsChart: Array<ProviderCommandsChart>;
   countProviders: Scalars['Int'];
-  paginateDeletedProvider: SalePagination;
+  paginateDeletedProviders: ProviderPagination;
   paginateCommands: CommandPagination;
   findCommandById: Command;
   countUndeliveredCommands: Scalars['Int'];
@@ -780,12 +836,13 @@ export type Query = {
   findMedicinesByMeasure: MedicinePaginationOutput;
   countMedicines: Scalars['Int'];
   mostConsumedMedicines: Array<MostConsumedMedicineOutput>;
-  paginateDeletedMedicines: Array<MedicinePaginationOutput>;
+  paginateDeletedMedicines: MedicinePaginationOutput;
   forms: Array<Form>;
   countForms: Scalars['Int'];
   dosages: Array<Dosage>;
   countDosages: Scalars['Int'];
   packaging: Array<Packaging>;
+  deletedPackaging: Array<Packaging>;
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
   countArticles: Scalars['Int'];
@@ -795,9 +852,11 @@ export type Query = {
   countUnpaidInvoices: Scalars['Int'];
   methods: Array<Method>;
   findExistingBatch?: Maybe<Batch>;
+  paginateDeletedBatches: BatchPaginationOutput;
   countStockMovements: Scalars['Float'];
   paginateSales: SalePagination;
   count2LatestWeekSales: Count2LatestWeekSales;
+  paginateDeletedProvider: SalePagination;
   findSuggestedPatients: Array<Patient>;
   paginatePatients: PaginatePatientOutput;
   paginatePatientSales: PaginatePatientSalesOutput;
@@ -820,7 +879,7 @@ export type QueryProviderCommandsChartArgs = {
 };
 
 
-export type QueryPaginateDeletedProviderArgs = {
+export type QueryPaginateDeletedProvidersArgs = {
   input: PaginationInput;
 };
 
@@ -895,6 +954,11 @@ export type QueryFindExistingBatchArgs = {
 };
 
 
+export type QueryPaginateDeletedBatchesArgs = {
+  input: PaginationInput;
+};
+
+
 export type QueryCountStockMovementsArgs = {
   id: Scalars['Int'];
 };
@@ -902,6 +966,11 @@ export type QueryCountStockMovementsArgs = {
 
 export type QueryPaginateSalesArgs = {
   paginationInput: PaginationInput;
+};
+
+
+export type QueryPaginateDeletedProviderArgs = {
+  input: PaginationInput;
 };
 
 
@@ -959,6 +1028,24 @@ export type SaveProviderInput = {
   name: Scalars['String'];
   address: Scalars['String'];
   contacts: Array<ContactInput>;
+};
+
+export type SoftRemoveBatchOutput = {
+  __typename?: 'SoftRemoveBatchOutput';
+  batch: Batch;
+  medicine: Medicine;
+};
+
+export type SoftRemoveCommandLineOutput = {
+  __typename?: 'SoftRemoveCommandLineOutput';
+  command: Command;
+  commandLine: CommandLine;
+};
+
+export type SoftRemoveMedicineOutput = {
+  __typename?: 'SoftRemoveMedicineOutput';
+  medicine: Medicine;
+  article: Article;
 };
 
 export type StockMovement = {

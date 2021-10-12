@@ -13,7 +13,7 @@ import {
   QueryPaginateArticlesArgs,
   SaveArticleInput,
 } from '../types';
-import { deletePaginationCache, InitialPagination } from '../utils/pagination';
+import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { Loading } from 'quasar';
@@ -75,10 +75,7 @@ export const useSaveArticle = () => {
           cache.modify({
             fields: {
               paginateArticles(existing: any, {toReference}) {
-                return {
-                  ...existing,
-                  items: [...existing.items, toReference(data.saveArticle)]
-                }
+                return addPaginationCache(data.saveArticle, existing, toReference);
               }
             }
           })

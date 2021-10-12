@@ -19,6 +19,11 @@ import { uniqId } from '../shared/id-builder.service';
 import { Medicine } from '../medicine/medicine.entity';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
 import { StockMovementService } from '../stock-movement/stock-movement.service';
+import {
+  BatchPaginationOutput,
+  SoftRemoveBatchOutput,
+} from './dto/batch.output';
+import { PaginationInput } from '../shared/shared.input';
 
 @Resolver(() => Batch)
 export class BatchResolver {
@@ -63,11 +68,33 @@ export class BatchResolver {
       input.expirationDate,
     );
   }
-  @Mutation(() => Medicine)
-  async softRemoveBatch(@Args('id', { type: () => Int }) id: number) {
-    const batch = await this.batchService.findOne(id);
-    await this.batchService.softRemove(batch);
-    return this.mdS.findOne(batch.medicineId);
+  @Query(() => BatchPaginationOutput)
+  async paginateDeletedBatches(@Args('input') input: PaginationInput) {
+    return this.batchService.paginateDeleted(input);
+  }
+  @Mutation(() => SoftRemoveBatchOutput)
+  async softRemoveBatch(
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<SoftRemoveBatchOutput> {
+    const bt = await this.batchService.findOne(id);
+    const batch = await this.batchService.softRemove(bt);
+    return {
+      medicine: await this.mdS.findOne(bt.medicineId),
+      batch,
+    };
+  }
+  @Mutation(() => Boolean)
+  async removeBatch(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.batchService.remove(id);
+  }
+  @Mutation(() => Medicine, { nullable: true })
+  async restoreBatch(
+    @Args({ name: 'id', type: () => Int }) id: number,
+  ): Promise<Medicine> {
+    const restored = await this.batchService.restore(id);
+    if (!restored) return null;
+    const { medicineId } = await this.batchService.findOne(id);
+    return this.mdS.findOne(medicineId);
   }
   @Query(() => Number)
   async countStockMovements(@Args({ name: 'id', type: () => Int }) id: number) {

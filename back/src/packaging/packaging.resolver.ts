@@ -37,9 +37,22 @@ export class PackagingResolver {
     packaging.units = input.units;
     return await this.packagingService.save(packaging);
   }
-
+  @Mutation(() => Packaging)
+  async softRemovePackaging(@Args({ name: 'id', type: () => Int }) id: number) {
+    const pack = await this.packagingService.findOneById(id);
+    return this.packagingService.softRemove(pack);
+  }
   @Mutation(() => Boolean)
-  async deletePackaging(@Args({ name: 'id', type: () => Int }) id: number) {
+  async removePackaging(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.packagingService.remove(id);
+  }
+  @Mutation(() => Packaging)
+  async restorePackaging(@Args({ name: 'id', type: () => Int }) id: number) {
+    await this.packagingService.restore(id);
+    return this.packagingService.findOneById(id);
+  }
+  @Query(() => [Packaging])
+  async deletedPackaging(): Promise<Packaging[]> {
+    return this.packagingService.deleted();
   }
 }

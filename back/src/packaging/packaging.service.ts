@@ -7,28 +7,41 @@ import { Repository } from 'typeorm';
 export class PackagingService {
   constructor(
     @InjectRepository(Packaging)
-    private readonly packagingRepository: Repository<Packaging>,
+    private readonly repository: Repository<Packaging>,
   ) {}
 
   async save(packaging: Packaging): Promise<Packaging> {
-    return await this.packagingRepository.save(packaging);
+    return await this.repository.save(packaging);
   }
 
   async findOneById(id: number): Promise<Packaging> {
-    return this.packagingRepository.findOne(id);
+    return this.repository.findOne(id);
   }
   async findByIds(ids: number[]): Promise<Packaging[]> {
-    return this.packagingRepository.findByIds(ids);
+    return this.repository.findByIds(ids);
   }
-
-  async remove(id: number): Promise<boolean> {
-    const query = await this.packagingRepository.delete(id);
-    return query.affected > 0;
-  }
-
   async findAll(): Promise<Packaging[]> {
-    return this.packagingRepository.find({
+    return this.repository.find({
       order: { id: 'ASC' },
     });
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
+  }
+  async softRemove(pack: Packaging): Promise<Packaging> {
+    return this.repository.softRemove(pack);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
+  async deleted(): Promise<Packaging[]> {
+    return this.repository
+      .createQueryBuilder('pack')
+      .where('pack.archivedAt IS NOT NULL')
+      .withDeleted()
+      .orderBy('pack.archivedAt', 'DESC')
+      .getMany();
   }
 }

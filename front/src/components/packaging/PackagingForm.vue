@@ -1,5 +1,15 @@
 <template>
   <q-form @submit.prevent="$emit('validate', model)" spellcheck="false">
+    <div class="row bg-teal-14 q-pa-sm text-white">
+      <span>Formulaire</span>
+      <q-space />
+      <q-icon
+        v-close-popup
+        @click="$emit('close')"
+        name="close"
+        size="15px"
+      />
+    </div>
     <q-list dense padding bordered>
       <q-item>
         <q-input
@@ -24,28 +34,16 @@
         />
       </q-item>
       <q-item>
-        <q-item-section>
-          <q-btn
-            type="submit"
-            color="secondary"
-            no-caps
-            dense
-            rounded
-            outline
-            label="ok"
-          />
-        </q-item-section>
-        <q-item-section v-close-popup>
-          <q-btn
-            color="secondary"
-            no-caps
-            dense
-            rounded
-            outline
-            label="Fermer"
-            @click="$emit('close')"
-          />
-        </q-item-section>
+        <q-btn
+          type="submit"
+          color="primary"
+          no-caps
+          dense
+          rounded
+          outline
+          label="ok"
+          class="full-width"
+        />
       </q-item>
     </q-list>
   </q-form>

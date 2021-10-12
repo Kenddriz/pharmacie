@@ -40,7 +40,7 @@
         color="warning"
         outline
         label="Supprimer"
-        @click="softRemoveMedicine(article.id, medicine.id)"
+        @click="softRemoveMedicine(medicine.id)"
       />
     </q-card-section>
   </q-card>
@@ -76,7 +76,5 @@ export default defineComponent({
   }
 });
 </script>
-
 <style scoped>
-
 </style>

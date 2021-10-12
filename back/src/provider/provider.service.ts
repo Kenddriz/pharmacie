@@ -54,10 +54,18 @@ export class ProviderService {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
+  async softRemove(pro: Provider): Promise<Provider> {
+    return this.repository.softRemove(pro);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
   async paginateDeleted(input: PaginationInput): Promise<Pagination<Provider>> {
     const query = this.repository
       .createQueryBuilder('pro')
       .where('pro.archivedAt IS NOT NULL')
+      .withDeleted()
       .orderBy('pro.archivedAt', 'DESC');
     return paginate<Provider>(query, { ...input });
   }

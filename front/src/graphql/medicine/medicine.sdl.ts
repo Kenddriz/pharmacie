@@ -1,7 +1,7 @@
 import { PACKAGING_PARAMS } from '../packaging/packaging.sdl';
 import { DOSAGE_PARAMS } from '../dosage/dosage.sdl';
 import { FORM_PARAMS } from '../form/form.sdl';
-import { Article, Medicine, MedicinePaginationOutput, MostConsumedMedicineOutput } from '../types';
+import { Article, SoftRemoveMedicineOutput, Medicine, MedicinePaginationOutput, MostConsumedMedicineOutput } from '../types';
 import { gql } from '@apollo/client/core';
 import { PAGINATION_META } from '../utils/pagination';
 
@@ -20,7 +20,6 @@ export const MEDICINE_PARAMS = `
 export type CreateMedicineData = {
   createMedicine: Article
 }
-
 export const CREATE_MEDICINE = gql`
     mutation CreateMedicine($input: CreateMedicineInput!) {
       createMedicine(input: $input) {
@@ -29,11 +28,9 @@ export const CREATE_MEDICINE = gql`
       }
     }
 `;
-
 export type UpdateMedicineData = {
   updateMedicine: Medicine
 }
-
 export const UPDATE_MEDICINE = gql`
   mutation UpdateMedicine($input:UpdateMedicineInput!) {
     updateMedicine(input: $input) {
@@ -41,44 +38,6 @@ export const UPDATE_MEDICINE = gql`
     }
   }
 `;
-
-
-export type SoftRemoveMedicineData = {
-  softRemoveMedicine: boolean;
-}
-export const SOFT_REMOVE_MEDICINE = gql`
-  mutation SoftRemoveMedicine($input: DeleteMedicineInput!) {
-    softRemoveMedicine(input: $input) {
-      id
-      medicines{${MEDICINE_PARAMS}}
-    }
-  }
-`;
-
-export type DeleteMedicineData = {
-  softRemoveMedicine: boolean;
-}
-export const DELETE_MEDICINE = gql`
-    mutation DeleteMedicine($input: DeleteMedicineInput!) {
-      deleteMedicine(input: $input) {
-        id
-        medicines{${MEDICINE_PARAMS}}
-      }
-    }
-`;
-
-export type RecoverMedicineData = {
-  recoverMedicine: boolean;
-}
-export const RECOVER_MEDICINE = gql`
-  mutation RecoverMedicine($input: DeleteMedicineInput!) {
-    recoverMedicine(input: $input) {
-      id
-      medicines{${MEDICINE_PARAMS}}
-    }
-  }
-`;
-
 export type FindMedicinesByMeasureData = {
   findMedicinesByMeasure: MedicinePaginationOutput;
 }
@@ -94,11 +53,9 @@ export const FIND_MEDICINES_BY_MEASURE = gql`
     }
   }
 `;
-
 export type MostConsumedMedicinesData = {
   mostConsumedMedicines: MostConsumedMedicineOutput;
 }
-
 export const MOST_CONSUMED_MEDICINES = gql`
     query MostConsumedMedicines($year: Int!) {
       mostConsumedMedicines(year: $year) {
@@ -109,4 +66,52 @@ export const MOST_CONSUMED_MEDICINES = gql`
         count
       }
     }
+`;
+export type PaginateDeletedMedicinesData = {
+  paginateDeletedMedicines: MedicinePaginationOutput;
+}
+export const PAGINATE_DELETED_MEDICINES = gql`
+  query PaginateDeletedMedicines($input: PaginationInput!){
+    paginateDeletedMedicines(input: $input) {
+      items{${MEDICINE_FIELDS} archivedAt article{ id commercialName }}
+      ${PAGINATION_META}
+    }
+  }
+`;
+export type SoftRemoveMedicineData = {
+  softRemoveMedicine: SoftRemoveMedicineOutput;
+}
+export const SOFT_REMOVE_MEDICINE = gql`
+  mutation SoftRemoveMedicine($id: Int!) {
+    softRemoveMedicine(id: $id) {
+      article{
+        id
+        medicines{${MEDICINE_PARAMS}}
+      }
+      medicine {
+        ${MEDICINE_FIELDS}
+        archivedAt
+        article{ id commercialName }
+      }
+    }
+  }
+`;
+export type RemoveMedicineData = {
+  removeMedicine: boolean;
+}
+export const REMOVE_MEDICINE = gql`
+  mutation RemoveMedicine($id: Int!) {
+    removeMedicine(id: $id)
+  }
+`;
+export type RestoreMedicineData = {
+  restoreMedicine: Article;
+}
+export const RESTORE_MEDICINE = gql`
+  mutation RestoreMedicine($id: Int!) {
+    restoreMedicine(id: $id) {
+      id
+      medicines{${MEDICINE_PARAMS}}
+    }
+  }
 `;

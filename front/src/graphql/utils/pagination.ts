@@ -27,3 +27,13 @@ export const deletePaginationCache = (id: number, existingRef: any, readField: a
     items: existingRef.items.filter((eRef: any) => readField('id', eRef) !== id)
   }
 }
+
+export const addPaginationCache = (data: any, existingRef: any, toReference: any) => {
+  const meta: Meta = cloneDeep(existingRef.meta);
+  meta.totalItems += 1; meta.itemCount += 1;
+  return {
+    ...existingRef,
+    meta: toReference(meta),
+    items: [toReference(data), ...existingRef.items]
+  }
+}

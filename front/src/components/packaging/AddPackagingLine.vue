@@ -28,11 +28,11 @@
     </div>
   </ScrollArea>
   <q-card-actions align="between" class="q-mt-none">
-    <q-btn no-caps outline color="secondary" label="Nouvelle ligne d'unités" icon="add">
+    <q-btn no-caps outline color="primary" label="Nouvelle ligne d'unités" icon="add">
       <q-menu anchor="top middle" self="bottom middle">
         <PackagingForm
           :unit="unit"
-          @validate="creationInput.push($event)"
+          @validate="creationInput.push({ ...$event })"
         />
       </q-menu>
     </q-btn>
@@ -41,8 +41,9 @@
       no-caps outline
       color="positive"
       label="Enregistrer"
-      icon="save"
+      icon-right="save"
       :disable="!creationInput.length"
+      :loading="loadCreation"
     />
   </q-card-actions>
 </template>

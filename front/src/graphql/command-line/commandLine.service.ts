@@ -46,9 +46,9 @@ export const useRemoveCommandLine = () => {
     MutationRemoveCommandLineArgs
     >(REMOVE_COMMAND_LINE);
   onDone(() => notify('Ligne de commande supprimée'));
-  function removeCommandLine(commandId: number, commandLineId: string) {
+  function removeCommandLine(id: string) {
     removeDialog(
-      () => { void mutate({ input: { commandId, commandLineId } })},
+      () => { void mutate({ id })},
       'removeForever'
     );
   }

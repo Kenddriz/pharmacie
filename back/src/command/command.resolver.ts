@@ -72,11 +72,6 @@ export class CommandResolver {
   ): Promise<Command> {
     return this.commandService.findOneById(id);
   }
-  @Mutation(() => Boolean)
-  async deleteCommand(@Args({ name: 'id', type: () => Int }) id: number) {
-    return await this.commandService.delete(id);
-  }
-
   /**Field resolver*/
   @ResolveField(() => [CommandLine])
   async commandLines(@Root() command: Command): Promise<CommandLine[]> {
@@ -105,5 +100,19 @@ export class CommandResolver {
     @Args('input') input: PaginationInput,
   ): Promise<CommandPagination> {
     return this.commandService.paginateDeleted(input);
+  }
+  @Mutation(() => Command)
+  async softRemoveCommand(@Args({ name: 'id', type: () => Int }) id: number) {
+    const command = await this.commandService.findWithRelations(id);
+    return this.commandService.softRemove(command);
+  }
+  @Mutation(() => Boolean)
+  async removeCommand(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.commandService.remove(id);
+  }
+  @Mutation(() => Command, { nullable: true })
+  async restoreCommand(@Args({ name: 'id', type: () => Int }) id: number) {
+    await this.commandService.restore(id);
+    return this.commandService.findOneById(id);
   }
 }

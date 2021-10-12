@@ -6,7 +6,6 @@ import { COMMAND_FIELDS, INVOICE_FIELDS, PROVIDER_FIELDS } from '../invoice/inco
 export type SaveProviderData = {
   saveProvider: Provider
 }
-
 export const CREATE_PROVIDER = gql`
   mutation SaveProvider($input: SaveProviderInput!) {
     saveProvider(input: $input) {
@@ -14,7 +13,6 @@ export const CREATE_PROVIDER = gql`
     }
   }
 `;
-
 export type PaginateProvidersData = {
   paginateProviders: ProviderPagination;
 }
@@ -40,7 +38,6 @@ export const PROVIDER_COMMANDS = gql`
     }
   }
 `;
-
 export type ProviderCommandsChartData = {
   providerCommandsChart: ProviderCommandsChart[]
 }
@@ -53,14 +50,6 @@ export const PROVIDER_COMMANDS_CHART = gql`
     }
   }
 `;
-export type RemoveProviderData = {
-  removeProvider: boolean;
-}
-export const REMOVE_PROVIDER = gql`
-  mutation RemoveProvider($id: Int!) {
-    removeProvider(id: $id)
-  }
-`;
 export type UpdateProviderAvatarData = {
   updateProviderAvatar: Provider;
 }
@@ -71,5 +60,45 @@ export const UPDATE_PROVIDER_AVATAR = gql`
       updatedAt
       avatar
     }
+  }
+`;
+
+export type PaginateDeletedProvidersData = {
+  paginateDeletedProviders: ProviderPagination;
+}
+export const PAGINATE_DELETED_PROVIDERS = gql`
+  query PaginateDeletedProviders($input: PaginationInput!){
+    paginateDeletedProviders(input: $input) {
+      items{ id name address avatar archivedAt}
+      ${PAGINATION_META}
+    }
+  }
+`;
+export type SoftRemoveProviderData = {
+  softRemoveProvider: Provider;
+}
+export const SOFT_REMOVE_PROVIDER = gql`
+    mutation SoftRemoveProvider($id: Int!){
+      softRemoveProvider(id: $id) {
+        id name address avatar archivedAt
+      }
+    }
+`;
+export type RestoreProviderData = {
+  restoreProvider: Provider;
+}
+export const RESTORE_PROVIDER = gql`
+    mutation RestoreProvider($id: Int!) {
+      restoreProvider(id: $id){
+        ${PROVIDER_FIELDS}
+      }
+    }
+`;
+export type RemoveProviderData = {
+  removeProvider: boolean;
+}
+export const REMOVE_PROVIDER = gql`
+  mutation RemoveProvider($id: Int!) {
+    removeProvider(id: $id)
   }
 `;

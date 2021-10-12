@@ -62,9 +62,26 @@ export class ProviderResolver {
   async countProviders() {
     return this.providerService.count();
   }
+  @Query(() => ProviderPagination)
+  async paginateDeletedProviders(
+    @Args('input') input: PaginationInput,
+  ): Promise<ProviderPagination> {
+    return this.providerService.paginateDeleted(input);
+  }
+  @Mutation(() => Provider)
+  async softRemoveProvider(@Args({ name: 'id', type: () => Int }) id: number) {
+    const pro = await this.providerService.findOneById(id);
+    return this.providerService.softRemove(pro);
+  }
   @Mutation(() => Boolean)
   async removeProvider(@Args({ name: 'id', type: () => Int }) id: number) {
     return this.providerService.remove(id);
+  }
+  @Mutation(() => Provider, { nullable: true })
+  async restoreProvider(@Args({ name: 'id', type: () => Int }) id: number) {
+    const query = await this.providerService.restore(id);
+    if (!query) return null;
+    return this.providerService.findOneById(id);
   }
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Provider)
@@ -77,11 +94,5 @@ export class ProviderResolver {
     const { filename } = await upload(file, 'avatars/providers', provider.id);
     provider.avatar = filename;
     return this.providerService.save(provider);
-  }
-  @Query(() => ProviderPagination)
-  async paginateDeletedProvider(
-    @Args('input') input: PaginationInput,
-  ): Promise<ProviderPagination> {
-    return this.providerService.paginateDeleted(input);
   }
 }

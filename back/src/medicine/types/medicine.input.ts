@@ -34,15 +34,7 @@ export class UpdateMedicineInput {
   form: MedicineFormInput;
 }
 @InputType()
-export class DeleteMedicineInput {
-  @Field(() => Int)
-  medicineId: number;
-
-  @Field(() => Int)
-  articleId: number;
-}
-@InputType()
-export class FindByMeasureInput extends PaginationInput{
+export class FindByMeasureInput extends PaginationInput {
   @Field(() => Int)
   measureId: number;
   @Field(() => String)

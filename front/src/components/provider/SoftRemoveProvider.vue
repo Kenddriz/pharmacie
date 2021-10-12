@@ -76,7 +76,7 @@
             flat
             color="red"
             label="Supprimer"
-            @click="removeProvider(provider.id)"
+            @click="softRemoveProvider(provider.id)"
           />
         </span>
       </q-card-section>
@@ -87,12 +87,15 @@
 <script lang="ts">
 import { defineComponent, PropType, UnwrapRef } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
-import { useProviderCommands, useRemoveProviders } from '../../graphql/provider/provider.service';
+import {
+  useProviderCommands,
+  useSoftRemoveProvider,
+} from '../../graphql/provider/provider.service';
 import { Command, Provider } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
 
 export default defineComponent({
-  name: 'DeleteProvider',
+  name: 'SoftRemoveProvider',
   props: {
     provider: {
       type: Object as PropType<Provider>,
@@ -106,7 +109,7 @@ export default defineComponent({
       dialogRef,
       ...useProviderCommands(5),
       formatDate,
-      ...useRemoveProviders()
+      ...useSoftRemoveProvider()
     }
   },
   beforeCreate() {

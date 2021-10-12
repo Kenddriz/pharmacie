@@ -69,7 +69,7 @@
             color="orange"
             size="md"
             flat
-            @click="removeCommandLine(command.id, props.row.id)"
+            @click="removeCommandLine(props.row.id)"
           />
           <q-btn
             round
@@ -114,7 +114,7 @@
         color="red"
         label="Supprimer cette commande"
         class="col-12 col-md-3"
-        @click="deleteCommand(command.id)"
+        @click="softRemoveCommand(command.id)"
       />
     </q-card-actions>
   </q-card>
@@ -151,7 +151,7 @@
   >
     <CreateInvoice
       :command-lines="selectedCls"
-      @delete="deleteCommand(command.id)"
+      @delete="softRemoveCommand(command.id)"
       @submit="createInvoice"
       :command-id="command.id"
     >
@@ -177,9 +177,9 @@ import {
 import UnitConverter from '../packaging/UnitConverter.vue';
 import CreateInvoice from '../invoice/CreateInvoice.vue';
 import { useCreateInvoice } from '../../graphql/invoice/invoice.service';
-import { useDeleteCommand } from '../../graphql/command/command.service';
 import { getMedicineName } from '../../graphql/utils/utils';
 import { downloadPdf } from '../../graphql/utils/utils';
+import { useSoftRemoveCommand } from '../../graphql/command/command.service';
 
 export default defineComponent({
   name: 'UpdateCommand',
@@ -190,7 +190,6 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ['deliver', 'delete'],
   setup(props) {
     const uclDialog = ref<boolean>(false);
     const pagination = reactive({
@@ -209,7 +208,7 @@ export default defineComponent({
       ...useRemoveCommandLine(),
       ...useUpdateCommandLine(),
       ...useCreateInvoice(),
-      ...useDeleteCommand(),
+      ...useSoftRemoveCommand(),
       updateCl: ref<CommandLine|null>(null),
       selectedCls: ref<CommandLine[]>([]),
       selectedLabel: function(nbr: number) {

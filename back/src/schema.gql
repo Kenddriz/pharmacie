@@ -144,7 +144,7 @@ type Batch {
   currentStock: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type Medicine {
@@ -178,7 +178,7 @@ type Command {
   commandLines: [CommandLine!]
   provider: Provider!
   createdAt: DateTime!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type Provider {
@@ -190,7 +190,7 @@ type Provider {
   createdAt: DateTime!
   updatedAt: DateTime!
   commands: [Command!]!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type CommandPagination {
@@ -215,6 +215,11 @@ type CommandLinePaginationOutput {
   meta: Meta!
 }
 
+type SoftRemoveCommandLineOutput {
+  command: Command!
+  commandLine: CommandLine!
+}
+
 type MedicinePaginationOutput {
   items: [Medicine!]!
   meta: Meta!
@@ -223,6 +228,11 @@ type MedicinePaginationOutput {
 type MostConsumedMedicineOutput {
   medicine: Medicine!
   count: Int!
+}
+
+type SoftRemoveMedicineOutput {
+  medicine: Medicine!
+  article: Article!
 }
 
 type ArticlePagination {
@@ -243,6 +253,16 @@ type CancelSaleLineOutput {
 type InvoicePagination {
   items: [Invoice!]!
   meta: Meta!
+}
+
+type BatchPaginationOutput {
+  items: [Batch!]!
+  meta: Meta!
+}
+
+type SoftRemoveBatchOutput {
+  batch: Batch!
+  medicine: Medicine!
 }
 
 type SalePagination {
@@ -279,7 +299,7 @@ type Query {
   providerCommands(input: ProviderCommandsInput!): CommandPagination!
   providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
   countProviders: Int!
-  paginateDeletedProvider(input: PaginationInput!): SalePagination!
+  paginateDeletedProviders(input: PaginationInput!): ProviderPagination!
   paginateCommands(paginationInput: PaginationInput!): CommandPagination!
   findCommandById(id: Int!): Command!
   countUndeliveredCommands: Int!
@@ -289,12 +309,13 @@ type Query {
   findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
   countMedicines: Int!
   mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
-  paginateDeletedMedicines(input: PaginationInput!): [MedicinePaginationOutput!]!
+  paginateDeletedMedicines(input: PaginationInput!): MedicinePaginationOutput!
   forms: [Form!]!
   countForms: Int!
   dosages: [Dosage!]!
   countDosages: Int!
   packaging: [Packaging!]!
+  deletedPackaging: [Packaging!]!
   paginateArticles(input: PaginationInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
   countArticles: Int!
@@ -304,9 +325,11 @@ type Query {
   countUnpaidInvoices: Int!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
+  paginateDeletedBatches(input: PaginationInput!): BatchPaginationOutput!
   countStockMovements(id: Int!): Float!
   paginateSales(paginationInput: PaginationInput!): SalePagination!
   count2LatestWeekSales: Count2LatestWeekSales!
+  paginateDeletedProvider(input: PaginationInput!): SalePagination!
   findSuggestedPatients(keyword: String!): [Patient!]!
   paginatePatients(input: PaginationInput!): PaginatePatientOutput!
   paginatePatientSales(input: PaginatePatientSalesInput!): PaginatePatientSalesOutput!
@@ -363,19 +386,25 @@ type Mutation {
   updatePassword(input: UpdatePasswordInput!): User
   updateUserAvatar(avatar: Upload!): User!
   saveProvider(input: SaveProviderInput!): Provider!
+  softRemoveProvider(id: Int!): Provider!
   removeProvider(id: Int!): Boolean!
+  restoreProvider(id: Int!): Provider
   updateProviderAvatar(id: Int!, avatar: Upload!): Provider!
   createCommand(input: CreateCommandInput!): Command!
   updateCommand(input: UpdateCommandInput!): Command!
-  deleteCommand(id: Int!): Boolean!
+  softRemoveCommand(id: Int!): Command!
+  removeCommand(id: Int!): Boolean!
+  restoreCommand(id: Int!): Command
   addCommandLine(input: AddCommandLineInput!): Command!
   updateCommandLine(input: UpdateCommandLineInput!): CommandLine!
-  removeCommandLine(input: DeleteCommandLineInput!): Command!
+  softRemoveCommandLine(id: String!): SoftRemoveCommandLineOutput!
+  restoreCommandLine(id: String!): Command
+  removeCommandLine(id: String!): Boolean!
   createMedicine(input: CreateMedicineInput!): Article!
   updateMedicine(input: UpdateMedicineInput!): Medicine!
-  softRemoveMedicine(input: DeleteMedicineInput!): Article!
-  deleteMedicine(input: DeleteMedicineInput!): Article!
-  recoverMedicine(input: DeleteMedicineInput!): Article!
+  softRemoveMedicine(id: Int!): SoftRemoveMedicineOutput!
+  removeMedicine(id: Int!): Boolean!
+  restoreMedicine(id: Int!): Article
   createForm(input: CreateFormInput!): Form
   updateForm(input: UpdateFormInput!): Form
   deleteForm(id: Int!): Boolean!
@@ -383,7 +412,9 @@ type Mutation {
   deleteDosage(id: Int!): Boolean!
   createPackaging(input: [CreatePackagingInput!]!): Packaging!
   updatePackaging(input: UpdatePackagingInput!): Packaging!
-  deletePackaging(id: Int!): Boolean!
+  softRemovePackaging(id: Int!): Packaging!
+  removePackaging(id: Int!): Boolean!
+  restorePackaging(id: Int!): Packaging!
   saveArticle(input: SaveArticleInput!): Article!
   deleteForeverArticle(id: Int!): Boolean!
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
@@ -399,7 +430,9 @@ type Mutation {
   updateMethod(input: MethodInput!): Method!
   createBatch(input: BatchFormInput!): Medicine
   updateBatch(input: UpdateBatchInput!): Batch!
-  softRemoveBatch(id: Int!): Medicine!
+  softRemoveBatch(id: Int!): SoftRemoveBatchOutput!
+  removeBatch(id: Int!): Boolean!
+  restoreBatch(id: Int!): Medicine
   createSale(input: CreateSaleInput!): Sale!
   softRemoveSale(id: Int!): Boolean!
   createPrescription(input: CreatePrescriptionInput!): Sale!
@@ -464,11 +497,6 @@ input UpdateCommandLineInput {
   commandLine: CommandLineInput!
 }
 
-input DeleteCommandLineInput {
-  commandLineId: String!
-  commandId: Int!
-}
-
 input CreateMedicineInput {
   articleId: Int!
   form: MedicineFormInput!
@@ -485,11 +513,6 @@ input MedicineFormInput {
 input UpdateMedicineInput {
   id: Int!
   form: MedicineFormInput!
-}
-
-input DeleteMedicineInput {
-  medicineId: Int!
-  articleId: Int!
 }
 
 input CreateFormInput {

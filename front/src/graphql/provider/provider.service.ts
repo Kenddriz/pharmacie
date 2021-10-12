@@ -7,7 +7,15 @@ import {
   ProviderCommandsData,
   PROVIDER_COMMANDS,
   ProviderCommandsChartData,
-  PROVIDER_COMMANDS_CHART, RemoveProviderData, REMOVE_PROVIDER, UpdateProviderAvatarData, UPDATE_PROVIDER_AVATAR,
+  PROVIDER_COMMANDS_CHART,
+  RemoveProviderData,
+  REMOVE_PROVIDER,
+  UpdateProviderAvatarData,
+  UPDATE_PROVIDER_AVATAR,
+  PaginateDeletedProvidersData,
+  PAGINATE_DELETED_PROVIDERS,
+  SoftRemoveProviderData,
+  SOFT_REMOVE_PROVIDER, RestoreProviderData, RESTORE_PROVIDER,
 } from './provider.sdl';
 import {
   SaveProviderInput,
@@ -21,12 +29,15 @@ import {
   CommandPagination,
   QueryProviderCommandsChartArgs,
   ProviderCommandsChartInput,
-  Command, MutationRemoveProviderArgs,
-  MutationUpdateProviderAvatarArgs
+  Command,
+  MutationRemoveProviderArgs,
+  MutationUpdateProviderAvatarArgs,
+  QueryPaginateDeletedProvidersArgs,
+  MutationSoftRemoveProviderArgs, MutationRestoreProviderArgs,
 } from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
-import { deletePaginationCache, InitialPagination } from '../utils/pagination';
+import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { Serie } from '../command/command.service';
 import { Loading } from 'quasar';
 import { notify } from '../../shared/notification';
@@ -60,10 +71,7 @@ export const useSaveProvider = () => {
           cache.modify({
             fields: {
               paginateProviders(existing: any, {toReference}) {
-                return {
-                  ...existing,
-                  items: [...existing.items, toReference(data.saveProvider)]
-                }
+                return addPaginationCache(data.saveProvider, existing, toReference);
               }
             }
           })
@@ -197,35 +205,6 @@ export const useProviderCommandsChart = () => {
     chartSeries
   }
 }
-export const useRemoveProviders = () => {
-  const { onDone, mutate} = useMutation<
-    RemoveProviderData,
-    MutationRemoveProviderArgs
-    >(REMOVE_PROVIDER);
-  onDone(() => {
-    Loading.hide();
-    notify('suppression avec succès !');
-  });
-  function removeProvider(id: number) {
-    removeDialog(() => {
-      Loading.show({ message: 'Exécution de l\'opération ...' });
-      void mutate({ id }, {
-        update(cache, { data }) {
-          if(data?.removeProvider) {
-            cache.modify({
-              fields: {
-                paginateProviders(existingRef: any, { readField, toReference }) {
-                  return deletePaginationCache(id, existingRef, readField, toReference);
-                }
-              }
-            })
-          }
-        }
-      })
-    }, 'removeForever')
-  }
-  return { removeProvider }
-}
 export const useUpdateProviderAvatar = () => {
   const { mutate, onDone } = useMutation<
     UpdateProviderAvatarData,
@@ -240,4 +219,111 @@ export const useUpdateProviderAvatar = () => {
     void mutate({ avatar: file, id });
   }
   return { updateAvatar }
+}
+
+export const usePaginateDeletedProviders = () => {
+  const input = reactive<PaginationInput>({
+    page: 1,
+    limit : 5
+  });
+  const { loading: ppLoading, result } = useQuery<
+    PaginateDeletedProvidersData,
+    QueryPaginateDeletedProvidersArgs
+    >(PAGINATE_DELETED_PROVIDERS, { input });
+  const providers = useResult(result, InitialPagination, pick => pick?.paginateDeletedProviders||InitialPagination)
+  return {
+    input,
+    ppLoading,
+    providers
+  }
+}
+export const useSoftRemoveProvider = () => {
+  const { onDone, mutate} = useMutation<
+    SoftRemoveProviderData,
+    MutationSoftRemoveProviderArgs
+    >(SOFT_REMOVE_PROVIDER);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  });
+  function softRemoveProvider(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Suppression ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.softRemoveProvider) {
+            cache.modify({
+              fields: {
+                paginateProviders(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                },
+                paginateDeletedProviders(existingRef: any, { readField }) {
+                  return addPaginationCache(data.softRemoveProvider, existingRef, readField);
+                }
+              }
+            })
+          }
+        }
+      })
+    })
+  }
+  return { softRemoveProvider }
+}
+export const useRestoreProvider = () => {
+  const { mutate, onDone } = useMutation<
+    RestoreProviderData,
+    MutationRestoreProviderArgs
+    >(RESTORE_PROVIDER);
+  onDone(({ data }) => {
+    Loading.hide();
+    notify(data?.restoreProvider ? 'Restauration avec succès !' : 'Echec de restauration');
+  });
+  function restore(id: number) {
+    void mutate({ id }, {
+      update: (cache, { data }) => {
+        if(data?.restoreProvider) {
+          cache.modify({
+            fields: {
+              paginateProviders(existing: any, {toReference}) {
+                return addPaginationCache(data.restoreProvider, existing, toReference);
+              },
+              paginateDeletedProviders(existing: any, {readField, toReference}) {
+                return deletePaginationCache(id, existing, readField,  toReference);
+              }
+            }
+          })
+        }
+      }
+    })
+  }
+  return { restore }
+}
+export const useRemoveProvider = () => {
+  const { onDone, mutate} = useMutation<
+    RemoveProviderData,
+    MutationRemoveProviderArgs
+    >(REMOVE_PROVIDER);
+  onDone(() => {
+    Loading.hide();
+    notify('suppression avec succès !');
+  });
+  function remove(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Exécution de l\'opération ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.removeProvider) {
+            cache.modify({
+              fields: {
+                paginateDeletedProviders(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                }
+              }
+            })
+          }
+        }
+      })
+    }, 'removeForever')
+  }
+  return { remove }
 }

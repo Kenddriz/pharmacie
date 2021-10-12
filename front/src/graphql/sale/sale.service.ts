@@ -10,7 +10,6 @@ import {
   SoftRemoveSaleData,
 } from './sale.sdl';
 import {
-  Meta,
   MutationCreateSaleArgs, MutationSoftRemoveSaleArgs,
   PaginationInput, PrescriptionInput,
   QueryPaginateCommandsArgs,
@@ -20,7 +19,7 @@ import { Loading } from 'quasar';
 import { computed, reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
-import { deletePaginationCache, InitialPagination } from '../utils/pagination';
+import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { defaultPrescription } from '../prescription/prescription.service';
 import moment from 'moment';
 import { useI18n } from 'vue-i18n';
@@ -39,13 +38,7 @@ export const useCreateSale = () => {
           cache.modify({
             fields: {
               paginateSales(existingRef: any, {toReference}){
-                const meta: Meta = cloneDeep(existingRef.meta);
-                meta.totalItems += 1; meta.itemCount += 1;
-                return {
-                  ...existingRef,
-                  meta: toReference(meta),
-                  items: [toReference(data.createSale), ...existingRef.items]
-                }
+                return addPaginationCache(data.createSale, existingRef, toReference);
               }
             }
           })
@@ -117,7 +110,6 @@ export const usePaginateSales = () => {
     paginationInput
   }
 }
-
 export const useSoftRemoveSale = () => {
   const { mutate, loading: srsLoading } = useMutation<
     SoftRemoveSaleData,

@@ -120,7 +120,7 @@
               size="md"
               round
               color="deep-orange"
-              @click="deleteCommand(props.row)"
+              @click="openSoftRemoveProvider(props.row)"
             />
           </q-td>
         </q-tr>
@@ -171,7 +171,7 @@ import AddProviderCommand from '../../components/provider/AddProviderCommand.vue
 import ProviderCommandDetails from '../../components/provider/ProviderCommandDetails.vue';
 import { Command, Provider } from '../../graphql/types';
 import { useQuasar } from 'quasar';
-import DeleteProvider from '../../components/provider/DeleteProvider.vue';
+import SoftRemoveProvider from '../../components/provider/SoftRemoveProvider.vue';
 import UpdateProvider from '../../components/provider/UpdateProvider.vue';
 
 export default defineComponent({
@@ -200,9 +200,9 @@ export default defineComponent({
         })
       },
       openCommandDetails,
-      deleteCommand: (provider: Provider) => {
+      openSoftRemoveProvider: (provider: Provider) => {
         dialog({
-          component: DeleteProvider,
+          component: SoftRemoveProvider,
           componentProps: { provider }
         }).onOk((command: Command) => openCommandDetails(command));
       },

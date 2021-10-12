@@ -1,12 +1,16 @@
 import {
-  MutationDeleteMedicineArgs,
-  MutationRecoverMedicineArgs,
   MutationCreateMedicineArgs,
   MutationSoftRemoveMedicineArgs,
   MutationUpdateMedicineArgs,
   MedicineFormInput,
   QueryFindMedicinesByMeasureArgs,
-  FindByMeasureInput, MedicinePaginationOutput, QueryMostConsumedMedicinesArgs,
+  FindByMeasureInput,
+  MedicinePaginationOutput,
+  QueryMostConsumedMedicinesArgs,
+  MutationRemoveMedicineArgs,
+  MutationRestoreMedicineArgs,
+  PaginationInput,
+  QueryPaginateDeletedMedicinesArgs
 } from '../types';
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
@@ -14,17 +18,22 @@ import {
   CreateMedicineData,
   SOFT_REMOVE_MEDICINE,
   SoftRemoveMedicineData,
-  DeleteMedicineData,
-  DELETE_MEDICINE,
-  RecoverMedicineData,
   UPDATE_MEDICINE,
   UpdateMedicineData,
   FindMedicinesByMeasureData,
-  FIND_MEDICINES_BY_MEASURE, MOST_CONSUMED_MEDICINES, MostConsumedMedicinesData,
+  FIND_MEDICINES_BY_MEASURE,
+  MOST_CONSUMED_MEDICINES,
+  MostConsumedMedicinesData,
+  RemoveMedicineData,
+  REMOVE_MEDICINE,
+  RestoreMedicineData,
+  RESTORE_MEDICINE,
+  PAGINATE_DELETED_MEDICINES,
+  PaginateDeletedMedicinesData,
 } from './medicine.sdl';
 import { removeDialog } from '../utils/utils';
 import { reactive, ref } from 'vue';
-import { InitialPagination } from '../utils/pagination';
+import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { Loading } from 'quasar';
 import { notify } from '../../shared/notification';
 
@@ -45,7 +54,6 @@ export const useCreateMedicine = () => {
   }
   return { createMedicine }
 }
-
 export const useUpdateMedicine = () => {
   const { mutate, onDone } = useMutation<
     UpdateMedicineData,
@@ -56,12 +64,28 @@ export const useUpdateMedicine = () => {
     notify('Mise à jour avec succès !');
   })
   function updateMedicine(id: number, form: MedicineFormInput) {
-    Loading.show({ message: 'Exécution de l\'opération ...'});
+    Loading.show({ message: 'Mise à jour ...'});
     void mutate({ input: {id, form} });
   }
   return { updateMedicine }
 }
 
+export const usePaginateDeletedMedicines = () => {
+  const input = reactive<PaginationInput>({
+    page: 1,
+    limit : 5
+  });
+  const { loading: pmLoading, result } = useQuery<
+    PaginateDeletedMedicinesData,
+    QueryPaginateDeletedMedicinesArgs
+    >(PAGINATE_DELETED_MEDICINES, { input });
+  const medicines = useResult(result, InitialPagination, pick => pick?.paginateDeletedMedicines||InitialPagination)
+  return {
+    input,
+    pmLoading,
+    medicines
+  }
+}
 export const useSoftRemoveMedicine = () => {
   const { mutate, onDone } = useMutation<
     SoftRemoveMedicineData,
@@ -72,35 +96,81 @@ export const useSoftRemoveMedicine = () => {
     notify('Suppression avec succès !');
   })
   return {
-    softRemoveMedicine: (articleId: number, medicineId: number) => {
+    softRemoveMedicine: (id: number) => {
       removeDialog(() => {
         Loading.show({ message: 'Suppression ...'});
-        void mutate({ input: { articleId, medicineId } });
+        void mutate({ id }, {
+          update(cache, { data }){
+            if(data?.softRemoveMedicine) {
+              cache.modify({
+                fields: {
+                  paginateDeletedMedicines(existing: any, {toReference}) {
+                    return addPaginationCache(data.softRemoveMedicine.medicine, existing, toReference);
+                  }
+                }
+              })
+            }
+          }
+        });
       })
     }
   }
 }
-
-export const useDeleteMedicine = () => {
-  const { mutate, loading: deleteMedicineLoading } = useMutation<
-    DeleteMedicineData,
-    MutationDeleteMedicineArgs
-    >(DELETE_MEDICINE);
-  return {
-    deleteMedicine: (articleId: number, medicineId: number) => mutate({ input: { articleId, medicineId }  }),
-    deleteMedicineLoading
+export const useRemoveMedicine = () => {
+  const { mutate, onDone } = useMutation<
+    RemoveMedicineData,
+    MutationRemoveMedicineArgs
+    >(REMOVE_MEDICINE);
+  onDone(() => {
+    Loading.hide();
+    notify('Suppression avec succès !');
+  })
+  function remove(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Suppression ...'});
+      void mutate({ id  }, {
+        update(cache, { data }){
+          if(data?.removeMedicine) {
+            cache.modify({
+              fields: {
+                paginateDeletedMedicines(existing: any, {readField, toReference}) {
+                  return deletePaginationCache(id, existing, readField, toReference);
+                }
+              }
+            })
+          }
+        }
+      })
+    }, 'removeForever')
   }
+  return { remove }
 }
-
-export const useRecoverMedicine = () => {
-  const { mutate, loading: recoverMedicineLoading } = useMutation<
-    RecoverMedicineData,
-    MutationRecoverMedicineArgs
-    >(DELETE_MEDICINE);
-  return {
-    recoverMedicine: (articleId: number, medicineId: number) => mutate({ input: { articleId, medicineId }  }),
-    recoverMedicineLoading
+export const useRestoreMedicine = () => {
+  const { mutate, onDone } = useMutation<
+    RestoreMedicineData,
+    MutationRestoreMedicineArgs
+    >(RESTORE_MEDICINE);
+  onDone(() => {
+    Loading.hide();
+    notify('Restauration avec succès !');
+  });
+  function restore (id: number) {
+    Loading.show({ message: 'Restauration ...'});
+    void mutate({ id }, {
+      update(cache, { data }){
+        if(data?.restoreMedicine) {
+          cache.modify({
+            fields: {
+              paginateDeletedMedicines(existing: any, {readField,toReference}) {
+                return deletePaginationCache(id, existing, readField, toReference);
+              }
+            }
+          })
+        }
+      }
+    })
   }
+  return { restore }
 }
 
 export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string) => {
@@ -121,7 +191,6 @@ export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string)
     >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
   return { medicines, loading, input }
 }
-
 export const useMostConsumedMedicines = () => {
   const year = ref<number>(new Date().getFullYear());
   const { loading, result } = useQuery<
@@ -135,3 +204,4 @@ export const useMostConsumedMedicines = () => {
     year
   }
 }
+
