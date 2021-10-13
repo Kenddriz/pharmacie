@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { Payment } from './payment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class PaymentService {
@@ -16,5 +16,13 @@ export class PaymentService {
 
   async findOneById(id: number): Promise<Payment> {
     return this.repository.findOne(id);
+  }
+  async restoreSoftDeleted(invoiceId: number): Promise<UpdateResult> {
+    return this.repository
+      .createQueryBuilder()
+      .update()
+      .set({ archivedAt: null })
+      .where(`invoiceId = :invoiceId`, { invoiceId })
+      .execute();
   }
 }

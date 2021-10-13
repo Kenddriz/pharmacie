@@ -70,7 +70,7 @@ export class Invoice {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

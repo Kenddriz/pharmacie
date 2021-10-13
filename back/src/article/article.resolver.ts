@@ -42,11 +42,6 @@ export class ArticleResolver {
   ): Promise<ArticlePagination> {
     return await this.articleService.paginate(input);
   }
-
-  @Mutation(() => Boolean)
-  deleteForeverArticle(@Args('id', { type: () => Int }) id: number) {
-    return this.articleService.deleteForever(id);
-  }
   @Query(() => Article, { nullable: true })
   findOneArticle(
     @Args({ name: 'keyword', type: () => String }) keyword: string,
@@ -60,5 +55,25 @@ export class ArticleResolver {
   @ResolveField(() => [Medicine])
   async medicines(@Root() article: Article): Promise<Medicine[]> {
     return await this.medicineService.findOneByArticle(article.id);
+  }
+  @Query(() => ArticlePagination)
+  async paginateDeletedArticles(
+    @Args('input') input: PaginationInput,
+  ): Promise<ArticlePagination> {
+    return this.articleService.paginateDeleted(input);
+  }
+  @Mutation(() => Article)
+  async softRemoveArticle(@Args({ name: 'id', type: () => Int }) id: number) {
+    const article = await this.articleService.findOneById(id);
+    return this.articleService.softRemove(article);
+  }
+  @Mutation(() => Boolean)
+  async removeArticle(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.articleService.remove(id);
+  }
+  @Mutation(() => Article, { nullable: true })
+  async restoreArticle(@Args({ name: 'id', type: () => Int }) id: number) {
+    await this.articleService.restore(id);
+    return this.articleService.findOneById(id);
   }
 }

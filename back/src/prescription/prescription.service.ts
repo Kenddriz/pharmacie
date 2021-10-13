@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Prescription } from './prescription.entity';
-import { Repository } from 'typeorm';
-import { Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class PrescriptionService {
@@ -26,5 +25,13 @@ export class PrescriptionService {
   }
   async remove(id: number) {
     return this.repository.delete(id);
+  }
+  async restoreSoftDeleted(saleId: number): Promise<UpdateResult> {
+    return this.repository
+      .createQueryBuilder()
+      .update()
+      .set({ archivedAt: null })
+      .where(`saleId = :saleId`, { saleId })
+      .execute();
   }
 }

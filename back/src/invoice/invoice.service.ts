@@ -33,13 +33,35 @@ export class InvoiceService {
     const { page, limit } = input;
     return await paginate<Invoice>(queryBuilder, { page, limit });
   }
-  remove(id: number) {
-    return `This action removes a #${id} delivery`;
-  }
   async countUnpaid(): Promise<number> {
     return this.repository
       .createQueryBuilder('i')
       .where('i.paymentId IS NULL')
       .getCount();
+  }
+
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Invoice>> {
+    const query = this.repository
+      .createQueryBuilder('ic')
+      .where('ic.archivedAt IS NOT NULL')
+      .withDeleted()
+      .orderBy('ic.archivedAt', 'DESC');
+    return paginate<Invoice>(query, { ...input });
+  }
+  async findWithRelations(id: number): Promise<Invoice> {
+    return this.repository.findOne(id, {
+      relations: ['stockMovements', 'payment'],
+    });
+  }
+  async softRemove(Invoice: Invoice): Promise<Invoice> {
+    return this.repository.softRemove(Invoice);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

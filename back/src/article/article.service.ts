@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ArticleDto } from './types/article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Article } from './article.entity';
@@ -46,11 +45,26 @@ export class ArticleService {
     };
     return await paginate<Article>(queryBuilder, options);
   }
-  async deleteForever(id: number): Promise<boolean> {
-    const query = await this.repository.delete(id);
-    return query.affected > 0;
-  }
   async count(): Promise<number> {
     return this.repository.count();
+  }
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Article>> {
+    const query = this.repository
+      .createQueryBuilder('cmd')
+      .where('cmd.archivedAt IS NOT NULL')
+      .withDeleted()
+      .orderBy('cmd.archivedAt', 'DESC');
+    return paginate<Article>(query, { ...input });
+  }
+  async softRemove(article: Article): Promise<Article> {
+    return this.repository.softRemove(article);
+  }
+  async restore(id: number): Promise<boolean> {
+    const query = await this.repository.restore(id);
+    return query.affected > 0;
+  }
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

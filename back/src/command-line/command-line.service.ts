@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommandLine } from './command-line.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class CommandLineService {
@@ -19,6 +19,17 @@ export class CommandLineService {
       .where('cl.commandId = :commandId', { commandId })
       .orderBy('cl.medicineId', 'ASC')
       .getMany();
+  }
+  async restoreSoftDeleted(
+    by: 'commandId' | 'medicineId',
+    id: number,
+  ): Promise<UpdateResult> {
+    return this.repository
+      .createQueryBuilder()
+      .update()
+      .set({ archivedAt: null })
+      .where(`${by} = :id`, { id })
+      .execute();
   }
   async findOne(id: string): Promise<CommandLine> {
     return await this.repository.findOne(id);

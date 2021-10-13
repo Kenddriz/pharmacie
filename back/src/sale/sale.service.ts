@@ -71,7 +71,7 @@ export class SaleService {
       .orderBy('sale.archivedAt', 'DESC');
     return paginate<Sale>(query, { ...input });
   }
-  async findWithRelation(id: number): Promise<Sale> {
+  async findWithRelations(id: number): Promise<Sale> {
     return this.repository.findOne(id, {
       relations: ['stockMovements', 'prescription'],
     });

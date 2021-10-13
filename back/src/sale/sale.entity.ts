@@ -37,7 +37,7 @@ export class Sale {
   })
   stockMovements: StockMovement[];
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

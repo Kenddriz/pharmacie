@@ -91,7 +91,7 @@ type Sale {
   createdAt: DateTime!
   prescription: Prescription
   stockMovements: [StockMovement!]!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type Method {
@@ -120,7 +120,7 @@ type Invoice {
   expense: Float!
   reference: String!
   createdAt: DateTime!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type StockMovement {
@@ -308,17 +308,18 @@ type Query {
   paginateArticles(input: PaginationInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
   countArticles: Int!
+  paginateDeletedArticles(input: PaginationInput!): ArticlePagination!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
-  paginateDeletedStockMovements(input: PaginationInput!): StockMovementPagination!
   paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
   countUnpaidInvoices: Int!
+  paginateDeletedInvoices(input: PaginationInput!): InvoicePagination!
   methods: [Method!]!
   findExistingBatch(input: FindExistingBatchInput!): Batch
   paginateDeletedBatches(input: PaginationInput!): BatchPaginationOutput!
   countStockMovements(id: Int!): Float!
   paginateSales(paginationInput: PaginationInput!): SalePagination!
   count2LatestWeekSales: Count2LatestWeekSales!
-  paginateDeletedProvider(input: PaginationInput!): SalePagination!
+  paginateDeletedSales(input: PaginationInput!): SalePagination!
   findSuggestedPatients(keyword: String!): [Patient!]!
   paginatePatients(input: PaginationInput!): PaginatePatientOutput!
   paginatePatientSales(input: PaginatePatientSalesInput!): PaginatePatientSalesOutput!
@@ -403,14 +404,18 @@ type Mutation {
   removePackaging(id: Int!): Boolean!
   restorePackaging(id: Int!): Packaging!
   saveArticle(input: SaveArticleInput!): Article!
-  deleteForeverArticle(id: Int!): Boolean!
+  softRemoveArticle(id: Int!): Article!
+  removeArticle(id: Int!): Boolean!
+  restoreArticle(id: Int!): Article
   updateAssuredLine(input: UpdateAssuredLineInput!): StockMovement!
   updateSaleLine(input: UpdateSaleLineInput!): StockMovement!
   cancelSaleLines(input: CancelSaleLinesInput!): CancelSaleLineOutput!
   addSaleLines(input: AddSaleLineInput!): Sale!
   createInvoice(input: CreateInvoiceInput!): Command!
   updateInvoice(input: UpdateInvoiceInput!): Invoice!
-  removeInvoice(id: Int!): Invoice!
+  softRemoveInvoice(id: Int!): Invoice!
+  removeInvoice(id: Int!): Boolean!
+  restoreInvoice(id: Int!): Invoice
   createPayment(input: CreatePaymentInput!): Invoice!
   updatePayment(input: UpdatePaymentInput!): Payment!
   createMethod(input: MethodInput!): Method!
@@ -421,7 +426,9 @@ type Mutation {
   removeBatch(id: Int!): Boolean!
   restoreBatch(id: Int!): Medicine
   createSale(input: CreateSaleInput!): Sale!
-  softRemoveSale(id: Int!): Boolean!
+  softRemoveSale(id: Int!): Sale
+  removeSale(id: Int!): Boolean!
+  restoreSale(id: Int!): Sale
   createPrescription(input: CreatePrescriptionInput!): Sale!
   updatePrescription(input: UpdatePrescriptionInput!): Prescription!
   deletePrescription(input: DeletePrescriptionInput!): Sale!

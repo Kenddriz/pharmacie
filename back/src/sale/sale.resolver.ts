@@ -80,11 +80,6 @@ export class SaleResolver {
     return await this.saleService.paginate(input);
   }
 
-  @Mutation(() => Boolean)
-  async softRemoveSale(@Args('id', { type: () => Int }) id: number) {
-    const sale = await this.saleService.findWithRelation(id);
-    return this.saleService.softRemove(sale);
-  }
   @Query(() => Count2LatestWeekSales)
   async count2LatestWeekSales(): Promise<Count2LatestWeekSales> {
     const current = await this.saleService.currentWeek();
@@ -101,9 +96,27 @@ export class SaleResolver {
     return this.stmS.findBySale(sale.id);
   }
   @Query(() => SalePagination)
-  async paginateDeletedProvider(
+  async paginateDeletedSales(
     @Args('input') input: PaginationInput,
   ): Promise<SalePagination> {
     return this.saleService.paginateDeleted(input);
+  }
+  @Mutation(() => Sale, { nullable: true })
+  async softRemoveSale(@Args({ name: 'id', type: () => Int }) id: number) {
+    const sale = await this.saleService.findWithRelations(id);
+    return this.saleService.softRemove(sale);
+  }
+  @Mutation(() => Boolean)
+  async removeSale(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.saleService.remove(id);
+  }
+  @Mutation(() => Sale, { nullable: true })
+  async restoreSale(@Args({ name: 'id', type: () => Int }) id: number): Promise<Sale> {
+    const restored = await this.saleService.restore(id);
+    if (restored) {
+      await this.stmS.restoreSoftDeleted('saleId', id);
+      await this.prescriptionService.restoreSoftDeleted(id);
+    }
+    return this.saleService.findOneById(id);
   }
 }

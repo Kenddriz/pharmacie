@@ -103,7 +103,7 @@ export class CommandResolver {
   }
   @Mutation(() => Command)
   async softRemoveCommand(@Args({ name: 'id', type: () => Int }) id: number) {
-    const command = await this.commandService.findOneById(id);
+    const command = await this.commandService.findWithRelations(id);
     return this.commandService.softRemove(command);
   }
   @Mutation(() => Boolean)
@@ -112,7 +112,9 @@ export class CommandResolver {
   }
   @Mutation(() => Command, { nullable: true })
   async restoreCommand(@Args({ name: 'id', type: () => Int }) id: number) {
-    await this.commandService.restore(id);
+    const restored = await this.commandService.restore(id);
+    if (restored)
+      await this.commandLineService.restoreSoftDeleted('commandId', id);
     return this.commandService.findOneById(id);
   }
 }

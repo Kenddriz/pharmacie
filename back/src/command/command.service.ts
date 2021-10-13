@@ -87,9 +87,18 @@ export class CommandService {
       .getRawMany();
   }
 
-  async remove(id: number): Promise<boolean> {
-    const query = await this.repository.delete(id);
-    return query.affected > 0;
+  async paginateDeleted(input: PaginationInput): Promise<Pagination<Command>> {
+    const query = this.repository
+      .createQueryBuilder('cmd')
+      .where('cmd.archivedAt IS NOT NULL')
+      .withDeleted()
+      .orderBy('cmd.archivedAt', 'DESC');
+    return paginate<Command>(query, { ...input });
+  }
+  async findWithRelations(id: number): Promise<Command> {
+    return this.repository.findOne(id, {
+      relations: ['commandLines'],
+    });
   }
   async softRemove(command: Command): Promise<Command> {
     return this.repository.softRemove(command);
@@ -98,12 +107,8 @@ export class CommandService {
     const query = await this.repository.restore(id);
     return query.affected > 0;
   }
-  async paginateDeleted(input: PaginationInput): Promise<Pagination<Command>> {
-    const query = this.repository
-      .createQueryBuilder('cmd')
-      .where('cmd.archivedAt IS NOT NULL')
-      .withDeleted()
-      .orderBy('cmd.archivedAt', 'DESC');
-    return paginate<Command>(query, { ...input });
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 }

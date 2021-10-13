@@ -102,10 +102,6 @@ export class InvoiceResolver {
     return await this.invoiceService.paginate(input);
   }
   /**Field resolver*/
-  @Mutation(() => Invoice)
-  removeInvoice(@Args('id', { type: () => Int }) id: number) {
-    return this.invoiceService.remove(id);
-  }
   @ResolveField(() => Payment, { nullable: true })
   async payment(@Root() invoice: Invoice): Promise<Payment> {
     return await this.paymentService.findOneById(invoice.paymentId || 0);
@@ -122,5 +118,29 @@ export class InvoiceResolver {
   @Query(() => Int)
   async countUnpaidInvoices() {
     return this.invoiceService.countUnpaid();
+  }
+  @Query(() => InvoicePagination)
+  async paginateDeletedInvoices(
+    @Args('input') input: PaginationInput,
+  ): Promise<InvoicePagination> {
+    return this.invoiceService.paginateDeleted(input);
+  }
+  @Mutation(() => Invoice)
+  async softRemoveInvoice(@Args({ name: 'id', type: () => Int }) id: number) {
+    const invoice = await this.invoiceService.findWithRelations(id);
+    return this.invoiceService.softRemove(invoice);
+  }
+  @Mutation(() => Boolean)
+  async removeInvoice(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.invoiceService.remove(id);
+  }
+  @Mutation(() => Invoice, { nullable: true })
+  async restoreInvoice(@Args({ name: 'id', type: () => Int }) id: number) {
+    const restored = await this.invoiceService.restore(id);
+    if (restored) {
+      await this.stmS.restoreSoftDeleted('invoiceId', id);
+      await this.paymentService.restoreSoftDeleted(id);
+    }
+    return this.invoiceService.findOneById(id);
   }
 }

@@ -4,8 +4,6 @@ import { StockMovement } from './stock-movement.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { PaginateStockMovementInput } from './dto/stock-movement.input';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { PaginationInput } from '../shared/shared.input';
-import { Medicine } from '../medicine/medicine.entity';
 
 @Injectable()
 export class StockMovementService {
@@ -100,13 +98,15 @@ export class StockMovementService {
       .orderBy('s.id', 'ASC')
       .getRawMany();
   }
-  async paginateDeleted(
-    input: PaginationInput,
-  ): Promise<Pagination<StockMovement>> {
-    const query = this.repository
-      .createQueryBuilder('stm')
-      .where('stm.archivedAt IS NOT NULL')
-      .orderBy('stm.archivedAt', 'DESC');
-    return paginate<StockMovement>(query, { ...input });
+  async restoreSoftDeleted(
+    by: 'invoiceId' | 'saleId',
+    id: number,
+  ): Promise<UpdateResult> {
+    return this.repository
+      .createQueryBuilder()
+      .update()
+      .set({ archivedAt: null })
+      .where(`${by} = :id`, { id })
+      .execute();
   }
 }
