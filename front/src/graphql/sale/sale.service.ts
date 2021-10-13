@@ -239,8 +239,8 @@ export const useSoftRemoveSale = () => {
                 paginatePatientSales(existingRef: any, {readField, toReference}) {
                   return deletePaginationCache(id, existingRef, readField, toReference);
                 },
-                paginateDeletedSales(existingRef: any, { readField }) {
-                  return addPaginationCache(data.softRemoveSale, existingRef, readField);
+                paginateDeletedSales(existingRef: any, { toReference }) {
+                  return addPaginationCache(data.softRemoveSale, existingRef, toReference);
                 }
               }
             })

@@ -4,7 +4,7 @@
       <q-menu>
         <q-item @click="$emit('restore')" clickable v-close-popup>
           <q-item-section side>
-            <q-icon color="primary" name="edit" />
+            <q-icon color="primary" name="restore_from_trash" />
           </q-item-section>
           <q-item-section>
             Restaurer

@@ -1,6 +1,4 @@
 import { Meta } from '../types';
-import { cloneDeep } from './utils';
-
 
 export const InitialPagination = {
   items: [],
@@ -19,7 +17,7 @@ export const PAGINATION_META = `
   }
 `;
 export const deletePaginationCache = (id: number|string, existingRef: any, readField: any, toReference: any) => {
-  const meta: Meta = cloneDeep(existingRef.meta);
+  const meta: Meta = { ... existingRef.meta };
   meta.totalItems -= 1; meta.itemCount -= 1;
   return {
     ...existingRef,
@@ -29,7 +27,7 @@ export const deletePaginationCache = (id: number|string, existingRef: any, readF
 }
 
 export const addPaginationCache = (data: any, existingRef: any, toReference: any) => {
-  const meta: Meta = cloneDeep(existingRef.meta);
+  const meta: Meta = { ...existingRef.meta };
   meta.totalItems += 1; meta.itemCount += 1;
   return {
     ...existingRef,

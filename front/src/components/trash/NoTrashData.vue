@@ -4,7 +4,7 @@
     <div class="absolute-center text-h5">Aucune donnée</div>
   </q-inner-loading>
   <q-inner-loading :showing="loading">
-    <q-icon name="person" size="80px" />
+    <q-spinner-cube color="warning" size="80px" />
   </q-inner-loading>
 </template>
 
