@@ -82,7 +82,7 @@
       full-height
       v-model="dialogRemove"
     >
-      <DeleteForeverArticle
+      <SoftRemoveArticle
         v-if="selected.length"
         :article="selected[0]"
       />
@@ -92,11 +92,11 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
 import { Article, ArticlePagination } from '../../graphql/types';
-import DeleteForeverArticle from './DeleteForeverArticle.vue';
+import SoftRemoveArticle from './SoftRemoveArticle.vue';
 
 export default defineComponent({
   name: 'Article',
-  components: { DeleteForeverArticle },
+  components: { SoftRemoveArticle },
   props: {
     articlePagination: Object as PropType<ArticlePagination>,
     selected: {

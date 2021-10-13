@@ -249,7 +249,7 @@ export type Invoice = {
   expense: Scalars['Float'];
   reference: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type InvoiceInput = {
@@ -364,14 +364,18 @@ export type Mutation = {
   removePackaging: Scalars['Boolean'];
   restorePackaging: Packaging;
   saveArticle: Article;
-  deleteForeverArticle: Scalars['Boolean'];
+  softRemoveArticle: Article;
+  removeArticle: Scalars['Boolean'];
+  restoreArticle?: Maybe<Article>;
   updateAssuredLine: StockMovement;
   updateSaleLine: StockMovement;
   cancelSaleLines: CancelSaleLineOutput;
   addSaleLines: Sale;
   createInvoice: Command;
   updateInvoice: Invoice;
-  removeInvoice: Invoice;
+  softRemoveInvoice: Invoice;
+  removeInvoice: Scalars['Boolean'];
+  restoreInvoice?: Maybe<Invoice>;
   createPayment: Invoice;
   updatePayment: Payment;
   createMethod: Method;
@@ -382,7 +386,9 @@ export type Mutation = {
   removeBatch: Scalars['Boolean'];
   restoreBatch?: Maybe<Medicine>;
   createSale: Sale;
-  softRemoveSale: Scalars['Boolean'];
+  softRemoveSale?: Maybe<Sale>;
+  removeSale: Scalars['Boolean'];
+  restoreSale?: Maybe<Command>;
   createPrescription: Sale;
   updatePrescription: Prescription;
   deletePrescription: Sale;
@@ -558,7 +564,17 @@ export type MutationSaveArticleArgs = {
 };
 
 
-export type MutationDeleteForeverArticleArgs = {
+export type MutationSoftRemoveArticleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveArticleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreArticleArgs = {
   id: Scalars['Int'];
 };
 
@@ -593,7 +609,17 @@ export type MutationUpdateInvoiceArgs = {
 };
 
 
+export type MutationSoftRemoveInvoiceArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationRemoveInvoiceArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreInvoiceArgs = {
   id: Scalars['Int'];
 };
 
@@ -649,6 +675,16 @@ export type MutationCreateSaleArgs = {
 
 
 export type MutationSoftRemoveSaleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRemoveSaleArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationRestoreSaleArgs = {
   id: Scalars['Int'];
 };
 
@@ -827,17 +863,18 @@ export type Query = {
   paginateArticles: ArticlePagination;
   findOneArticle?: Maybe<Article>;
   countArticles: Scalars['Int'];
+  paginateDeletedArticles: ArticlePagination;
   paginateStockMovement: StockMovementPagination;
-  paginateDeletedStockMovements: StockMovementPagination;
   paginateInvoices: InvoicePagination;
   countUnpaidInvoices: Scalars['Int'];
+  paginateDeletedInvoices: InvoicePagination;
   methods: Array<Method>;
   findExistingBatch?: Maybe<Batch>;
   paginateDeletedBatches: BatchPaginationOutput;
   countStockMovements: Scalars['Float'];
   paginateSales: SalePagination;
   count2LatestWeekSales: Count2LatestWeekSales;
-  paginateDeletedProvider: SalePagination;
+  paginateDeletedSales: SalePagination;
   findSuggestedPatients: Array<Patient>;
   paginatePatients: PaginatePatientOutput;
   paginatePatientSales: PaginatePatientSalesOutput;
@@ -910,18 +947,23 @@ export type QueryFindOneArticleArgs = {
 };
 
 
+export type QueryPaginateDeletedArticlesArgs = {
+  input: PaginationInput;
+};
+
+
 export type QueryPaginateStockMovementArgs = {
   input: PaginateStockMovementInput;
 };
 
 
-export type QueryPaginateDeletedStockMovementsArgs = {
-  input: PaginationInput;
+export type QueryPaginateInvoicesArgs = {
+  paginationInput: PaginationInput;
 };
 
 
-export type QueryPaginateInvoicesArgs = {
-  paginationInput: PaginationInput;
+export type QueryPaginateDeletedInvoicesArgs = {
+  input: PaginationInput;
 };
 
 
@@ -945,7 +987,7 @@ export type QueryPaginateSalesArgs = {
 };
 
 
-export type QueryPaginateDeletedProviderArgs = {
+export type QueryPaginateDeletedSalesArgs = {
   input: PaginationInput;
 };
 

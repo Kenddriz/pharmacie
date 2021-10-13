@@ -3,17 +3,22 @@ import {
   Count2LatestWeekSalesData,
   COUNT_2LATEST_WEEK_SALES,
   CREATE_SALE,
-  CreateSaleData,
-  PAGINATE_SALE,
-  PaginateSalesData,
-  SOFT_REMOVE_SALE,
-  SoftRemoveSaleData,
+  CreateSaleData, PAGINATE_DELETED_SALES,
+  PAGINATE_SALE, PaginateDeletedSalesData,
+  PaginateSalesData, REMOVE_SALE, RemoveSaleData, RESTORE_SALE, RestoreSaleData,
+  SOFT_REMOVE_SALE, SoftRemoveSaleData,
 } from './sale.sdl';
 import {
-  MutationCreateSaleArgs, MutationSoftRemoveSaleArgs,
-  PaginationInput, PrescriptionInput,
-  QueryPaginateCommandsArgs,
-  Sale, SaleLineInput,
+  MutationCreateSaleArgs,
+  MutationRemoveSaleArgs,
+  MutationRestoreSaleArgs,
+  MutationSoftRemoveSaleArgs,
+  PaginationInput,
+  PrescriptionInput,
+  QueryPaginateDeletedSalesArgs,
+  QueryPaginateSalesArgs,
+  Sale,
+  SaleLineInput,
 } from '../types';
 import { Loading } from 'quasar';
 import { computed, reactive, ref } from 'vue';
@@ -85,7 +90,7 @@ export const usePaginateSales = () => {
 
   const { result, loading: psLoading } = useQuery<
     PaginateSalesData,
-    QueryPaginateCommandsArgs
+    QueryPaginateSalesArgs
     >(PAGINATE_SALE, { paginationInput });
 
   const sales = useResult(result, InitialPagination, res => {
@@ -109,31 +114,6 @@ export const usePaginateSales = () => {
     selectSale,
     paginationInput
   }
-}
-export const useSoftRemoveSale = () => {
-  const { mutate, loading: srsLoading } = useMutation<
-    SoftRemoveSaleData,
-    MutationSoftRemoveSaleArgs
-    >(SOFT_REMOVE_SALE);
-  function softRemoveSale(id: number) {
-    removeDialog(() => void mutate({id}, {
-      update(cache, { data }) {
-        if(data?.softRemoveSale) {
-          cache.modify({
-            fields: {
-              paginateSales(existingRef: any, {readField, toReference}){
-                return deletePaginationCache(id, existingRef, readField, toReference);
-              },
-              paginatePatientSales(existingRef: any, {readField, toReference}) {
-                return deletePaginationCache(id, existingRef, readField, toReference);
-              }
-            }
-          })
-        }
-      }
-    }))
-  }
-  return { softRemoveSale, srsLoading }
 }
 type Serie = {
   data: number[];
@@ -218,4 +198,118 @@ export const useCount2LatestWeekSales = () => {
     return { salesOptions, salesSeries }
   })
   return { loading, salesData }
+}
+
+export const usePaginateDeletedSales = () => {
+  const input = reactive<PaginationInput>({
+    page: 1,
+    limit : 5
+  });
+  const { loading, result } = useQuery<
+    PaginateDeletedSalesData,
+    QueryPaginateDeletedSalesArgs
+    >(PAGINATE_DELETED_SALES, { input });
+  const sale = useResult(result, InitialPagination, pick => pick?.paginateDeletedSales||InitialPagination)
+  return {
+    input,
+    loading,
+    sale
+  }
+}
+export const useSoftRemoveSale = () => {
+  const { onDone, mutate } = useMutation<
+    SoftRemoveSaleData,
+    MutationSoftRemoveSaleArgs
+    >(SOFT_REMOVE_SALE);
+  onDone(() => {
+    Loading.hide();
+    notify('suppression avec succès !');
+  });
+  function softRemoveSale(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Suppression ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.softRemoveSale) {
+            cache.modify({
+              fields: {
+                paginateSales(existingRef: any, {readField, toReference}){
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                },
+                paginatePatientSales(existingRef: any, {readField, toReference}) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                },
+                paginateDeletedSales(existingRef: any, { readField }) {
+                  return addPaginationCache(data.softRemoveSale, existingRef, readField);
+                }
+              }
+            })
+          }
+        }
+      })
+    })
+  }
+  return { softRemoveSale }
+}
+export const useRestoreSale = () => {
+  const { mutate, onDone } = useMutation<
+    RestoreSaleData,
+    MutationRestoreSaleArgs
+    >(RESTORE_SALE);
+  onDone(({ data }) => {
+    Loading.hide();
+    notify(data?.restoreSale ? 'Restauration avec succès !' : 'Echec de restauration');
+  });
+  function restore(id: number) {
+    Loading.show({ message: 'Restauration ...'});
+    void mutate({ id }, {
+      update: (cache, { data }) => {
+        if(data?.restoreSale) {
+          cache.modify({
+            fields: {
+              paginateSales(existingRef: any, {toReference}) {
+                return addPaginationCache(data.restoreSale, existingRef, toReference);
+              },
+              paginatePatientSales(existingRef: any, {toReference}) {
+                return addPaginationCache(data.restoreSale, existingRef, toReference);
+              },
+              paginateDeletedSales(existingRef: any, {readField, toReference}) {
+                return deletePaginationCache(id, existingRef, readField,  toReference);
+              }
+            }
+          })
+        }
+      }
+    })
+  }
+  return { restore }
+}
+export const useRemoveSale = () => {
+  const { onDone, mutate} = useMutation<
+    RemoveSaleData,
+    MutationRemoveSaleArgs
+    >(REMOVE_SALE);
+  onDone(() => {
+    Loading.hide();
+    notify('suppression avec succès !');
+  });
+  function remove(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Exécution de l\'opération ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.removeSale) {
+            cache.modify({
+              fields: {
+                paginateDeletedSales(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                }
+              }
+            })
+          }
+        }
+      })
+    }, 'removeForever')
+  }
+  return { remove }
 }

@@ -40,8 +40,8 @@
         icon="delete_forever"
         color="red"
         outline
-        label="Supprimer définitivement"
-        @click="deleteForeverArticle(article.id)"
+        label="Supprimer"
+        @click="softRemoveArticle(article.id)"
       />
     </q-card-section>
   </q-card>
@@ -50,13 +50,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { Article } from '../../graphql/types';
-import { useDeleteForeverArticle } from '../../graphql/article/article.service';
+import { useSoftRemoveArticle } from '../../graphql/article/article.service';
 import { getMedicineName } from '../../graphql/utils/utils';
 import MedicineList from '../medicine/MedicineList.vue';
 import ScrollArea from '../shared/ScrollArea.vue';
 
 export default defineComponent({
-  name: 'DeleteForeverArticle',
+  name: 'SoftRemoveArticle',
   components: { MedicineList, ScrollArea },
   props: {
     article: {
@@ -66,7 +66,7 @@ export default defineComponent({
   },
   setup(props) {
     return {
-      ...useDeleteForeverArticle(),
+      ...useSoftRemoveArticle(),
       getMedicineName,
       medicineCount: props.article?.medicines?.length
     }

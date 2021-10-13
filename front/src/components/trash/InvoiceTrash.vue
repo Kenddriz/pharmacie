@@ -3,25 +3,25 @@
     @click="show = true"
     label="Factures"
     :loading="loading"
-    :total="command.meta.totalItems"
+    :total="invoice.meta.totalItems"
   />
   <q-dialog full-width full-height v-model="show">
     <q-card square>
       <q-bar class="bg-teal-14 text-white">
-        <span style="font-size: 12px">Commandes supprimées({{command.meta.totalItems}})</span>
+        <span style="font-size: 12px">Factures supprimées({{invoice.meta.totalItems}})</span>
         <q-space />
         <q-btn v-close-popup flat dense icon="close" />
       </q-bar>
       <q-card-section style="height: calc(100% - 90px)" class="overflow-auto">
-        <q-list v-if="command.meta.totalPages">
-          <q-item v-for="item in command.items" :key="item.id">
+        <q-list v-if="invoice.meta.totalPages">
+          <q-item v-for="item in invoice.items" :key="item.id">
             <q-item-section>
-              <q-item-label>N°Commande</q-item-label>
-              <q-item-label caption>{{item.id}}</q-item-label>
+              <q-item-label>Ref Facture</q-item-label>
+              <q-item-label caption>{{item.reference}}</q-item-label>
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{item.provider.name}}</q-item-label>
-              <q-item-label caption>{{item.provider.address}}</q-item-label>
+              <q-item-label>Echéance</q-item-label>
+              <q-item-label caption>{{formatDate(item.createdAt, 'DATE_TIME')}}</q-item-label>
             </q-item-section>
             <q-item-section>
               <q-item-label>Date de création</q-item-label>
@@ -37,22 +37,17 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!command.meta.totalPages && !loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="invoice.meta.totalItems" :loading="loading" />
       </q-card-section>
       <q-separator />
       <q-card-actions align="center">
         <q-pagination
           :model-value="input.page"
           v-model="input.page"
-          :max="command.meta.totalPages"
+          :max="invoice.meta.totalPages"
           input
           input-class="text-orange-10"
-          :disable="command.meta.totalPages <= 1"
+          :disable="invoice.meta.totalPages <= 1"
         />
       </q-card-actions>
     </q-card>
@@ -62,19 +57,20 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import TrashCardBase from './TrashCardBase.vue';
-import { usePaginateDeletedCommands, useRemoveCommand, useRestoreCommand } from '../../graphql/command/command.service';
 import { formatDate } from '../../shared/date';
 import TrashOperations from './TrashOperations.vue';
+import { useRestoreInvoice, usePaginateDeletedInvoices, useRemoveInvoice } from '../../graphql/invoice/invoice.service';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'InvoiceTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),
-      ...usePaginateDeletedCommands(),
-      ...useRestoreCommand(),
-      ...useRemoveCommand(),
+      ...usePaginateDeletedInvoices(),
+      ...useRestoreInvoice(),
+      ...useRemoveInvoice(),
       formatDate
     }
   }

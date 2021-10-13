@@ -33,12 +33,7 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!medicines.meta.itemCount && !pmLoading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="pmLoading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="medicines.meta.totalItems" :loading="pmLoading" />
       </q-card-section>
       <q-separator />
       <q-card-actions align="center">
@@ -66,10 +61,11 @@ import {
 } from '../../graphql/medicine/medicine.service';
 import { formatDate } from '../../shared/date';
 import { getMedicineName } from '../../graphql/utils/utils';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'MedicineTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),

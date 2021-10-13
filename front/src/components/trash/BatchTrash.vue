@@ -34,12 +34,7 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!batch.meta.itemCount && !loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="batch.meta.totalItems" :loading="loading" />
       </q-card-section>
       <q-separator />
       <q-card-actions align="center">
@@ -62,10 +57,11 @@ import TrashCardBase from './TrashCardBase.vue';
 import { usePaginateDeletedBatches, useRemoveBatch, useRestoreBatch } from '../../graphql/batch/batch.service';
 import TrashOperations from './TrashOperations.vue';
 import { formatDate } from '../../shared/date';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'BatchTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),

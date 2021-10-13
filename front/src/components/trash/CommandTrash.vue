@@ -37,12 +37,7 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!command.meta.totalPages && !loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="command.meta.totalItems" :loading="loading" />
       </q-card-section>
       <q-separator />
       <q-card-actions align="center">
@@ -65,10 +60,11 @@ import TrashCardBase from './TrashCardBase.vue';
 import { usePaginateDeletedCommands, useRemoveCommand, useRestoreCommand } from '../../graphql/command/command.service';
 import { formatDate } from '../../shared/date';
 import TrashOperations from './TrashOperations.vue';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'CommandTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),

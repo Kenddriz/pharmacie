@@ -6,6 +6,7 @@
     icon-right="expand_more"
     no-caps
     text-color="text-blue-grey-14"
+    style="font-size: 12px"
   >
     <q-menu ref="uc">
       <q-list dense padding>

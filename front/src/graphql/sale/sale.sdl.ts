@@ -20,7 +20,6 @@ export const CREATE_SALE = gql`
     }
   }
 `;
-
 export type PaginateSalesData = {
   paginateSales: SalePagination
 }
@@ -35,19 +34,9 @@ export const PAGINATE_SALE = gql`
       }
     }
 `;
-
-export type SoftRemoveSaleData = {
-  softRemoveSale: boolean;
-}
-export const SOFT_REMOVE_SALE = gql`
-    mutation SoftRemoveSale($id: Int!) {
-      softRemoveSale(id: $id)
-    }
-`;
 export type Count2LatestWeekSalesData = {
   count2LatestWeekSales: Count2LatestWeekSales
 }
-
 export const COUNT_2LATEST_WEEK_SALES = gql`
     query Count2LatestWeekSales {
       count2LatestWeekSales {
@@ -55,4 +44,45 @@ export const COUNT_2LATEST_WEEK_SALES = gql`
         last { day count }
       }
     }
+`;
+
+export type PaginateDeletedSalesData = {
+  paginateDeletedSales: SalePagination;
+}
+export const PAGINATE_DELETED_SALES = gql`
+  query PaginateDeletedSales($input: PaginationInput!){
+    paginateDeletedSales(input: $input) {
+      items{ id createdAt archivedAt}
+      ${PAGINATION_META}
+    }
+  }
+`;
+export type SoftRemoveSaleData = {
+  softRemoveSale: Sale;
+}
+export const SOFT_REMOVE_SALE = gql`
+  mutation SoftRemoveSale($id: Int!){
+    softRemoveSale(id: $id) {
+      id createdAt archivedAt
+    }
+  }
+`;
+export type RestoreSaleData = {
+  restoreSale: Sale;
+}
+export const RESTORE_SALE = gql`
+  mutation RestoreSale($id: Int!) {
+    restoreSale(id: $id){
+      ${SALE_FIELDS}
+      ${STOCK_MVT_DTO}
+    }
+  }
+`;
+export type RemoveSaleData = {
+  removeSale: boolean;
+}
+export const REMOVE_SALE = gql`
+  mutation RemoveSale($id: Int!) {
+    removeSale(id: $id)
+  }
 `;

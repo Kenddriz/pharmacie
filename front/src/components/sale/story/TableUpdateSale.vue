@@ -90,7 +90,6 @@
       color="red"
       label="Supprimer cette vente"
       @click="softRemoveSale(sale.id)"
-      :loading="srsLoading"
       v-close-popup
     />
   </q-card-actions>

@@ -44,8 +44,8 @@ export const INVOICE_PARAMS = `
   deliveryDate
   reference
   expense
+  createdAt
 `;
-
 export const STOCK_MVT_DTO = `
   stockMovements {
     ${STOCK_MVT_FIELDS}
@@ -64,7 +64,6 @@ export const INVOICE_FIELDS = `
     ${STOCK_MVT_DTO}
     createdAt
 `;
-
 export const CREATE_INVOICE = gql`
   mutation CreateInvoice($input: CreateInvoiceInput!){
     createInvoice(input: $input) {
@@ -73,7 +72,6 @@ export const CREATE_INVOICE = gql`
     }
   }
 `;
-
 export const PAGINATE_INVOICES = gql`
  query PaginateInvoices($paginationInput: PaginationInput!) {
   paginateInvoices(paginationInput: $paginationInput) {
@@ -88,13 +86,55 @@ export const PAGINATE_INVOICES = gql`
   }
  }
 `
-
 export type UpdateInvoiceData = {
   updateInvoice: Invoice
 }
-
 export const UPDATE_INVOICE = gql`
   mutation updateInvoice($input:UpdateInvoiceInput!){
     updateInvoice(input:$input){${INVOICE_PARAMS}}
+  }
+`;
+
+export type PaginateDeletedInvoicesData = {
+  paginateDeletedInvoices: InvoicePagination;
+}
+export const PAGINATE_DELETED_INVOICES = gql`
+  query PaginateDeletedInvoices($input: PaginationInput!){
+    paginateDeletedInvoices(input: $input) {
+      items{ ${INVOICE_PARAMS} archivedAt}
+      ${PAGINATION_META}
+    }
+  }
+`;
+export type SoftRemoveInvoiceData = {
+  softRemoveInvoice: Invoice;
+}
+export const SOFT_REMOVE_INVOICE = gql`
+  mutation SoftRemoveInvoice($id: Int!){
+    softRemoveInvoice(id: $id) {
+      ${INVOICE_PARAMS} archivedAt
+    }
+  }
+`;
+export type RestoreInvoiceData = {
+  restoreInvoice: Invoice;
+}
+export const RESTORE_INVOICE = gql`
+  mutation RestoreInvoice($id: Int!) {
+    restoreInvoice(id: $id){
+      ${INVOICE_FIELDS}
+      command{
+        ${COMMAND_FIELDS}
+        provider{${PROVIDER_FIELDS}}
+      }
+    }
+  }
+`;
+export type RemoveInvoiceData = {
+  removeInvoice: boolean;
+}
+export const REMOVE_INVOICE = gql`
+  mutation RemoveInvoice($id: Int!) {
+    removeInvoice(id: $id)
   }
 `;

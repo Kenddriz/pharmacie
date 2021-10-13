@@ -4,7 +4,6 @@ import { MEDICINE_FIELDS, MEDICINE_PARAMS } from '../medicine/medicine.sdl';
 import { PAGINATION_META } from '../utils/pagination';
 import { BATCH_FIELDS } from '../batch/batch.sdl';
 
-
 export type ArticlePaginationData = {
   paginateArticles: ArticlePagination
 }
@@ -13,6 +12,7 @@ export const ARTICLE_PARAMS = `
   id
   dci
   commercialName
+  createdAt
 `;
 
 export const PAGINATE_ARTICLE = (withBatches: boolean) => gql`
@@ -67,11 +67,45 @@ export const FIND_ARTICLE_SALE = gql`
   }
 `;
 
-export type DeleteForeverArticleData = {
-  deleteForeverArticle: boolean;
+export type PaginateDeletedArticlesData = {
+  paginateDeletedArticles: ArticlePagination;
 }
-export const DELETE_FOREVER_ARTICLE = gql`
-  mutation DeleteForeverArticle($id: Int!) {
-    deleteForeverArticle(id: $id)
+export const PAGINATE_DELETED_ARTICLES = gql`
+  query PaginateDeletedCommands($input: PaginationInput!){
+    paginateDeletedArticles(input: $input) {
+      items{${ARTICLE_PARAMS} archivedAt}
+      ${PAGINATION_META}
+    }
+  }
+`;
+export type SoftRemoveArticleData = {
+  softRemoveArticle: Article;
+}
+export const SOFT_REMOVE_ARTICLE = gql`
+  mutation SoftRemoveArticle($id: Int!){
+    softRemoveArticle(id: $id) {
+      ${ARTICLE_PARAMS} archivedAt
+    }
+  }
+`;
+export type RestoreArticleData = {
+  restoreArticle: Article;
+}
+export const RESTORE_ARTICLE = gql`
+  mutation RestoreArticle($id: Int!) {
+    restoreArticle(id: $id){
+      ${ARTICLE_PARAMS}
+      medicines{
+        ${MEDICINE_PARAMS}
+      }
+    }
+  }
+`;
+export type RemoveArticleData = {
+  removeArticle: boolean;
+}
+export const REMOVE_ARTICLE = gql`
+  mutation RemoveArticle($id: Int!) {
+    removeArticle(id: $id)
   }
 `;

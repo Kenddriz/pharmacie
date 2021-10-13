@@ -34,12 +34,7 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!providers.meta.totalPages && !ppLoading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="ppLoading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="providers.meta.totalItems" :loading="ppLoading" />
       </q-card-section>
       <q-separator />
       <q-card-section>
@@ -65,10 +60,11 @@ import {
   useRestoreProvider,
 } from '../../graphql/provider/provider.service';
 import { formatDate } from '../../shared/date';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'ProviderTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),

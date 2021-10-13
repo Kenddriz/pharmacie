@@ -33,12 +33,7 @@
             />
           </q-item>
         </q-list>
-        <q-inner-loading :showing="!list.length && !loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
-        <q-inner-loading :showing="loading">
-          <q-icon name="person" size="80px" />
-        </q-inner-loading>
+        <NoTrashData :total-items="list.length" :loading="loading" />
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -54,10 +49,11 @@ import {
   useRestorePackaging,
 } from '../../graphql/packaging/packaging.service';
 import { formatDate } from '../../shared/date';
+import NoTrashData from './NoTrashData.vue';
 
 export default defineComponent({
   name: 'ProviderTrash',
-  components: { TrashCardBase, TrashOperations },
+  components: { TrashCardBase, TrashOperations, NoTrashData },
   setup() {
     return {
       show: ref<boolean>(false),

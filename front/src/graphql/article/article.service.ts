@@ -1,17 +1,32 @@
 import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
-  ArticlePaginationData, DELETE_FOREVER_ARTICLE, DeleteForeverArticleData, FIND_ARTICLE_SALE,
-  FIND_ONE_ARTICLE, FindOneArticleData,
+  ArticlePaginationData,
+  FIND_ARTICLE_SALE,
+  FIND_ONE_ARTICLE,
+  FindOneArticleData,
   PAGINATE_ARTICLE,
+  PAGINATE_DELETED_ARTICLES,
+  PaginateDeletedArticlesData, REMOVE_ARTICLE,
+  RemoveArticleData,
+  RESTORE_ARTICLE,
+  RestoreArticleData,
   SAVE_ARTICLE,
   SaveArticleData,
+  SOFT_REMOVE_ARTICLE,
+  SoftRemoveArticleData,
 } from './article.sdl';
 import {
-  Article, MutationDeleteForeverArticleArgs,
-  MutationSaveArticleArgs, Packaging,
-  PaginationInput, QueryFindOneArticleArgs,
+  Article,
+  MutationSaveArticleArgs,
+  Packaging,
+  PaginationInput,
+  QueryFindOneArticleArgs,
   QueryPaginateArticlesArgs,
   SaveArticleInput,
+  QueryPaginateDeletedArticlesArgs,
+  MutationSoftRemoveArticleArgs,
+  MutationRestoreArticleArgs,
+  MutationRemoveArticleArgs,
 } from '../types';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
@@ -162,25 +177,104 @@ export const useFindOneArticle = () => {
     keyword
   }
 }
- export const useDeleteForeverArticle = () => {
-  const { mutate, onDone } = useMutation<
-    DeleteForeverArticleData,
-    MutationDeleteForeverArticleArgs
-    >(DELETE_FOREVER_ARTICLE);
+
+export const usePaginateDeletedArticles = () => {
+  const input = reactive<PaginationInput>({
+    page: 1,
+    limit : 5
+  });
+  const { loading, result } = useQuery<
+    PaginateDeletedArticlesData,
+    QueryPaginateDeletedArticlesArgs
+    >(PAGINATE_DELETED_ARTICLES, { input });
+  const article = useResult(result, InitialPagination, pick => pick?.paginateDeletedArticles||InitialPagination)
+  return {
+    input,
+    loading,
+    article
+  }
+}
+export const useSoftRemoveArticle = () => {
+  const { onDone, mutate } = useMutation<
+    SoftRemoveArticleData,
+    MutationSoftRemoveArticleArgs
+    >(SOFT_REMOVE_ARTICLE);
   onDone(() => {
     Loading.hide();
-    notify('Suppression avec succès !');
+    notify('suppression avec succès !');
   });
-  function deleteForeverArticle(id: number) {
+  function softRemoveArticle(id: number) {
     removeDialog(() => {
       Loading.show({ message: 'Suppression ...' });
       void mutate({ id }, {
-        update(cache, { data }){
-          if(data?.deleteForeverArticle) {
+        update(cache, { data }) {
+          if(data?.softRemoveArticle) {
             cache.modify({
               fields: {
-                paginateArticles(existing: any, {readField, toReference}){
-                  return deletePaginationCache(id, existing, readField, toReference);
+                paginateArticles(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
+                },
+                paginateDeletedArticles(existingRef: any, { readField }) {
+                  return addPaginationCache(data.softRemoveArticle, existingRef, readField);
+                }
+              }
+            })
+          }
+        }
+      })
+    })
+  }
+  return { softRemoveArticle }
+}
+export const useRestoreArticle = () => {
+  const { mutate, onDone } = useMutation<
+    RestoreArticleData,
+    MutationRestoreArticleArgs
+    >(RESTORE_ARTICLE);
+  onDone(({ data }) => {
+    Loading.hide();
+    notify(data?.restoreArticle ? 'Restauration avec succès !' : 'Echec de restauration');
+  });
+  function restore(id: number) {
+    Loading.show({ message: 'Restauration ...'});
+    void mutate({ id }, {
+      update: (cache, { data }) => {
+        if(data?.restoreArticle) {
+          cache.modify({
+            fields: {
+              paginateArticles(existing: any, {toReference}) {
+                return addPaginationCache(data.restoreArticle, existing, toReference);
+              },
+              paginateDeletedArticles(existing: any, {readField, toReference}) {
+                return deletePaginationCache(id, existing, readField,  toReference);
+              }
+            }
+          })
+        }
+      }
+    })
+  }
+  return { restore }
+}
+export const useRemoveArticle = () => {
+  const { onDone, mutate} = useMutation<
+    RemoveArticleData,
+    MutationRemoveArticleArgs
+    >(REMOVE_ARTICLE);
+  onDone(() => {
+    Loading.hide();
+    notify('suppression avec succès !');
+  });
+  function remove(id: number) {
+    removeDialog(() => {
+      Loading.show({ message: 'Exécution de l\'opération ...' });
+      void mutate({ id }, {
+        update(cache, { data }) {
+          if(data?.removeArticle) {
+            cache.modify({
+              fields: {
+                paginateDeletedArticles(existingRef: any, { readField, toReference }) {
+                  return deletePaginationCache(id, existingRef, readField, toReference);
                 }
               }
             })
@@ -189,5 +283,5 @@ export const useFindOneArticle = () => {
       })
     }, 'removeForever')
   }
-  return { deleteForeverArticle }
- }
+  return { remove }
+}
