@@ -24,14 +24,14 @@ export default defineComponent({
   box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.25), inset -2px -2px -2px rgba(0, 0, 0, 0.25);
 }
 body {
-  font-family: Lato, sans-serif !important;
+  font-family: Poppins, sans-serif !important;
   overflow: hidden;
   font-size: 12px;
   color: #455a64;
 }
 .sticky-header-table {
   .q-table__top, .q-table__bottom, thead tr:first-child th {
-    background-color: #c1f4cd;
+    background-color: white;
   }
   thead tr th {
     position: sticky;

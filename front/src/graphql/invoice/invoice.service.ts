@@ -2,7 +2,6 @@ import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import { reactive, ref } from 'vue';
 import {
   CreateInvoiceInput,
-  Invoice,
   MutationCreateInvoiceArgs,
   MutationRemoveInvoiceArgs,
   MutationRestoreInvoiceArgs,
@@ -29,42 +28,33 @@ import {
   UpdateInvoiceData,
 } from './incoice.sdl';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
-import { cloneDeep, removeDialog } from '../utils/utils';
+import { removeDialog } from '../utils/utils';
 import { notify } from '../../shared/notification';
 import { Loading } from 'quasar';
 
-export const usePaginateInvoices = () => {
+/**args
+ * withSales: fetch movements of a batch
+ * **/
+export const usePaginateInvoices = (withSales: boolean) => {
   const paginationInput = reactive<PaginationInput>({
     page: 1,
     limit: Math.ceil((screen.height - 250)/50),
     keyword: ''
   });
-  const selectedInvoice = ref<Invoice[]>([]);
-  const setSelectedInvoice = (index: number) => {
-    Object.assign(selectedInvoice.value[0], invoices.value.items[index]);
-  }
-  const { result, loading: paginateLoading, refetch } = useQuery<
+  const { result, loading, refetch } = useQuery<
     PaginateInvoicesData,
     QueryPaginateCommandsArgs
-    >(PAGINATE_INVOICES, { paginationInput: { ...paginationInput } });
-  const invoices = useResult(result, InitialPagination, res => {
-    if(res?.paginateInvoices) {
-      const id = selectedInvoice.value[0]?.id;
-      selectedInvoice.value.length = 0;
-      const find = res.paginateInvoices.items.find(item => item.id === id)||res.paginateInvoices.items[0];
-      if(find)selectedInvoice.value = [cloneDeep(find)];
-      return res.paginateInvoices;
-    }
-    return InitialPagination;
-  });
-  function findInvoices() { void refetch({ paginationInput })}
+    >(PAGINATE_INVOICES(withSales), { paginationInput: { ...paginationInput } });
+  const invoices = useResult(result, InitialPagination, res => res?.paginateInvoices||InitialPagination);
+  function findInvoices() {
+    loading.value = true;
+    refetch({ paginationInput })?.finally(() => loading.value = false);
+  }
   return {
-    invoices,
-    paginateLoading,
-    selectedInvoice,
-    setSelectedInvoice,
     findInvoices,
-    paginationInput
+    paginationInput,
+    loading,
+    invoices
   }
 }
 export const useCreateInvoice = () => {
@@ -141,7 +131,7 @@ export const useSoftRemoveInvoice = () => {
                 paginateInvoices(existingRef: any, {readField, toReference}){
                   return deletePaginationCache(id, existingRef, readField, toReference);
                 },
-                paginateDeletedSales(existingRef: any, { readField }) {
+                paginateDeletedInvoices(existingRef: any, { readField }) {
                   return addPaginationCache(data.softRemoveInvoice, existingRef, readField);
                 }
               }

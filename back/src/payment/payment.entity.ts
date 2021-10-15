@@ -46,7 +46,7 @@ export class Payment {
   @Column({ type: 'date' })
   date: string;
 
-  @Field()
+  @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamp' })
-  archivedAt: Date;
+  archivedAt?: Date;
 }

@@ -8,7 +8,6 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
-import { Batch } from '../batch/batch.entity';
 
 @Injectable()
 export class ProviderService {

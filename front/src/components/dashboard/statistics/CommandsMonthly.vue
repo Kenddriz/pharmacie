@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useCommandsMonthly } from '../../graphql/command/command.service';
+import { useCommandsMonthly } from '../../../graphql/command/command.service';
 
 export default defineComponent({
   name: 'CommandsMonthly',

@@ -124,7 +124,7 @@
           :key="i"
           @click="setSelectedCmd(i); tab = 'update'"
           :active="cmd.id === selectedCmd[0].id"
-          :active-class="cmd.id === selectedCmd[0].id ? 'bg-brown-1' : ''"
+          active-class="bg-brown-1"
         >
           <q-item-section avatar>
             <q-avatar size="sm" color="primary" text-color="white">

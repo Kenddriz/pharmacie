@@ -1,21 +1,21 @@
 <template>
   <q-item-section side>
-    <q-btn round icon="more_vert" dense flat color="primary">
+    <q-btn round icon="more_vert" dense flat :text-color="color">
       <q-menu>
         <q-item @click="$emit('restore')" clickable v-close-popup>
           <q-item-section side>
-            <q-icon color="primary" name="restore_from_trash" />
+            <q-icon color="primary" :name="icons[0]" />
           </q-item-section>
           <q-item-section>
-            Restaurer
+            {{labels[0]}}
           </q-item-section>
         </q-item>
         <q-item @click="$emit('remove')" clickable v-close-popup>
           <q-item-section side>
-            <q-icon color="deep-orange" name="delete_forever" />
+            <q-icon color="deep-orange" :name="icons[1]" />
           </q-item-section>
           <q-item-section>
-            Supprimer
+            {{labels[1]}}
           </q-item-section>
         </q-item>
       </q-menu>
@@ -25,7 +25,21 @@
 
 <script>
 export default {
-  name: 'TrashOperations',
+  name: 'MenuOperations',
+  props: {
+    labels: {
+      type: Array,
+      default: () => (['Restaurer', 'Supprimer'])
+    },
+    icons: {
+      type: Array,
+      default: () => (['restore_from_trash', 'delete_forever'])
+    },
+    color: {
+      type: String,
+      default: 'primary'
+    }
+  },
   emits: ['remove', 'restore']
 };
 </script>

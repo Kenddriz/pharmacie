@@ -12,7 +12,7 @@ export const PAGINATE_COMMAND = gql`
     items{
       ${COMMAND_FIELDS}
       provider{${PROVIDER_FIELDS}}
-      invoice{${INVOICE_FIELDS}}
+      invoice{${INVOICE_FIELDS(false)}}
     }
     ${PAGINATION_META}
   }
@@ -26,7 +26,7 @@ export const CREATE_COMMAND = gql`
         createCommand(input: $input) {
           ${COMMAND_FIELDS}
           provider{${PROVIDER_FIELDS}}
-          invoice{${INVOICE_FIELDS}}
+          invoice{${INVOICE_FIELDS()}}
         }
     }
 `;
@@ -77,7 +77,7 @@ export const RESTORE_COMMAND = gql`
     restoreCommand(id: $id){
       ${COMMAND_FIELDS}
       provider{${PROVIDER_FIELDS}}
-      invoice{${INVOICE_FIELDS}}
+      invoice{${INVOICE_FIELDS()}}
     }
   }
 `;

@@ -58,13 +58,6 @@
   </div>
   <q-dialog v-model="dialog">
     <q-card>
-      <q-bar class="bg-primary text-white">
-        <div class="text-body2">Nouvelle sous-unité</div>
-        <q-space />
-        <q-btn dense size="md" flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-red">Fermer</q-tooltip>
-        </q-btn>
-      </q-bar>
       <PackagingForm @validate="addUnit($event)" />
     </q-card>
   </q-dialog>

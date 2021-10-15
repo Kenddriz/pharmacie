@@ -35,3 +35,11 @@ export const addPaginationCache = (data: any, existingRef: any, toReference: any
     items: [toReference(data), ...existingRef.items]
   }
 }
+
+export const emptyPaginationCache = (existingRef: any, toReference: any) => {
+  return {
+    ...existingRef,
+    meta: toReference({...InitialPagination.meta}),
+    items: []
+  }
+}

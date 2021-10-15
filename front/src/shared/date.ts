@@ -1,7 +1,7 @@
 import { date } from 'quasar';
 // destructuring to keep only what is needed
 const DATE_FORMATS = {
-  DATE_TIME: 'DD-MM-YYYY T HH:mm:ss',
+  DATE_TIME: 'DD-MM-YYYY à HH:mm:ss',
   DATE_ONLY: 'DD/MM/YYYY',
   TIME_ONLY: 'HH:mm:ss'
 };

@@ -1,3 +1,5 @@
+import { ref } from 'vue';
+
 export const pItems = [
   {
     label: 'Unités',
@@ -33,13 +35,14 @@ export const pItems = [
 
 export const sItems = [
   {
-    label: 'Tableau de board',
+    label: 'Résultats statistiques',
     icon: 'dashboard',
-    to: 'dashboard'
+    to: 'statistics'
   },
   {
-    label: 'Compte',
+    label: 'Revenu',
     icon: 'settings',
-    to: 'settings'
+    to: 'income'
   }
 ]
+export const otherLayoutTab = ref<string>('statistics');

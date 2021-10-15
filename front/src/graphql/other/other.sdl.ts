@@ -21,3 +21,12 @@ export const COUNTER = gql`
       countUnpaidInvoices
     }
 `;
+
+export type RemoveAllArchivedData = {
+  removeAllArchived: number
+}
+export const REMOVE_ALL_ARCHIVED = gql`
+    mutation RemoveAllArchived($repo: String!) {
+      removeAllArchived(repo: $repo)
+    }
+`;

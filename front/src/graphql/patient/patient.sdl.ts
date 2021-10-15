@@ -35,7 +35,7 @@ export const PAGINATE_PATIENT_SALES = gql`
     paginatePatientSales(input: $input) {
       items{
         ${SALE_FIELDS}
-        ${STOCK_MVT_DTO}
+        ${STOCK_MVT_DTO()}
       }
       ${PAGINATION_META}
     }

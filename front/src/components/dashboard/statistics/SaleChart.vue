@@ -17,7 +17,7 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue'
-  import { useCount2LatestWeekSales } from '../../graphql/sale/sale.service';
+  import { useCount2LatestWeekSales } from '../../../graphql/sale/sale.service';
   export default defineComponent({
     name: 'SaleChart',
     setup() {

@@ -138,9 +138,11 @@ export class InvoiceResolver {
   async restoreInvoice(@Args({ name: 'id', type: () => Int }) id: number) {
     const restored = await this.invoiceService.restore(id);
     if (restored) {
+      const invoice = await this.invoiceService.findOneById(id);
       await this.stmS.restoreSoftDeleted('invoiceId', id);
-      await this.paymentService.restoreSoftDeleted(id);
+      await this.paymentService.restore(invoice.paymentId);
+      return invoice;
     }
-    return this.invoiceService.findOneById(id);
+    return null;
   }
 }

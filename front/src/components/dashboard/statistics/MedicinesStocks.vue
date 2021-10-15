@@ -66,10 +66,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { usePaginateArticle } from '../../graphql/article/article.service';
-import SubdivideList from '../packaging/SubdivideList.vue';
-import Divider from '../shared/Divider.vue';
-import ScrollArea from '../shared/ScrollArea.vue';
+import { usePaginateArticle } from '../../../graphql/article/article.service';
+import SubdivideList from '../../packaging/SubdivideList.vue';
+import Divider from '../../shared/Divider.vue';
+import ScrollArea from '../../shared/ScrollArea.vue';
 
 export default defineComponent({
   name: 'MedicinesStocks',

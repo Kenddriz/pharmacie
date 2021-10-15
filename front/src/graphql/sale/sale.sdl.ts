@@ -16,7 +16,7 @@ export const CREATE_SALE = gql`
   mutation CreateSale($input: CreateSaleInput!) {
     createSale(input: $input) {
       ${SALE_FIELDS}
-      ${STOCK_MVT_DTO}
+      ${STOCK_MVT_DTO(false)}
     }
   }
 `;
@@ -28,7 +28,7 @@ export const PAGINATE_SALE = gql`
       paginateSales(paginationInput:$paginationInput) {
         items{
           ${SALE_FIELDS}
-          ${STOCK_MVT_DTO}
+          ${STOCK_MVT_DTO(false)}
         }
         ${PAGINATION_META}
       }
@@ -74,7 +74,7 @@ export const RESTORE_SALE = gql`
   mutation RestoreSale($id: Int!) {
     restoreSale(id: $id){
       ${SALE_FIELDS}
-      ${STOCK_MVT_DTO}
+      ${STOCK_MVT_DTO(false)}
     }
   }
 `;

@@ -48,7 +48,7 @@ export const useCreateMedicine = () => {
   })
   function createMedicine(articleId: number, form: MedicineFormInput) {
     Loading.show({
-      message: 'Exécution de l\opération ...'
+      message: 'Création ...'
     });
     void mutate({ input: { articleId, form } });
   }
@@ -68,6 +68,38 @@ export const useUpdateMedicine = () => {
     void mutate({ input: {id, form} });
   }
   return { updateMedicine }
+}
+
+export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string) => {
+  const input = reactive<FindByMeasureInput>({
+    measureId,
+    foreignKey,
+    page: 1,
+    limit: 5
+  });
+  const { loading, result } = useQuery<
+    FindMedicinesByMeasureData,
+    QueryFindMedicinesByMeasureArgs
+    >(FIND_MEDICINES_BY_MEASURE, { input }, { fetchPolicy: 'no-cache' });
+  const medicines = useResult<
+    FindMedicinesByMeasureData|undefined,
+    MedicinePaginationOutput,
+    MedicinePaginationOutput
+    >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
+  return { medicines, loading, input }
+}
+export const useMostConsumedMedicines = () => {
+  const year = ref<number>(new Date().getFullYear());
+  const { loading, result } = useQuery<
+    MostConsumedMedicinesData,
+    QueryMostConsumedMedicinesArgs
+    >(MOST_CONSUMED_MEDICINES, { year: year.value }, { fetchPolicy: 'no-cache' });
+  const consumed = useResult(result, [], pick => pick?.mostConsumedMedicines);
+  return {
+    loading,
+    consumed,
+    year
+  }
 }
 
 export const usePaginateDeletedMedicines = () => {
@@ -171,37 +203,5 @@ export const useRestoreMedicine = () => {
     })
   }
   return { restore }
-}
-
-export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string) => {
-  const input = reactive<FindByMeasureInput>({
-    measureId,
-    foreignKey,
-    page: 1,
-    limit: 5
-  });
-  const { loading, result } = useQuery<
-    FindMedicinesByMeasureData,
-    QueryFindMedicinesByMeasureArgs
-    >(FIND_MEDICINES_BY_MEASURE, { input }, { fetchPolicy: 'no-cache' });
-  const medicines = useResult<
-    FindMedicinesByMeasureData|undefined,
-    MedicinePaginationOutput,
-    MedicinePaginationOutput
-    >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
-  return { medicines, loading, input }
-}
-export const useMostConsumedMedicines = () => {
-  const year = ref<number>(new Date().getFullYear());
-  const { loading, result } = useQuery<
-    MostConsumedMedicinesData,
-    QueryMostConsumedMedicinesArgs
-    >(MOST_CONSUMED_MEDICINES, { year: year.value }, { fetchPolicy: 'no-cache' });
-  const consumed = useResult(result, [], pick => pick?.mostConsumedMedicines);
-  return {
-    loading,
-    consumed,
-    year
-  }
 }
 

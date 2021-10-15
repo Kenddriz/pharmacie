@@ -17,12 +17,12 @@ export class PaymentService {
   async findOneById(id: number): Promise<Payment> {
     return this.repository.findOne(id);
   }
-  async restoreSoftDeleted(invoiceId: number): Promise<UpdateResult> {
+  async restore(id: number): Promise<UpdateResult> {
     return this.repository
       .createQueryBuilder()
       .update()
       .set({ archivedAt: null })
-      .where(`invoiceId = :invoiceId`, { invoiceId })
+      .where(`id = :id`, { id })
       .execute();
   }
 }

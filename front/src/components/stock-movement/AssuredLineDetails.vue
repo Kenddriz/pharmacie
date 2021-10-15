@@ -4,14 +4,14 @@
       group="group"
       :label="`Détails de la facture [${invoice.reference}]`"
       default-opened
-      header-class="text-subtitle1"
+      header-class="text-subtitle2"
     >
       <InvoiceDetails :invoice="invoice" />
     </q-expansion-item>
     <q-expansion-item
       group="group"
       :label="`Lignes livrées : ${invoice.stockMovements.length * 100/commandLines.length}%`"
-      header-class="text-subtitle1"
+      header-class="text-subtitle2"
     >
       <q-table
         flat

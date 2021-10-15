@@ -74,7 +74,6 @@ export const saleLineCost = (input: SaleLineInput|StockMovement): number => {
   c += (c * (input.vat / 100)) - (c * (input.discount/100));
   return c;
 }
-
 export const downloadPdf = (command: Command) => {
   const columns: string[]  = ['N°', 'Médicament', 'Quantité']
   const rows:string[][] = [];

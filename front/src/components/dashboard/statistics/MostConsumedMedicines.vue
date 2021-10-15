@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useMostConsumedMedicines } from '../../graphql/medicine/medicine.service';
-import { getMedicineName } from '../../graphql/utils/utils';
+import { useMostConsumedMedicines } from '../../../graphql/medicine/medicine.service';
+import { getMedicineName } from '../../../graphql/utils/utils';
 
 export default defineComponent({
   name: 'MostConsumedMedicines',

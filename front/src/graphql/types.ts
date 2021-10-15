@@ -331,6 +331,7 @@ export type MostConsumedMedicineOutput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  removeAllArchived: Scalars['Float'];
   createUser: User;
   updateUser: User;
   updatePassword?: Maybe<User>;
@@ -388,13 +389,18 @@ export type Mutation = {
   createSale: Sale;
   softRemoveSale?: Maybe<Sale>;
   removeSale: Scalars['Boolean'];
-  restoreSale?: Maybe<Command>;
+  restoreSale?: Maybe<Sale>;
   createPrescription: Sale;
   updatePrescription: Prescription;
   deletePrescription: Sale;
   updatePatient: Patient;
   removePatient: Patient;
   login: LoginDto;
+};
+
+
+export type MutationRemoveAllArchivedArgs = {
+  repo: Scalars['String'];
 };
 
 
@@ -774,7 +780,7 @@ export type Payment = {
   method: Method;
   invoice: Invoice;
   date: Scalars['String'];
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type PaymentFormInput = {
@@ -1012,7 +1018,7 @@ export type Sale = {
   createdAt: Scalars['DateTime'];
   prescription?: Maybe<Prescription>;
   stockMovements: Array<StockMovement>;
-  archivedAt: Scalars['DateTime'];
+  archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type SaleLineInput = {
@@ -1071,7 +1077,7 @@ export type StockMovement = {
   stock: Scalars['Float'];
   discount: Scalars['Float'];
   vat: Scalars['Float'];
-  purchasePrice: Scalars['Float'];
+  out: Array<StockMovement>;
 };
 
 export type StockMovementFormInput = {

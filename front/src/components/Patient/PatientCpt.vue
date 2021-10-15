@@ -1,5 +1,6 @@
 <template>
   <q-splitter
+    :model-value="splitterModel"
     v-model="splitterModel"
     style="height: 100%; max-height: 100%"
     before-class="q-px-sm"
@@ -110,28 +111,21 @@
           </q-item-section>
         </q-item>
       </q-list>
-      <div
-        v-if="!psLoading && !sale.items.length"
-        class="text-body1 row justify-center items-center"
-        style="height: 80%"
-      >
-        Aucune ordonnance trouvée
-      </div>
-      <div
-        style="position: absolute; bottom: 0; left: 0; right: 0"
-        class="q-py-sm flex flex-center"
-        v-if="sale.meta.totalPages > 1"
-      >
+      <NoData
+        :total-items="sale.items.length"
+        :loading="psLoading"
+        :sizes="[80, 150]"
+      />
+      <q-page-sticky position="bottom-right">
         <q-pagination
           outline
           :model-value="psInput.page"
           v-model="psInput.page"
           color="primary"
           :max="sale.meta.totalPages"
-          :max-pages="10"
-          :boundary-numbers="false"
+          input
         />
-      </div>
+      </q-page-sticky>
       <!--sale details-->
       <q-dialog v-model="sSale.show" full-width full-height ref="dialogRef">
         <q-card>
@@ -158,10 +152,11 @@ import { formatDate } from '../../shared/date';
 import { useQuasar } from 'quasar';
 import UpdatePatient from './UpdatePatient.vue';
 import TableUpdateSale from '../sale/story/TableUpdateSale.vue';
+import NoData from '../shared/NoData.vue';
 
 export default defineComponent({
   name: 'PatientCpt',
-  components:{ TableUpdateSale },
+  components:{ TableUpdateSale, NoData },
   setup () {
     const { dialog } = useQuasar();
     return {

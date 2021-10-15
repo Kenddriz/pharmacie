@@ -23,6 +23,7 @@ import { PatientModule } from './patient/patient.module';
 import { AuthModule } from './auth/auth.module';
 import { PrescriptionModule } from './prescription/prescription.module';
 import { FormModule } from './form/form.module';
+import { AppResolver } from './app.resolver';
 
 @Module({
   imports: [
@@ -57,6 +58,6 @@ import { FormModule } from './form/form.module';
     FormModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}

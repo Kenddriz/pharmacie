@@ -113,7 +113,7 @@
         icon="delete_forever"
         color="red"
         label="Supprimer cette commande"
-        class="col-12 col-md-3"
+        class="col-12 col-md-4"
         @click="softRemoveCommand(command.id)"
       />
     </q-card-actions>

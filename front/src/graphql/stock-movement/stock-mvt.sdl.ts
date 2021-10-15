@@ -92,7 +92,7 @@ export const ADD_SALE_LINES = gql`
     mutation AddSaleLines($input: AddSaleLineInput!) {
       addSaleLines(input: $input) {
         ${SALE_FIELDS}
-        ${STOCK_MVT_DTO}
+        ${STOCK_MVT_DTO(false)}
       }
     }
 `;

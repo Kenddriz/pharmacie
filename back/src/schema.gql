@@ -107,7 +107,7 @@ type Payment {
   method: Method!
   invoice: Invoice!
   date: String!
-  archivedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type Invoice {
@@ -133,7 +133,7 @@ type StockMovement {
   stock: Float!
   discount: Float!
   vat: Float!
-  purchasePrice: Float!
+  out: [StockMovement!]!
 }
 
 type Batch {
@@ -371,6 +371,7 @@ input PaginatePatientSalesInput {
 }
 
 type Mutation {
+  removeAllArchived(repo: String!): Float!
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
   updatePassword(input: UpdatePasswordInput!): User

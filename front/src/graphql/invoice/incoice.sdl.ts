@@ -46,9 +46,16 @@ export const INVOICE_PARAMS = `
   expense
   createdAt
 `;
-export const STOCK_MVT_DTO = `
+const OUT_MVT_FIELDS = `
+  out {
+    sale { id createdAt prescription {id } }
+    ${STOCK_MVT_FIELDS}
+  }
+`;
+export const STOCK_MVT_DTO = (out = false) => `
   stockMovements {
     ${STOCK_MVT_FIELDS}
+    ${out ? OUT_MVT_FIELDS : ''}
     batch {
       ${BATCH_FIELDS}
       medicine {
@@ -58,27 +65,28 @@ export const STOCK_MVT_DTO = `
     }
   }
 `;
-export const INVOICE_FIELDS = `
+
+export const INVOICE_FIELDS = (out = false) =>`
     ${INVOICE_PARAMS}
     payment{${PAYMENT_PARAMS}}
-    ${STOCK_MVT_DTO}
+    ${STOCK_MVT_DTO(out)}
     createdAt
 `;
 export const CREATE_INVOICE = gql`
   mutation CreateInvoice($input: CreateInvoiceInput!){
     createInvoice(input: $input) {
       id
-      invoice {${INVOICE_FIELDS}}
+      invoice {${INVOICE_FIELDS()}}
     }
   }
 `;
-export const PAGINATE_INVOICES = gql`
+export const PAGINATE_INVOICES = (out: boolean) => gql`
  query PaginateInvoices($paginationInput: PaginationInput!) {
   paginateInvoices(paginationInput: $paginationInput) {
     items{
-      ${INVOICE_FIELDS}
+      ${INVOICE_FIELDS(out)}
       command{
-        ${COMMAND_FIELDS}
+        ${out ? 'id' : COMMAND_FIELDS}
         provider{${PROVIDER_FIELDS}}
       }
     }
@@ -122,7 +130,7 @@ export type RestoreInvoiceData = {
 export const RESTORE_INVOICE = gql`
   mutation RestoreInvoice($id: Int!) {
     restoreInvoice(id: $id){
-      ${INVOICE_FIELDS}
+      ${INVOICE_FIELDS(false)}
       command{
         ${COMMAND_FIELDS}
         provider{${PROVIDER_FIELDS}}

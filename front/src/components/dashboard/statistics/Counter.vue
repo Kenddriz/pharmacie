@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useCounter } from '../../graphql/counter/counter.service';
+import { useCounter } from '../../../graphql/other/other.service';
 import Alert from './Alert.vue';
 
 export default defineComponent({

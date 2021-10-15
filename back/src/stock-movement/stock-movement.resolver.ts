@@ -159,4 +159,27 @@ export class StockMovementResolver {
     if (!stockMovement.saleId) return null;
     return this.saleService.findOneById(stockMovement.saleId);
   }
+  @ResolveField(() => [StockMovement])
+  async out(@Root() stockMovement: StockMovement): Promise<StockMovement[]> {
+    let soldQuantity = 0,
+      nextId = stockMovement.id;
+    const movements: StockMovement[] = [];
+    while (soldQuantity < stockMovement.quantity && nextId >= 0) {
+      const movement = await this.stmService.outingMovement(
+        nextId,
+        stockMovement.batchId,
+      );
+      if (movement) {
+        movements.push(movement);
+        nextId = movement.id;
+        soldQuantity += movement.quantity;
+      } else nextId = -1;
+    }
+    /** assure that sold quantity is <= bought quantity, remove exceeded quantity**/
+    if (soldQuantity > stockMovement.quantity) {
+      const delta = soldQuantity - stockMovement.quantity;
+      movements[movements.length - 1].quantity -= delta;
+    }
+    return movements;
+  }
 }

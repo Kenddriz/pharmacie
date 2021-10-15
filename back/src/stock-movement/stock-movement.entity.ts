@@ -65,8 +65,8 @@ export class StockMovement {
   @Column({ type: 'float', default: 0 })
   vat: number; /**purchase or sale vat variation**/
 
-  @Field()
-  purchasePrice: number; /**purchase or sale vat variation**/
+  @Field(() => [StockMovement])
+  out: StockMovement[]; /**purchase or sale vat variation**/
 
   @DeleteDateColumn({ type: 'timestamp' })
   archivedAt: Date;

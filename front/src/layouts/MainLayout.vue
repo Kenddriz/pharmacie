@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lhh lpR fff">
     <q-header>
-      <div class="row justify-between items-center">
+      <div class="row justify-between items-center q-pr-md">
         <q-tabs
           v-model="tab"
           no-caps

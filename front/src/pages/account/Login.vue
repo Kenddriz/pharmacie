@@ -1,5 +1,5 @@
 <template>
-  <div id="login-container">
+  <div id="login-container" class="text-blue-grey-14">
     <q-avatar
       size="150px"
       style="transform: translateY(50px); z-index: 1"
@@ -9,17 +9,16 @@
     </q-avatar>
     <q-card
       flat
-      class="login q-pa-lg bg-teal"
+      class="login q-pa-lg"
       style="transform: translateY(-30px);"
     >
-      <q-card-section class="text-white" align="center">
+      <q-card-section align="center">
         <h1 class="text-h4 q-mb-sm">AUTHENTIFICATION</h1>
         <div class="text-h6">Fary</div>
       </q-card-section>
       <q-card-section>
         <q-form @submit.prevent="submitLogin" class="q-gutter-lg">
           <q-input
-            dark
             outlined
             label="Nom d'utilisateur"
             v-model="input.username"
@@ -30,7 +29,6 @@
           </q-input>
 
           <q-input
-            dark
             outlined
             label="Mot de passe"
             v-model="input.password"
@@ -47,7 +45,7 @@
               no-caps
               rounded
               icon-right="login"
-              color="positive"
+              color="primary"
               type="submit"
               label="Se connecter"
             />
@@ -88,6 +86,6 @@
    box-shadow: 13px 13px 20px #cbced1;
  }
  .q-field__control {
-   color: white;
+   color: $primary!important;
  }
 </style>

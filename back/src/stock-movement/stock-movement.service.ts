@@ -85,19 +85,6 @@ export class StockMovementService {
       .where(`m.batchId = :batchId`, { batchId })
       .getCount();
   }
-  /**Marge**/
-  async marge(id: number, batchId: number, t0: number) {
-    /**purchase price will previous enter price**/
-    return this.repository
-      .createQueryBuilder('s')
-      .select(['SUM(s.q) as total'])
-      .where('s.saleId IS NOT NULL')
-      .andWhere(`s.batchId = :batchId`, { batchId })
-      .andWhere(`s.id > :id`, { id })
-      .having('total <= :t0', { t0 })
-      .orderBy('s.id', 'ASC')
-      .getRawMany();
-  }
   async restoreSoftDeleted(
     by: 'invoiceId' | 'saleId',
     id: number,
@@ -108,5 +95,19 @@ export class StockMovementService {
       .set({ archivedAt: null })
       .where(`${by} = :id`, { id })
       .execute();
+  }
+  /**get all lines until an entry spent**/
+  async outingMovement(
+    entryId: number,
+    batchId: number,
+  ): Promise<StockMovement> {
+    /**purchase price will previous enter price**/
+    return this.repository
+      .createQueryBuilder('stm')
+      .where(`stm.id > :entryId`, { entryId })
+      .andWhere('stm.batchId = :batchId', { batchId })
+      .andWhere('stm.saleId IS NOT NULL')
+      .orderBy('stm.id', 'ASC')
+      .getOne();
   }
 }

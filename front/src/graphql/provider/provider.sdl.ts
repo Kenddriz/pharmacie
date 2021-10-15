@@ -32,7 +32,7 @@ export const PROVIDER_COMMANDS = gql`
     providerCommands(input: $input){
       items{
         ${COMMAND_FIELDS}
-        invoice{${INVOICE_FIELDS}}
+        invoice{${INVOICE_FIELDS()}}
       }
       ${PAGINATION_META}
     }

@@ -1,102 +1,59 @@
 <template>
   <q-page class="row q-pa-sm text-blue-grey-14">
-    <q-card bordered flat square class="col-12 col-md-9 q-ma-none">
-      <ScrollArea class="q-pa-sm" :style="`height:${$q.screen.height - 100}px;`">
-        <PaymentMode />
-        <q-separator />
-        <AssuredLineDetails
-          v-if="selectedInvoice.length"
-          :command-lines="selectedInvoice[0].command.commandLines"
-          :invoice="selectedInvoice[0]"
-        />
-      </ScrollArea>
+    <q-card
+      bordered
+      flat square
+      class="col-12 col-md-9 q-pa-sm overflow-auto"
+      :style="`height:${$q.screen.height - 86}px;`"
+    >
+      <PaymentMode />
+      <q-separator />
+      <AssuredLineDetails
+        v-if="pInvoice.selected.length"
+        :command-lines="pInvoice.selected[0].command.commandLines"
+        :invoice="pInvoice.selected[0]"
+      />
+      <NoData
+        :sizes="[60, 150]"
+        :loading="pInvoice.loading"
+        :total-items="pInvoice.total"
+      />
     </q-card>
-    <div class="col-12 col-md-3">
-      <div class="flex flex-center q-pa-sm" style="border-bottom: 1px solid gainsboro">
-        <q-input
-          :model-value="paginationInput.keyword"
-          v-model="paginationInput.keyword"
-          dense
-          outlined
-          label="Référence de la facture"
-          @keyup.enter="findInvoices"
-        >
-          <template v-slot:after>
-            <q-btn
-              unelevated
-              outline
-              color="primary"
-              no-caps
-              label="Chercher"
-              icon="search"
-              @click="findInvoices"
-              :loading="paginateLoading"
-            />
-          </template>
-        </q-input>
-      </div>
-      <div class="text-h6 text-center">Liste de factures</div>
-      <q-list
-        ref="scrollTargetRef"
-        :style="`height: ${$q.screen.height - 250}px`"
-        class="scroll-y"
-        separator
-      >
-        <q-item
-          clickable
-          v-ripple
-          v-for="(invoice, i) in invoices.items"
-          :active="selectedInvoice[0].id === invoice.id"
-          active-class="bg-warning text-white"
-          :key="i"
-          @click="setSelectedInvoice(i)"
-        >
-          <q-item-section avatar>
-            <q-avatar size="sm" color="primary" text-color="white">
-              {{invoice.command.provider.name.charAt(0)}}
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>{{invoice.command.provider.name}}</q-item-section>
-          <q-item-section>{{invoice.reference}}</q-item-section>
-          <q-item-section side>
-            <q-item-label>
-              payée
-              <q-icon v-if="invoice.payment" size="md" color="primary" name="price_check" />
-              <q-icon v-else size="sm" color="positive" name="unpublished" />
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-      <div style="border-top: 1px solid gainsboro" class="q-mt-sm flex flex-center">
-        <q-pagination
-          flat
-          v-model="paginationInput.page"
-          color="primary"
-          :max="invoices.meta.totalPages"
-          :max-pages="6"
-          boundary-numbers
-          @update:model-value="findInvoices"
-        />
-      </div>
-    </div>
+    <InvoiceList
+      class="col-12 col-md-3"
+      v-model="pInvoice.selected"
+      show-menu-op
+      @remove="softRemoveInvoice"
+      v-model:total="pInvoice.total"
+      v-model:p-loading="pInvoice.loading"
+    />
   </q-page>
 </template>
 
 <script lang="ts">
 import PaymentMode from '../../components/method/Method.vue';
-import { defineComponent } from 'vue';
-import { usePaginateInvoices } from '../../graphql/invoice/invoice.service';
+import { defineComponent, reactive } from 'vue';
+import { useSoftRemoveInvoice } from '../../graphql/invoice/invoice.service';
+import { Invoice } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
-import ScrollArea from '../../components/shared/ScrollArea.vue';
 import AssuredLineDetails from '../../components/stock-movement/AssuredLineDetails.vue';
+import NoData from '../../components/shared/NoData.vue';
+import InvoiceList from '../../components/invoice/InvoiceList.vue';
+
+export type SelectedInvoice = {selected: Invoice[], loading: boolean, total: number}
 
 export default defineComponent({
   name: 'Invoice',
-  components: { PaymentMode, AssuredLineDetails, ScrollArea },
+  components: { PaymentMode, AssuredLineDetails, NoData, InvoiceList },
   setup() {
     return {
-      ...usePaginateInvoices(),
-      formatDate
+      ...useSoftRemoveInvoice(),
+      formatDate,
+      pInvoice: reactive<SelectedInvoice>({
+        selected: [],
+        loading: false,
+        total: 0
+      })
     }
   },
 });

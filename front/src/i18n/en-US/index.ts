@@ -16,7 +16,8 @@ export default {
   remove: {
     title: '<strong>Etes-vous sûr de supprimer cet élément ?</strong>',
     softRemove: 'Si vous le supprimer, vous pouvez toujours<br> le récupérer dans la corbeille.',
-    removeForever: 'Si vous le supprimer, il sera définitivement supprimé<br> et irrécupérable</br>.'
+    removeForever: 'Si vous le supprimer, il sera définitivement supprimé<br> et irrécupérable</br>.',
+    many: '<strong>Voulez-vous vraiment supprimer ces éléments de façon définitive ?</strong>'
   },
   local: {
     dateMask: '##/##/####',
@@ -44,5 +45,13 @@ export default {
   otherLayout: {
     dashboard: 'Résultats statistiques',
     trash: 'Eléments supprimés'
+  },
+  movement: {
+    quantity: 'Quantité',
+    price: 'Prix',
+    ht: 'HT',
+    vat: 'TVA',
+    discount: 'Remise',
+    ttc: 'TTC'
   }
 };
