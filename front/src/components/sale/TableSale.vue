@@ -114,12 +114,12 @@
   </q-markup-table>
   <q-avatar
     size="xs"
-    class="q-btn q-btn--round cursor-pointer shadow-10"
+    :class="`q-btn q-btn--round cursor-pointer shadow-10 ${fixedTool ? 'fixed' : 'absolute'}`"
     text-color="white"
     color="primary"
     v-touch-pan.prevent.mouse="move"
     v-ripple
-    :style="`position: absolute; bottom: 8px; right: 8px;${currentPos})`"
+    :style="`${currentPos}`"
   >
     <q-icon
       size="md"
@@ -134,17 +134,49 @@
       anchor="bottom left"
       self="bottom right"
     >
-      <SearchTool
-        @add-shop="addShop"
-        @individual-sale="handleIndividualSale"
-      />
+      <q-card
+        square
+        bordered
+        style="width: 700px;"
+      >
+        <q-card-section>
+          <q-input
+            outlined
+            label="Entrer le nom de l'article"
+            :model-value="keyword"
+            v-model="keyword"
+            dense
+            hide-bottom-space
+            @update:model-value="findArticle"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+            <template v-slot:after>
+              <q-btn dense v-close-popup icon="close" color="deep-orange" flat round />
+            </template>
+          </q-input>
+        </q-card-section>
+        <ScrollArea style="height: calc(86vh - 100px)" class="q-pa-sm">
+          <ArticleMedicinesBatches
+            v-if="article"
+            :article="article"
+            @add-shop="addShop"
+            @individual-sale="handleIndividualSale"
+          />
+          <NoData
+            :sizes="[100, 150]"
+            :loading="faLoading"
+            :total-items="article?.medicines?.length||0"
+          />
+        </ScrollArea>
+      </q-card>
     </q-menu>
   </q-avatar>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from 'vue';
-import SearchTool from './SearchTool.vue';
 import DiscountCalculator from './create/DiscountCalculator.vue';
 import CommonSaleHeader from './CommonSaleHeader.vue';
 import SubdivideList from '../packaging/SubdivideList.vue';
@@ -152,15 +184,21 @@ import SaleLine from './create/SaleLine.vue';
 import { Batch, SaleLineInput } from '../../graphql/types';
 import { useQuasar } from 'quasar';
 import { getMedicineName, movable, saleLineCost } from '../../graphql/utils/utils';
+import ArticleMedicinesBatches from './create/ArticleMedicinesBatches.vue';
+import ScrollArea from '../shared/ScrollArea.vue';
+import NoData from '../shared/NoData.vue';
+import { useFindOneArticle } from '../../graphql/article/article.service';
 
 export default defineComponent({
   name: 'TableSale',
   components: {
-    SearchTool,
     SaleLine,
     SubdivideList,
     DiscountCalculator,
-    CommonSaleHeader
+    CommonSaleHeader,
+    ArticleMedicinesBatches,
+    ScrollArea,
+    NoData
   },
   emits: ['sell'],
   props: {
@@ -172,6 +210,7 @@ export default defineComponent({
       type: Array as PropType<number[]>,
       default: () =>([])
     },
+    fixedTool: Boolean
   },
   setup(props) {
     const shop = ref<Batch[]>([]);
@@ -252,11 +291,22 @@ export default defineComponent({
       ...movable((ev: any) => {
         if(ev.isFirst !== true && !ev.isFinal && searchTool.value)
           searchTool.value = false;
-      })
+      }),
+      ...useFindOneArticle()
     }
   }
 });
 </script>
 
 <style lang="scss" scoped>
+  .fixed {
+    position: fixed;
+    bottom: 40px;
+    right: 12px;
+  }
+  .absolute {
+    position: absolute;
+    bottom: 18px;
+    right: 18px;
+  }
 </style>

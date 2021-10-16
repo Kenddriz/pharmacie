@@ -60,7 +60,7 @@ export default defineComponent({
     return {
       dialogRef,
       done,
-      maximized: ref<boolean>(false),
+      maximized: ref<boolean>(true),
       add: (saleLines: SaleLineInput[]) => {
         addSaleLines({ saleLines, saleId: props.saleId })
       }

@@ -160,8 +160,8 @@ export const useFindOneArticleForCommand = (defaultOption: FindOneArticleOption)
     model
   }
 }
-export const useFindOneArticle = () => {
-  const keyword = ref<string>('');
+export const useFindOneArticle = (model = '') => {
+  const keyword = ref<string>(model);
   const { loading: faLoading, result, load } = useLazyQuery<
     FindOneArticleData,
     QueryFindOneArticleArgs
@@ -169,7 +169,11 @@ export const useFindOneArticle = () => {
   function findArticle() {
     if(keyword.value) void load(FIND_ARTICLE_SALE,{keyword: keyword.value });
   }
-  const article = useResult(result, null, pick => pick?.findOneArticle);
+  const article = useResult<
+    FindOneArticleData|undefined,
+    Article|undefined,
+    Article|undefined
+    >(result, undefined, pick => pick?.findOneArticle);
   return {
     faLoading,
     findArticle,

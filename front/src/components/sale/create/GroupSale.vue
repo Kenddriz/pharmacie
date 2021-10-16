@@ -6,6 +6,7 @@
   <TableSale
     @sell="done = false; createSale($event)"
     :done="done"
+    fixed-tool
   />
 </template>
 
