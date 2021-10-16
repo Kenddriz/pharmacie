@@ -76,8 +76,10 @@
               <td :class="m > 0 ? 'text-positive' : 'text-red'">{{m}}</td>
             </tr>
             <tr class="q-tr--no-hover">
-              <td colspan="2" class="bordered-top text-orange" style="text-align: center!important;">
-                {{m >= 0 ? 'Bénéfice' : 'Perte'}}
+              <td colspan="2" class="bordered-top" style="text-align: center!important;">
+                <span v-if="m === 0" class="text-amber-10">Résultat nul</span>
+                <span v-if="m > 0" class="text-positive">Bénéfice</span>
+                <span v-else class="text-negative">Perte</span>
               </td>
             </tr>
           </template>

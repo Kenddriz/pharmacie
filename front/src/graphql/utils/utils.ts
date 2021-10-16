@@ -4,6 +4,7 @@ import { Command, Contact, Medicine, SaleLineInput, StockMovement, Unit } from '
 import moment from 'moment';
 import { jsPDF }  from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { computed, ref } from 'vue';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -103,4 +104,14 @@ export const downloadPdf = (command: Command) => {
     }
   });
   doc.save(command.provider.name + '.pdf');
+}
+export const movable = (callBack: any = undefined) => {
+  const pos = ref([0, 0]);
+  function move (ev: any) {
+    if(callBack)callBack(ev);
+    pos.value = [pos.value[0] + ev.delta.x, pos.value[1] + ev.delta.y];
+    console.log(ev);
+  }
+  const currentPos = computed(() => `transform:translate(${pos.value[0]}px,${pos.value[1]}px`);
+  return { currentPos, move }
 }

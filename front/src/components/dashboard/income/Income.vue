@@ -6,59 +6,47 @@
       v-model="pInvoice.selected"
       v-model:total="pInvoice.total"
       v-model:p-loading="pInvoice.loading"
-      @update:modelValue="selectedMovement = $event[0]?.stockMovements[0]"
+      @update:modelValue="detail.selected = $event[0]?.stockMovements[0]"
     />
-    <q-tab-panels
-      v-model="tab"
-      animated
-      class="col bordered-left"
-    >
-      <q-tab-panel name="resume" class="q-pt-sm">
-        <q-list v-if="pInvoice.selected.length">
-          <q-expansion-item
-            group="gain"
-            icon="explore"
-            label="Profit global"
-            default-opened
-            header-class="text-weight-bold"
-          >
-            <Gain :invoice="pInvoice.selected[0]" />
-          </q-expansion-item>
-          <q-expansion-item
-            group="gain"
-            icon="explore"
-            label="Profit individuel"
-            header-class="text-weight-bold"
-          >
-            <div class="flex flex-center q-gutter-x-sm q-pt-sm">
-              <MovementTable
-                v-for="(item, index) in pInvoice.selected[0].stockMovements"
-                :key="index"
-                :out-cost="linesCosts(item.out, true)"
-                :entry-cost="lineCost(item)"
-                :expiration="formatDate(item.batch.expirationDate, 'DATE_ONLY')"
-                :medicine="getMedicineName(item.batch.medicine)"
-                :quantity="item.quantity"
-                @detail="selectedMovement = item; tab = $event"
-              />
-            </div>
-          </q-expansion-item>
-        </q-list>
-      </q-tab-panel>
+    <q-list class="col bordered-left" v-if="pInvoice.selected.length">
+      <q-expansion-item
+        group="gain"
+        icon="explore"
+        label="Profit global"
+        default-opened
+        header-class="text-weight-bold"
+      >
+        <Gain :invoice="pInvoice.selected[0]" />
+      </q-expansion-item>
+      <q-expansion-item
+        group="gain"
+        icon="explore"
+        label="Profit individuel"
+        header-class="text-weight-bold"
+      >
+        <div class="flex flex-center q-gutter-x-sm q-pt-sm">
+          <MovementTable
+            v-for="(item, index) in pInvoice.selected[0].stockMovements"
+            :key="index"
+            :out-cost="linesCosts(item.out, true)"
+            :entry-cost="lineCost(item)"
+            :expiration="formatDate(item.batch.expirationDate, 'DATE_ONLY')"
+            :medicine="getMedicineName(item.batch.medicine)"
+            :quantity="item.quantity"
+            @detail="openDetail(item)"
+          />
+        </div>
+      </q-expansion-item>
+    </q-list>
 
-      <q-tab-panel name="details" class="q-pa-none">
-        <OutDetails
-          v-if="selectedMovement"
-          :movement="selectedMovement"
-          @back="tab = $event"
-        />
-      </q-tab-panel>
-    </q-tab-panels>
+    <q-dialog v-model="detail.show" seamless persistent>
+      <OutDetails v-if="detail.selected" :movement="detail.selected" />
+    </q-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref, UnwrapRef } from 'vue';
 import InvoiceList from '../../invoice/InvoiceList.vue';
 import { SelectedInvoice } from '../../../pages/invoice/Invoice.vue';
 import { getMedicineName } from '../../../graphql/utils/utils';
@@ -78,7 +66,10 @@ export default defineComponent({
       loading: false,
       total: 0
     });
-    const selectedMovement = ref<StockMovement|null>(null);
+    const detail = reactive({
+      selected: null,
+      show: false
+    })
     return {
       pInvoice,
       getMedicineName,
@@ -86,7 +77,10 @@ export default defineComponent({
       linesCosts,
       lineCost,
       tab: ref<string>('resume'),
-      selectedMovement
+      detail,
+      openDetail: (selected: UnwrapRef<StockMovement>) => {
+        Object.assign(detail, { selected, show: true })
+      }
     }
   }
 });

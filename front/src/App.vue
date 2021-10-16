@@ -16,6 +16,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 ::-webkit-scrollbar {
+  height: 4px;
   width: 5px;
 }
 ::-webkit-scrollbar-thumb {

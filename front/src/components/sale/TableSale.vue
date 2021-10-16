@@ -117,9 +117,9 @@
     class="q-btn q-btn--round cursor-pointer shadow-10"
     text-color="white"
     color="primary"
-    v-touch-pan.prevent.mouse="moveFab"
+    v-touch-pan.prevent.mouse="move"
     v-ripple
-    :style="`position: absolute; bottom: 8px; right: 8px;transform:translate(${fabPos[0]}px,${fabPos[1]}px)`"
+    :style="`position: absolute; bottom: 8px; right: 8px;${currentPos})`"
   >
     <q-icon
       size="md"
@@ -151,7 +151,7 @@ import SubdivideList from '../packaging/SubdivideList.vue';
 import SaleLine from './create/SaleLine.vue';
 import { Batch, SaleLineInput } from '../../graphql/types';
 import { useQuasar } from 'quasar';
-import { getMedicineName, saleLineCost } from '../../graphql/utils/utils';
+import { getMedicineName, movable, saleLineCost } from '../../graphql/utils/utils';
 
 export default defineComponent({
   name: 'TableSale',
@@ -233,7 +233,6 @@ export default defineComponent({
       const batch = shop.value.find(s => s.id === b.id);
       if(batch)Object.assign(batch, b);
     }
-    const fabPos = ref([0, 0]);
     const searchTool = ref<boolean>(true);
     return {
       saleLines,
@@ -245,16 +244,11 @@ export default defineComponent({
       costs,
       reset,
       handleIndividualSale,
-      fabPos,
       searchTool,
-      moveFab (ev: any) {
+      ...movable((ev: any) => {
         if(ev.isFirst !== true && !ev.isFinal && searchTool.value)
           searchTool.value = false;
-        fabPos.value = [
-          fabPos.value[0] + ev.delta.x,
-          fabPos.value[1] + ev.delta.y
-        ]
-      }
+      })
     }
   }
 });

@@ -17,7 +17,7 @@
       class="col text-center"
     >
       <q-item-section avatar>
-        <q-icon name="person" />
+        <q-icon name="workspaces" />
       </q-item-section>
       <q-item-section>Espace de travail</q-item-section>
     </q-item>
@@ -28,7 +28,7 @@
       class="col text-center"
     >
       <q-item-section avatar>
-        <q-icon name="delete" />
+        <q-icon name="delete_sweep" />
       </q-item-section>
       <q-item-section>Corbeille</q-item-section>
     </q-item>
