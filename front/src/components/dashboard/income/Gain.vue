@@ -93,7 +93,7 @@
 import { computed, defineComponent, PropType } from 'vue';
 import { Invoice } from '../../../graphql/types';
 import { formatDate } from '../../../shared/date';
-import { columns, lineCost, linesCosts } from './logical';
+import { columns, lineCost, linesCosts, roundNumber } from './logical';
 
 export default defineComponent({
   name: 'Gain',
@@ -118,7 +118,7 @@ export default defineComponent({
           return cost + income[index];
         });
       });
-      return { expense, income, progress: Math.ceil((quantities[1] * 100) / quantities[0]) }
+      return { expense, income, progress: roundNumber((quantities[1] * 100) / quantities[0]) }
     })
     return {
       formatDate,

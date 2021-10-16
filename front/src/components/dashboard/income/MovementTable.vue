@@ -60,7 +60,7 @@
       <tr class="q-tr--no-hover">
         <td>Marge</td>
         <td class="text-center" colspan="2">
-          {{outCost[3] - entryCost[3]}}
+          {{outCost[4] - entryCost[3]}}
         </td>
       </tr>
     </tbody>
@@ -93,7 +93,8 @@ export default defineComponent({
   setup(props) {
     return {
       columns,
-      progress: computed(() => roundNumber(props.outCost[0] * 100 / props.quantity))
+      progress: computed(() => roundNumber(props.outCost[0] * 100 / props.quantity)),
+      roundNumber
     }
   }
 });

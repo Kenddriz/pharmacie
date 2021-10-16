@@ -43,6 +43,7 @@
             flat
             icon="add_shopping_cart"
             @click="$emit('add-shop', getBatch(iMed, iBatch))"
+            :disable="batch.currentStock === 0"
           />
           <q-btn
             dense
@@ -52,6 +53,7 @@
             flat
             icon="sell"
             @click="individualSale(iMed, iBatch)"
+            :disable="batch.currentStock === 0"
           />
         </q-item-section>
       </q-item>

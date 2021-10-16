@@ -179,7 +179,11 @@ export default defineComponent({
     watch(() => props.done, (done) => {
       if(done) {
         shop.value.forEach((batch, index) => {
-          batch.currentStock -= saleLines.value[index].quantity;
+          const rest = batch.currentStock - saleLines.value[index].quantity;
+          if(rest <= 0) {
+            shop.value.splice(index, 1);
+            saleLines.value.splice(index, 1);
+          } else batch.currentStock = rest;
         });
       }
     });

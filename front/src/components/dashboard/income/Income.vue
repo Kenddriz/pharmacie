@@ -7,6 +7,7 @@
       v-model:total="pInvoice.total"
       v-model:p-loading="pInvoice.loading"
       @update:modelValue="detail.selected = $event[0]?.stockMovements[0]"
+      activated
     />
     <q-list class="col bordered-left" v-if="pInvoice.selected.length">
       <q-expansion-item
@@ -24,7 +25,7 @@
         label="Profit individuel"
         header-class="text-weight-bold"
       >
-        <div class="flex flex-center q-gutter-x-sm q-pt-sm">
+        <div class="flex flex-center q-gutter-sm q-pt-sm">
           <MovementTable
             v-for="(item, index) in pInvoice.selected[0].stockMovements"
             :key="index"

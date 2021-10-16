@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, PropType } from 'vue';
+import { defineComponent, watch, PropType, onActivated } from 'vue';
 import { usePaginateInvoices } from '../../graphql/invoice/invoice.service';
 import { Invoice } from '../../graphql/types';
 import { cloneDeep } from '../../graphql/utils/utils';
@@ -104,7 +104,8 @@ export default defineComponent({
     height: {
       type: Number,
       default: 230
-    }
+    },
+    activated: Boolean
   },
   emits: ['update:modelValue', 'update:pLoading', 'update:total', 'remove'],
   setup(props, { emit }) {
@@ -125,11 +126,13 @@ export default defineComponent({
         emit('update:total', 0);
       }
     }, { immediate: true })
-
     const setModelValue = (index: number) => {
       emit('update:modelValue', invoices.value.items.slice(index));
     }
     watch(() => loading.value, l => emit('update:pLoading', l), { immediate: true });
+    onActivated(() => {
+      if(props?.activated)findInvoices();
+    });
     return {
       loading,
       setModelValue,
