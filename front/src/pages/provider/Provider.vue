@@ -27,7 +27,7 @@
       <template v-slot:top>
         <div class="column full-width q-gutter-xs">
           <div class="row q-gutter-sm">
-            <q-toolbar-title class="text-bold">Mes fournisseurs</q-toolbar-title>
+            <div class="text-bold text-h6 text-blue-grey-14">Mes fournisseurs</div>
             <q-space />
             <q-input
               :model-value="paginateInput.keyword"

@@ -29,9 +29,11 @@ export default defineComponent({
         },
         title: {
           text: 'Nombre de Commandes Passées & Livrées',
-          align: 'left',
+          align: 'center',
           style: {
-
+            fontSize: '14px',
+            fontFamily: 'Poppins, sans-serif',
+            color:  '#455a64'
           }
         },
         stroke: {
@@ -44,13 +46,16 @@ export default defineComponent({
         labels: tm('local.monthsShort'),
         legend: {
           show: true,
-          labels: {
-          }
+          fontFamily: 'Poppins, sans-serif',
+          color:  '#455a64',
+          labels: {}
         },
         yaxis: {
           title: {
             text: 'Nombre',
             style: {
+              fontFamily: 'Poppins, sans-serif',
+              color:  '#455a64'
             }
           },
           labels: {
@@ -58,6 +63,22 @@ export default defineComponent({
               return val.toFixed(0);
             },
           }
+
+        },
+        xaxis: {
+          labels: {
+            show: true,
+            style: {
+              fontFamily: 'Poppins, sans-serif',
+              color:  '#455a64',
+            },
+          }
+        },
+        tooltip: {
+          style: {
+            fontSize: '12px',
+            fontFamily: 'Poppins, sans-serif',
+          },
         }
       },
       ...useCommandsMonthly()

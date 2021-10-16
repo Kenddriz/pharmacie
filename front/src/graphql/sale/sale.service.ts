@@ -135,10 +135,17 @@ export const useCount2LatestWeekSales = () => {
         type: 'line',
         toolbar: { show: false}
       },
+      legend: {
+        show: true,
+        fontFamily: 'Poppins, sans-serif',
+        color: '#455a64',
+      },
       grid: {
         show: true,
         strokeDashArray: 0,
         xaxis: {
+          fontFamily: 'Poppins, sans-serif',
+          color:  '#455a64',
           lines: {
             show: true
           }
@@ -154,14 +161,16 @@ export const useCount2LatestWeekSales = () => {
         text: 'Volume de vente',
         align: 'center',
         style: {
-          color: '#455a64'
+          fontFamily: 'Poppins, sans-serif',
+          color:  '#455a64',
         }
       },
       xaxis: {
         categories: days,
         labels: {
           style: {
-            colors: '#455a64'
+            fontFamily: 'Poppins, sans-serif',
+            color:  '#455a64',
           }
         }
       },
@@ -171,9 +180,16 @@ export const useCount2LatestWeekSales = () => {
             return val.toFixed(0);
           },
           style: {
-            colors: '#455a64'
+            fontFamily: 'Poppins, sans-serif',
+            color:  '#455a64',
           }
         }
+      },
+      tooltip: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Poppins, sans-serif',
+        },
       }
     };
     const salesSeries: Serie[] = [
