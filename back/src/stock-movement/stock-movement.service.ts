@@ -100,17 +100,18 @@ export class StockMovementService {
       .execute();
   }
   /**get all lines until an entry spent**/
-  async outingMovement(
+  async outingMovements(
     entryId: number,
     batchId: number,
     q0: number,
   ): Promise<StockMovement[]> {
     const subQuery = this.repository
       .createQueryBuilder()
-      .select(['id', 'SUM("quantity") OVER (ORDER BY id ASC) AS total'])
+      .select(['id', 'SUM(quantity) OVER (ORDER BY id ASC) AS total'])
       .where(`id > ${entryId}`)
       .andWhere(`"batchId" = ${batchId}`)
-      .andWhere('"saleId" IS NOT NULL');
+      .andWhere('"saleId" IS NOT NULL')
+      .limit(q0);
     return this.repository
       .createQueryBuilder('stm')
       .innerJoin(`(${subQuery.getQuery()})`, 'joiner', 'joiner.id = stm.id')

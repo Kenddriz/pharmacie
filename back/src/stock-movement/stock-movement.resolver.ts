@@ -161,30 +161,15 @@ export class StockMovementResolver {
   }
   @ResolveField(() => [StockMovement])
   async out(@Root() entryMvt: StockMovement): Promise<StockMovement[]> {
-    /*let soldQuantity = 0,
-      nextId = stockMovement.id;
-    const movements: StockMovement[] = [];
-    while (soldQuantity < stockMovement.quantity && nextId >= 0) {
-      const movement = await this.stmService.outingMovement(
-        nextId,
-        stockMovement.batchId,
-      );
-      if (movement) {
-        movements.push(movement);
-        nextId = movement.id;
-        soldQuantity += movement.quantity;
-      } else nextId = -1;
-    }
-    // assure that sold quantity is <= bought quantity, remove exceeded quantity
-    if (soldQuantity > stockMovement.quantity) {
-      const delta = soldQuantity - stockMovement.quantity;
-      movements[movements.length - 1].quantity -= delta;
-    }*/
-    const out = await this.stmService.outingMovement(
+    const out = await this.stmService.outingMovements(
       entryMvt.id,
       entryMvt.batchId,
       entryMvt.quantity,
     );
+    const soldQuantity = out.reduce((sum, cur) => sum + cur.quantity, 0);
+    // assure that sold quantity is <= bought quantity, remove exceeded quantity
+    if (soldQuantity > entryMvt.quantity)
+      out[out.length - 1].quantity -= soldQuantity - entryMvt.quantity;
     return out;
   }
 }
