@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
-import { columns } from './logical';
+import { columns, roundNumber } from './logical';
 
 export default defineComponent({
   name: 'MovementTable',
@@ -93,7 +93,7 @@ export default defineComponent({
   setup(props) {
     return {
       columns,
-      progress: computed(() => Math.ceil(props.outCost[0] * 100 / props.quantity))
+      progress: computed(() => roundNumber(props.outCost[0] * 100 / props.quantity))
     }
   }
 });

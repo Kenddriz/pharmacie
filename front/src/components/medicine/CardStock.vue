@@ -93,12 +93,11 @@
       <q-card-actions align="center">
         <q-pagination
           outline
-          v-if="stockMovements.meta.totalPages > 1"
+          :disable="stockMovements.meta.totalPages <= 1"
           :model-value="stmInput.page"
           v-model="stmInput.page"
           :max="stockMovements.meta.totalPages"
-          :max-pages="20"
-          boundary-numbers
+          input
         />
       </q-card-actions>
       <q-separator inset />

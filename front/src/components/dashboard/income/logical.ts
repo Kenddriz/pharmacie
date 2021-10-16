@@ -5,12 +5,12 @@ export type CostParams = {
   out: number[]
 }
 export const columns = ['ht', 'vat', 'discount', 'ttc'];
-
+export const roundNumber = (n: number) => Math.round(n * 1000) / 1000;
 export const lineCost = (input: StockMovement): number[] => {
   const ht = input.price * input.quantity;
   const vat = ht * (input.vat/100);
   const discount =  ht * (input.discount/100);
-  return [ ht, vat, discount, ht + vat - discount ]
+  return [ roundNumber(ht), roundNumber(vat), roundNumber(discount), roundNumber(ht + vat - discount) ]
 }
 
 export const linesCosts = (sales: StockMovement[], withTotal = false): number[] => {

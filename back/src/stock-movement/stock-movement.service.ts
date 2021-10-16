@@ -67,17 +67,20 @@ export class StockMovementService {
   async paginate(
     input: PaginateStockMovementInput,
   ): Promise<Pagination<StockMovement>> {
-    const queryBuilder = this.repository
+    const subQuery = this.repository
       .createQueryBuilder('stm')
+      .select('stm.id')
       .leftJoin('batches', 'btc', 'btc.id = stm.batchId')
-      .where('btc.medicineId =:medicineId', { medicineId: input.medicineId });
-    if (input.batchId)
-      queryBuilder.where('btc.id =:batchId', {
-        batchId: input.batchId,
-      });
-    queryBuilder.orderBy('stm.id', 'DESC');
+      .where(`btc.medicineId = ${input.medicineId}`);
+    if (input.batchId) subQuery.where(`btc.id = ${input.batchId}`);
+    subQuery.orderBy('stm.id', 'DESC');
+
     const { page, limit } = input;
-    return await paginate<StockMovement>(queryBuilder, { page, limit });
+    const query = this.repository
+      .createQueryBuilder('res')
+      .where('res.id IN (' + subQuery.getQuery() + ')')
+      .orderBy('res.id', 'ASC');
+    return await paginate<StockMovement>(query, { page, limit });
   }
   async countByBatch(batchId: number): Promise<number> {
     return this.repository
@@ -100,14 +103,19 @@ export class StockMovementService {
   async outingMovement(
     entryId: number,
     batchId: number,
-  ): Promise<StockMovement> {
-    /**purchase price will previous enter price**/
+    q0: number,
+  ): Promise<StockMovement[]> {
+    const subQuery = this.repository
+      .createQueryBuilder()
+      .select(['id', 'SUM("quantity") OVER (ORDER BY id ASC) AS total'])
+      .where(`id > ${entryId}`)
+      .andWhere(`"batchId" = ${batchId}`)
+      .andWhere('"saleId" IS NOT NULL');
     return this.repository
       .createQueryBuilder('stm')
-      .where(`stm.id > :entryId`, { entryId })
-      .andWhere('stm.batchId = :batchId', { batchId })
-      .andWhere('stm.saleId IS NOT NULL')
+      .innerJoin(`(${subQuery.getQuery()})`, 'joiner', 'joiner.id = stm.id')
+      .andWhere('joiner.total - stm.quantity < :q0', { q0 })
       .orderBy('stm.id', 'ASC')
-      .getOne();
+      .getMany();
   }
 }

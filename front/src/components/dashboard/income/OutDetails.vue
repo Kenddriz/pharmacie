@@ -137,7 +137,6 @@ export default defineComponent({
   props: {
     movement: Object as PropType<StockMovement>
   },
-  emits: ['back'],
   setup() {
     const { t } = useI18n();
     const cols = ['quantity', 'price', ...columns].map(col => ({
