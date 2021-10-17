@@ -3,28 +3,32 @@
     <MovableCard resizable class="resizable">
       <template v-slot:title>
         Médicaments dependant {{$t('measure.delete.' + foreignKey)}}
-        <q-badge align="top" color="warning">{{medicines.size}}</q-badge>
+        <q-badge align="top" color="warning">{{params.size}}</q-badge>
       </template>
-      <q-list v-if="medicines.size" separator>
-        <q-item clickable v-for="(med, index) in medicines.list" :key="index">
-          <q-item-section side>{{index + 1}}</q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{getMedicineName(med)}}
-            </q-item-label>
-            <q-item-label class="text-brown" caption>
-              {{med.archivedAt ? 'archivé' : 'non archivé'}}
-            </q-item-label>
-          </q-item-section>
-          <q-item-section>
-            {{med.packaging.units.map(u => u.label).join(' - ')}}
-          </q-item-section>
-          <q-item-section side>
-            <q-btn icon="more_vert" color="primary" flat round />
-          </q-item-section>
-        </q-item>
+      <q-list separator>
+        <template v-for="article in articles.items" :key="article.id">
+          <template v-for="(med, index) in article.medicines" :key="index">
+            <q-item clickable v-if="med[params.table].id === measureId" >
+              <q-item-section side>{{index + 1}}</q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{article.commercialName}} {{med.dosage.label}}, {{med.form.label}}
+                </q-item-label>
+                <q-item-label class="text-brown" caption>
+                  {{med.archivedAt ? 'archivé' : 'non archivé'}}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section>
+                {{med.packaging.units.map(u => u.label).join(' - ')}}
+              </q-item-section>
+              <q-item-section side>
+                <q-btn icon="more_vert" color="primary" flat round />
+              </q-item-section>
+            </q-item>
+          </template>
+        </template>
       </q-list>
-      <NoData :total-items="medicines.size" :sizes="[50, 150]" :loading="listLoading">
+      <NoData :total-items="params.size" :sizes="[50, 150]" :loading="listLoading">
         <div class="text-subtitle1">L'élément n'est pas utilisé.</div>
         <div class="row q-gutter-md q-mt-ms">
           <q-btn
@@ -51,8 +55,8 @@
       </NoData>
       <template v-slot:footer>
         <q-banner class="full-width">
-          L'élément est utilisé dans {{ medicines.size }}
-          médicament{{medicines.size > 1 ? 's' : ''}}.
+          L'élément est utilisé dans {{ params.size }}
+          médicament{{params.size > 1 ? 's' : ''}}.
           <template v-slot:action>
             <q-pagination
               :model-value="searchInput.page"
@@ -83,7 +87,7 @@ import { useDeleteDosage } from '../../graphql/dosage/dosage.service';
 import MovableCard from '../shared/MovableCard.vue';
 import NoData from '../shared/NoData.vue';
 import { usePaginateArticle } from '../../graphql/article/article.service';
-import { Article, Medicine } from '../../graphql/types';
+import  { Article } from '../../graphql/types';
 
 export default defineComponent({
   name: 'MedicinesUseMeasure',
@@ -106,26 +110,20 @@ export default defineComponent({
       articles,
       submitSearch
     } = usePaginateArticle(4, false, { foreignKey: props.foreignKey, id: props.measureId });
-    const medicines = computed(() => {
-      const list: Medicine[] = [];
-      let table = 'packaging';
-      switch (props.foreignKey) {
-        case 'dosageId':
-          table = 'dosage';
-          break;
-        case 'formId':
-          table = 'form';
-          break;
-      }
-      articles.value.items.forEach((art: Article) => {
-        const { medicines, ...article } = art;
-        medicines?.forEach((med: Medicine) => {
-          if((med as any)[table].id === props.measureId) {
-            list.push({ ...med, article });
-          }
-        });
-      });
-      return {list, size: articles.value.meta.totalItems };
+    let table = 'packaging';
+    switch (props.foreignKey) {
+      case 'dosageId':
+        table = 'dosage';
+        break;
+      case 'formId':
+        table = 'form';
+        break;
+    }
+    const params = computed(() => {
+      const size = articles.value.items.reduce((s, cur: Article) => {
+        return s + cur?.medicines?.filter(med => (med as any)[table].id === props.measureId).length;
+      }, 0)
+      return { table, size };
     })
     const { softRemovePackaging } = useSoftRemovePackaging();
     const { deleteForm } = useDeleteForm();
@@ -144,7 +142,7 @@ export default defineComponent({
       }
     }
     return {
-      medicines,
+      params,
       getMedicineName,
       dialogRef,
       submitDelete,
