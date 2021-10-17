@@ -22,6 +22,7 @@
               :units="med.packaging.units"
               :value="med.currentSalePrice"
               :is-q="false"
+              style="margin-left: -4px"
             />
           </q-item-section>
         </q-item>
@@ -62,6 +63,11 @@
         </q-btn>
       </q-card-actions>
     </q-card>
+    <NoData
+      :total-items="article?.medicines?.length||0"
+      :loading="false"
+      :sizes="[100, 100]"
+    />
     <q-dialog v-model="removeMedicine" full-height>
       <SoftRemoveMedicine
         v-if="selected"
@@ -81,12 +87,14 @@ import { useQuasar } from 'quasar';
 import { cloneDeep } from '../../graphql/utils/utils';
 import UpdateMedicine from './UpdateMedicine.vue';
 import SoftRemoveMedicine from './SoftRemoveMedicine.vue';
+import NoData from '../shared/NoData.vue';
 
 export default defineComponent ({
   name: 'MedicineList',
   components: {
     SoftRemoveMedicine,
-    UnitConverter
+    UnitConverter,
+    NoData
   },
   props: {
     article: {

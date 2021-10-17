@@ -6,7 +6,8 @@
   >
     <span>
       <img  src="no-data.svg" :height="sizes[1]" :width="sizes[1]" />
-      <div class="text-subtitle1">Aucune donnée</div>
+      <slot v-if="$slots.default"></slot>
+      <div v-else class="text-subtitle1">Aucune donnée</div>
     </span>
   </div>
   <q-inner-loading :showing="loading">

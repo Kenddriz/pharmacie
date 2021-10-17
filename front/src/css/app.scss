@@ -19,4 +19,10 @@
 .bordered-top {
   border-top: 1px solid gainsboro!important;
 }
+.resizable {
+  resize: both;
+  max-height: 100vh;
+  max-width: 100vw!important;
+  overflow: hidden!important;
+}
 

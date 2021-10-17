@@ -26,6 +26,15 @@
         :medicine="selectedMedicine"
         :article="getArticle()"
       />
+      <NoData
+        :total-items="selectedMedicine?.batches?.length||0"
+        :loading="false"
+        :sizes="[70, 100]"
+      >
+        <div class="text-subtitle1">
+          {{ selectedMedicine ? 'Aucune donnée' : 'Ajouter un médicament' }}
+        </div>
+      </NoData>
     </template>
   </q-splitter>
 </template>
@@ -36,10 +45,11 @@ import { Article } from '../../graphql/types';
 import BatchCpt from '../batch/Batch.vue';
 import MedicineList from './MedicineList.vue';
 import AddMedicine from './AddMedicine.vue';
+import NoData from '../shared/NoData.vue';
 
 export default defineComponent({
   name: 'Medicine',
-  components: { AddMedicine, MedicineList, BatchCpt },
+  components: { AddMedicine, MedicineList, BatchCpt, NoData },
   props: {
     article: {
       type: Object as PropType<Article>,
