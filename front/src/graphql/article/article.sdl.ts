@@ -16,7 +16,7 @@ export const ARTICLE_PARAMS = `
 `;
 
 export const PAGINATE_ARTICLE = (withBatches: boolean) => gql`
-  query PaginateArticles($input:PaginationInput!){
+  query PaginateArticles($input:PaginateArticleInput!){
       paginateArticles(input:$input){
          items {
             ${ARTICLE_PARAMS}

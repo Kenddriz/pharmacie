@@ -3,9 +3,6 @@ import {
   MutationSoftRemoveMedicineArgs,
   MutationUpdateMedicineArgs,
   MedicineFormInput,
-  QueryFindMedicinesByMeasureArgs,
-  FindByMeasureInput,
-  MedicinePaginationOutput,
   QueryMostConsumedMedicinesArgs,
   MutationRemoveMedicineArgs,
   MutationRestoreMedicineArgs,
@@ -20,8 +17,6 @@ import {
   SoftRemoveMedicineData,
   UPDATE_MEDICINE,
   UpdateMedicineData,
-  FindMedicinesByMeasureData,
-  FIND_MEDICINES_BY_MEASURE,
   MOST_CONSUMED_MEDICINES,
   MostConsumedMedicinesData,
   RemoveMedicineData,
@@ -69,25 +64,6 @@ export const useUpdateMedicine = () => {
   }
   return { updateMedicine }
 }
-
-export const useFindMedicinesByMeasure = (measureId: number, foreignKey: string) => {
-  const input = reactive<FindByMeasureInput>({
-    measureId,
-    foreignKey,
-    page: 1,
-    limit: 5
-  });
-  const { loading, result } = useQuery<
-    FindMedicinesByMeasureData,
-    QueryFindMedicinesByMeasureArgs
-    >(FIND_MEDICINES_BY_MEASURE, { input }, { fetchPolicy: 'no-cache' });
-  const medicines = useResult<
-    FindMedicinesByMeasureData|undefined,
-    MedicinePaginationOutput,
-    MedicinePaginationOutput
-    >(result, InitialPagination, res => res?.findMedicinesByMeasure||InitialPagination);
-  return { medicines, loading, input }
-}
 export const useMostConsumedMedicines = () => {
   const year = ref<number>(new Date().getFullYear());
   const { loading, result } = useQuery<
@@ -101,7 +77,6 @@ export const useMostConsumedMedicines = () => {
     year
   }
 }
-
 export const usePaginateDeletedMedicines = () => {
   const input = reactive<PaginationInput>({
     page: 1,

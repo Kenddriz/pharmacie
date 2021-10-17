@@ -27,6 +27,8 @@ import {
   MutationSoftRemoveArticleArgs,
   MutationRestoreArticleArgs,
   MutationRemoveArticleArgs,
+  FindByMeasureInput,
+  PaginateArticleInput
 } from '../types';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { reactive, ref } from 'vue';
@@ -36,16 +38,21 @@ import { notify } from '../../shared/notification';
 
 const lim = Math.ceil((screen.height - 150)/50);
 
-export const usePaginateArticle = (limit = lim, withBatches = true) => {
-  const searchInput = reactive<PaginationInput>({
+export const usePaginateArticle = (
+  limit = lim,
+  withBatches = true,
+  measureInput: FindByMeasureInput|undefined = undefined
+) => {
+  const searchInput = reactive<PaginateArticleInput>({
     limit,
     keyword: '',
     page: 1
   });
+  if(measureInput)Object.assign(searchInput, { measureInput });
   const {result, loading: listLoading, refetch, onResult } = useQuery<
     ArticlePaginationData,
     QueryPaginateArticlesArgs
-    >(PAGINATE_ARTICLE(withBatches), { input: cloneDeep(searchInput) });
+    >(PAGINATE_ARTICLE(withBatches), { input: { ...searchInput } });
   const selected = ref<Article[]>([]);
   const articles = useResult(result, InitialPagination, res => {
     if(res?.paginateArticles) {
@@ -181,7 +188,6 @@ export const useFindOneArticle = (model = '') => {
     keyword
   }
 }
-
 export const usePaginateDeletedArticles = () => {
   const input = reactive<PaginationInput>({
     page: 1,

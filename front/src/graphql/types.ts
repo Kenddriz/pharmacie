@@ -219,10 +219,7 @@ export type Dosage = {
 };
 
 export type FindByMeasureInput = {
-  keyword?: Maybe<Scalars['String']>;
-  page: Scalars['Float'];
-  limit: Scalars['Float'];
-  measureId: Scalars['Int'];
+  id: Scalars['Int'];
   foreignKey: Scalars['String'];
 };
 
@@ -731,6 +728,13 @@ export type Packaging = {
   archivedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type PaginateArticleInput = {
+  keyword?: Maybe<Scalars['String']>;
+  page: Scalars['Float'];
+  limit: Scalars['Float'];
+  measureInput?: Maybe<FindByMeasureInput>;
+};
+
 export type PaginatePatientOutput = {
   __typename?: 'PaginatePatientOutput';
   items: Array<Patient>;
@@ -856,7 +860,6 @@ export type Query = {
   countUndeliveredCommands: Scalars['Int'];
   commandsMonthly: Array<CommandsMonthly>;
   paginateDeletedCommands: CommandPagination;
-  findMedicinesByMeasure: MedicinePaginationOutput;
   countMedicines: Scalars['Int'];
   mostConsumedMedicines: Array<MostConsumedMedicineOutput>;
   paginateDeletedMedicines: MedicinePaginationOutput;
@@ -928,11 +931,6 @@ export type QueryPaginateDeletedCommandsArgs = {
 };
 
 
-export type QueryFindMedicinesByMeasureArgs = {
-  input: FindByMeasureInput;
-};
-
-
 export type QueryMostConsumedMedicinesArgs = {
   year: Scalars['Int'];
 };
@@ -944,7 +942,7 @@ export type QueryPaginateDeletedMedicinesArgs = {
 
 
 export type QueryPaginateArticlesArgs = {
-  input: PaginationInput;
+  input: PaginateArticleInput;
 };
 
 
