@@ -16,6 +16,7 @@
     behavior="menu"
     @update:model-value="$emit('update', model)"
     popup-content-class="text-blue-grey-14"
+    input-class="text-blue-grey-14"
   >
     <template v-slot:no-option>
       <q-item>

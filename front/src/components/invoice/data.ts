@@ -1,41 +1,41 @@
 export const columns = [
   {
     name: 'medicineId',
-    align: 'center',
+    align: 'left',
     label: 'Médicament',
     field: 'medicineId',
   },
   {
     name: 'quantity',
-    align: 'center',
+    align: 'left',
     label: 'Quantité livrée',
     field: 'quantity',
   },
   {
     name: 'price',
-    align: 'center',
+    align: 'left',
     label: 'Prix',
     field: 'price'
   },
   {
     name: 'ht',
-    align: 'center',
+    align: 'left',
     label: 'Montant HT',
   },
   {
+    name: 'vat',
+    align: 'left',
+    label: 'TVA',
+  },
+  {
     name: 'discount',
-    align: 'center',
+    align: 'left',
     label: 'Remise',
     field: 'discount'
   },
   {
-    name: 'vat',
-    align: 'center',
-    label: 'TVA',
-  },
-  {
     name: 'expirationDate',
-    align: 'center',
+    align: 'left',
     label: 'Date d\'expiration',
     field: 'expirationDate'
   }

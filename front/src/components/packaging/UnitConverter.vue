@@ -6,7 +6,7 @@
     icon-right="expand_more"
     no-caps
     style="font-size: 12px; margin-left: -4px"
-    class="text-caption text-grey"
+    class="text-caption text-blue-grey-14"
     align="left"
   >
     <q-menu ref="uc">

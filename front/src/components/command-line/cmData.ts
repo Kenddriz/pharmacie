@@ -2,19 +2,19 @@
 export const cmData = [
   {
     name: 'medicine',
-    align: 'center',
+    align: 'left',
     label: 'Médicament',
     field: 'medicine',
   },
   {
     name: 'quantity',
-    align: 'center',
+    align: 'left',
     label: 'Quantité',
     field: 'quantity',
   },
   {
     name: 'action',
-    align: 'center',
+    align: 'left',
     label: 'Action'
   }
 ];

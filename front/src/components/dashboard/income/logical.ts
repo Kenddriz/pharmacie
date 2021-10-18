@@ -1,8 +1,8 @@
-import { StockMovement } from '../../../graphql/types';
+import { SaleLineInput, StockMovement } from '../../../graphql/types';
 
 export const columns = ['ht', 'vat', 'discount', 'ttc'];
 export const roundNumber = (n: number) => Math.round(n * 1000) / 1000;
-export const lineCost = (input: StockMovement, round = true): number[] => {
+export const lineCost = (input: StockMovement|SaleLineInput, round = true): number[] => {
   const ht = input.price * input.quantity;
   const vat = ht * (input.vat/100);
   const discount =  ht * (input.discount/100);
@@ -14,8 +14,8 @@ export const lineCost = (input: StockMovement, round = true): number[] => {
   ];
   return [ ht, vat, discount, ht + vat - discount ];
 }
-
-export const linesCosts = (sales: StockMovement[], withTotal = false): number[] => {
+/**any: stockMovement, saleLineInput**/
+export const linesCosts = (sales: any[], withTotal = false): number[] => {
   let quantity = 0;
   const costs = sales.reduce((sum: number[], cur: StockMovement) => {
     const out = lineCost(cur, false);

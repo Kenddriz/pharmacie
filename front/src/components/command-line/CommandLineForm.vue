@@ -10,7 +10,7 @@
       :model-value="medicine"
       @update="medicine = $event"
       outlined
-      label="Chercher un médicament"
+      label="Nom du médicament*"
       lazy-rules
       :rules="[ val => val.value > 0 || 'Entrer le nom du médicament à commander']"
     />
@@ -29,6 +29,7 @@
         label="Enregistrer"
         icon="save"
         no-caps
+        v-close-popup
       />
     </div>
   </q-form>

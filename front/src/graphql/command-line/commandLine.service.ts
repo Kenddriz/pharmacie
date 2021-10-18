@@ -30,17 +30,19 @@ export const useAddCommandLine = () => {
 }
 
 export const useUpdateCommandLine = () => {
-  const { loading: uclLoading, mutate, onDone } = useMutation<
+  const { mutate, onDone } = useMutation<
     UpdateCommandLineData,
     MutationUpdateCommandLineArgs
     >(UPDATE_COMMAND_LINE);
   onDone(({ data }) => {
+    Loading.hide();
     if(data?.updateCommandLine)notify('Mise à jour avec succès');
   });
   function updateCommandLine(id: string, commandLine: CommandLineInput) {
+    Loading.show({ message: 'Mise à jour ...' });
     void mutate({ input: {id, commandLine} });
   }
-  return { uclLoading, updateCommandLine }
+  return { updateCommandLine }
 }
 export const useRemoveCommandLine = () => {
   const { mutate, onDone } = useMutation<

@@ -13,13 +13,16 @@
     input-class="text-blue-grey-14"
   >
     <template v-slot:prepend>
-      <q-btn color="grey-6" size="12px" icon="info" dense flat>
+      <q-btn color="primary" size="12px" icon="more_vert" dense flat>
         <q-menu style="width: fit-content" fit auto-close anchor="center middle" self="center middle">
-          <q-item v-close-popup>
-            <q-item-section v-for="(u, index) in units" :key="index">
-              <q-item-label lines="1">{{u.label}}</q-item-label>
-              <q-item-label caption>{{`${u.multiplicity} ${units[index + 1] ? ' = ' : ''}`}}</q-item-label>
-            </q-item-section>
+          <q-item v-close-popup class="flex flex-center no-wrap">
+            <span class="row items-center" v-for="(u, index) in units" :key="index">
+              <span>
+                <div>{{u.label}}</div>
+                <div>{{u.multiplicity}}</div>
+              </span>
+              <span v-if="units[index + 1]" class="q-mx-md">=</span>
+            </span>
           </q-item>
         </q-menu>
       </q-btn>
