@@ -308,7 +308,7 @@ type Query {
   countArticles: Int!
   paginateDeletedArticles(input: PaginationInput!): ArticlePagination!
   paginateStockMovement(input: PaginateStockMovementInput!): StockMovementPagination!
-  paginateInvoices(paginationInput: PaginationInput!): InvoicePagination!
+  paginateInvoices(input: PaginateInvoiceInput!): InvoicePagination!
   countUnpaidInvoices: Int!
   paginateDeletedInvoices(input: PaginationInput!): InvoicePagination!
   methods: [Method!]!
@@ -359,6 +359,13 @@ input PaginateStockMovementInput {
   batchId: Float
   page: Float!
   limit: Float!
+}
+
+input PaginateInvoiceInput {
+  keyword: String
+  page: Float!
+  limit: Float!
+  paymentId: Float
 }
 
 input FindExistingBatchInput {
@@ -423,6 +430,7 @@ type Mutation {
   updatePayment(input: UpdatePaymentInput!): Payment!
   createMethod(input: MethodInput!): Method!
   updateMethod(input: MethodInput!): Method!
+  removeMethod(id: Int!): Boolean!
   createBatch(input: BatchFormInput!): Medicine
   updateBatch(input: UpdateBatchInput!): Batch!
   softRemoveBatch(id: Int!): SoftRemoveBatchOutput!

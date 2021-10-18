@@ -31,3 +31,11 @@ export const UPDATE_METHOD = gql`
     updateMethod(input:$input){${METHOD_PARAMS}}
   }
 `;
+export type RemoveMethodeData = {
+  removeMethod: boolean;
+}
+export const REMOVE_METHOD = gql`
+  mutation RemoveMethod($id: Int!){
+    removeMethod(id: $id)
+  }
+`;

@@ -378,6 +378,7 @@ export type Mutation = {
   updatePayment: Payment;
   createMethod: Method;
   updateMethod: Method;
+  removeMethod: Scalars['Boolean'];
   createBatch?: Maybe<Medicine>;
   updateBatch: Batch;
   softRemoveBatch: SoftRemoveBatchOutput;
@@ -647,6 +648,11 @@ export type MutationUpdateMethodArgs = {
 };
 
 
+export type MutationRemoveMethodArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type MutationCreateBatchArgs = {
   input: BatchFormInput;
 };
@@ -733,6 +739,13 @@ export type PaginateArticleInput = {
   page: Scalars['Float'];
   limit: Scalars['Float'];
   measureInput?: Maybe<FindByMeasureInput>;
+};
+
+export type PaginateInvoiceInput = {
+  keyword?: Maybe<Scalars['String']>;
+  page: Scalars['Float'];
+  limit: Scalars['Float'];
+  paymentId?: Maybe<Scalars['Float']>;
 };
 
 export type PaginatePatientOutput = {
@@ -956,7 +969,7 @@ export type QueryPaginateStockMovementArgs = {
 
 
 export type QueryPaginateInvoicesArgs = {
-  paginationInput: PaginationInput;
+  input: PaginateInvoiceInput;
 };
 
 

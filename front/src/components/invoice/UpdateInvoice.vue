@@ -1,11 +1,13 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
     <q-menu class="text-blue-grey-14">
-      <q-form @submit.prevent="updateInvoice(updateInput)" class="q-pa-md">
-        <p class="text-center text-subtitle1">
+      <q-card flat>
+        <q-bar class="text-subtitle1 text-white bg-teal-14">
           Modification de la facture {{invoice.reference}}
-        </p>
-        <q-card flat>
+          <q-space />
+          <q-btn dense v-close-popup flat round icon="close" />
+        </q-bar>
+        <q-form class="q-pa-md" @submit.prevent="updateInvoice(updateInput)">
           <q-card-section horizontal>
             <q-card-section class="q-gutter-md q-pa-none q-mr-sm">
               <q-input
@@ -45,30 +47,27 @@
               />
             </q-card-section>
           </q-card-section>
-
-          <q-card-actions align="around">
+          <q-card-actions class="q-px-none" align="between">
             <q-btn
               v-close-popup
               class="col"
               label="Valider"
               no-caps
-              rounded
               outline
               type="submit"
-              color="grey"
+              color="primary"
             />
             <q-btn
               v-close-popup
               label="Fermer"
               no-caps
-              color="grey"
-              rounded
+              color="primary"
               outline
               class="col"
             />
           </q-card-actions>
-        </q-card>
-      </q-form>
+        </q-form>
+      </q-card>
     </q-menu>
   </q-btn>
 </template>

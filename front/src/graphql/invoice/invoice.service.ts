@@ -11,6 +11,7 @@ import {
   QueryPaginateInvoicesArgs,
   QueryPaginateDeletedInvoicesArgs,
   UpdateInvoiceInput,
+  PaginateInvoiceInput
 } from '../types';
 import {
   CREATE_INVOICE,
@@ -35,20 +36,21 @@ import { Loading } from 'quasar';
 /**args
  * withSales: fetch movements of a batch
  * **/
-export const usePaginateInvoices = (withSales: boolean) => {
-  const paginationInput = reactive<PaginationInput>({
+export const usePaginateInvoices = (withSales: boolean, paymentId = 0) => {
+  const paginationInput = reactive<PaginateInvoiceInput>({
     page: 1,
     limit: Math.ceil((screen.height - 250)/50),
     keyword: ''
   });
+  if(paymentId > 0) Object.assign(paginationInput, { paymentId });
   const { result, loading, refetch } = useQuery<
     PaginateInvoicesData,
     QueryPaginateInvoicesArgs
-    >(PAGINATE_INVOICES(withSales), { paginationInput: { ...paginationInput } });
+    >(PAGINATE_INVOICES(withSales), { input: { ...paginationInput } });
   const invoices = useResult(result, InitialPagination, res => res?.paginateInvoices||InitialPagination);
   function findInvoices() {
     loading.value = true;
-    refetch({ paginationInput })?.finally(() => loading.value = false);
+    refetch({ input: paginationInput })?.finally(() => loading.value = false);
   }
   return {
     findInvoices,
@@ -72,7 +74,7 @@ export const useCreateInvoice = () => {
   })
   const createInvoice =(input: CreateInvoiceInput) => {
     Loading.show({
-      message: 'Enregistrement des données ...'
+      message: 'Création ...'
     })
     void mutate({ input });
   }
@@ -89,7 +91,7 @@ export const useUpdateInvoice = () => {
   })
   return {
     updateInvoice: (input: UpdateInvoiceInput) => {
-      Loading.show({ message: 'Enregistrement des modifications ...'})
+      Loading.show({ message: 'Mise à jour ...'})
       void mutate({ input });
     }
   }

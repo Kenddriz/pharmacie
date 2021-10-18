@@ -111,7 +111,6 @@ export const movable = (callBack: any = undefined) => {
   function move (ev: any) {
     if(callBack)callBack(ev);
     pos.value = [pos.value[0] + ev.delta.x, pos.value[1] + ev.delta.y];
-    console.log(ev);
   }
   const currentPos = computed(() => `transform:translate(${pos.value[0]}px,${pos.value[1]}px`);
   return { currentPos, move }

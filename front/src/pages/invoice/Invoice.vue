@@ -6,7 +6,7 @@
       class="col-12 col-md-9 q-pa-sm overflow-auto"
       :style="`height:${$q.screen.height - 86}px;`"
     >
-      <PaymentMode />
+      <PaymentMode @ok="pInvoice.selected = $event" />
       <q-separator />
       <AssuredLineDetails
         v-if="pInvoice.selected.length"
@@ -23,7 +23,6 @@
       class="col-12 col-md-3"
       v-model="pInvoice.selected"
       show-menu-op
-      @remove="softRemoveInvoice"
       v-model:total="pInvoice.total"
       v-model:p-loading="pInvoice.loading"
     />
@@ -33,7 +32,6 @@
 <script lang="ts">
 import PaymentMode from '../../components/method/Method.vue';
 import { defineComponent, reactive } from 'vue';
-import { useSoftRemoveInvoice } from '../../graphql/invoice/invoice.service';
 import { Invoice } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
 import AssuredLineDetails from '../../components/stock-movement/AssuredLineDetails.vue';
@@ -47,7 +45,6 @@ export default defineComponent({
   components: { PaymentMode, AssuredLineDetails, NoData, InvoiceList },
   setup() {
     return {
-      ...useSoftRemoveInvoice(),
       formatDate,
       pInvoice: reactive<SelectedInvoice>({
         selected: [],

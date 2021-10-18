@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Invoice } from './invoice.entity';
 import { PaginationInput } from '../shared/shared.input';
 import { Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { PaginateInvoiceInput } from './types/invoice.input';
 
 @Injectable()
 export class InvoiceService {
@@ -24,12 +25,17 @@ export class InvoiceService {
       .where('invoice.commandId = :commandId', { commandId })
       .getOne();
   }
-  async paginate(input: PaginationInput): Promise<Pagination<Invoice>> {
+  async paginate(input: PaginateInvoiceInput): Promise<Pagination<Invoice>> {
     const keyword = `%${input.keyword}%`;
     const queryBuilder = this.repository
       .createQueryBuilder('invoice')
-      .where('invoice.reference ILIKE :keyword', { keyword })
-      .orderBy('invoice.dueDate', 'ASC');
+      .where('invoice.reference ILIKE :keyword', { keyword });
+    if (input.paymentId) {
+      queryBuilder.andWhere('invoice.paymentId = :paymentId', {
+        paymentId: input.paymentId,
+      });
+    }
+    queryBuilder.orderBy('invoice.dueDate', 'ASC');
     const { page, limit } = input;
     return await paginate<Invoice>(queryBuilder, { page, limit });
   }

@@ -81,8 +81,8 @@ export const CREATE_INVOICE = gql`
   }
 `;
 export const PAGINATE_INVOICES = (out: boolean) => gql`
- query PaginateInvoices($paginationInput: PaginationInput!) {
-  paginateInvoices(paginationInput: $paginationInput) {
+ query PaginateInvoices($input: PaginateInvoiceInput!) {
+  paginateInvoices(input: $input) {
     items{
       ${INVOICE_FIELDS(out)}
       command{

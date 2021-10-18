@@ -209,6 +209,7 @@ import { getMedicineName } from '../../graphql/utils/utils';
 import { linesCosts } from '../dashboard/income/logical';
 import { useDialogPluginComponent } from 'quasar';
 import { useCreateInvoice } from '../../graphql/invoice/invoice.service';
+import { formatDate } from '../../shared/date';
 
 export default defineComponent({
   name: 'CreateInvoice',
@@ -250,6 +251,7 @@ export default defineComponent({
       getMedicineName,
       dialogRef,
       ...useCreateInvoice(),
+      formatDate
     }
   }
 });

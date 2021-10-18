@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { MethodService } from './method.service';
 import { Method } from './method.entity';
 import { MethodInput } from './dto/method.input';
@@ -18,13 +18,16 @@ export class MethodResolver {
     method = new Method();
     method.id = await uniqId('Method');
     Object.assign<Method, MethodInput>(method, input);
-    method = await this.methodService.save(method);
-    return method;
+    return this.methodService.save(method);
   }
   @Mutation(() => Method)
   async updateMethod(@Args('input') input: MethodInput) {
     const method = await this.methodService.findOneById(input.id);
     Object.assign<Method, MethodInput>(method, input);
-    return await this.methodService.save(method);
+    return this.methodService.save(method);
+  }
+  @Mutation(() => Boolean)
+  async removeMethod(@Args({ name: 'id', type: () => Int }) id: number) {
+    return this.methodService.remove(id);
   }
 }

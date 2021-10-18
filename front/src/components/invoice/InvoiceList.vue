@@ -1,29 +1,31 @@
 <template>
   <div>
-    <div class="flex flex-center q-pa-sm" style="border-bottom: 1px solid gainsboro">
-      <q-input
-        :model-value="paginationInput.keyword"
-        v-model="paginationInput.keyword"
-        dense
-        outlined
-        label="Référence de la facture"
-        @keyup.enter="findInvoices"
-      >
-        <template v-slot:after>
-          <q-btn
-            unelevated
-            outline
-            color="primary"
-            no-caps
-            label="Chercher"
-            icon="search"
-            @click="findInvoices"
-            :loading="loading"
-          />
-        </template>
-      </q-input>
-    </div>
-    <div class="text-h6 text-center">Liste de factures</div>
+    <template v-if="paymentId === 0">
+      <div class="flex flex-center q-pa-sm" style="border-bottom: 1px solid gainsboro">
+        <q-input
+          :model-value="paginationInput.keyword"
+          v-model="paginationInput.keyword"
+          dense
+          outlined
+          label="Référence de la facture"
+          @keyup.enter="findInvoices"
+        >
+          <template v-slot:after>
+            <q-btn
+              unelevated
+              outline
+              color="primary"
+              no-caps
+              label="Chercher"
+              icon="search"
+              @click="findInvoices"
+              :loading="loading"
+            />
+          </template>
+        </q-input>
+      </div>
+      <div class="text-h6 text-center">Liste de factures</div>
+    </template>
     <q-list
       :style="`height: ${$q.screen.height - height}px`"
       class="scroll-y"
@@ -42,7 +44,7 @@
           :icons="['read_more', 'delete']"
           :labels="['Détailler', 'Supprimer']"
           @restore="setModelValue(i)"
-          @remove="$emit('remove', invoice.id)"
+          @remove="softRemoveInvoice(invoice.id)"
           :color="modelValue[0]?.id === invoice.id ? 'warning' : 'primary'"
         />
         <q-item-section>{{invoice.command.provider.name}}</q-item-section>
@@ -67,6 +69,7 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <slot v-if="$slots.default"></slot>
     </q-list>
     <div style="border-top: 1px solid gainsboro" class="q-mt-sm flex flex-center">
       <q-pagination
@@ -85,7 +88,7 @@
 
 <script lang="ts">
 import { defineComponent, watch, PropType, onActivated } from 'vue';
-import { usePaginateInvoices } from '../../graphql/invoice/invoice.service';
+import { usePaginateInvoices, useSoftRemoveInvoice } from '../../graphql/invoice/invoice.service';
 import { Invoice } from '../../graphql/types';
 import { cloneDeep } from '../../graphql/utils/utils';
 import MenuOperations from '../shared/MenuOperations.vue';
@@ -105,16 +108,20 @@ export default defineComponent({
       type: Number,
       default: 230
     },
-    activated: Boolean
+    activated: Boolean,
+    paymentId: {
+      type: Number,
+      default: 0
+    }
   },
-  emits: ['update:modelValue', 'update:pLoading', 'update:total', 'remove'],
+  emits: ['update:modelValue', 'update:pLoading', 'update:total'],
   setup(props, { emit }) {
     const {
       loading,
       paginationInput,
       findInvoices,
       invoices
-    } = usePaginateInvoices(!props.showMenuOp);
+    } = usePaginateInvoices(!props.showMenuOp, props.paymentId);
     watch(() => invoices.value, invoice => {
       if(invoice?.items?.length){
         const id = props.modelValue[0]?.id;
@@ -141,7 +148,8 @@ export default defineComponent({
       findInvoices,
       itemClick: (i: number) => {
         if(!props.showMenuOp)setModelValue(i);
-      }
+      },
+      ...useSoftRemoveInvoice()
     }
   }
 });

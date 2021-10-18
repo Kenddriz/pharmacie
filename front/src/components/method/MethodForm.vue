@@ -1,63 +1,49 @@
 <template>
-  <q-card class="q-pa-md" style="width: 300px">
-    <q-card-section class="text-subtitle1 q-pt-none">{{title}}</q-card-section>
-    <q-form @submit="$emit('submit')" class="q-gutter-md">
-      <q-input
-        outlined
-        :model-value="modelValue.label"
-        v-model="model.label"
-        label="La désignation *"
-        hint="Désignation du mode"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || 'Taper quelque chose']"
-      />
-
-      <div>
+  <q-dialog ref="dialogRef">
+    <MovableCard>
+      <template v-slot:title>
+        {{label ? 'Modifcation du mode de payment' : 'Nouveau mode de payment'}}
+      </template>
+      <q-form spellcheck="false" @submit="$emit('ok', model)" class="column">
+        <q-input
+          dense
+          outlined
+          :model-value="model"
+          v-model="model"
+          label="La désignation *"
+          lazy-rules
+          :rules="[ val => val && val.length > 0 || 'Taper quelque chose']"
+        />
         <q-btn
-          flat
-          label="Valider"
+          v-close-popup
+          no-caps
+          outline
+          label="Enregistrer"
           type="submit"
           color="primary"
         />
-        <q-btn
-          label="Fermer"
-          color="primary"
-          flat class="q-ml-sm"
-          @click="$emit('close')"
-        />
-        <q-btn
-          v-if="withRemove"
-          color="deep-orange"
-          flat class="q-ml-sm"
-          @click="$emit('remove')"
-          icon="delete_forever"
-        />
-      </div>
-    </q-form>
-  </q-card>
+      </q-form>
+    </MovableCard>
+  </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive } from 'vue';
-import { MethodInput } from '../../graphql/types';
+import { defineComponent, ref } from 'vue';
+import MovableCard from '../shared/MovableCard.vue';
+import { useDialogPluginComponent } from 'quasar';
 
 export default defineComponent({
-  name: 'CreatePaymentMode',
+  name: 'MethodForm',
+  components: {MovableCard},
   props: {
-    modelValue: {
-      type: Object as PropType<MethodInput>,
-      default: () => ({}),
-    },
-    title: {
-      type: String,
-      default: 'Nouveau mode de payment'
-    },
-    withRemove: Boolean
+    label: String
   },
-  emits: ['submit', 'close', 'remove'],
+  emits: ['ok'],
   setup(props){
+    const { dialogRef } = useDialogPluginComponent();
     return {
-      model: reactive<MethodInput>(props.modelValue)
+      dialogRef,
+      model: ref<string>(props?.label||'')
     }
   }
 });

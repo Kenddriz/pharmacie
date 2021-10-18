@@ -20,9 +20,9 @@ export class MethodService {
   async findAll(): Promise<Method[]> {
     return this.repository.find({ order: { label: 'ASC' } });
   }
-  async remove(id: number): Promise<number> {
-    await this.repository.delete(id);
-    return id;
+  async remove(id: number): Promise<boolean> {
+    const query = await this.repository.delete(id);
+    return query.affected > 0;
   }
 
   async findOneByLabel(label: string): Promise<Method> {

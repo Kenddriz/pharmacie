@@ -12,11 +12,11 @@ import { Invoice } from './invoice.entity';
 import { Payment } from '../payment/payment.entity';
 import {
   CreateInvoiceInput,
-  InvoiceInput,
+  InvoiceInput, PaginateInvoiceInput,
   UpdateInvoiceInput,
-} from './dto/invoice.input';
+} from './types/invoice.input';
 import { uniqId } from '../shared/id-builder.service';
-import { InvoicePagination } from './dto/invoice.output';
+import { InvoicePagination } from './types/invoice.output';
 import { PaginationInput } from '../shared/shared.input';
 import { PaymentService } from '../payment/payment.service';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
@@ -97,7 +97,7 @@ export class InvoiceResolver {
 
   @Query(() => InvoicePagination)
   async paginateInvoices(
-    @Args('paginationInput') input: PaginationInput,
+    @Args('input') input: PaginateInvoiceInput,
   ): Promise<InvoicePagination> {
     return await this.invoiceService.paginate(input);
   }

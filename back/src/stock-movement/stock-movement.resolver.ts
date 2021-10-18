@@ -12,7 +12,7 @@ import { BatchService } from '../batch/batch.service';
 import { Batch } from '../batch/batch.entity';
 import { InvoiceService } from '../invoice/invoice.service';
 import { Invoice } from '../invoice/invoice.entity';
-import { UpdateAssuredLineInput } from '../invoice/dto/invoice.input';
+import { UpdateAssuredLineInput } from '../invoice/types/invoice.input';
 import { MedicineService } from '../medicine/medicine.service';
 import {
   CancelSaleLineOutput,

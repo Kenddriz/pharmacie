@@ -1,68 +1,69 @@
 <template>
   <q-btn icon="edit" size="sm" round flat color="positive">
     <q-menu persistent anchor="bottom middle" self="top middle">
-      <q-form class="text-blue-grey-14" @submit.prevent="submit()" @reset="reset">
-        <q-card flat class="q-pa-md">
-          <div class="text-h6 q-mb-md row">
-            <q-icon name="info" size="md" />
-            {{payment ? 'Informations du payment' : 'Payement de la facture'}}
-            <q-space />
-            <q-btn dense v-close-popup flat round icon="close" color="red" />
+      <q-card flat class="text-blue-grey-14">
+        <q-bar class="text-subtitle1 text-white bg-teal-14">
+          {{payment ? 'Informations du payment' : 'Régler la facture'}}
+          <q-space />
+          <q-btn dense v-close-popup flat round icon="close" />
+        </q-bar>
+        <q-form class="row q-pa-md" @submit.prevent="submit()" @reset="reset">
+          <div class="q-gutter-md q-mr-md">
+            <q-input
+              dense
+              hide-bottom-space
+              :model-value="model.reference"
+              v-model="model.reference"
+              stack-label
+              outlined
+              label="Référence *"
+              lazy-rules
+              :rules="[ val => val && val.length > 0 || 'Veuiller entrer la référence']"
+            />
+            <DateInput
+              v-model="model.date"
+              outlined
+              label="Date de payment *"
+              dense
+            />
+            <CustomSelect
+              dense
+              outlined
+              label="Mode de payement"
+              :options="paymentModes"
+              v-model="model.methodeId"
+              lazy-rules
+              :rules="[ () => model.methodeId > 0 || 'Entrer le moyen de payment']"
+            />
           </div>
-          <q-card-section horizontal>
-            <div class="q-gutter-md q-mr-md">
-              <q-input
-                hide-bottom-space
-                :model-value="model.reference"
-                v-model="model.reference"
-                stack-label
-                outlined
-                label="Référence *"
-                lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Veuiller entrer la référence']"
-              />
-              <DateInput
-                v-model="model.date"
-                outlined
-                label="Date de payment *"
-              />
-              <CustomSelect
-                outlined
-                label="Mode de payement"
-                :options="paymentModes"
-                v-model="model.methodeId"
-                lazy-rules
-                :rules="[ () => model.methodeId > 0 || 'Entrer le moyen de payment']"
-              />
-            </div>
-            <div class="q-gutter-sm">
-              <q-input
-                :model-value="model.note"
-                v-model="model.note"
-                stack-label
-                label="Mettre une note"
-                outlined
-                type="textarea"
-              />
-              <q-btn
-                v-close-popup
-                no-caps
-                outline
-                label="Enregistrer"
-                type="submit"
-                color="primary"
-              />
-              <q-btn
-                no-caps
-                outline
-                label="Réinitialiser"
-                type="reset"
-                color="primary"
-              />
-            </div>
-          </q-card-section>
-        </q-card>
-      </q-form>
+          <div class="q-gutter-sm">
+            <q-input
+              dense
+              :model-value="model.note"
+              v-model="model.note"
+              stack-label
+              label="Mettre une note"
+              outlined
+              type="textarea"
+            />
+            <q-btn
+              v-close-popup
+              no-caps
+              outline
+              label="Enregistrer"
+              type="submit"
+              color="primary"
+            />
+            <q-btn
+              no-caps
+              outline
+              label="Réinitialiser"
+              type="reset"
+              color="primary"
+            />
+          </div>
+        </q-form>
+      </q-card>
     </q-menu>
   </q-btn>
 </template>

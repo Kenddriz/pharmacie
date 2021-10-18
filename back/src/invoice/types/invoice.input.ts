@@ -8,6 +8,7 @@ import {
 } from '@nestjs/graphql';
 import { StockMovementFormInput } from '../../stock-movement/dto/stock-movement.input';
 import { BatchFormInput } from '../../batch/dto/batch.input';
+import { PaginationInput } from '../../shared/shared.input';
 
 @InputType()
 export class AssuredLineInput extends StockMovementFormInput {
@@ -60,3 +61,10 @@ export class UpdateInvoiceInput extends PartialType(
   @Field()
   id: number;
 }
+
+@InputType()
+export class PaginateInvoiceInput extends PaginationInput {
+  @Field({ nullable: true })
+  paymentId?: number;
+}
+
