@@ -52,6 +52,7 @@ export default {
     ht: 'HT',
     vat: 'TVA',
     discount: 'Remise',
-    ttc: 'TTC'
+    ttc: 'TTC',
+    date: 'Date'
   }
 };

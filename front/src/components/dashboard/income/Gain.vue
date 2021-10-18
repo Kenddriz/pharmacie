@@ -1,12 +1,23 @@
 <template>
-  <q-card square flat bordered class="q-mb-sm text-center">
+  <q-card square flat bordered class="text-center">
     <q-card-section class="q-pb-none">
       <div class="flex flex-center">
         <span>Référence : {{invoice.reference}}&nbsp;&nbsp;-&nbsp;&nbsp;</span>
         <span>Frais divers : {{invoice.expense}}&nbsp;&nbsp;-&nbsp;&nbsp;</span>
         <span>Echéance : {{formatDate(invoice.dueDate, 'DATE_ONLY')}}</span>
       </div>
-      <q-knob
+      <q-slider
+        :model-value="costs.progress"
+        :min="0"
+        :max="100"
+        :step="1"
+        label
+        :label-value="`Quantité vendue : ${costs.progress}%`"
+        color="positive"
+        readonly
+        dense
+      />
+      <!--<q-knob
         show-value
         font-size="12px"
         :model-value="costs.progress"
@@ -15,12 +26,13 @@
         color="teal"
         track-color="grey-3"
         class="q-ma-sm"
+        readonly
       >
         <div>
           Quantité vendue
           <div class="q-mt-sm">{{ costs.progress }}%</div>
         </div>
-      </q-knob>
+      </q-knob>-->
     </q-card-section>
     <q-separator />
     <q-card-section horizontal>

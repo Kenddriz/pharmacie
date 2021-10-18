@@ -28,7 +28,7 @@ import {
   ProviderCommandsInput
 } from '../types';
 import { reactive, ref } from 'vue';
-import { cloneDeep, removeDialog } from '../utils/utils';
+import { removeDialog } from '../utils/utils';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { notify } from '../../shared/notification';
 import { Loading } from 'quasar';
@@ -53,15 +53,17 @@ export const usePaginateCommands = (
     QueryPaginateCommandsArgs
     >(PAGINATE_COMMAND, { input });
 
-  const commands = useResult(result, InitialPagination, res => {
-    if(res?.paginateCommands) {
-      const id = selectedCmd.value[0]?.id;
-      selectedCmd.value.length = 0;
-      const find = res.paginateCommands.items.find(item => item.id === id)||res.paginateCommands.items[0];
-      if(find)selectedCmd.value = [cloneDeep(find)];
-      return res.paginateCommands;
+  const commands = useResult(result, InitialPagination, pick => {
+    if(pick?.paginateCommands) {
+      const find = pick.paginateCommands.items.find(c => c.id === selectedCmd.value[0]?.id)||pick.paginateCommands.items[0];
+      if(find){
+        if(selectedCmd.value.length)Object.assign(selectedCmd.value[0], {...find});
+        else selectedCmd.value.push({...find });
+      }
+      return pick.paginateCommands;
     }
-    return InitialPagination
+    selectedCmd.value.length = 0;
+    return InitialPagination;
   });
   function setSelectedCmd(index: number) {
     Object.assign(selectedCmd.value[0], commands.value.items[index]);

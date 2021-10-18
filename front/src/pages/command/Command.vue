@@ -112,36 +112,22 @@
     </q-card>
     <div class="col-12 col-md-3">
       <div class="text-h6 text-center">Liste de commandes</div>
-      <q-list
-        ref="scrollTargetRef"
-        :style="`max-height: ${$q.screen.height - 150}px`"
-        class="scroll-y"
-        separator
-      >
-        <q-item
-          clickable
-          v-ripple v-for="(cmd, i) in commands.items"
-          :key="i"
-          @click="setSelectedCmd(i); tab = 'update'"
-          :active="cmd.id === selectedCmd[0].id"
-          active-class="bg-brown-1"
-        >
-          <q-item-section avatar>
-            <q-avatar size="sm" color="primary" text-color="white">
-              {{cmd.provider.name.charAt(0).toUpperCase()}}
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>{{cmd.provider.name}}</q-item-section>
-          <q-item-section>{{formatDate(cmd.provider.createdAt, 'DATE_ONLY')}}</q-item-section>
-          <q-item-section top side>
-            <q-item-label caption>
-              livrée
-            </q-item-label>
-            <q-icon size="xs" v-if="cmd.invoice" color="positive" name="done" />
-            <q-icon size="xs" v-else color="warning" name="remove_done" />
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <CommandList
+        :style="`height: ${$q.screen.height - 190}px`"
+        :commands="commands.items"
+        :selected-id="selectedCmd[0]?.id"
+        with-name
+        @select="setSelectedCmd($event); tab = 'update'"
+      />
+      <div class="flex flex-center">
+        <q-pagination
+          :disable="commands.meta.totalItems <= 1"
+          :model-value="input.page"
+          :max="commands.meta.totalPages"
+          v-model="input.page"
+          input
+        />
+      </div>
     </div>
   </q-page>
 </template>
@@ -156,6 +142,7 @@ import UpdateCommand from '../../components/command/UpdateCommand.vue';
 import CardProvider from '../../components/provider/CardProvider.vue';
 import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue'
 import UpdateProviderAvatar from '../../components/provider/UpdateProviderAvatar.vue';
+import CommandList from '../../components/command/CommandList.vue';
 
 export default defineComponent({
   name: 'Command',
@@ -165,7 +152,8 @@ export default defineComponent({
     AddCommandTab,
     UpdateCommand,
     CommandLineDetails,
-    UpdateProviderAvatar
+    UpdateProviderAvatar,
+    CommandList
   },
   setup() {
     return {

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { jsPDF }  from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { computed, ref } from 'vue';
+import { roundNumber } from '../../components/dashboard/income/logical';
 
 export const cloneDeep = (data: any) => {
   return JSON.parse(JSON.stringify(data))
@@ -73,7 +74,7 @@ export const subdivideToUnits = (val: number, units: Unit[]): number[] => {
 export const saleLineCost = (input: SaleLineInput|StockMovement): number => {
   let c = input.price * input.quantity;
   c += (c * (input.vat / 100)) - (c * (input.discount/100));
-  return c;
+  return roundNumber(c);
 }
 export const downloadPdf = (command: Command) => {
   const columns: string[]  = ['N°', 'Médicament', 'Quantité']
