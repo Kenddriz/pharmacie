@@ -33,9 +33,9 @@
             <q-item
               clickable
               v-ripple
-              v-for="cmd in commands.items"
-              :key="cmd.id"
-              @click="showMore(cmd)"
+              v-for="(cmd, index) in commands.items"
+              :key="index"
+              @click="showMore(index)"
             >
               <q-item-section side>
                 N°{{cmd.id}}
@@ -91,11 +91,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, UnwrapRef } from 'vue';
+import { defineComponent } from 'vue';
 import { formatDate } from '../../shared/date';
 import { useProviderCommandsChart } from '../../graphql/provider/provider.service';
 import { useI18n } from 'vue-i18n';
-import { Command } from '../../graphql/types';
 import { usePaginateCommands } from '../../graphql/command/command.service';
 
 export default defineComponent({
@@ -109,11 +108,20 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props){
+  setup(props, {emit}){
     const { tm } = useI18n();
     const { pccLoading, chartSeries, input: chartInput } = useProviderCommandsChart(props.providerId);
+    const { commands, selectedCmd, setSelectedCmd, pcLoading, input } = usePaginateCommands(1, chartInput);
+    function showMore(index: number) {
+      setSelectedCmd(index);
+      emit('more', selectedCmd.value[0]);/**emit selected reference to parent**/
+    }
     return {
-      ...usePaginateCommands(1, chartInput),
+      commands,
+      selectedCmd,
+      pcLoading,
+      input,
+      showMore,
       formatDate,
       chartOptions: {
         chart: {
@@ -180,12 +188,6 @@ export default defineComponent({
       chartInput
     }
   },
-  methods: {
-    showMore(cmd: UnwrapRef<Command> ) {
-      Object.assign(this.selectedCmd[0], cmd);
-      this.$emit('more', this.selectedCmd[0]);/**emit selected reference to parent**/
-    }
-  }
 });
 </script>
 
