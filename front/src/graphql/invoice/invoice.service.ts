@@ -8,7 +8,7 @@ import {
   MutationSoftRemoveInvoiceArgs,
   MutationUpdateInvoiceArgs,
   PaginationInput,
-  QueryPaginateCommandsArgs,
+  QueryPaginateInvoicesArgs,
   QueryPaginateDeletedInvoicesArgs,
   UpdateInvoiceInput,
 } from '../types';
@@ -43,7 +43,7 @@ export const usePaginateInvoices = (withSales: boolean) => {
   });
   const { result, loading, refetch } = useQuery<
     PaginateInvoicesData,
-    QueryPaginateCommandsArgs
+    QueryPaginateInvoicesArgs
     >(PAGINATE_INVOICES(withSales), { paginationInput: { ...paginationInput } });
   const invoices = useResult(result, InitialPagination, res => res?.paginateInvoices||InitialPagination);
   function findInvoices() {

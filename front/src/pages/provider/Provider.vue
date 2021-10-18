@@ -124,11 +124,10 @@
             />
           </q-td>
         </q-tr>
-        <q-tr no-hover v-show="props.expand" :props="props">
+        <q-tr no-hover v-if="props.expand" :props="props">
           <q-td no-hover colspan="100%">
             <ProviderCommands
-              :expand="props.expand"
-              :provider="props.row"
+              :provider-id="props.row.id"
               @add="openAddCmdDialog(props.row)"
               @more="openCommandDetails($event)"
             />
@@ -203,7 +202,7 @@ export default defineComponent({
       openSoftRemoveProvider: (provider: Provider) => {
         dialog({
           component: SoftRemoveProvider,
-          componentProps: { provider }
+          componentProps: { id: provider.id, name: provider.name }
         }).onOk((command: Command) => openCommandDetails(command));
       },
       viewModeOptions: [

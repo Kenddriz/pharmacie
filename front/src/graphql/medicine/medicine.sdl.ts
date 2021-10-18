@@ -16,6 +16,8 @@ export const MEDICINE_PARAMS = `
   currentSalePrice
   currentVat
   stockTotal
+  createdAt,
+  updatedAt
 `;
 export type CreateMedicineData = {
   createMedicine: Article

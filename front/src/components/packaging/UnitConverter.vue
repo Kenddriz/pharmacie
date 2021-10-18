@@ -5,8 +5,9 @@
     :label="(showValue ? modelValue : '') + (isQ ? ' ' : 'Ar/') + units[suIndex]?.label"
     icon-right="expand_more"
     no-caps
-    text-color="text-blue-grey-14"
-    style="font-size: 12px"
+    style="font-size: 12px; margin-left: -4px"
+    class="text-caption text-grey"
+    align="left"
   >
     <q-menu ref="uc">
       <q-list dense padding>

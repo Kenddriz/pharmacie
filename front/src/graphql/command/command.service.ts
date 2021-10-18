@@ -24,30 +24,34 @@ import {
   QueryCommandsMonthlyArgs,
   QueryPaginateCommandsArgs,
   QueryPaginateDeletedCommandsArgs,
+  PaginateProviderCommandsInput,
+  ProviderCommandsInput
 } from '../types';
 import { reactive, ref } from 'vue';
 import { cloneDeep, removeDialog } from '../utils/utils';
 import { addPaginationCache, deletePaginationCache, InitialPagination } from '../utils/pagination';
 import { notify } from '../../shared/notification';
 import { Loading } from 'quasar';
-import { addProviderCommandsCache, removeProviderCommandsCache } from './update.cache';
 
 export type Serie = {
   name: string,
   type: string,
   data: Array<number>
 }
-export const usePaginateCommands = () => {
-  const paginationInput = reactive<PaginationInput>({
+const lim = Math.ceil((screen.height - 150)/50);
+export const usePaginateCommands = (
+  limit = lim, providerInput: ProviderCommandsInput|undefined = undefined
+) => {
+  const input = reactive<PaginateProviderCommandsInput>({
     page: 1,
-    limit: Math.ceil((screen.height - 150)/50),
+    limit
   });
+  if(providerInput) Object.assign(input, { providerInput });
   const selectedCmd = ref<Command[]>([]);
-
   const { result, loading: pcLoading } = useQuery<
     PaginateCommandsData,
     QueryPaginateCommandsArgs
-    >(PAGINATE_COMMAND, { paginationInput });
+    >(PAGINATE_COMMAND, { input });
 
   const commands = useResult(result, InitialPagination, res => {
     if(res?.paginateCommands) {
@@ -67,6 +71,7 @@ export const usePaginateCommands = () => {
     pcLoading,
     selectedCmd,
     setSelectedCmd,
+    input
   }
 }
 export const useCreateCommand = () => {
@@ -80,9 +85,6 @@ export const useCreateCommand = () => {
           fields: {
             paginateCommands(existing: any, {toReference}) {
               return addPaginationCache(data.createCommand, existing, toReference);
-            },
-            providerCommands(existingRef: any, { toReference }){
-              return addProviderCommandsCache(existingRef, toReference)
             }
           }
         })
@@ -177,9 +179,6 @@ export const useSoftRemoveCommand = () => {
               fields: {
                 paginateCommands(existingRef: any, { readField, toReference }) {
                   return deletePaginationCache(id, existingRef, readField, toReference);
-                },
-                providerCommands(existingRef: any, { toReference }) {
-                  return removeProviderCommandsCache(existingRef, toReference);
                 },
                 paginateDeletedCommands(existingRef: any, { readField }) {
                   return addPaginationCache(data.softRemoveCommand, existingRef, readField);

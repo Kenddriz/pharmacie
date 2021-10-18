@@ -6,24 +6,21 @@
     <q-card style="width: 350px" square>
       <q-bar class="bg-teal-14 text-white">
         <span style="font-size: 12px!important;">
-          {{provider.name}}
+          {{name}}
         </span>
         <q-space />
         <q-btn dense flat icon="close" v-close-popup>
           <q-tooltip class="bg-white text-primary">Fermer</q-tooltip>
         </q-btn>
       </q-bar>
-      <q-card-section
-        v-if="providerCommands.items.length || pcLoading"
-        style="height: calc(100% - 35px)"
-      >
-        <q-list separator>
+      <q-card-section style="height: calc(100% - 35px)">
+        <q-list v-if="commands.items.length || pcLoading" separator>
           <q-item
             clickable
             v-ripple
-            v-for="(cmd, i) in providerCommands.items"
+            v-for="(cmd, i) in commands.items"
             :key="i"
-            @click="openMoreDialog(cmd)"
+            @click="shoMore(cmd)"
           >
             <q-item-section>{{formatDate(provider.createdAt, 'DATE_ONLY')}}</q-item-section>
             <q-item-section v-if="(size = cmd.commandLines.length) !== undefined" side>
@@ -38,14 +35,13 @@
             </q-item-section>
           </q-item>
         </q-list>
-        <template v-if="(total = providerCommands.meta.totalItems) !== undefined && !pcLoading">
+        <template v-if="(total = commands.meta.totalItems && !pcLoading)">
           <q-separator />
           <q-item>
             <q-pagination
-              :model-value="pcInput.page"
-              :max="providerCommands.meta.totalPages"
-              v-model="pcInput.page"
-              @update:model-value="getCommands(provider.id)"
+              :model-value="input.page"
+              :max="commands.meta.totalPages"
+              v-model="input.page"
               input
             />
           </q-item>
@@ -58,17 +54,8 @@
             </q-item-section>
           </q-item>
         </template>
-        <q-inner-loading :showing="pcLoading">
-          <q-spinner-cube size="80px" color="warning" />
-        </q-inner-loading>
-      </q-card-section>
-      <q-card-section
-        v-else
-        style="height: calc(100% - 35px)"
-        vertical
-        class="column justify-center items-center"
-      >
-        <span class="text-subtitle1">
+        <NoData :sizes="[95, 100]" :loading="pcLoading" :total-items="commands.meta.totalItems">
+         <div class="text-body2">
           Aucune commande n'a été effectuée depuis sa création.
           <q-btn
             v-close-popup
@@ -78,46 +65,45 @@
             label="Supprimer"
             @click="softRemoveProvider(provider.id)"
           />
-        </span>
+        </div>
+        </NoData>
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, UnwrapRef } from 'vue';
+import { defineComponent, UnwrapRef } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
-import {
-  useProviderCommands,
-  useSoftRemoveProvider,
-} from '../../graphql/provider/provider.service';
-import { Command, Provider } from '../../graphql/types';
+import { useSoftRemoveProvider } from '../../graphql/provider/provider.service';
+import { Command } from '../../graphql/types';
 import { formatDate } from '../../shared/date';
+import { usePaginateCommands } from '../../graphql/command/command.service';
+import NoData from '../shared/NoData.vue';
 
 export default defineComponent({
   name: 'SoftRemoveProvider',
+  components: { NoData },
   props: {
-    provider: {
-      type: Object as PropType<Provider>,
+    id: {
+      type: Number,
       required: true
     },
+    name: String
   },
   emits: ['ok'],
-  setup() {
+  setup(props) {
     const { dialogRef } = useDialogPluginComponent();
     return {
       dialogRef,
-      ...useProviderCommands(5),
+      ...usePaginateCommands(4, { year: new Date().getFullYear(), providerId: props.id }),
       formatDate,
       ...useSoftRemoveProvider()
     }
   },
-  beforeCreate() {
-    this.getCommands(this.provider.id)
-  },
   methods: {
-    openMoreDialog(cmd: UnwrapRef<Command> ) {
-      Object.assign(this.selectedCmd[0], {...cmd, provider: this.provider });
+    shoMore(cmd: UnwrapRef<Command> ) {
+      Object.assign(this.selectedCmd[0], cmd);
       this.$emit('ok', this.selectedCmd[0]);/**emit selected reference to parent**/
     }
   }

@@ -6,22 +6,22 @@
         style="width: 300px;"
       >
         <q-input
-          :model-value="pcInput.year"
+          :model-value="chartInput.year"
           input-class="text-center"
           placeholder="Année de commande"
           class="q-mb-md"
           dense
           type="number"
-          v-model.number="pcInput.year"
           :loading="pcLoading"
-          @keydown.enter="refresh"
+          v-model.number="chartInput.year"
+          @keydown.enter="input.providerInput.year = chartInput.year"
         >
           <template v-slot:prepend>
             <span class="text-body2 text-weight-bold">Année : </span>
           </template>
           <template v-slot:append>
             <q-icon
-              @click="refresh"
+              @click="input.providerInput.year = chartInput.year"
               color="dark"
               name="send"
               class="cursor-pointer"
@@ -29,13 +29,13 @@
           </template>
         </q-input>
         <q-list class="full-width" separator bordered>
-          <template v-if="providerCommands.items.length">
+          <template v-if="commands.items.length">
             <q-item
               clickable
               v-ripple
-              v-for="cmd in providerCommands.items"
+              v-for="cmd in commands.items"
               :key="cmd.id"
-              @click="openMoreDialog(cmd)"
+              @click="showMore(cmd)"
             >
               <q-item-section side>
                 N°{{cmd.id}}
@@ -54,10 +54,9 @@
             </q-item>
             <q-item>
               <q-pagination
-                :model-value="pcInput.page"
-                :max="providerCommands.meta.totalPages"
-                v-model="pcInput.page"
-                @update:model-value="getCommands(provider.id)"
+                :model-value="input.page"
+                :max="commands.meta.totalPages"
+                v-model="input.page"
                 input
               />
             </q-item>
@@ -92,11 +91,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watch, UnwrapRef } from 'vue';
+import { defineComponent, UnwrapRef } from 'vue';
 import { formatDate } from '../../shared/date';
-import { useProviderCommands, useProviderCommandsChart } from '../../graphql/provider/provider.service';
+import { useProviderCommandsChart } from '../../graphql/provider/provider.service';
 import { useI18n } from 'vue-i18n';
-import { Command, Provider } from '../../graphql/types';
+import { Command } from '../../graphql/types';
+import { usePaginateCommands } from '../../graphql/command/command.service';
 
 export default defineComponent({
   name: 'ProviderCommands',
@@ -104,47 +104,16 @@ export default defineComponent({
   components: {
   },
   props: {
-    provider: {
-      type: Object as PropType<Provider>,
-      required: true
-    },
-    expand: {
-      type: Boolean,
+    providerId: {
+      type: Number,
       required: true
     }
   },
-  setup(props, {emit}){
+  setup(props){
     const { tm } = useI18n();
-    const {
-      pcLoading,
-      getCommands,
-      providerCommands,
-      pcInput,
-      selectedCmd
-    } = useProviderCommands();
-    const {
-      pccLoading,
-      loadChart,
-      chartSeries
-    } = useProviderCommandsChart();
-    function refresh() {
-      getCommands(props.provider.id);
-      loadChart({ year: pcInput.year, providerId: props.provider.id })
-    }
-    watch<boolean>(() => props.expand, (expanded) => {
-      if(expanded)refresh();
-    });
-    function openMoreDialog(cmd: UnwrapRef<Command> ) {
-      Object.assign(selectedCmd.value[0], {...cmd, provider: props.provider });
-      emit('more', selectedCmd.value[0]);/**emit selected reference to parent**/
-    }
+    const { pccLoading, chartSeries, input: chartInput } = useProviderCommandsChart(props.providerId);
     return {
-      refresh,
-      pcLoading,
-      getCommands,
-      providerCommands,
-      pcInput,
-      selectedCmd,
+      ...usePaginateCommands(1, chartInput),
       formatDate,
       chartOptions: {
         chart: {
@@ -207,9 +176,14 @@ export default defineComponent({
         }
       },
       pccLoading,
-      loadChart,
       chartSeries,
-      openMoreDialog
+      chartInput
+    }
+  },
+  methods: {
+    showMore(cmd: UnwrapRef<Command> ) {
+      Object.assign(this.selectedCmd[0], cmd);
+      this.$emit('more', this.selectedCmd[0]);/**emit selected reference to parent**/
     }
   }
 });

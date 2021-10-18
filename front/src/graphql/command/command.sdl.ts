@@ -7,8 +7,8 @@ export type PaginateCommandsData = {
   paginateCommands: CommandPagination;
 }
 export const PAGINATE_COMMAND = gql`
- query PaginateCommands($paginationInput: PaginationInput!) {
-  paginateCommands(paginationInput: $paginationInput) {
+ query PaginateCommands($input: PaginateProviderCommandsInput!) {
+  paginateCommands(input: $input) {
     items{
       ${COMMAND_FIELDS}
       provider{${PROVIDER_FIELDS}}

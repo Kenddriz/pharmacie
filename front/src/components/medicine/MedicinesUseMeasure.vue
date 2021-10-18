@@ -1,28 +1,27 @@
 <template>
-  <q-dialog style="overflow: hidden" seamless ref="dialogRef">
+  <q-dialog seamless ref="dialogRef">
     <MovableCard resizable class="resizable">
       <template v-slot:title>
         Médicaments dependant {{$t('measure.delete.' + foreignKey)}}
         <q-badge align="top" color="warning">{{params.size}}</q-badge>
       </template>
       <q-list separator>
-        <template v-for="article in articles.items" :key="article.id">
-          <template v-for="(med, index) in article.medicines" :key="index">
+        <template v-for="(article, iA) in articles.items" :key="iA">
+          <template v-for="(med, iM) in article.medicines" :key="iM">
             <q-item clickable v-if="med[params.table].id === measureId" >
-              <q-item-section side>{{index + 1}}</q-item-section>
+              <q-item-section side>{{iM + 1}}</q-item-section>
               <q-item-section>
                 <q-item-label>
                   {{article.commercialName}} {{med.dosage.label}}, {{med.form.label}}
-                </q-item-label>
-                <q-item-label class="text-brown" caption>
-                  {{med.archivedAt ? 'archivé' : 'non archivé'}}
                 </q-item-label>
               </q-item-section>
               <q-item-section>
                 {{med.packaging.units.map(u => u.label).join(' - ')}}
               </q-item-section>
               <q-item-section side>
-                <q-btn icon="more_vert" color="primary" flat round />
+                <q-btn icon="more_vert" color="primary" flat round>
+                  <MoreInfo :medicine="med" />
+                </q-btn>
               </q-item-section>
             </q-item>
           </template>
@@ -79,7 +78,6 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import { getMedicineName } from '../../graphql/utils/utils';
 import { useDialogPluginComponent } from 'quasar';
 import { useDeleteForm } from '../../graphql/form/form.service';
 import { useSoftRemovePackaging } from '../../graphql/packaging/packaging.service';
@@ -87,11 +85,12 @@ import { useDeleteDosage } from '../../graphql/dosage/dosage.service';
 import MovableCard from '../shared/MovableCard.vue';
 import NoData from '../shared/NoData.vue';
 import { usePaginateArticle } from '../../graphql/article/article.service';
-import  { Article } from '../../graphql/types';
+import { formatDate } from '../../shared/date';
+import MoreInfo from './MoreInfo.vue';
 
 export default defineComponent({
   name: 'MedicinesUseMeasure',
-  components: { MovableCard, NoData },
+  components: { MovableCard, NoData, MoreInfo },
   props: {
     measureId: {
       type: Number,
@@ -120,9 +119,10 @@ export default defineComponent({
         break;
     }
     const params = computed(() => {
-      const size = articles.value.items.reduce((s, cur: Article) => {
-        return s + cur?.medicines?.filter(med => (med as any)[table].id === props.measureId).length;
-      }, 0)
+      let size = 0;
+      articles.value.items.forEach(article => {
+        size += article.medicines.filter(med => (med as any)[table].id === props.measureId).length;
+      })
       return { table, size };
     })
     const { softRemovePackaging } = useSoftRemovePackaging();
@@ -143,7 +143,7 @@ export default defineComponent({
     }
     return {
       params,
-      getMedicineName,
+      formatDate,
       dialogRef,
       submitDelete,
       listLoading,

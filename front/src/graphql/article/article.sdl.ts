@@ -71,7 +71,7 @@ export type PaginateDeletedArticlesData = {
   paginateDeletedArticles: ArticlePagination;
 }
 export const PAGINATE_DELETED_ARTICLES = gql`
-  query PaginateDeletedCommands($input: PaginationInput!){
+  query PaginateDeletedArticles($input: PaginationInput!){
     paginateDeletedArticles(input: $input) {
       items{${ARTICLE_PARAMS} archivedAt}
       ${PAGINATION_META}

@@ -3,7 +3,9 @@
     <Divider align="center" class="text-blue-grey-14">
       {{article.commercialName}}
       {{med.dosage.label}}, {{med.form.label}}
-      <q-btn dense color="brown" flat icon="read_more" />
+      <q-btn dense color="brown" flat icon="read_more">
+        <MoreInfo :medicine="med" />
+      </q-btn>
     </Divider>
     <q-list dense class="text-blue-grey-14">
       <q-item
@@ -70,10 +72,11 @@ import Divider from '../../shared/Divider.vue';
 import SubdivideList from '../../packaging/SubdivideList.vue';
 import { formatDate } from '../../../shared/date';
 import { leftDays, subdivideToUnits } from '../../../graphql/utils/utils';
+import MoreInfo from '../../medicine/MoreInfo.vue';
 
 export default defineComponent({
   name: 'ArticleMedicinesBatches',
-  components: {Divider, SubdivideList},
+  components: {Divider, SubdivideList, MoreInfo},
   props: {
     article: {
       type: Object as PropType<Article>,

@@ -17,12 +17,9 @@
           <q-item-section>
             <q-item-label>Prix de vente</q-item-label>
             <UnitConverter
-              class="text-dark text-caption text-brown"
-              align="left"
               :units="med.packaging.units"
               :value="med.currentSalePrice"
               :is-q="false"
-              style="margin-left: -4px"
             />
           </q-item-section>
         </q-item>

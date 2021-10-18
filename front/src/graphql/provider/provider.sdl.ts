@@ -1,7 +1,7 @@
 import {gql} from '@apollo/client/core';
-import { CommandPagination, Provider, ProviderCommandsChart, ProviderPagination } from '../types';
+import { Provider, ProviderCommandsChart, ProviderPagination } from '../types';
 import { PAGINATION_META } from '../utils/pagination';
-import { COMMAND_FIELDS, INVOICE_FIELDS, PROVIDER_FIELDS } from '../invoice/incoice.sdl';
+import { PROVIDER_FIELDS } from '../invoice/incoice.sdl';
 
 export type SaveProviderData = {
   saveProvider: Provider
@@ -24,25 +24,11 @@ export const PAGINATE_PROVIDERS = gql`
     }
   }
 `;
-export type ProviderCommandsData = {
-  providerCommands: CommandPagination;
-}
-export const PROVIDER_COMMANDS = gql`
-  query ProviderCommands($input: ProviderCommandsInput!){
-    providerCommands(input: $input){
-      items{
-        ${COMMAND_FIELDS}
-        invoice{${INVOICE_FIELDS()}}
-      }
-      ${PAGINATION_META}
-    }
-  }
-`;
 export type ProviderCommandsChartData = {
   providerCommandsChart: ProviderCommandsChart[]
 }
 export const PROVIDER_COMMANDS_CHART = gql`
-  query ProviderCommandsChart($input: ProviderCommandsChartInput!) {
+  query ProviderCommandsChart($input: ProviderCommandsInput!) {
     providerCommandsChart(input: $input) {
       month
       invoice

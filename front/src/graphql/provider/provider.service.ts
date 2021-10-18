@@ -1,11 +1,9 @@
-import { useLazyQuery, useMutation, useQuery, useResult } from '@vue/apollo-composable';
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import {
   CREATE_PROVIDER,
   SaveProviderData,
   PaginateProvidersData,
   PAGINATE_PROVIDERS,
-  ProviderCommandsData,
-  PROVIDER_COMMANDS,
   ProviderCommandsChartData,
   PROVIDER_COMMANDS_CHART,
   RemoveProviderData,
@@ -25,11 +23,7 @@ import {
   QueryPaginateProvidersArgs,
   ProviderPagination,
   ProviderCommandsInput,
-  QueryProviderCommandsArgs,
-  CommandPagination,
   QueryProviderCommandsChartArgs,
-  ProviderCommandsChartInput,
-  Command,
   MutationRemoveProviderArgs,
   MutationUpdateProviderAvatarArgs,
   QueryPaginateDeletedProvidersArgs,
@@ -127,52 +121,15 @@ export const usePaginateProviders = (limit = 5) => {
     selectedProvider
   }
 }
-export const useProviderCommands = (limit = 1) => {
-  const selectedCmd = ref<Command[]>([]);
-  const pcInput = reactive<Omit<ProviderCommandsInput, 'providerId'>>({
-    limit,
-    year: new Date().getFullYear(),
-    page: 1
-  });
-  const { loading: pcLoading, result, load } = useLazyQuery<
-    ProviderCommandsData,
-    QueryProviderCommandsArgs
-    >(PROVIDER_COMMANDS);
-  function getCommands(providerId: number) {
-    void load(PROVIDER_COMMANDS, { input: { ...pcInput, providerId } }, { fetchPolicy: 'network-only' })
-  }
-  const providerCommands = useResult<
-    ProviderCommandsData|undefined,
-    CommandPagination,
-    CommandPagination
-    >(result, InitialPagination, pick => {
-    if(pick?.providerCommands) {
-      const find = pick.providerCommands.items.find(c => c.id === selectedCmd.value[0]?.id)||pick.providerCommands.items[0];
-      if(find){
-        if(selectedCmd.value.length)Object.assign(selectedCmd.value[0], {...find});
-        else selectedCmd.value.push({...find });
-      }
-      return pick.providerCommands;
-    }
-    selectedCmd.value.length = 0;
-    return InitialPagination;
-  });
-  return {
-    pcLoading,
-    getCommands,
-    providerCommands,
-    pcInput,
-    selectedCmd
-  }
-}
-export const useProviderCommandsChart = () => {
-  const { loading: pccLoading, load, result } = useLazyQuery<
+export const useProviderCommandsChart = (providerId: number) => {
+  const  input = reactive<ProviderCommandsInput>({
+    providerId,
+    year: new Date().getFullYear()
+  })
+  const { loading: pccLoading, result } = useQuery<
     ProviderCommandsChartData,
     QueryProviderCommandsChartArgs
-    >(PROVIDER_COMMANDS_CHART);
-  function loadChart(input: ProviderCommandsChartInput) {
-    void load(PROVIDER_COMMANDS_CHART,{ input }, { fetchPolicy: 'network-only' })
-  }
+    >(PROVIDER_COMMANDS_CHART, { input });
   const chartSeries = useResult<
     ProviderCommandsChartData|undefined,
     Serie[],
@@ -201,8 +158,8 @@ export const useProviderCommandsChart = () => {
   });
   return {
     pccLoading,
-    loadChart,
-    chartSeries
+    chartSeries,
+    input
   }
 }
 export const useUpdateProviderAvatar = () => {

@@ -30,7 +30,7 @@ export type Article = {
   id: Scalars['Float'];
   dci: Scalars['String'];
   commercialName: Scalars['String'];
-  medicines?: Maybe<Array<Medicine>>;
+  medicines: Array<Medicine>;
   updatedAt: Scalars['DateTime'];
   createdAt: Scalars['DateTime'];
   archivedAt?: Maybe<Scalars['DateTime']>;
@@ -753,6 +753,13 @@ export type PaginatePatientSalesOutput = {
   meta: Meta;
 };
 
+export type PaginateProviderCommandsInput = {
+  keyword?: Maybe<Scalars['String']>;
+  page: Scalars['Float'];
+  limit: Scalars['Float'];
+  providerInput?: Maybe<ProviderCommandsInput>;
+};
+
 export type PaginateStockMovementInput = {
   medicineId: Scalars['Float'];
   batchId?: Maybe<Scalars['Float']>;
@@ -830,16 +837,9 @@ export type ProviderCommandsChart = {
   invoice: Scalars['Float'];
 };
 
-export type ProviderCommandsChartInput = {
-  year: Scalars['Int'];
-  providerId: Scalars['Int'];
-};
-
 export type ProviderCommandsInput = {
   year: Scalars['Int'];
   providerId: Scalars['Int'];
-  page: Scalars['Int'];
-  limit: Scalars['Int'];
 };
 
 export type ProviderPagination = {
@@ -851,7 +851,6 @@ export type ProviderPagination = {
 export type Query = {
   __typename?: 'Query';
   paginateProviders: ProviderPagination;
-  providerCommands: CommandPagination;
   providerCommandsChart: Array<ProviderCommandsChart>;
   countProviders: Scalars['Int'];
   paginateDeletedProviders: ProviderPagination;
@@ -896,13 +895,8 @@ export type QueryPaginateProvidersArgs = {
 };
 
 
-export type QueryProviderCommandsArgs = {
-  input: ProviderCommandsInput;
-};
-
-
 export type QueryProviderCommandsChartArgs = {
-  input: ProviderCommandsChartInput;
+  input: ProviderCommandsInput;
 };
 
 
@@ -912,7 +906,7 @@ export type QueryPaginateDeletedProvidersArgs = {
 
 
 export type QueryPaginateCommandsArgs = {
-  paginationInput: PaginationInput;
+  input: PaginateProviderCommandsInput;
 };
 
 
