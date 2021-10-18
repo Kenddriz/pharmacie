@@ -26,7 +26,7 @@
         title-class="text-blue-grey-14"
       >
         <template v-slot:body="props">
-          <q-tr :props="props">
+          <q-tr no-hover :props="props">
             <q-td key="batch" no-hover>
               {{ getMedicineName(props.row.batch.medicine) }}
             </q-td>

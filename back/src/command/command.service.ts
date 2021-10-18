@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
 import {
-  ProviderCommandsChartInput,
+  PaginateProviderCommandsInput,
   ProviderCommandsInput,
 } from './dto/command.input';
 import { ProviderCommandsChart } from './dto/command.dto';
@@ -27,30 +27,27 @@ export class CommandService {
     const query = await this.repository.delete(id);
     return query.affected > 0;
   }
-  async paginate(input: PaginationInput): Promise<Pagination<Command>> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('c')
-      .orderBy('c.createdAt', 'DESC');
+  async paginate(
+    input: PaginateProviderCommandsInput,
+  ): Promise<Pagination<Command>> {
+    const queryBuilder = this.repository.createQueryBuilder('c');
+    if (input?.providerInput) {
+      queryBuilder
+        .where('c.providerId = :providerId', {
+          providerId: input.providerInput.providerId,
+        })
+        .andWhere('EXTRACT(YEAR FROM c.createdAt) = :year', {
+          year: input.providerInput.year,
+        });
+    }
+    queryBuilder.orderBy('c.createdAt', 'DESC');
 
     const { page, limit } = input;
     return await paginate<Command>(queryBuilder, { page, limit });
   }
-  async providerCommands(
-    input: ProviderCommandsInput,
-  ): Promise<Pagination<Command>> {
-    const queryBuilder = this.repository
-      .createQueryBuilder('c')
-      .where('c.providerId = :providerId', { providerId: input.providerId })
-      .andWhere('EXTRACT(YEAR FROM c.createdAt) = :year', { year: input.year })
-      .orderBy('c.createdAt', 'DESC');
-    return await paginate<Command>(queryBuilder, {
-      page: input.page,
-      limit: input.limit,
-    });
-  }
 
   async providerCommandsChart(
-    input: ProviderCommandsChartInput,
+    input: ProviderCommandsInput,
   ): Promise<ProviderCommandsChart[]> {
     return this.repository
       .createQueryBuilder('cmd')

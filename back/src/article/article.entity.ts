@@ -1,7 +1,8 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
-  CreateDateColumn, DeleteDateColumn,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryColumn,
@@ -23,12 +24,12 @@ export class Article {
   @Column()
   commercialName: string;
 
-  @Field(() => [Medicine], { nullable: true })
-  @OneToMany(() => Medicine, (medicin) => medicin.article, {
+  @Field(() => [Medicine])
+  @OneToMany(() => Medicine, (medicine) => medicine.article, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  medicines?: Medicine[];
+  medicines: Medicine[];
 
   @Field()
   @CreateDateColumn()

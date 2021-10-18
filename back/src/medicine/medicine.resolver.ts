@@ -13,7 +13,6 @@ import {
   CreateMedicineInput,
   UpdateMedicineInput,
   MedicineFormInput,
-  FindByMeasureInput,
 } from './types/medicine.input';
 import { uniqId } from '../shared/id-builder.service';
 import { Form } from '../form/form.entity';
@@ -31,7 +30,6 @@ import {
   MostConsumedMedicineOutput,
   SoftRemoveMedicineOutput,
 } from './types/medicine.output';
-import { Pagination } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
 
 @Resolver(() => Medicine)
@@ -64,13 +62,6 @@ export class MedicineResolver {
     const medicine = await this.medicineService.findOne(id);
     await this.save(medicine, form);
     return medicine;
-  }
-
-  @Query(() => MedicinePaginationOutput)
-  async findMedicinesByMeasure(
-    @Args('input') input: FindByMeasureInput,
-  ): Promise<Pagination<Medicine>> {
-    return this.medicineService.findByMeasure(input);
   }
   /**Field resolvers*/
   @ResolveField(() => Form)

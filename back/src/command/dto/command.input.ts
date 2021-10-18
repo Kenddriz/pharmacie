@@ -1,5 +1,6 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { CommandLineInput } from '../../command-line/dto/command-line.input';
+import { PaginationInput } from '../../shared/shared.input';
 
 @InputType()
 export class CreateCommandInput {
@@ -21,15 +22,10 @@ export class ProviderCommandsInput {
   year: number;
   @Field(() => Int)
   providerId: number;
-  @Field(() => Int)
-  page: number;
-  @Field(() => Int)
-  limit: number;
 }
+
 @InputType()
-export class ProviderCommandsChartInput {
-  @Field(() => Int)
-  year: number;
-  @Field(() => Int)
-  providerId: number;
+export class PaginateProviderCommandsInput extends PaginationInput {
+  @Field(() => ProviderCommandsInput, { nullable: true })
+  providerInput?: ProviderCommandsInput;
 }

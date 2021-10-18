@@ -3,46 +3,46 @@ export const assuredLineColumns = [
     name: 'batch',
     label: 'Médicament',
     field: 'batch',
-    align: 'center'
+    align: 'left'
   },
   {
     name: 'commandedQuantity',
-    label: 'Quantité Commandée',
+    label: 'Commandée',
     field: 'quantity',
-    align: 'center'
+    align: 'left'
   },
   {
     name: 'deliveredQuantity',
-    label: 'Quantité Livrée',
-    align: 'center',
+    label: 'Livrée',
+    align: 'left',
   },
   {
     name: 'price',
     label: 'Prix',
     field: 'price',
-    align: 'center'
+    align: 'left'
   },
   {
     name: 'ht',
-    label: 'Montant HT',
-    align: 'center'
+    label: 'HT',
+    align: 'left'
   },
   {
     name: 'discount',
-    label: 'Escompte',
+    label: 'Remise',
     field: 'discount',
-    align: 'center'
+    align: 'left'
   },
   {
     name: 'tva',
     label: 'TVA',
     field: 'vat',
-    align: 'center'
+    align: 'left'
   },
   {
     name: 'expirationDate',
-    label: 'Date de péremption',
+    label: 'Péremption',
     field: 'batch',
-    align: 'center'
+    align: 'left'
   }
 ]

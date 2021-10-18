@@ -8,6 +8,7 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { PaginationInput } from '../shared/shared.input';
+import { PaginateArticleInput } from './types/article.input';
 
 @Injectable()
 export class ArticleService {
@@ -16,10 +17,6 @@ export class ArticleService {
   ) {}
   create(article: Article) {
     return this.repository.save(article);
-  }
-
-  findAll() {
-    return `This action returns all article`;
   }
 
   async findOneById(id: number): Promise<Article> {
@@ -31,14 +28,30 @@ export class ArticleService {
       where: [{ dci: ILike(keyword) }, { commercialName: ILike(keyword) }],
     });
   }
-  async paginate(input: PaginationInput): Promise<Pagination<Article>> {
-    const keyword = `%${input.keyword}%`;
-    const queryBuilder = this.repository
-      .createQueryBuilder('article')
-      .where('article.dci ILIKE :keyword', { keyword })
-      .where('article.commercialName ILIKE :keyword', { keyword })
-      .orderBy('article.createdAt', 'DESC');
-
+  async paginate(input: PaginateArticleInput): Promise<Pagination<Article>> {
+    const queryBuilder = this.repository.createQueryBuilder('article');
+    if (!input?.measureInput) {
+      const keyword = `%${input.keyword}%`;
+      queryBuilder
+        .where('article.dci ILIKE :keyword', { keyword })
+        .where('article.commercialName ILIKE :keyword', { keyword });
+    } else {
+      let table = 'packaging';
+      const id = input.measureInput.id;
+      const foreignKey = input.measureInput.foreignKey;
+      switch (foreignKey) {
+        case 'dosageId':
+          table = 'dosages';
+          break;
+        case 'formId':
+          table = 'forms';
+          break;
+      }
+      queryBuilder
+        .innerJoin('medicines', 'med', 'med.articleId = article.id')
+        .where(`med.${foreignKey} = :id`, { id });
+    }
+    queryBuilder.orderBy('article.createdAt', 'DESC');
     const options: IPaginationOptions = {
       page: input.page,
       limit: input.limit,

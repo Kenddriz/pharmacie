@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { ArticleService } from './article.service';
 import { Article } from './article.entity';
-import { SaveArticleInput } from './types/article.input';
+import { PaginateArticleInput, SaveArticleInput } from './types/article.input';
 import { ArticlePagination } from './types/article.dto';
 import { uniqId } from '../shared/id-builder.service';
 import { PaginationInput } from '../shared/shared.input';
@@ -38,7 +38,7 @@ export class ArticleResolver {
   }
   @Query(() => ArticlePagination)
   async paginateArticles(
-    @Args('input') input: PaginationInput,
+    @Args('input') input: PaginateArticleInput,
   ): Promise<ArticlePagination> {
     return await this.articleService.paginate(input);
   }

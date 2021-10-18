@@ -10,7 +10,11 @@ import {
 import { CommandService } from './command.service';
 import { Command } from './command.entity';
 import { uniqId } from '../shared/id-builder.service';
-import { CreateCommandInput, UpdateCommandInput } from './dto/command.input';
+import {
+  CreateCommandInput,
+  PaginateProviderCommandsInput,
+  UpdateCommandInput,
+} from './dto/command.input';
 import { CommandPagination, CommandsMonthly } from './dto/command.dto';
 import { PaginationInput } from '../shared/shared.input';
 import { CommandLine } from '../command-line/command-line.entity';
@@ -61,7 +65,7 @@ export class CommandResolver {
   }
   @Query(() => CommandPagination)
   async paginateCommands(
-    @Args('paginationInput') input: PaginationInput,
+    @Args('input') input: PaginateProviderCommandsInput,
   ): Promise<CommandPagination> {
     return await this.commandService.paginate(input);
   }

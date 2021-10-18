@@ -10,10 +10,7 @@ import {
   CommandPagination,
   ProviderCommandsChart,
 } from '../command/dto/command.dto';
-import {
-  ProviderCommandsChartInput,
-  ProviderCommandsInput,
-} from '../command/dto/command.input';
+import { ProviderCommandsInput } from '../command/dto/command.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/jwt-auth.guard';
 import { GraphQLUpload } from 'graphql-upload';
@@ -46,15 +43,10 @@ export class ProviderResolver {
   ): Promise<ProviderPagination> {
     return await this.providerService.paginate(input);
   }
-  @Query(() => CommandPagination)
-  async providerCommands(
-    @Args('input') input: ProviderCommandsInput,
-  ): Promise<CommandPagination> {
-    return this.commandService.providerCommands(input);
-  }
+
   @Query(() => [ProviderCommandsChart])
   async providerCommandsChart(
-    @Args('input') input: ProviderCommandsChartInput,
+    @Args('input') input: ProviderCommandsInput,
   ): Promise<ProviderCommandsChart[]> {
     return this.commandService.providerCommandsChart(input);
   }

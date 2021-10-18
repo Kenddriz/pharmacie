@@ -51,9 +51,10 @@ export class BatchService {
   }
   async stockTotal(medicineId: number): Promise<number> {
     const { total } = await this.repository
-      .createQueryBuilder('b')
-      .select('SUM(b.currentStock) AS total')
-      .where('b.medicineId = :medicineId', { medicineId })
+      .createQueryBuilder('batch')
+      .select('SUM(batch.currentStock) AS total')
+      .where('batch.medicineId = :medicineId', { medicineId })
+      .andWhere('batch.expirationDate >= CURRENT_DATE')
       .getRawOne();
     return total || 0;
   }

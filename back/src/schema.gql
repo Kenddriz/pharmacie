@@ -33,7 +33,7 @@ type Article {
   id: Float!
   dci: String!
   commercialName: String!
-  medicines: [Medicine!]
+  medicines: [Medicine!]!
   updatedAt: DateTime!
   createdAt: DateTime!
   archivedAt: DateTime
@@ -286,16 +286,14 @@ type LoginDto {
 
 type Query {
   paginateProviders(input: PaginationInput!): ProviderPagination!
-  providerCommands(input: ProviderCommandsInput!): CommandPagination!
-  providerCommandsChart(input: ProviderCommandsChartInput!): [ProviderCommandsChart!]!
+  providerCommandsChart(input: ProviderCommandsInput!): [ProviderCommandsChart!]!
   countProviders: Int!
   paginateDeletedProviders(input: PaginationInput!): ProviderPagination!
-  paginateCommands(paginationInput: PaginationInput!): CommandPagination!
+  paginateCommands(input: PaginateProviderCommandsInput!): CommandPagination!
   findCommandById(id: Int!): Command!
   countUndeliveredCommands: Int!
   commandsMonthly(year: Int!): [CommandsMonthly!]!
   paginateDeletedCommands(input: PaginationInput!): CommandPagination!
-  findMedicinesByMeasure(input: FindByMeasureInput!): MedicinePaginationOutput!
   countMedicines: Int!
   mostConsumedMedicines(year: Int!): [MostConsumedMedicineOutput!]!
   paginateDeletedMedicines(input: PaginationInput!): MedicinePaginationOutput!
@@ -305,7 +303,7 @@ type Query {
   countDosages: Int!
   packaging: [Packaging!]!
   deletedPackaging: [Packaging!]!
-  paginateArticles(input: PaginationInput!): ArticlePagination!
+  paginateArticles(input: PaginateArticleInput!): ArticlePagination!
   findOneArticle(keyword: String!): Article
   countArticles: Int!
   paginateDeletedArticles(input: PaginationInput!): ArticlePagination!
@@ -335,20 +333,24 @@ input PaginationInput {
 input ProviderCommandsInput {
   year: Int!
   providerId: Int!
-  page: Int!
-  limit: Int!
 }
 
-input ProviderCommandsChartInput {
-  year: Int!
-  providerId: Int!
-}
-
-input FindByMeasureInput {
+input PaginateProviderCommandsInput {
   keyword: String
   page: Float!
   limit: Float!
-  measureId: Int!
+  providerInput: ProviderCommandsInput
+}
+
+input PaginateArticleInput {
+  keyword: String
+  page: Float!
+  limit: Float!
+  measureInput: FindByMeasureInput
+}
+
+input FindByMeasureInput {
+  id: Int!
   foreignKey: String!
 }
 

@@ -1,4 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { PaginationInput } from '../../shared/shared.input';
 
 @InputType()
 export class SaveArticleInput {
@@ -10,4 +11,17 @@ export class SaveArticleInput {
 
   @Field()
   commercialName: string;
+}
+
+@InputType()
+export class FindByMeasureInput {
+  @Field(() => Int)
+  id: number;
+  @Field(() => String)
+  foreignKey: 'formId' | 'dosageId' | 'packagingId';
+}
+@InputType()
+export class PaginateArticleInput extends PaginationInput {
+  @Field(() => FindByMeasureInput, { nullable: true })
+  measureInput?: FindByMeasureInput;
 }
