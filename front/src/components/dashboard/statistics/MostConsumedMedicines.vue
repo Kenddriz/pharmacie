@@ -9,7 +9,7 @@
     <thead>
       <tr>
         <th colspan="2">
-          <span class="text-subtitle1 text-weight-bold">
+          <span class="text-subtitle2 text-weight-bold">
             Les médicaments les plus consomés
           </span>
         </th>

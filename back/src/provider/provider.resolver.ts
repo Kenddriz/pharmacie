@@ -2,20 +2,17 @@ import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
 import { ProviderService } from './provider.service';
 import { Provider } from './provider.entity';
 import { SaveProviderInput } from './types/provider.input';
-import { uniqId } from '../shared/id-builder.service';
 import { PaginationInput, Upload } from '../shared/shared.input';
 import { ProviderPagination } from './types/provider.dto';
 import { CommandService } from '../command/command.service';
 import {
-  CommandPagination,
   ProviderCommandsChart,
 } from '../command/dto/command.dto';
 import { ProviderCommandsInput } from '../command/dto/command.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/jwt-auth.guard';
 import { GraphQLUpload } from 'graphql-upload';
-import { removeFile } from '../shared/remove-file.service';
-import { upload } from '../shared/uploader.service';
+import { removeFile, uniqId, upload } from '../utils';
 
 @Resolver(() => Provider)
 export class ProviderResolver {

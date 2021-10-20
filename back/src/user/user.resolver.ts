@@ -6,16 +6,14 @@ import {
   UpdatePasswordInput,
   UpdateUserInput,
 } from './types/user.input';
-import { uniqId } from '../shared/id-builder.service';
 import { compareSync, hashSync } from 'bcrypt';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user-decorator';
 import { StrategyType } from '../auth/types/strategy.type';
-import { removeFile } from '../shared/remove-file.service';
 import { Upload } from '../shared/shared.input';
 import { GraphQLUpload } from 'graphql-upload';
-import { upload } from '../shared/uploader.service';
+import { removeFile, uniqId, upload } from '../utils';
 
 @Resolver(() => User)
 export class UserResolver {

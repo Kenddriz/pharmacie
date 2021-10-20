@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { DosageService } from './dosage.service';
 import { Dosage } from './dosage.entity';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { SaveDosageInput } from './types/dosage.input';
 
 @Resolver(() => Dosage)

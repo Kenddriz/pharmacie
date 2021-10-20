@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { MethodService } from './method.service';
 import { Method } from './method.entity';
 import { MethodInput } from './dto/method.input';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 
 @Resolver(() => Method)
 export class MethodResolver {

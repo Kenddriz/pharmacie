@@ -10,7 +10,7 @@ import {
 } from './dto/prescription.input';
 import { SaleService } from '../sale/sale.service';
 import { Sale } from '../sale/sale.entity';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 
 @Resolver(() => Prescription)
 export class PrescriptionResolver {

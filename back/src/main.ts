@@ -9,7 +9,12 @@ loadEnvVariables().then(async () => {
     require('./app.module').AppModule,
   );
   app.use(graphqlUploadExpress({ maxFileSize: 1000000000, maxFiles: 10 }));
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  // app.useStaticAssets('.\\public');
+  app.useStaticAssets(
+    process.env.NODE_ENV === 'development'
+      ? join(__dirname, '..', 'public')
+      : './public',
+  );
   // app.setGlobalPrefix('api');
   await app.listen(process.env.PORT, '0.0.0.0');
   console.log(

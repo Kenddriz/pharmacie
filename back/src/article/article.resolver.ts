@@ -11,7 +11,7 @@ import { ArticleService } from './article.service';
 import { Article } from './article.entity';
 import { PaginateArticleInput, SaveArticleInput } from './types/article.input';
 import { ArticlePagination } from './types/article.dto';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { PaginationInput } from '../shared/shared.input';
 import { Medicine } from '../medicine/medicine.entity';
 import { MedicineService } from '../medicine/medicine.service';

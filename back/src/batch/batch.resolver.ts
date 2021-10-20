@@ -15,7 +15,7 @@ import {
   UpdateBatchInput,
 } from './dto/batch.input';
 import { MedicineService } from '../medicine/medicine.service';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { Medicine } from '../medicine/medicine.entity';
 import { StockMovement } from '../stock-movement/stock-movement.entity';
 import { StockMovementService } from '../stock-movement/stock-movement.service';

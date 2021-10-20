@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { CommandService } from './command.service';
 import { Command } from './command.entity';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import {
   CreateCommandInput,
   PaginateProviderCommandsInput,

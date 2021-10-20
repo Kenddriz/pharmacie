@@ -6,7 +6,7 @@ import { InvoiceService } from '../invoice/invoice.service';
 import { MethodService } from '../method/method.service';
 import { Invoice } from '../invoice/invoice.entity';
 import { CreatePaymentInput, UpdatePaymentInput } from './dto/payment.input';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 
 @Resolver(() => Payment)
 export class PaymentResolver {

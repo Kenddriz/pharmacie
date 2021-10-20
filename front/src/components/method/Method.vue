@@ -9,13 +9,14 @@
   </q-item>
   <div class="row q-gutter-md justify-center">
     <q-card
+      flat
       style="height: 100px!important;"
       bordered
       @click="create"
       class="col-1 justify-center items-center column"
     >
       <span class="q-mb-sm">Nouveau</span>
-      <q-btn color="primary" round icon="add"/>
+      <q-btn unelevated color="primary" round icon="add"/>
     </q-card>
     <ScrollArea class="col" style="height: 120px; width: 100%">
       <div class="row no-wrap q-gutter-md">

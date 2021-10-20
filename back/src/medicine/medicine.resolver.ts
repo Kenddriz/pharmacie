@@ -14,7 +14,7 @@ import {
   UpdateMedicineInput,
   MedicineFormInput,
 } from './types/medicine.input';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { Form } from '../form/form.entity';
 import { FormService } from '../form/form.service';
 import { DosageService } from '../dosage/dosage.service';

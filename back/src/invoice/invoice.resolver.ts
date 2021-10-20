@@ -15,7 +15,7 @@ import {
   InvoiceInput, PaginateInvoiceInput,
   UpdateInvoiceInput,
 } from './types/invoice.input';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { InvoicePagination } from './types/invoice.output';
 import { PaginationInput } from '../shared/shared.input';
 import { PaymentService } from '../payment/payment.service';

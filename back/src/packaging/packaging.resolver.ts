@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PackagingService } from './packaging.service';
 import { Packaging } from './packaging.entity';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import {
   CreatePackagingInput,
   UpdatePackagingInput,

@@ -20,7 +20,7 @@ import { MedicineService } from '../medicine/medicine.service';
 import { PaginationInput } from '../shared/shared.input';
 import { StockMovementService } from '../stock-movement/stock-movement.service';
 import { PatientService } from '../patient/patient.service';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 
 @Resolver(() => Sale)
 export class SaleResolver {

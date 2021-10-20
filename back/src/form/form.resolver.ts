@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { FormService } from './form.service';
 import { Form } from './form.entity';
-import { uniqId } from '../shared/id-builder.service';
+import { uniqId } from '../utils';
 import { CreateFormInput, UpdateFormInput } from './types/form.input';
 
 @Resolver(() => Form)
