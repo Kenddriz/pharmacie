@@ -6,11 +6,11 @@ import { Loading } from 'quasar';
 import { emptyPaginationCache } from '../utils/pagination';
 
 export const useCounter = () => {
-  const { result, loading: counterLoading } = useQuery<CounterData>(COUNTER);
+  const { result, loading } = useQuery<CounterData>(COUNTER, {}, {fetchPolicy: 'no-cache'});
   const counts = useResult(result, new CounterData(), res => res);
   return {
     counts,
-    counterLoading
+    loading
   }
 }
 export const useRemoveAllArchived = () => {

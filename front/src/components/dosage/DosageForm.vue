@@ -1,6 +1,6 @@
 <template>
   <q-menu v-model="show" @before-show="$emit('before-show')">
-    <q-form @submit="show=false; $emit('submit')" class="q-ma-md">
+    <q-form @submit.prevent="show=false; $emit('submit')" class="q-ma-md">
       <div class="text-subtitle1 text-weight-bold q-mb-sm">{{title}}</div>
       <div class="row items-center no-wrap q-gutter-md">
         <q-input

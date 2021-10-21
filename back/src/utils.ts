@@ -9,12 +9,11 @@ import {
   unlinkSync,
 } from 'fs';
 import { UnauthorizedException } from '@nestjs/common';
-import { join } from 'path';
 type FileParams = {
   filename: string;
   mimetype: string;
 };
-export const publicDir =
+export const publicDir = () =>
   process.env.NODE_ENV === 'development' ? '../public/' : './public/';
 export const uniqId = async (repo: string): Promise<number> => {
   let id = 1,
@@ -49,7 +48,7 @@ export const upload = async (
     filename.lastIndexOf('.') > 20 ? filename.substr(20) : filename;
   m_filename = id + '-' + m_filename;
 
-  const path = __dirname + `${publicDir}${dossier}/`;
+  const path = `${publicDir()}${dossier}/`;
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
 
   const uploaded = await new Promise((resolve, reject) =>
@@ -64,7 +63,7 @@ export const upload = async (
   return { filename: m_filename, mimetype };
 };
 export const removeFile = (filename: string): boolean => {
-  const path = join(__dirname, publicDir, filename);
+  const path = publicDir() + filename;
   let removed = false;
   access(path, constants.F_OK, (err) => {
     if (!err) {

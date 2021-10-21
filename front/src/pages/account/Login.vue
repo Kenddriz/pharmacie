@@ -1,6 +1,8 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <WindowTools />
+    <WindowTools>
+      <div class="text-h6">Fary</div>
+    </WindowTools>
     <q-page-container>
       <div class="login-container text-blue-grey-14">
         <q-avatar
@@ -15,9 +17,8 @@
           class="login q-pa-lg"
           style="transform: translateY(-30px);"
         >
-          <q-card-section class="text-center">
-            <h1 class="text-h4 q-mb-sm">AUTHENTIFICATION</h1>
-            <div class="text-h6">Fary</div>
+          <q-card-section class="text-center text-h4 q-mt-md">
+            AUTHENTIFICATION
           </q-card-section>
           <q-card-section class="q-pt-sm">
             <q-form @submit.prevent="submitLogin" class="q-gutter-lg">
@@ -68,7 +69,7 @@
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
   import {useLogin} from '../../graphql/user/login/login.service';
-  import WindowTools from '../../components/shared/WindowBar.vue';
+  import WindowTools from '../../components/shared/WindowTools.vue';
   export default defineComponent({
     name: 'Login',
     components: { WindowTools },

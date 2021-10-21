@@ -40,7 +40,7 @@
   import { defineComponent, ref } from 'vue';
   import Footer from './Footer.vue';
   import { pItems, sItems } from './menu' ;
-  import WindowTools from '../components/shared/WindowBar.vue';
+  import WindowTools from '../components/shared/WindowTools.vue';
   import Account from '../components/account/Account.vue';
 
   export default defineComponent({

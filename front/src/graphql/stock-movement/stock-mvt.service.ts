@@ -59,7 +59,7 @@ export const useUpdateAssuredLine = (stm: StockMovement) => {
 
   function updateAssuredLine () {
     Loading.show({
-      message: 'Enregistrement des modifications ...'
+      message: 'Mise à jour ...'
     })
     void mutate({ input: updateInput });
   }
@@ -97,7 +97,7 @@ export const useUpdateSaleLine = (stm: StockMovement) => {
     >(UPDATE_SALE_LINE);
     onDone(() => {
       Loading.hide();
-      notify('L\'Opération a reussi !')
+      notify('Mise à jour avec succès !')
     });
     const uslInput = reactive<UpdateSaleLineInput>({
       id: stm.id,
@@ -108,7 +108,7 @@ export const useUpdateSaleLine = (stm: StockMovement) => {
       discount: stm.discount
     });
     function updateSaleLine() {
-      Loading.show({ message: 'Enregistrement ...'})
+      Loading.show({ message: 'Mise à jour ...'})
       void mutate({input: uslInput});
     }
     return { updateSaleLine, uslInput }
@@ -121,7 +121,7 @@ export const useCancelSaleLines = () => {
     >(CANCEL_SALE_LINES);
   onDone(() => {
     Loading.hide();
-    notify('L\'opération a reussi');
+    notify('Annulation avec succès');
   });
   function cancelSaleLine(input: CancelSaleLinesInput) {
     Loading.show({ message: 'Annulation ...' });

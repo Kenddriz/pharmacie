@@ -5,13 +5,17 @@
 import { defineComponent } from 'vue';
 import { invoke } from '@tauri-apps/api/tauri';
 import { Command } from '@tauri-apps/api/shell';
+import { appWindow } from '@tauri-apps/api/window';
 
 export default defineComponent({
   name: 'App',
   beforeCreate() {
-    new Command('.\\server.exe').execute().catch((e) => console.log(e));
+    new Command('./server.exe').execute().catch((e) => console.log(e));
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => void invoke('close_splashscreen'), 3000);
+      setTimeout(() => {
+        void invoke('close_splashscreen');
+        void appWindow.maximize();
+      }, 3000);
     });
   },
 })

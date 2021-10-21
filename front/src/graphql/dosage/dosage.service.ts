@@ -82,7 +82,7 @@ export const useDeleteDosage = () => {
     notify('Suppression avec succès');
   })
   function deleteDosage(id: number) {
-    Loading.show({ message: 'Suppression ...'});
+    Loading.show({message: 'Suppression ...'});
     void mutate({ id }, {
       update(cache, { data }) {
         if(data?.deleteDosage) {

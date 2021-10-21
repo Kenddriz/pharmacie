@@ -2,7 +2,7 @@
   <q-page class="q-pa-xs">
     <q-splitter
       v-model="splitterModel"
-      style="height: 86vh"
+      style="height: 88vh"
     >
       <template v-slot:before>
         <Article

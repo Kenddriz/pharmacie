@@ -52,7 +52,7 @@ export default defineComponent({
   components: { GroupSale, SaleStory, PatientCpt },
   setup() {
     const { screen } = useQuasar();
-    const heightStyle = computed(() => `height:${screen.height - 90}px`);
+    const heightStyle = computed(() => `height:${screen.height - 74}px;`);
     return {
       tab: ref<string>('create'),
       splitterModel: ref(10),

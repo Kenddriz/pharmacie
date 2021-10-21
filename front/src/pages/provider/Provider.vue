@@ -20,7 +20,7 @@
       no-data-label="Aucune page trouvé..."
       hide-pagination
       :loading="ppLoading"
-      :style="`height:${$q.screen.height - 90}px;`"
+      :style="`height:${$q.screen.height - 80}px;`"
       loading-label="Chargement des données"
       table-style="overflow-x:hidden"
     >

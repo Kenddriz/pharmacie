@@ -4,7 +4,8 @@
       <div class="text-bold">{{ label }}</div>
       <q-separator class="q-my-sm" />
       <div class="row no-wrap items-center justify-between">
-        <q-icon size="25px" :name="icon" />
+        <q-spinner-oval v-if="loading" color="primary" size="20px" />
+        <q-icon v-else size="25px" :name="icon" />
         <div>
           {{ value }}
         </div>
@@ -19,7 +20,8 @@
     props: {
       label: String,
       icon: String,
-      value: Number
+      value: Number,
+      loading: Boolean
     }
   };
 </script>

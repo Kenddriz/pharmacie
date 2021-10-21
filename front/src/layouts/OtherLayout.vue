@@ -10,7 +10,7 @@
         stretch
         inline-label
         content-class="q-gutter-x-lg"
-        indicator-color="warning"
+        active-color="warning"
       >
         <q-tab
           v-for="(item, index) in sItems"
@@ -43,7 +43,7 @@ import { defineComponent, ref } from 'vue';
 import Footer from './Footer.vue';
 import Account from '../components/account/Account.vue';
 import { otherLayoutTab, sItems } from './menu';
-import WindowTools from '../components/shared/WindowBar.vue';
+import WindowTools from '../components/shared/WindowTools.vue';
 
 export default defineComponent({
   name: 'OtherLayout',

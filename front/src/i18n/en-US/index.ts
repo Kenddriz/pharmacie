@@ -54,5 +54,21 @@ export default {
     discount: 'Remise',
     ttc: 'TTC',
     date: 'Date'
+  },
+  unit: {
+    indications: [
+      {
+        title: 'Formes et dosages',
+        body: 'Paramètres de prix d\'un médicament'
+      },
+      {
+        title: 'Unités de vente',
+        body: 'Une ligne d\'unités de vente représente les différentes possibilités de vendre un médicament.'
+      },
+      {
+        title: 'A retenir',
+        body: 'Forme, dosage et unités de vente sont nécéssaires pour créer un médicament.'
+      }
+    ]
   }
 };

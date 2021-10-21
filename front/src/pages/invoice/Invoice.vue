@@ -4,7 +4,7 @@
       bordered
       flat square
       class="col-12 col-md-9 q-pa-sm overflow-auto"
-      :style="`height:${$q.screen.height - 86}px;`"
+      :style="`height:${$q.screen.height - 82}px;`"
     >
       <PaymentMode @ok="pInvoice.selected = $event" />
       <q-separator />

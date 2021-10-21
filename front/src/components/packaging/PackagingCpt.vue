@@ -19,7 +19,7 @@
       </q-item>
     </q-card-section>
     <q-separator />
-    <ScrollArea style="height: calc(100vh - 170px);">
+    <ScrollArea style="height: calc(100vh - 160px);">
       <q-card-section class="q-pb-none">
         <ScrollArea
           v-for="(pk, index) in packagingList"

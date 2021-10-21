@@ -12,6 +12,7 @@
           <span class="text-subtitle2 text-weight-bold">
             Les médicaments les plus consomés
           </span>
+          <q-spinner-dots v-if="loading" color="primary" size="sm" />
         </th>
       </tr>
       <tr>

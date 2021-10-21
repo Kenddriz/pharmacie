@@ -30,39 +30,17 @@
       </q-card>
     </div>
     <q-page-sticky position="top" :offset="[18, 18]">
-      <q-btn fab-mini color="secondary" text-color="warning" icon="info" rounded>
+      <q-btn fab-mini color="primary" text-color="white" icon="info" rounded>
         <q-menu anchor="top middle" self="bottom middle" class="overflow-hidden">
-          <q-list padding style="max-width: 400px">
-            <q-item>
+          <q-list padding style="max-width: 350px">
+            <q-item v-for="(u, index) in $tm('unit.indications')" :key="index">
               <q-item-section avatar>
-                <q-icon color="positive" name="info" />
+                <q-avatar size="25px" color="primary" text-color="white">{{index}}</q-avatar>
               </q-item-section>
               <q-item-section>
-                <q-item-label>Formes et dosages</q-item-label>
+                <q-item-label>{{u.title}}</q-item-label>
                 <q-item-label caption>
-                  Paramètres de prix d'un médicament.
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section avatar>
-                <q-icon color="positive" name="info" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Unités de vente</q-item-label>
-                <q-item-label caption>
-                  Une ligne d'unités de vente représente les différentes possibilités de vendre un médicament.
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item>
-              <q-item-section avatar>
-                <q-icon name="info" color="positive" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>A retenir</q-item-label>
-                <q-item-label caption>
-                  Forme, dosage et unités de vente sont nécéssaires pour créer un médicament.
+                  {{u.body}}
                 </q-item-label>
               </q-item-section>
             </q-item>

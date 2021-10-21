@@ -2,7 +2,7 @@
   <q-splitter
     :model-value="insideModel"
     v-model="insideModel"
-    style="height: 81vh"
+    style="height: 82vh"
     class="text-blue-grey-14"
   >
     <template v-slot:before>

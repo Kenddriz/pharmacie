@@ -18,108 +18,91 @@
           </q-tabs>
           <q-separator />
           <q-tab-panels keep-alive swipeable v-model="tab" animated>
-            <q-tab-panel name="add" class="q-pa-none">
-              <ScrollArea :style="heightStyle" class="q-pa-md">
-                <AddCommandTab />
-              </ScrollArea>
+            <q-tab-panel :style="heightStyle" name="add" class="q-pa-sm">
+              <AddCommandTab />
             </q-tab-panel>
 
-            <q-tab-panel name="update" class="q-pa-none">
-              <div v-if="pcLoading" :style="heightStyle" class="row items-center justify-center">
-                <q-spinner-ios size="8em" color="secondary" />
-              </div>
-              <ScrollArea
-                v-else-if="selectedCmd.length"
-                class="q-pa-sm"
-                :style="heightStyle"
-              >
-                <q-list dense class="q-mb-md">
-                  <q-expansion-item
-                    expand-separator
-                    icon="info"
-                    label="Informations supplémentaires"
-                    :caption="`Destination de la commande: ${selectedCmd[0].provider.name}`"
-                  >
-                    <div class="row items-stretch q-pb-sm q-mt-sm justify-around">
-                      <CardProvider flat :provider="selectedCmd[0].provider" />
-                      <div class="col-sm-12 col-md-4">
-                        <UpdateProviderAvatar
-                          :avatar="selectedCmd[0].provider.avatar"
-                          :provider-id="selectedCmd[0].provider.id"
-                          height="190px"
-                        />
-                        <q-item class="q-mt-sm">
-                          <q-item-section>
-                            <q-item-label>Date de commande</q-item-label>
-                            <q-item-label caption>
-                              {{ formatDate(selectedCmd[0].createdAt, 'DATE_TIME') }}
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section>
-                            <q-item-label>N°Commande</q-item-label>
-                            <q-item-label caption>
-                              {{selectedCmd[0].id}}
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </div>
+            <q-tab-panel :style="heightStyle" name="update" class="q-pa-sm">
+              <q-list dense v-if="selectedCmd.length">
+                <q-expansion-item
+                  expand-separator
+                  icon="info"
+                  label="Informations supplémentaires"
+                  :caption="`Destination de la commande: ${selectedCmd[0].provider.name}`"
+                >
+                  <div class="row items-stretch q-pb-sm q-mt-sm justify-around">
+                    <CardProvider flat :provider="selectedCmd[0].provider" />
+                    <div class="col-sm-12 col-md-4">
+                      <UpdateProviderAvatar
+                        :avatar="selectedCmd[0].provider.avatar"
+                        :provider-id="selectedCmd[0].provider.id"
+                        height="190px"
+                      />
+                      <q-item class="q-mt-sm">
+                        <q-item-section>
+                          <q-item-label>Date de commande</q-item-label>
+                          <q-item-label caption>
+                            {{ formatDate(selectedCmd[0].createdAt, 'DATE_TIME') }}
+                          </q-item-label>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>N°Commande</q-item-label>
+                          <q-item-label caption>
+                            {{selectedCmd[0].id}}
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </div>
-                  </q-expansion-item>
-                  <q-expansion-item
-                    default-opened
-                    expand-separator
-                    icon="receipt"
-                    label="Contenu de la commande"
-                    :caption="`Il y a ${selectedCmd[0].commandLines.length} ligne(s)`"
-                  >
-                   <UpdateCommand
-                     v-if="!selectedCmd[0].invoice"
-                      :command="selectedCmd[0]"
-                    />
-                    <CommandLineDetails
-                      v-else
-                      :command="selectedCmd[0]"
-                    />
-                  </q-expansion-item>
-                </q-list>
-              </ScrollArea>
-              <div
-                v-show="!selectedCmd.length && !pcLoading"
-                :style="heightStyle"
-                class="row items-center justify-center"
-              >
-                <div class="text-center">
-                  <p class="text-h5">AUCUNE COMMANDE EFFECTUEE</p>
-                  <q-btn
-                    no-caps
-                    outline
-                    rounded
-                    label="Passer une commande"
-                    icon-right="send"
-                    color="primary"
-                    @click="tab = 'add'"
+                  </div>
+                </q-expansion-item>
+                <q-expansion-item
+                  default-opened
+                  expand-separator
+                  icon="receipt"
+                  label="Contenu de la commande"
+                  :caption="`Il y a ${selectedCmd[0].commandLines.length} ligne(s)`"
+                >
+                  <UpdateCommand
+                    v-if="!selectedCmd[0].invoice"
+                    :command="selectedCmd[0]"
                   />
+                  <CommandLineDetails
+                    v-else
+                    :command="selectedCmd[0]"
+                  />
+                </q-expansion-item>
+              </q-list>
+              <NoData :sizes="[100, 150]" :total-items="commands.meta.totalItems" :loading="pcLoading">
+                <div class="row items-center justify-center">
+                  <div class="text-center">
+                    <p class="text-h5">AUCUNE COMMANDE EFFECTUEE</p>
+                    <q-btn
+                      no-caps
+                      outline
+                      rounded
+                      label="Passer une commande"
+                      icon-right="send"
+                      color="primary"
+                      @click="tab = 'add'"
+                    />
+                  </div>
                 </div>
-              </div>
+              </NoData>
             </q-tab-panel>
           </q-tab-panels>
-        </q-tab-panel>
-
-        <q-tab-panel name="delivery" class="q-pa-sm">
-          <div>Détails de livraison</div>
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
     <div class="col-12 col-md-3">
       <div class="text-h6 text-center">Liste de commandes</div>
       <CommandList
-        :style="`height: ${$q.screen.height - 190}px`"
+        :style="`height: ${$q.screen.height - 156}px;`"
         :commands="commands.items"
         :selected-id="selectedCmd[0]?.id"
         with-name
         @select="setSelectedCmd($event); tab = 'update'"
       />
-      <div class="flex flex-center">
+      <div class="flex flex-center bordered-top bordered-bottom">
         <q-pagination
           :disable="commands.meta.totalItems <= 1"
           :model-value="input.page"
@@ -135,7 +118,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { formatDate } from '../../shared/date';
-import ScrollArea from '../../components/shared/ScrollArea.vue';
 import { usePaginateCommands } from '../../graphql/command/command.service';
 import AddCommandTab from '../../components/command/AddCommandTab.vue';
 import UpdateCommand from '../../components/command/UpdateCommand.vue';
@@ -143,17 +125,18 @@ import CardProvider from '../../components/provider/CardProvider.vue';
 import CommandLineDetails from '../../components/command-line/CommandLineDetails.vue'
 import UpdateProviderAvatar from '../../components/provider/UpdateProviderAvatar.vue';
 import CommandList from '../../components/command/CommandList.vue';
+import NoData from '../../components/shared/NoData.vue';
 
 export default defineComponent({
   name: 'Command',
   components: {
-    ScrollArea,
     CardProvider,
     AddCommandTab,
     UpdateCommand,
     CommandLineDetails,
     UpdateProviderAvatar,
-    CommandList
+    CommandList,
+    NoData
   },
   setup() {
     return {
@@ -161,7 +144,7 @@ export default defineComponent({
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      heightStyle: `height:${screen.height - 210}px`
+      heightStyle: `height:${screen.height - 284}px;`
     }
   }
 });

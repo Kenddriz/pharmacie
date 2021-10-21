@@ -311,7 +311,7 @@ export const useRemoveSale = () => {
   });
   function remove(id: number) {
     removeDialog(() => {
-      Loading.show({ message: 'Exécution de l\'opération ...' });
+      Loading.show({ message: 'Suppression ...' });
       void mutate({ id }, {
         update(cache, { data }) {
           if(data?.removeSale) {

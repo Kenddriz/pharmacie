@@ -1,10 +1,10 @@
 <template>
-  <ScrollArea style="height: calc(100vh - 172px);">
+  <ScrollArea style="height: calc(100vh - 160px);">
     <div class="row wrap q-gutter-md q-pa-md">
       <q-btn icon-right="add" fab-mini text-color="primary">
         <FormForm />
       </q-btn>
-      <q-card v-for="(fm, i) in forms" :key="i">
+      <q-card flat bordered v-for="(fm, i) in forms" :key="i">
         <q-card-section class="text-center">{{fm.label}}</q-card-section>
         <q-separator />
         <q-card-actions>
