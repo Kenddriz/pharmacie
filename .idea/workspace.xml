@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ead1efca-4345-478c-bee6-a461387232ea" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/back/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/.eslintrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/.prettierrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/nest-cli.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/public/avatars/providers/1-IMG_20210928_132626.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/public/avatars/providers/2-IMG_20210928_132659.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/public/avatars/providers/4-IMG_20210928_132626.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/public/avatars/users/1-IMG_20210928_132645.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/app.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/app.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/app.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/app.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/article.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/article.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/article.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/article.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/types/article.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/article/types/article.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/auth.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/auth.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/current-user-decorator.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/jwt-auth.guard.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/jwt.strategy.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/types/auth.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/types/auth.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/auth/types/strategy.type.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/batch.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/batch.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/batch.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/batch.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/dto/batch.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/batch/dto/batch.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/command-line.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/command-line.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/command-line.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/command-line.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/dto/command-line.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command-line/dto/command-line.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/command.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/command.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/command.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/command.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/dto/command.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/command/dto/command.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/configuration/connexionLoader.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/configuration/jwt.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/dosage.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/dosage.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/dosage.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/dosage.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/types/create-dosage.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/dosage/types/dosage.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/form/form.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/form/form.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/form/form.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/form/form.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/form/types/form.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/invoice.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/invoice.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/invoice.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/invoice.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/types/invoice.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/invoice/types/invoice.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/main.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/medicine.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/medicine.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/medicine.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/medicine.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/types/medicine.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/medicine/types/medicine.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/dto/method.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/dto/method.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/method.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/method.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/method.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/method/method.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/packaging/packaging.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/packaging/packaging.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/packaging/packaging.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/packaging/packaging.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/packaging/types/packaging.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/dto/patient.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/dto/patient.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/patient.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/patient.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/patient.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/patient/patient.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/dto/payment.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/dto/payment.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/payment.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/payment.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/payment.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/payment/payment.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/dto/prescription.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/dto/prescription.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/prescription.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/prescription.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/prescription.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/prescription/prescription.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/provider.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/provider.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/provider.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/provider.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/types/provider.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/provider/types/provider.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/dto/sale.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/dto/sale.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/sale.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/sale.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/sale.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/sale/sale.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/schema.gql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/shared/shared.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/shared/shared.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/dto/stock-movement.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/dto/stock-movement.output.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/stock-movement.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/stock-movement.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/stock-movement.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/stock-movement/stock-movement.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/types/user.dto.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/types/user.input.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/user.entity.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/user.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/user.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/user/user.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/src/utils.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/test/app.e2e-spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/test/jest-e2e.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/tsconfig.build.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/rcara.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/madavoary.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1zoOUBPbnRdshUy5nadKd6MWCri" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ead1efca-4345-478c-bee6-a461387232ea" name="Default Changelist" comment="" />
+      <created>1634810995420</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1634810995420</updated>
+      <workItem from="1634810997398" duration="6000" />
+      <workItem from="1634839922327" duration="1190000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
