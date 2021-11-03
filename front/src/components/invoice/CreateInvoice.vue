@@ -88,13 +88,13 @@
             <template v-slot:body="props">
               <q-tr no-hover :props="props">
                 <q-td key="medicineId" :props="props">
-                  {{getMedicineName(commandLines[props.pageIndex].medicine)}}
+                  {{getMedicineName(assuredLines[props.pageIndex].medicine)}}
                 </q-td>
                 <q-td key="quantity">
                   <PackagingInput
                     min="0"
                     :value="props.row.quantity"
-                    :units="commandLines[props.pageIndex].medicine.packaging.units"
+                    :units="assuredLines[props.pageIndex].medicine.packaging.units"
                     @set-model="props.row.quantity = $event"
                     :is-q="false"
                     lazy-rules
@@ -105,7 +105,7 @@
                   <PackagingInput
                     min="0"
                     :value="props.row.price"
-                    :units="commandLines[props.pageIndex].medicine.packaging.units"
+                    :units="assuredLines[props.pageIndex].medicine.packaging.units"
                     @set-model="props.row.price = $event"
                     :is-q="false"
                     lazy-rules

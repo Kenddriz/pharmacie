@@ -9,12 +9,14 @@ import {
   unlinkSync,
 } from 'fs';
 import { UnauthorizedException } from '@nestjs/common';
+import { join } from 'path';
+
 type FileParams = {
   filename: string;
   mimetype: string;
 };
-export const publicDir = () =>
-  process.env.NODE_ENV === 'development' ? '../public/' : './public/';
+export const publicDir = () => join(__dirname, process.env.NODE_ENV === 'development' ? '..' : '', 'public/');
+
 export const uniqId = async (repo: string): Promise<number> => {
   let id = 1,
     lastId = 0;
@@ -44,9 +46,7 @@ export const upload = async (
 ): Promise<FileParams> => {
   const { createReadStream, filename, mimetype } = await file;
 
-  let m_filename =
-    filename.lastIndexOf('.') > 20 ? filename.substr(20) : filename;
-  m_filename = id + '-' + m_filename;
+  let m_filename = id + '-' + filename.substr(-20);
 
   const path = `${publicDir()}${dossier}/`;
   if (!existsSync(path)) mkdirSync(path, { recursive: true });

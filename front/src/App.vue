@@ -10,12 +10,12 @@ import { appWindow } from '@tauri-apps/api/window';
 export default defineComponent({
   name: 'App',
   beforeCreate() {
-    new Command('./server.exe').execute().catch((e) => console.log(e));
+    void new Command('./server.exe').execute();
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         void invoke('close_splashscreen');
         void appWindow.maximize();
-      }, 3000);
+      }, 5000);
     });
   },
 })
@@ -35,6 +35,7 @@ body {
   overflow: hidden;
   font-size: 12px;
   color: #455a64;
+  user-select: none;
 }
 .sticky-header-table {
   .q-table__top, .q-table__bottom, thead tr:first-child th {
