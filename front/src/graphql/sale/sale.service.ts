@@ -205,6 +205,7 @@ export const useCount2LatestWeekSales = () => {
     const res = result.value?.count2LatestWeekSales;
     if(res) {
       days.forEach((day, index) => {
+        index += 1;
         const last = res.last.find(ls => moment(ls.day).day() === index);
         salesSeries[0].data.push(last?.count||0);
         const cur = res.current.find(cu => moment(cu.day).day() === index);

@@ -23,7 +23,7 @@
             </q-tab-panel>
 
             <q-tab-panel :style="heightStyle" name="update" class="q-pa-sm">
-              <q-list dense v-if="selectedCmd.length">
+              <q-list dense v-if="selectedCmd.length" class="q-pb-sm">
                 <q-expansion-item
                   expand-separator
                   icon="info"
@@ -144,7 +144,7 @@ export default defineComponent({
       tab: ref<string>('update'),
       formatDate,
       ...usePaginateCommands(),
-      heightStyle: `height:${screen.height - 284}px;`
+      heightStyle: `height:${screen.height - 181}px;`
     }
   }
 });
