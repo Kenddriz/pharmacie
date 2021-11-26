@@ -136,10 +136,6 @@
       <change afterPath="$PROJECT_DIR$/back/tsconfig.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/public/splashscreen.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/public/splashscreen.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/components/medicine/MedicineForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/medicine/MedicineForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/src/index.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/index.template.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +174,8 @@
       <workItem from="1635340595049" duration="1841000" />
       <workItem from="1635758800135" duration="2381000" />
       <workItem from="1635922744233" duration="4414000" />
-      <workItem from="1635929307863" duration="8684000" />
+      <workItem from="1635929307863" duration="17364000" />
+      <workItem from="1635959828523" duration="603000" />
     </task>
     <servers />
   </component>
@@ -195,5 +192,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
