@@ -15,7 +15,7 @@ type FileParams = {
   filename: string;
   mimetype: string;
 };
-export const publicDir = () => join(__dirname, process.env.NODE_ENV === 'development' ? '..' : '', 'public/');
+export const publicDir = () => process.env.NODE_ENV === 'development' ?  join(__dirname, '..', 'public') : 'public/'
 
 export const uniqId = async (repo: string): Promise<number> => {
   let id = 1,

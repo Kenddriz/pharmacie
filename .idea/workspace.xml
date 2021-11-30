@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ead1efca-4345-478c-bee6-a461387232ea" name="Default Changelist" comment="">
+    <list default="true" id="a92006a3-08ea-48f9-b7e6-da9e93b8f333" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/back/.env" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/.eslintrc.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/.gitignore" afterDir="false" />
@@ -9,7 +9,6 @@
       <change afterPath="$PROJECT_DIR$/back/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/nest-cli.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/back/server.exe" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/src/app.controller.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/src/app.module.ts" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/src/app.resolver.ts" afterDir="false" />
@@ -136,6 +135,11 @@
       <change afterPath="$PROJECT_DIR$/back/tsconfig.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/back/yarn.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src-tauri/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/front/src-tauri/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/batch/Batch.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/batch/Batch.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/batch/BatchForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/batch/BatchForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/components/provider/UpdateProviderAvatar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/components/provider/UpdateProviderAvatar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front/src/index.template.html" beforeDir="false" afterPath="$PROJECT_DIR$/front/src/index.template.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,8 +149,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="1zoOUBPbnRdshUy5nadKd6MWCri" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="21RbEc0bdHuhshTPntatICw4r5U" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -155,43 +158,29 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="yarn" />
     <property name="ts.external.directory.path" value="D:\ENI\Projets\mamisoa\back\node_modules\typescript\lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="ead1efca-4345-478c-bee6-a461387232ea" name="Default Changelist" comment="" />
-      <created>1634810995420</created>
+      <changelist id="a92006a3-08ea-48f9-b7e6-da9e93b8f333" name="Default Changelist" comment="" />
+      <created>1637906743538</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1634810995420</updated>
-      <workItem from="1634810997398" duration="6000" />
-      <workItem from="1634839922327" duration="3033000" />
-      <workItem from="1634881429410" duration="2646000" />
-      <workItem from="1635332609075" duration="2196000" />
-      <workItem from="1635340595049" duration="1841000" />
-      <workItem from="1635758800135" duration="2381000" />
-      <workItem from="1635922744233" duration="4414000" />
-      <workItem from="1635929307863" duration="17364000" />
-      <workItem from="1635959828523" duration="603000" />
+      <updated>1637906743538</updated>
+      <workItem from="1637906746361" duration="435000" />
+      <workItem from="1638275823330" duration="2891000" />
+      <workItem from="1638293378144" duration="8179000" />
+      <workItem from="1638301965032" duration="1619000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

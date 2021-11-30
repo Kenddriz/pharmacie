@@ -1,4 +1,4 @@
-<template>
+ <template>
   <q-menu>
     <q-form @submit.prevent="submitForm()" class="q-pa-md q-gutter-sm">
       <DateInput
@@ -77,7 +77,6 @@ export default defineComponent({
     function submitForm() {
       if(props.batch)updateBatch({ id: props.batch.id, form: model });
       else {
-        alert(45);
         createBatch(model);
       }
     }

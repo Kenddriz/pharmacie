@@ -2,12 +2,12 @@
   <div class="q-pa-md q-gutter-sm">
     <div class="q-table__title q-mb-md">
       Lots
-      <q-btn class="q-ml-lg" round color="positive" size="xs" icon="add">
+      <!--<q-btn class="q-ml-lg" round color="positive" size="xs" icon="add">
         <BatchForm
           :units="medicine.packaging.units"
           :medicine-id="medicine.id"
         />
-      </q-btn>
+      </q-btn>-->
     </div>
     <template  v-for="(batch, index) in medicine.batches" :key="index">
       <q-expansion-item v-if="(expiration = leftDays(batch.expirationDate)) !== undefined">
